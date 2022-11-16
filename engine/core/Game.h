@@ -21,15 +21,14 @@
 #include "GameObject.h"
 
 class CameraComponent;
-//class DirectionLight;
 class ShadowMapRender;
+class MonoInst;
 
 class Game {
 
 private:
 	Window m_window;
 	Render m_render;
-	//RenderDevice m_renderTarget;
 	Lighting m_lighting;
 	InputDevice m_input;
 	FPSCounter m_fpsCounter;
@@ -41,7 +40,6 @@ private:
 
 	CameraComponent* m_defaultCamera = nullptr;
 	CameraComponent* m_mainCamera = nullptr;
-	//DirectionLight* f_directionLight = nullptr;
 
 	std::list<GameObject*> m_gameObjects;
 
@@ -52,7 +50,7 @@ public:
 
 	Game() {}
 
-	void Init();
+	void Init(MonoInst* imono);
 	void Run();
 	void Exit(int code);
 	
@@ -69,8 +67,6 @@ public:
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera) { m_mainCamera = camera; }
 
-	//DirectionLight* directionLight() { return f_directionLight; }
-
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
 	GameObject* CreateGameObject(std::string name = "");
@@ -86,7 +82,6 @@ public:
 private:
 
 	void m_Update();
-	//void m_Draw();
 	void m_Destroy();
 
 	std::list<GameObject*>::iterator m_EraseGameObject(std::list<GameObject*>::iterator it);

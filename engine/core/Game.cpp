@@ -14,6 +14,8 @@
 #include "ImageComponent.h"
 #include "MeshComponent.h"
 
+#include "MonoInst.h"
+
 
 std::vector<std::string> shaderPaths = {
 	 "../../data/engine/shaders/vertex_color.hlsl",
@@ -24,7 +26,9 @@ std::vector<std::string> shaderPaths = {
 };
 
 
-void Game::Init() {
+void Game::Init(MonoInst* imono) {
+
+
 	m_window.Init(L"CGLab6 - Shadow Map", 1920, 1080);
 	m_window.Create();
 

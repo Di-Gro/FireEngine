@@ -28,13 +28,13 @@
     <Filter Include="Json">
       <UniqueIdentifier>{af512a77-c7a2-4d99-9c44-3daf0f5434d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="bridge">
+      <UniqueIdentifier>{f39e6195-6222-416e-8a64-c7328e35e3c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
       <Filter>Delegates</Filter>
-    </ClCompile>
-    <ClCompile Include="CGLab3.cpp">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="Forms.cpp">
       <Filter>Header Files</Filter>
@@ -154,6 +154,27 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="ShaderAsset.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassInfo.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="CppClass.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="CSBridge.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="CSLinked.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="MonoInst.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="Ref.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -310,6 +331,24 @@
     </ClInclude>
     <ClInclude Include="ShaderAsset.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassInfo.h">
+      <Filter>bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="CppClass.h">
+      <Filter>bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="CSBridge.h">
+      <Filter>bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="CSLinked.h">
+      <Filter>bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="MonoInst.h">
+      <Filter>bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="Ref.h">
+      <Filter>bridge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

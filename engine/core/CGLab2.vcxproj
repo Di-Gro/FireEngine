@@ -23,9 +23,13 @@
     <ClCompile Include="AxisDrawer.cpp" />
     <ClCompile Include="AxisDrawer.h" />
     <ClCompile Include="CameraComponent.cpp" />
-    <ClCompile Include="CGLab3.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ClassInfo.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="CppClass.cpp" />
+    <ClCompile Include="CSBridge.cpp" />
+    <ClCompile Include="CSLinked.cpp" />
     <ClCompile Include="Delegates.cpp" />
     <ClCompile Include="DirectionLight.cpp" />
     <ClCompile Include="FileSystem.cpp" />
@@ -47,10 +51,12 @@
     <ClCompile Include="MeshComponent.cpp" />
     <ClCompile Include="LinedPlain.cpp" />
     <ClCompile Include="MeshAsset.cpp" />
+    <ClCompile Include="MonoInst.cpp" />
     <ClCompile Include="MoveController.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="Ref.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
@@ -65,8 +71,12 @@
   <ItemGroup>
     <ClInclude Include="Attachable.h" />
     <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="ClassInfo.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.inl" />
+    <ClInclude Include="CppClass.h" />
+    <ClInclude Include="CSBridge.h" />
+    <ClInclude Include="CSLinked.h" />
     <ClInclude Include="Delegates.h" />
     <ClInclude Include="DirectionLight.h" />
     <ClInclude Include="Easing.h" />
@@ -94,11 +104,13 @@
     <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="LinedPlain.h" />
     <ClInclude Include="MeshAsset.h" />
+    <ClInclude Include="MonoInst.h" />
     <ClInclude Include="MoveController.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="Ref.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="RenderDevice.h" />
     <ClInclude Include="RenderTarget.h" />
@@ -234,11 +246,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -249,13 +263,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Release;C:\Program Files\Mono\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
