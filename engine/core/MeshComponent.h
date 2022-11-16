@@ -40,7 +40,7 @@ public:
 	void CreateMesh(
 		std::vector<Mesh4::Vertex>* verteces,
 		std::vector<int>* indeces,
-		fs::path shaderPath = "data/engine/shaders/default.hlsl");
+		fs::path shaderPath = "../../data/engine/shaders/default.hlsl");
 
 	void ShowNormals(std::vector<Mesh4::Vertex>* verteces);
 

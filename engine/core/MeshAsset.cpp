@@ -173,7 +173,7 @@ void MeshAsset::m_InitMaterials(
 {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
-	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(L"data/engine/shaders/default.hlsl"));
+	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(L"../../data/engine/shaders/default.hlsl"));
 
 	if (materials.empty()) {
 		auto& mat = asset->materials.emplace_back();

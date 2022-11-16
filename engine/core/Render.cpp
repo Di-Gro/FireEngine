@@ -28,7 +28,7 @@ void Render::Init(Game* game, Window* window) {
 
 void Render::Start() {
 	m_screenQuad = m_game->CreateGameObject("Screen Quad")->AddComponent<ImageComponent>();
-	m_screenQuad->shaderPath = "data/engine/shaders/screen_quad.hlsl";
+	m_screenQuad->shaderPath = "../../data/engine/shaders/screen_quad.hlsl";
 	m_screenQuad->SetImage(m_mainRT.renderTexture());
 	m_screenQuad->visibility(false);
 }

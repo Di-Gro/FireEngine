@@ -21,7 +21,7 @@ public:
 		vertex2.position = Vector4(worldPos);
 		vertex2.color = color;
 
-		CreateMesh(&verteces, &indeces, "data/engine/shaders/vertex_color.hlsl");
+		CreateMesh(&verteces, &indeces, "../../data/engine/shaders/vertex_color.hlsl");
 		mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 
@@ -37,7 +37,7 @@ public:
 		vertex2.position = Vector4(end);
 		vertex2.color = color;
 
-		CreateMesh(&verteces, &indeces, "data/engine/shaders/vertex_color.hlsl");
+		CreateMesh(&verteces, &indeces, "../../data/engine/shaders/vertex_color.hlsl");
 		mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 };

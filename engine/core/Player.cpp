@@ -25,7 +25,7 @@ void Player::OnInit() {
 
 	form = Forms4::SphereLined(radius, 12, 12, {0, 0.6, 0, 1});
 	auto boundSphere = m_playerBound->AddComponent<MeshComponent>();
-	boundSphere->CreateMesh(&form.verteces, &form.indexes, "data/engine/shaders/vertex_color.hlsl");
+	boundSphere->CreateMesh(&form.verteces, &form.indexes, "../../data/engine/shaders/vertex_color.hlsl");
 	boundSphere->mesh()->topology = form.topology;
 	boundSphere->isDebug = true;
 

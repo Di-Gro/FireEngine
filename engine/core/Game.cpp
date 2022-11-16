@@ -16,11 +16,11 @@
 
 
 std::vector<std::string> shaderPaths = {
-	 "data/engine/shaders/vertex_color.hlsl",
-	 "data/engine/shaders/default.hlsl",
-	 "data/engine/shaders/image.hlsl",
-	 "data/engine/shaders/shadow_map.hlsl",
-	 "data/engine/shaders/screen_quad.hlsl",
+	 "../../data/engine/shaders/vertex_color.hlsl",
+	 "../../data/engine/shaders/default.hlsl",
+	 "../../data/engine/shaders/image.hlsl",
+	 "../../data/engine/shaders/shadow_map.hlsl",
+	 "../../data/engine/shaders/screen_quad.hlsl",
 };
 
 
@@ -59,7 +59,7 @@ void Game::Run() {
 	auto mesh = CreateGameObject()->AddComponent<MeshComponent>();
 
 	auto form = Forms4::Box({ 50,50,50 });
-	mesh->CreateMesh(&form.verteces, &form.indexes, "data/engine/shaders/shadow_map.hlsl");
+	mesh->CreateMesh(&form.verteces, &form.indexes, "../../data/engine/shaders/shadow_map.hlsl");
 
 
 	MSG msg = {};

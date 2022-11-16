@@ -15,7 +15,7 @@
 
 class ImageComponent : public Component {
 public:
-	std::string shaderPath = "data/engine/shaders/image.hlsl";
+	std::string shaderPath = "../../data/engine/shaders/image.hlsl";
 
 private:
 	std::vector<const Material*> m_materials;

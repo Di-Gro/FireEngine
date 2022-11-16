@@ -96,7 +96,7 @@ void GameController::OnInit() {
 	m_playerCamera = m_player->GetComponentInChild<PlayerCamera>();
 
 	std::vector<GameObject*> newObjects;
-	game()->meshAsset()->LoadScene("data/assets/levels/farm", &newObjects);
+	game()->meshAsset()->LoadScene("../../data/assets/levels/farm", &newObjects);
 	
 	for (auto gobj : newObjects) {
 		auto attachable = gobj->GetComponent<Attachable>();
