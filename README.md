@@ -21,6 +21,7 @@ Core:
 - для Release | "$(SolutionDir)x64\Release; C:\Program Files\Mono\lib" | Linker -> General -> Additional Library Directories
 - "DirectXTK.lib; monopp.lib; mono-2.0-sgen.lib;" | Linker -> Input -> Additional Dependencies
 * в main.cpp ASSEMBLY_PATH - путь до C# .dll
+- Add->Reference->monopp
 
 Mono:
 - OutputPath = "$(SolutionDir)x64\Debug\"
