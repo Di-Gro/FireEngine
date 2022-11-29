@@ -7,3 +7,4 @@
 using namespace DirectX::SimpleMath;
 
 extern std::string ToString(const Vector3& vec);
+extern std::string ToString(const Quaternion& vec);

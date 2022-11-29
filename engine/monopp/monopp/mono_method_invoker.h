@@ -66,6 +66,14 @@ template <typename... Args>
 class mono_method_invoker<void(Args...)> : public mono_method
 {
 public:
+	mono_method_invoker() { 
+	}
+
+	mono_method_invoker(const mono_method& o)
+		: mono_method(o)
+	{
+	}
+
 	void operator()(Args... args)
 	{
 		invoke(nullptr, std::forward<Args>(args)...);
@@ -106,16 +114,24 @@ private:
 	template <typename Signature>
 	friend mono_method_invoker<Signature> make_method_invoker(const mono_method&, bool);
 
-	mono_method_invoker(const mono_method& o)
-		: mono_method(o)
-	{
-	}
+	//mono_method_invoker(const mono_method& o)
+	//	: mono_method(o)
+	//{
+	//}
 };
 
 template <typename RetType, typename... Args>
 class mono_method_invoker<RetType(Args...)> : public mono_method
 {
 public:
+	mono_method_invoker() {
+	}
+
+	mono_method_invoker(const mono_method& o)
+		: mono_method(o)
+	{
+	}
+
 	auto operator()(Args... args)
 	{
 		return invoke(nullptr, std::forward<Args>(args)...);
@@ -152,17 +168,17 @@ private:
 			return result;
 		};
 
-		auto result = apply(inv, tup);
+		auto result = mono::apply(inv, tup);
 		return convert_mono_type<std::decay_t<RetType>>::from_mono_boxed(std::move(result));
 	}
 
 	template <typename Signature>
 	friend mono_method_invoker<Signature> make_method_invoker(const mono_method&, bool);
 
-	mono_method_invoker(const mono_method& o)
-		: mono_method(o)
-	{
-	}
+	//mono_method_invoker(const mono_method& o)
+	//	: mono_method(o)
+	//{
+	//}
 };
 
 template <typename Signature>

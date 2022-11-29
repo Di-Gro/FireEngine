@@ -10,7 +10,7 @@ private:
 	Player* m_player = nullptr;
 
 public:
-	PlayerController(GameObject* gameObject) : Component(gameObject) { }
+	//PlayerController(GameObject* gameObject) : Component(gameObject) { }
 
 	//void OnInit() override;
 	void OnStart() override;

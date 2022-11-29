@@ -40,6 +40,9 @@ public:
 
 	bool IsKeyDown(Keys key);	
 
+private:
+	//void m_InitMono();
+
 protected:
 	struct KeyboardArgs {
 		USHORT MakeCode;

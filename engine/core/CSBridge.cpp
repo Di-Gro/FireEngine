@@ -1,28 +1,28 @@
 #include "CSBridge.h"
 
-#include "Ref.h"
+#include "Refs.h"
 #include "CppClass.h"
 #include "ClassInfo.h"
 
 
 void CSBridge::setValue_2() {
-    std::cout << "CPP: CSBridge::setValue()" << std::endl;
+    std::cout << "+: CSBridge::setValue()" << std::endl;
 }
 
-void CSBridge::setValue(size_t refId, float value) {
-    auto* a = Refs::GetRef<CppClass>(refId);
+void CSBridge::setValue(CppRef refId, float value) {
+    auto* a = Refs::GetPointer<CppClass>(refId);
     if (a != nullptr)
         a->floatValue = value;
 }
 
-void* CSBridge::Ref_GetPointer(size_t refId) {
-    return Refs::GetRef<void>(refId);
+void* CSBridge::Ref_GetPointer(CppRef refId) {
+    return Refs::GetPointer<void>(refId);
 }
 
-void CSBridge::CppClass_GetClassInfo(size_t refId, ClassInfo* outInfo) {
-    std::cout << "CPP: CSBridge::CppClass_GetClassInfo()" << std::endl;
+void CSBridge::CppClass_GetClassInfo(CppRef refId, ClassInfo* outInfo) {
+    std::cout << "+: CSBridge::CppClass_GetClassInfo()" << std::endl;
 
-    auto* info = Refs::GetRef<ClassInfo>(refId);
+    auto* info = Refs::GetPointer<ClassInfo>(refId);
 
     if (info != nullptr) {
         outInfo->offsetCount = info->offsetCount;

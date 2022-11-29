@@ -3,6 +3,10 @@
 #include <d3d11.h>
 #include <SimpleMath.h>
 
+#include "ClassInfo.h"
+#include "CSBridge.h"
+#include "CsLink.h"
+
 using namespace DirectX::SimpleMath;
 
 ///
@@ -10,25 +14,25 @@ using namespace DirectX::SimpleMath;
 /// чтобы мировая позиция не изменилась. 
 ///
 
+class Game;
 class GameObject;
+class Component;
 
-class Transform {
+
+class Transform : public CsLink {
+	OBJECT;
+
 	friend class GameObject;
 
-public:
-	
-
 private:
-
 	Vector3 m_localPosition = Vector3::Zero;
-	//Vector3 localPosition = Vector3::Zero;
 	Vector3 m_localRotation = Vector3::Zero;
 	Vector3 m_scale = Vector3::One;
 
 	Matrix m_localMatrix;
+	Matrix m_localRotationMatrix;
 
 	GameObject* friend_gameObject;
-	//bool friend_dirty = true;
 
 	Matrix m_matrix = Matrix::Identity;
 
@@ -51,7 +55,7 @@ public:
 
 	void localPosition(const Vector3& value);
 	void localRotation(const Vector3& value);
-	void localRotation(const Quaternion& value);
+	void localRotationQ(const Quaternion& value);
 	void localRotation(const Vector3& axis, float angle);
 	void localScale(const Vector3& value);
 
@@ -59,11 +63,28 @@ public:
 	Vector3 worldRotation();
 	Matrix tmp_GetMatrixRL();
 	Vector3 worldScale();
-	//void worldPosition(Vector3 value);
 
 private:
-	Transform() = default;
+	Transform() = default; 
 
 	void friend_ChangeParent(GameObject* newParent);
-
 };
+
+#pragma warning( push )
+#pragma warning( disable : 4190)
+
+PROP_GETSET(Transform, Vector3, localPosition)
+PROP_GETSET(Transform, Vector3, localRotation)
+PROP_GETSET(Transform, Quaternion, localRotationQ)
+PROP_GETSET(Transform, Vector3, localScale)
+
+PROP_GET(Transform, Vector3, localForward)
+PROP_GET(Transform, Vector3, localUp)
+PROP_GET(Transform, Vector3, localRight)
+
+PROP_GET(Transform, Vector3, forward)
+PROP_GET(Transform, Vector3, up)
+PROP_GET(Transform, Vector3, right)
+
+
+#pragma warning( pop ) 

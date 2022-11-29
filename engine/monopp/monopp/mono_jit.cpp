@@ -82,6 +82,11 @@ bool init(const std::string& domain, bool enable_debugging)
 			// xdomain-checks: Makes sure that no references are left when a domain is unloaded.
 			"--gc-debug=check-remset-consistency,verify-before-collections,xdomain-checks"
 		};
+		//const char* options[] = {
+		//"--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:48484,embedding=1",
+		//"--use-fallback-tls",
+		//"--gc-debug=check-remset-consistency,verify-before-collections,xdomain-checks",
+		//};
 		// clang-format on
 		mono_jit_parse_options(sizeof(options) / sizeof(char*), const_cast<char**>(options));
 		mono_debug_init(MONO_DEBUG_FORMAT_MONO);

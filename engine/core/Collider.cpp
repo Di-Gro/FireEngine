@@ -35,19 +35,19 @@ void BoxCollider::OnUpdate() {
 }
 
 bool BoxCollider::Intersects() {
-	auto worldPos = player->transform.worldPosition();
-	auto scale = transform.localScale();
+	auto worldPos = player->transform->worldPosition();
+	auto scale = transform->localScale();
 	auto extends = boundSize / 2 * scale;
 
-	auto box = DirectX::BoundingOrientedBox(transform.worldPosition(), extends, transform.localRotationQ());
+	auto box = DirectX::BoundingOrientedBox(transform->worldPosition(), extends, transform->localRotationQ());
 	auto sphere = DirectX::BoundingSphere(worldPos, player->radius);
 	
 	return box.Intersects(sphere);
 
 	//auto boxSize = boundSize + Vector3::One.Normalized() * (player->radius * 2);
-	//auto ltpos = transform.worldPosition() - boxSize / 2;
+	//auto ltpos = transform->worldPosition() - boxSize / 2;
 
-	//auto boxWorld = Matrix::CreateWorld(ltpos, transform.forward(), transform.up());
+	//auto boxWorld = Matrix::CreateWorld(ltpos, transform->forward(), transform->up());
 	//auto boxInvert = boxWorld.Invert();
 
 	//auto p = (Matrix::CreateTranslation(worldPos) * boxInvert).Translation();
@@ -63,11 +63,11 @@ bool BoxCollider::Intersects() {
 }
 
 bool BoxCollider::FloorContainPoint(Vector3 point) {
-	auto worldPos = point; // player->transform.worldPosition();
-	auto scale = transform.localScale();
+	auto worldPos = point; // player->transform->worldPosition();
+	auto scale = transform->localScale();
 	auto extends = boundSize / 2 * scale;
 
-	auto box = DirectX::BoundingOrientedBox(transform.worldPosition(), extends, transform.localRotationQ());
+	auto box = DirectX::BoundingOrientedBox(transform->worldPosition(), extends, transform->localRotationQ());
 
 	DirectX::XMFLOAT3 corners[8] = {};
 	box.GetCorners(corners);
@@ -88,10 +88,10 @@ bool BoxCollider::FloorContainPoint(Vector3 point) {
 
 Vector2 BoxCollider::GetClosestFloorPoint(Vector3 point) {
 	auto worldPos = point;
-	auto scale = transform.localScale();
+	auto scale = transform->localScale();
 	auto extends = boundSize / 2 * scale;
 
-	auto box = DirectX::BoundingOrientedBox(transform.worldPosition(), extends, transform.localRotationQ());
+	auto box = DirectX::BoundingOrientedBox(transform->worldPosition(), extends, transform->localRotationQ());
 
 	DirectX::XMFLOAT3 corners[8] = {};
 	box.GetCorners(corners);
@@ -131,11 +131,11 @@ Vector2 BoxCollider::GetClosestFloorPoint(Vector3 point) {
 }
 
 bool BoxCollider::GetIntersectPoint(Vector3 lineBegin, Vector3 lineEnd) {
-	auto worldPos = player->transform.worldPosition();
-	auto scale = transform.localScale();
+	auto worldPos = player->transform->worldPosition();
+	auto scale = transform->localScale();
 	auto extends = boundSize / 2 * scale;
 
-	auto box = DirectX::BoundingOrientedBox(transform.worldPosition(), extends, transform.localRotationQ());
+	auto box = DirectX::BoundingOrientedBox(transform->worldPosition(), extends, transform->localRotationQ());
 
 	DirectX::XMFLOAT3 corners[8] = {};
 	box.GetCorners(corners);
@@ -175,8 +175,8 @@ bool BoxCollider::GetIntersectPoint(Vector3 lineBegin, Vector3 lineEnd) {
 	
 	auto mesh = CreateGameObject("hit")->AddComponent<MeshComponent>();
 	auto form = Forms4::Box({ 5,5,5 }, { 1,0,0,1 });
-	mesh->CreateMesh(&form.verteces, &form.indexes);
-	mesh->transform.localPosition(minPoint);
+	mesh->AddShape(&form.verteces, &form.indexes);
+	mesh->transform->localPosition(minPoint);
 
 	std::cout << minPoint.x << " " << minPoint.y << " " << minPoint.z << "\n";
 

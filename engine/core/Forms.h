@@ -6,6 +6,7 @@
 #include <SimpleMath.h>
 
 #include "Mesh.h"
+#include "CSBridge.h"
 
 using namespace DirectX::SimpleMath;
 

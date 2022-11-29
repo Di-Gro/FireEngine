@@ -9,13 +9,18 @@
 #include "wrl.h_d3d11_alias.h"
 #include "Shader.h"
 #include "Material.h"
+#include "CsLink.h"
+#include "CSBridge.h"
 
 using namespace DirectX::SimpleMath;
 
 class DirectionLight;
 class Render;
+class MeshAsset;
 
-class Mesh4 {
+class Mesh4 : public CsLink {
+	friend MeshAsset;
+
 public:
 	class Vertex {
 	public:
@@ -59,14 +64,18 @@ public:
 	mutable D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 private:
+	size_t f_assetHash = 0;
 	std::vector<Shape> m_shapes;
+	Render* m_render;
 
 	UINT m_strides[1] = { sizeof(Vertex) }; // Размер в байтах на каждую вершину
 	UINT m_offsets[1] = { 0 };
 
 public:
 	Mesh4() {};
+	Mesh4(const Mesh4& other);
 	~Mesh4();
+
 
 	void AddShape(
 		std::vector<Vertex>* verteces,
@@ -74,10 +83,28 @@ public:
 		Render* render,
 		int materialIndex);
 
+	void AddShape(
+		Vertex* verteces,
+		int vertecesLength,
+		int* indeces,
+		int indecesLength,
+		Render* render,
+		int materialIndex);
+
+	void m_InitShape(Mesh4::Shape& shape);
+
+
 	void Draw(const DynamicData& data) const;
 
-	int shapeCount() { return m_shapes.size(); }
+	//Mesh4 Clone(Render* render) const;
+
+	int shapeCount() const { return m_shapes.size(); }
+
+	int maxMaterialIndex() const;
 
 	Shape* GetShape(int index);
 
 };
+
+FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);
+FUNC(Mesh4, MaterialMaxIndex, int)(CppRef mesh4Ref);

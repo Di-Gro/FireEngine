@@ -10,7 +10,7 @@ class ShaderAsset {
 private:
 	Render* m_render;
 
-	std::map<unsigned int, Shader> m_shaders;
+	std::map<size_t, Shader> m_shaders;
 
 public:
 	void Init(Render* render);
@@ -18,10 +18,10 @@ public:
 	void CompileShader(const fs::path& path);
 	void RecompileShaders();
 
-	bool HasShader(unsigned int hashCode) { return m_shaders.count(hashCode) > 0; }
-	Shader* GetShader(unsigned int hashCode) { return &m_shaders.at(hashCode); }
+	bool HasShader(size_t hashCode) { return m_shaders.count(hashCode) > 0; }
+	Shader* GetShader(size_t hashCode) { return &m_shaders.at(hashCode); }
 
-	unsigned int GetShaderHash(const fs::path& path) { return std::hash<std::string>()(path.string()); }
+	size_t GetShaderHash(const fs::path& path) { return std::hash<std::string>()(path.string()); }
 
 private:
 	bool m_CompileShader(const fs::path& path, Shader* shader);

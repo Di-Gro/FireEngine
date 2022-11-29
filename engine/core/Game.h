@@ -17,6 +17,7 @@
 #include "ImageAsset.h"
 #include "ShaderAsset.h"
 #include "Math.h"
+#include "CSBridge.h"
 
 #include "GameObject.h"
 
@@ -27,6 +28,8 @@ class MonoInst;
 class Game {
 
 private:
+	MonoInst* m_mono;
+
 	Window m_window;
 	Render m_render;
 	Lighting m_lighting;
@@ -54,6 +57,8 @@ public:
 	void Run();
 	void Exit(int code);
 	
+	inline MonoInst* mono() { return m_mono; }
+
 	inline Window* window() { return &m_window; }
 	inline Render* render() { return &m_render; }
 	inline Lighting* lighting() { return &m_lighting; }
@@ -62,7 +67,7 @@ public:
 
 	inline ShaderAsset* shaderAsset() { return &m_shaderAsset; }
 	inline MeshAsset* meshAsset() { return &m_meshAsset; }
-	inline ImageAsset* imageAsset() { return &m_imageAsset; }
+	ImageAsset* imageAsset() { return &m_imageAsset; }
 
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera) { m_mainCamera = camera; }
@@ -70,6 +75,10 @@ public:
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
 	GameObject* CreateGameObject(std::string name = "");
+	GameObject* CreateGameObjectCs(std::string name = "");
+
+	GameObjectInfo CreateGameObjectFromCS(CsRef csRef);
+
 	void DestroyGameObject(GameObject* gameObject);
 
 	void PrintSceneTree();
@@ -80,6 +89,7 @@ public:
 	std::list<GameObject*>::iterator EndGameObject() { return m_gameObjects.end(); }
 	
 private:
+	void m_InitMono(MonoInst* imono);
 
 	void m_Update();
 	void m_Destroy();
@@ -89,3 +99,9 @@ private:
 	void m_PrintSceneTree(const std::string& prefix, const GameObject* node);
 
 };
+
+
+
+FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef);
+
+//FUNC(Game, AddComponentFromCS, CppObjectInfo)(CppRef gameRef, CsRef csRef);

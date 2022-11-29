@@ -17,14 +17,23 @@ namespace EngineMono {
         }
 
         public void CallCppFunc(float value) {
-            Console.WriteLine($"CS: CallCppFunc({value})");
+            Console.WriteLine($"#: CallCppFunc({value})");
             try {
                 CppFunc(m_refId, value);
             }
             catch (Exception ex) {
-                Console.WriteLine($"CS: {ex.GetType().Name}='{ex.Message}'");
+                Console.WriteLine($"#: {ex.GetType().Name}='{ex.Message}'");
             }
         }
+
+        public UInt64 CreateInstance(UInt64 refId, string name) {
+            var type = Type.GetType(name);
+            var obj = Activator.CreateInstance(type);
+
+
+            return 0;
+        }
+
 
         [DllImport(ExePath, EntryPoint = "setValue")]
         public static extern void CppFunc(UInt64 refId, float value);

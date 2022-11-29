@@ -33,14 +33,14 @@ static inline Vector3 deg(Vector3 vec) {
 	return Vector3(deg(vec.x), deg(vec.y), deg(vec.z));
 }
 
-static std::string ToString(Transform& transform) {
+static std::string ToString(Transform* transform) {
 	std::string str;
 
-	str += "local position: " + ToString(transform.localPosition()) + "\n";
-	str += "local rotation: " + ToString(deg(transform.localRotation())) + "\n";
+	str += "local position: " + ToString(transform->localPosition()) + "\n";
+	str += "local rotation: " + ToString(deg(transform->localRotation())) + "\n";
 
-	str += "world position: " + ToString(transform.worldPosition()) + "\n";
-	str += "world rotation: " + ToString(deg(transform.worldRotation())) + "\n";
+	str += "world position: " + ToString(transform->worldPosition()) + "\n";
+	str += "world rotation: " + ToString(deg(transform->worldRotation())) + "\n";
 
 	return str;
 }
@@ -53,11 +53,11 @@ GameObject* GameController::CreatePlayer() {
 	
 	auto cameraRoot = CreateGameObject("camera root");
 	cameraRoot->SetParent(player);
-	cameraRoot->transform.localPosition({ 0, 0, 0 });
+	cameraRoot->transform->localPosition({ 0, 0, 0 });
 
 	auto camera = CreateGameObject("player camera");
 	camera->SetParent(cameraRoot);
-	camera->transform.localPosition({ 0, 0, 300 });
+	camera->transform->localPosition({ 0, 0, 300 });
 	camera->AddComponent<PlayerCamera>();
 
 	auto test = player->AddComponent<TestComponent>();
@@ -90,7 +90,7 @@ void GameController::OnInit() {
 	AddComponent<LineComponent>()->SetPoint(Vector3::Right * 100, { 1, 0, 0, 1 });
 
 	m_defaultCamera = game()->mainCamera();
-	m_defaultCamera->transform.localPosition({ 0, 100,-300 });
+	m_defaultCamera->transform->localPosition({ 0, 100,-300 });
 
 	m_player = CreatePlayer()->GetComponent<Player>();
 	m_playerCamera = m_player->GetComponentInChild<PlayerCamera>();
@@ -110,7 +110,7 @@ void GameController::OnInit() {
 
 	auto imgSize = sprite->size() * 0.1f;
 
-	sprite->transform.localPosition({ 20, 1080 - imgSize.y - 35, 0 });
+	sprite->transform->localPosition({ 20, 1080 - imgSize.y - 35, 0 });
 	sprite->size(imgSize);
 
 	auto test = m_player->GetComponentInChild<TestComponent>();
@@ -129,7 +129,7 @@ void GameController::OnDestroy() {
 }
 
 void GameController::OnUpdate() {
-	auto hotkeys = game()->hotkeys();
+	auto hotkeys = game()->hotkeys();		
 	if (hotkeys->Is(Keys::Esc, KeyState::Press)) {
 		std::cout << "Exit" << std::endl;
 		game()->Exit(0);

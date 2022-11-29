@@ -1,48 +1,46 @@
 #pragma once
 
 #include <iostream>
+#include <iostream>
+#include <stddef.h>
 
-static int GetOffset(void* from, void* to) {
-	return ((int8_t*)from) - ((int8_t*)to);
-}
+
+#include <d3d11.h>
+#include <SimpleMath.h>
+
+using namespace DirectX::SimpleMath;
+
+#include "Refs.h"
+#include "ClassInfo.h"
+#include "CSBridge.h"
+
 
 class CppClass {
+	OBJECT;
+
 public:
 	float floatValue = 1.154f;
 	int intValue = 1;
 
+	Vector3 vector3{ 1, 2, 3 };
+	Quaternion quat{ 0.1f, 0.2f, 0.3f, 0.4f };
+
 private:
-	long m_longValue = 1;
+	long m_longValue = 2;
+	Vector3 m_vector3{ 4, 5, 6 };
 
 public:
-	long longValue() { return m_longValue;  }
+	long longValue() { return m_longValue; }
 	void longValue(long value) { m_longValue = value; }
 
+	Vector3 vector3m() { return m_vector3; }
+	void vector3m(Vector3 value) { m_vector3 = value; }
+
 	float SomeFunc() { return intValue * floatValue; }
-
-	static int OffsetCount() { return 2; }
-
-	static void WriteOffsets(int* offsets) {
-		auto* ptr = (CppClass*)4;
-		offsets[0] = GetOffset(&ptr->floatValue, ptr);
-		offsets[1] = GetOffset(&ptr->intValue, ptr);
-	}
 };
 
-namespace CSBridge {
+PROP_GETSET(CppClass, long, longValue)
+PROP_GETSET(CppClass, Vector3, vector3m)
 
-	extern "C" __declspec(dllexport) long CppClass_longValue_get(size_t objRef);
-	extern "C" __declspec(dllexport) void CppClass_longValue_set(size_t objRef, long value);
+FUNC(CppClass, SomeFunc, float)(size_t objRef);
 
-	extern "C" __declspec(dllexport) float CppClass_SomeFunc(size_t objRef);
-
-}
-
-// floatValue
-// intValue
-/// идут в C# как свойства с прямым доступом по смещениям из самого C#
-
-// m_longValue
-// long longValue()
-// void longValue(long value)
-/// идет в C# как свойство с доступом через getter и setter из C++

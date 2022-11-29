@@ -19,7 +19,7 @@ private:
 	DelegateHandle m_mouseMoveHandle;
 
 public:
-	PlayerCamera(GameObject* gameObject) : CameraComponent(gameObject) { }
+	//PlayerCamera(GameObject* gameObject) : CameraComponent(gameObject) { }
 
 	void OnInit() override;
 	void OnDestroy() override;

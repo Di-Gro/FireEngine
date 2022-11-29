@@ -12,7 +12,7 @@ private:
 	ImageComponent* m_cursor = nullptr;
 	
 public:
-	TestComponent(GameObject* gameObject) : Component(gameObject) { }
+	//TestComponent(GameObject* gameObject) : Component(gameObject) { }
 
 	void OnInit() override {
 		m_cursor = CreateGameObject("Test Cursor")->AddComponent<ImageComponent>();
@@ -24,7 +24,7 @@ public:
 		auto directionLight = game()->lighting()->directionLight();
 		auto camera = directionLight->camera();
 
-		auto wpos = transform.worldPosition();
+		auto wpos = transform->worldPosition();
 		//auto transMatrix = Matrix::CreateTranslation(wpos) * camera->cameraMatrix();
 		//auto devicePos = transMatrix.Translation();
 		//auto uvw = (devicePos + Vector3::One) / 2;
@@ -38,11 +38,11 @@ public:
 		auto uvw = m.Translation();
 
 		if (targetImage != nullptr) {
-			auto tPos = targetImage->transform.worldPosition();
+			auto tPos = targetImage->transform->worldPosition();
 			auto tSize = targetImage->size();
 			auto ltPos = Vector3(tSize) * uvw;
 
-			m_cursor->transform.localPosition(tPos + ltPos);
+			m_cursor->transform->localPosition(tPos + ltPos);
 		}
 	}
 

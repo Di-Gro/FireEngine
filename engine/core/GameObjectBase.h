@@ -4,18 +4,20 @@
 
 #include "Transform.h"
 
-class Game;
-class GameObject;
-class Component;
 
-class GameObjectBase {
+class GameObjectBase : public CsLink {
 	friend class Game;
 	friend class GameObject;
 
 public:
-	Transform& transform;
+	Transform* transform;
 
 private:
+
+	//Ref2<GameObjectBase> f_ref;
+	//CppRef f_cppRef;
+	//CsRef f_csRef;
+
 	GameObject* friend_gameObject = nullptr;
 	Component* friend_component = nullptr;
 	int friend_timeToDestroy = 1;
@@ -25,16 +27,20 @@ private:
 	
 
 public:
-	GameObjectBase(GameObject* gameObject);
+	GameObjectBase() {}
 
 	Game* game();
 	GameObject* gameObject();
+
+	//CppRef cppRef() { return f_cppRef; }
+	//CsRef csRef() { return f_csRef; }
 
 	bool IsDestroyed();
 
 	bool HasParent();
 	GameObject* GetParent();
 	void SetParent(GameObjectBase* parent);
+
 
 	GameObject* CreateGameObject(std::string name = "");
 	void Destroy();

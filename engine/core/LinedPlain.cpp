@@ -25,7 +25,7 @@ void LinedPlain::OnInit() {
 	}
 
 	m_meshComponent = AddComponent<MeshComponent>();
-	m_meshComponent->CreateMesh(&verteces, &indeces);
+	m_meshComponent->AddShape(&verteces, &indeces);
 	m_meshComponent->mesh()->topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 }
 

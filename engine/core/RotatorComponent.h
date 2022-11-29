@@ -40,7 +40,7 @@ public:
 		return perp;
 	}
 
-	RotatorComponent(GameObject* gameObject) : Component(gameObject) {}
+	//RotatorComponent(GameObject* gameObject) : Component(gameObject) {}
 
 	void OnInit() override {
 		auto random = Random();
@@ -58,10 +58,10 @@ public:
 	void OnUpdate() override {
 		if (byAxis) {
 			tatalAngle += angle * game()->deltaTime();
-			transform.localRotation(axis, tatalAngle);
+			transform->localRotation(axis, tatalAngle);
 		}
 		else {
-			transform.localRotation(transform.localRotation() + angles * game()->deltaTime());
+			transform->localRotation(transform->localRotation() + angles * game()->deltaTime());
 		}
 
 		if(printTransform)

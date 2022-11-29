@@ -22,7 +22,11 @@
     <ClCompile Include="Attachable.cpp" />
     <ClCompile Include="AxisDrawer.cpp" />
     <ClCompile Include="AxisDrawer.h" />
+    <ClCompile Include="Bridge.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="CS.cpp" />
+    <ClCompile Include="CSComponent.cpp" />
+    <ClCompile Include="DynamicMeshComponent.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ClassInfo.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -56,7 +60,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="PlayerController.cpp" />
-    <ClCompile Include="Ref.cpp" />
+    <ClCompile Include="Refs.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
@@ -70,15 +74,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Attachable.h" />
+    <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ClassInfo.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.inl" />
     <ClInclude Include="CppClass.h" />
+    <ClInclude Include="CS.h" />
     <ClInclude Include="CSBridge.h" />
+    <ClInclude Include="CSComponent.h" />
+    <ClInclude Include="CsLink.h" />
     <ClInclude Include="CSLinked.h" />
     <ClInclude Include="Delegates.h" />
     <ClInclude Include="DirectionLight.h" />
+    <ClInclude Include="DynamicMeshComponent.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="FlyingCamera.h" />
@@ -110,7 +119,7 @@
     <ClInclude Include="PlayerCamera.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Random.h" />
-    <ClInclude Include="Ref.h" />
+    <ClInclude Include="Refs.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="RenderDevice.h" />
     <ClInclude Include="RenderTarget.h" />
@@ -135,6 +144,12 @@
     <None Include="GameObject.inl" />
     <None Include="GameObjectBase.h" />
     <None Include="GameObjectBase.inl" />
+    <None Include="Refs.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\monopp\monopp.vcxproj">
+      <Project>{672496c0-45cb-41cd-b4a3-a1a62897169c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -264,6 +279,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

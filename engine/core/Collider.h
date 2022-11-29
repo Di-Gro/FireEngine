@@ -13,7 +13,7 @@ public:
 	Player* player = nullptr;
 
 public:
-	BoxCollider(GameObject* gameObject) : Component(gameObject) { }
+	//BoxCollider(GameObject* gameObject) : Component(gameObject) { }
 
 	void OnStart() override;
 	void OnUpdate() override;

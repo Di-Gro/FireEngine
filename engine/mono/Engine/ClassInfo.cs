@@ -3,20 +3,33 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace EngineMono {
+namespace Engine {
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct CppObjectInfo {
+        public CppRef objectRef;
+        public CppRef classRef;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct GameObjectInfo {
+        public CppRef objectRef;
+        public CppRef classRef;
+        public CsRef transformRef;
+    }
 
     class ClassInfo {
 
-        public UInt64 classInfoRef { get; private set; }
+        public CppRef classInfoRef { get; private set; }
 
         public int[] offsets { get; private set; }
 
 
-        public static ClassInfo GetClassInfo(UInt64 classInfoRef) {
-            Console.WriteLine($"CS: ClassInfo.GetClassInfo()");
+        public static ClassInfo GetClassInfo(CppRef classInfoRef) {
+            //Console.WriteLine($"#: ClassInfo.GetClassInfo({classInfoRef})");
 
             ClassInfo info = new ClassInfo();
-            info.classInfoRef = classInfoRef;
+            info.classInfoRef = classInfoRef.value;
 
             unsafe {
                 var structPtr = (ClassInfoStruct*)Ref.GetPointer(classInfoRef);
@@ -39,14 +52,14 @@ namespace EngineMono {
         //private static extern void GetClassInfo(UInt64 classInfoRefId, out ClassInfoStruct classInfo);
 
         //public static ClassInfo GetClassInfo(UInt64 classInfoRef) {
-        //    Console.WriteLine($"CS: ClassInfo.GetClassInfo()");
+        //    Console.WriteLine($"#: ClassInfo.GetClassInfo()");
 
         //    ClassInfo info = new ClassInfo();
 
         //    unsafe {
         //        var structPtr = (ClassInfoStruct*)Ref.GetPointer(classInfoRef);
 
-        //        Console.WriteLine($"CS: classInfo ({structPtr->offsetCount}, {(ulong)structPtr->offsetsPtr})");
+        //        Console.WriteLine($"#: classInfo ({structPtr->offsetCount}, {(ulong)structPtr->offsetsPtr})");
 
         //        info.offsets = new int[structPtr->offsetCount];
 

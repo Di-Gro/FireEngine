@@ -26,7 +26,7 @@ private:
 	bool m_visible = true;
 
 public:
-	ImageComponent(GameObject* gameObject) : Component(gameObject) {}
+	//ImageComponent(GameObject* gameObject) : Component(gameObject) {}
 
 	void visibility(bool value) { m_visible = value; }
 	bool visibility() { return m_visible; }

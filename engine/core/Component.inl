@@ -1,8 +1,7 @@
 
 class Component : public GameObjectBase {
 public:
-
-	Component(GameObject* gameObject) : GameObjectBase(gameObject) { }
+	Component() { }
 
 	virtual void OnInit() { };
 	virtual void OnStart() { };
@@ -16,3 +15,4 @@ public:
 	virtual ~Component() {}
 
 };
+

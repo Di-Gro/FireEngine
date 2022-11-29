@@ -5,10 +5,12 @@
 #include "SimpleMath.h"
 #include "wrl.h_d3d11_alias.h"
 #include "FileSystem.h"
+#include "CsLink.h"
+#include "CSBridge.h"
 
 class Shader;
 
-class Material {
+class Material : public CsLink {
 	#pragma pack(push, 4)
 	public: struct Data {
 		Vector3 diffuseColor = Vector3::One;	// 12
@@ -30,8 +32,39 @@ class Material {
 	};
 
 public:
-	std::string name;
 	const Shader* shader;
 	Texture diffuse;
 	Data data;
+	bool isDynamic = false;
+
+private:
+	std::string m_name;
+	char m_name_cstr[80];
+	
+public:
+	std::string name() const {  return m_name;  }
+
+	void name(std::string value) { 
+		assert(value.size() <= 80);
+		m_name = value; 
+	}
 };
+
+FUNC(Material, diffuseColor_get, Vector3)(CppRef matRef);
+FUNC(Material, diffuse_get, float)(CppRef matRef);
+FUNC(Material, ambient_get, float)(CppRef matRef);
+FUNC(Material, specular_get, float)(CppRef matRef);
+FUNC(Material, shininess_get, float)(CppRef matRef);
+
+FUNC(Material, diffuseColor_set, void)(CppRef matRef, Vector3 value);
+FUNC(Material, diffuse_set, void)(CppRef matRef, float value);
+FUNC(Material, ambient_set, void)(CppRef matRef, float value);
+FUNC(Material, specular_set, void)(CppRef matRef, float value);
+FUNC(Material, shininess_set, void)(CppRef matRef, float value);
+
+//FUNC(Material, name_get, const char*)(CppRef matRef);
+FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth);
+
+//extern "C" __declspec(dllexport) char* _cdecl Material_name_get(CppRef matRef);
+
+//class DynamicMaterial

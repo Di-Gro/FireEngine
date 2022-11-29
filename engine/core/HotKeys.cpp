@@ -1,7 +1,35 @@
 #include "HotKeys.h"
 
+#include "InputDevice.h"
 #include "Game.h"
+#include "CSBridge.h"
+//#include "CS.h"
 
+//using namespace CS;
+
+void HotKeys::Init(Game* game) {
+	m_game = game;
+	m_InitMono();
+
+	m_mouseMoveHandle = m_game->input()->MouseMove.AddRaw(this, &HotKeys::m_OnMouseMove);
+}
+
+void HotKeys::m_InitMono() {
+	auto type = m_game->mono()->GetType("Engine", "Input");
+	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_OnInit");
+
+	CppRef cppRef = RefCpp((Refs::Create(this).id()));
+	method(cppRef);
+}
+
+void HotKeys::Destroy() {
+	auto type = m_game->mono()->GetType("Engine", "Input");
+	auto method = mono::make_method_invoker<void(void)>(type, "cpp_OnDestroy");
+
+	method();
+
+	m_game->input()->MouseMove.Remove(m_mouseMoveHandle);
+}
 
 void HotKeys::Update(InputDevice* input) {
 	for (auto it = m_states.begin(); it != m_states.end(); it++) {
@@ -23,6 +51,10 @@ void HotKeys::Update(InputDevice* input) {
 				state = KeyState::None;
 		}
 	}
+}
+
+void HotKeys::LateUpdate() {
+	m_mouseWheelDelta = 0;
 }
 
 void HotKeys::RegisterHotkey(Keys key) {
@@ -48,3 +80,62 @@ bool HotKeys::Is(Keys key, KeyState state) {
 
 	return false;
 }
+
+bool HotKeys::Is(Keys key) {
+	if (m_states.count(key) > 0)
+		return m_states[key].state != KeyState::None;
+
+	return false;
+}
+
+bool HotKeys::GetButtonDown(Keys key) {
+	return Is(key, KeyState::Press);
+}
+
+bool HotKeys::GetButtonUp(Keys key) {
+	return Is(key, KeyState::Release);
+}
+
+bool HotKeys::GetButton(Keys key) {
+	return Is(key);
+}
+
+DirectX::SimpleMath::Vector2 HotKeys::GetMousePosition() {
+	return m_game->input()->MousePosition;
+}
+
+void HotKeys::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
+	if (args.WheelDelta != 0)
+		m_mouseWheelDelta += args.WheelDelta > 0 ? 1 : -1;
+}
+
+
+DEF_FUNC(HotKeys, GetButtonDown, bool)(CppRef objRef, int keyCode) {
+	return Refs::ThrowPointer<HotKeys>(objRef)->GetButtonDown((Keys)keyCode);
+}
+
+DEF_FUNC(HotKeys, GetButtonUp, bool)(CppRef objRef, int keyCode) {
+	return Refs::ThrowPointer<HotKeys>(objRef)->GetButtonUp((Keys)keyCode);
+}
+
+DEF_FUNC(HotKeys, GetButton, bool)(CppRef objRef, int keyCode) {
+	return Refs::ThrowPointer<HotKeys>(objRef)->GetButton((Keys)keyCode);
+}
+
+DEF_FUNC(HotKeys, RegisterHotkey, void)(CppRef objRef, int keyCode) {
+	Refs::ThrowPointer<HotKeys>(objRef)->RegisterHotkey((Keys)keyCode);
+}
+
+DEF_FUNC(HotKeys, UnregisterHotkey, void)(CppRef objRef, int keyCode) {
+	Refs::ThrowPointer<HotKeys>(objRef)->UnregisterHotkey((Keys)keyCode);
+}
+
+DEF_FUNC(HotKeys, MousePosition, float2)(CppRef objRef) {
+	auto pos = Refs::ThrowPointer<HotKeys>(objRef)->GetMousePosition();
+	float2 res;
+	res._1 = pos.x;
+	res._2 = pos.y;
+	return res;
+}
+
+DEF_PROP_GET(HotKeys, int, wheelDelta)

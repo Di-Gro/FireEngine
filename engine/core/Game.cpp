@@ -15,6 +15,10 @@
 #include "MeshComponent.h"
 
 #include "MonoInst.h"
+#include "ClassInfo.h"
+#include "Refs.h"
+#include "CppClass.h"
+#include "CSComponent.h"
 
 
 std::vector<std::string> shaderPaths = {
@@ -27,8 +31,8 @@ std::vector<std::string> shaderPaths = {
 
 
 void Game::Init(MonoInst* imono) {
-
-
+	m_InitMono(imono);
+		
 	m_window.Init(L"CGLab6 - Shadow Map", 1920, 1080);
 	m_window.Create();
 
@@ -37,6 +41,7 @@ void Game::Init(MonoInst* imono) {
 	m_meshAsset.Init(this);
 	m_imageAsset.Init();
 	m_input.Init(this);
+	m_hotkeys.Init(this);
 
 	for (auto& path : shaderPaths)
 		m_shaderAsset.CompileShader(path);
@@ -44,27 +49,47 @@ void Game::Init(MonoInst* imono) {
 	m_lighting.Init(this);
 }
 
-void Game::Run() {
+void Game::m_InitMono(MonoInst* imono) {
+	m_mono = imono;
 
+	auto gameType = m_mono->GetType("Engine", "Game");
+	auto method_SetGameRef = mono::make_method_invoker<void(CppRef)>(gameType, "cpp_SetGameRef");
+
+	auto gameRef = Refs::Create(this);
+	method_SetGameRef(CppRef::Create(gameRef.id()));
+}
+
+void Game::Run() {
 	m_render.Start();
+	m_meshAsset.Start();
+
+	///
+	
+	std::string mesnName1 = "../../data/assets/levels/farm/meshes/House_Purple.obj";
+	std::string mesnName2 = "../../data/assets/levels/farm/meshes/Coffin.obj";
+	std::string mesnName3 = "../../data/assets/levels/farm/meshes/Daisy.obj";
+
+	auto cppObj = CppClass();
+	auto csLink = CSLinked<CppClass>(mono());
+
+	csLink.Link(cppObj, "EngineMono", "CSClass");
+
+	//auto gameObject = CreateGameObjectCs();
+
+	///
 
 	m_defaultCamera = CreateGameObject("default camera")->AddComponent<FlyingCamera>();
-	m_defaultCamera->transform.localPosition({ 0, 0, 300 });
-	m_defaultCamera->transform.localRotation({ rad(-45), rad(45 + 180), 0 });
+	m_defaultCamera->transform->localPosition({ 0, 0, 300 });
+	m_defaultCamera->transform->localRotation({ rad(-45), rad(45 + 180), 0 });
 	m_defaultCamera->Attach();
 	m_defaultCamera->drawDebug = false;
 
 	m_lighting.f_directionLight = m_defaultCamera->AddComponent<DirectionLight>();
-	m_lighting.f_directionLight->transform.localRotation({ rad(-45), rad(45 + 180), 0 });
+	m_lighting.f_directionLight->transform->localRotation({ rad(-45), rad(45 + 180), 0 });
 	m_lighting.f_directionLight->drawDebug(true);
 
 	CreateGameObject("GameController")->AddComponent<GameController>();
-
-	auto mesh = CreateGameObject()->AddComponent<MeshComponent>();
-
-	auto form = Forms4::Box({ 50,50,50 });
-	mesh->CreateMesh(&form.verteces, &form.indexes, "../../data/engine/shaders/shadow_map.hlsl");
-
+	
 
 	MSG msg = {};
 	bool isExitRequested = false;
@@ -82,6 +107,7 @@ void Game::Run() {
 		m_hotkeys.Update(input());
 		m_Update();
 		m_render.Draw();
+		m_hotkeys.LateUpdate();
 
 		m_fpsCounter.Update();
 		if (m_fpsCounter.HasChanges()) {
@@ -118,6 +144,8 @@ void Game::m_Update() {
 }
 
 void Game::m_Destroy() {
+	m_hotkeys.Destroy();
+
 	auto it = m_gameObjects.begin();
 	while (it != m_gameObjects.end()) {
 		DestroyGameObject(*it);
@@ -130,9 +158,42 @@ GameObject* Game::CreateGameObject(std::string name) {
 	auto it = m_gameObjects.insert(m_gameObjects.end(), gameObject);
 
 	gameObject->f_Init(this, name);
-	gameObject->friend_objectID = ++m_objectCount;
+	gameObject->f_objectID = ++m_objectCount;
 
 	return gameObject;
+}
+
+GameObject* Game::CreateGameObjectCs(std::string name) {
+	std::cout << "+: Game.CreateGameObjectCs()" << std::endl;
+
+	auto gameType = m_mono->GetType("Engine", "GameObject");
+	auto method_create = mono::make_method_invoker<CppRef()>(gameType, "cpp_Create");
+
+	auto cppRef = method_create();
+
+	return Refs::GetPointer<GameObject>(cppRef);
+}
+
+GameObjectInfo Game::CreateGameObjectFromCS(CsRef csRef) {
+	std::cout << "+: Game.CreateGameObjectFromCS(): csRef:" << csRef << std::endl;
+
+	auto classInfoRef = Refs::Create(ClassInfo::Get<GameObject>());
+
+	GameObject* gameObject = CreateGameObject();
+	GameObjectBase* ptr2 = (GameObjectBase*)gameObject;
+	CsLink* ptr3= (CsLink*)gameObject;
+	GameObject* ptr4 = (GameObject*)ptr3;
+
+	gameObject->f_ref = Refs::Create(gameObject);
+	gameObject->f_cppRef = gameObject->f_ref.id();
+	gameObject->f_csRef = csRef;
+
+	GameObjectInfo objectInfo;
+	objectInfo.classRef = RefCpp(classInfoRef.id());
+	objectInfo.objectRef = gameObject->cppRef();
+	objectInfo.transformRef = gameObject->transform->csRef();
+
+	return objectInfo;
 }
 
 void Game::DestroyGameObject(GameObject* gameObject) {
@@ -140,6 +201,11 @@ void Game::DestroyGameObject(GameObject* gameObject) {
 		gameObject->GameObjectBase::friend_StartDestroy();
 
 		gameObject->f_Destroy();
+
+		if (Refs::IsValid(gameObject->f_ref)) {
+			Refs::Remove(gameObject->f_ref);
+			std::cout << "+: Refs.Remove(): " << gameObject->cppRef() << std::endl;
+		}
 	}
 }
 
@@ -161,7 +227,7 @@ void Game::PrintSceneTree() {
 void Game::m_PrintSceneTree(const std::string& prefix, const GameObject* node) {
 	if (node != nullptr) {
 		std::cout << prefix << "* " << node->name;
-		std::cout << " (" << node->friend_objectID << ")" << std::endl;
+		std::cout << " (" << node->f_objectID << ")" << std::endl;
 
 		for (int i = 0; i < node->m_childs.size(); i++) {
 			auto n = node->m_childs[i];
@@ -193,7 +259,11 @@ void Game::SendGameMessage(const std::string& msg) {
 	auto s = lostMsg.erase(0, 1);
 
 	for (auto gameObject : m_gameObjects) {
-		if (gameObject->friend_objectID == objId && !gameObject->IsDestroyed())
+		if (gameObject->f_objectID == objId && !gameObject->IsDestroyed())
 			gameObject->RecieveGameMessage(s);
 	}
+}
+
+DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef) {
+	return Refs::ThrowPointer<Game>(gameRef)->CreateGameObjectFromCS(csRef);
 }

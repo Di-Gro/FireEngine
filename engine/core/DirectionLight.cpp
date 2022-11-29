@@ -30,15 +30,16 @@ void DirectionLight::drawDebug(bool value) {
 	m_needDrawDebug = value;
 
 	if (m_debugMesh != nullptr) {
-		m_debugMesh->SetVisibility(m_needDrawDebug);
-		m_debugLine->SetVisibility(m_needDrawDebug);
+		m_debugMesh->visible = m_needDrawDebug;
+		m_debugLine->visible = m_needDrawDebug;
 		return;
 	}
 	if (m_needDrawDebug) {
 		m_debugMesh = AddComponent<MeshComponent>();
 
 		auto form = Forms4::SphereLined(10, 6, 6, { 0,1,0,1 });
-		m_debugMesh->CreateMesh(&form.verteces, &form.indexes, "../../data/engine/shaders/vertex_color.hlsl");
+		m_debugMesh->AddShape(&form.verteces, &form.indexes, 0);
+		m_debugMesh->SetMaterial(0, "../../data/engine/shaders/vertex_color.hlsl");
 		m_debugMesh->mesh()->topology = form.topology;
 
 		m_debugLine = AddComponent<LineComponent>();
@@ -51,12 +52,12 @@ void DirectionLight::drawDebug(bool value) {
 
 CameraComponent* DirectionLight::camera() {
 
-	auto rot = transform.localRotation();
+	auto rot = transform->localRotation();
 	auto rotator = Matrix::CreateFromYawPitchRoll(rot.y, rot.x, 0);
 
-	auto newMatrix = Matrix::CreateLookAt(transform.worldPosition(), transform.worldPosition() + rotator.Forward(), rotator.Up());
+	auto newMatrix = Matrix::CreateLookAt(transform->worldPosition(), transform->worldPosition() + rotator.Forward(), rotator.Up());
 	m_camera->viewMatrix(newMatrix);
-	m_camera->UpdateProjectionMatrix(game()->window());
+	m_camera->UpdateProjectionMatrix(/*game()->window()*/);
 
 	m_uvMatrix = m_camera->cameraMatrix() * Matrix::CreateTranslation(Vector3(1, 1, 0)) * Matrix::CreateScale({ 0.5, 0.5, 1 });
 

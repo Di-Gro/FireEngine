@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 
 #include "mono_config.h"
 
@@ -6,6 +7,7 @@
 #include "mono_string.h"
 #include "mono_type.h"
 #include "mono_type_traits.h"
+
 
 namespace mono
 {
@@ -28,7 +30,8 @@ struct convert_mono_type
 	using mono_unboxed_type = T;
 	using mono_boxed_type = MonoObject*;
 
-	static_assert(std::is_scalar<mono_unboxed_type>::value, "Specialize convertor for non-scalar types");
+	//static_assert(std::is_scalar<mono_unboxed_type>::value, "Specialize convertor for non-scalar types");
+	static_assert(std::is_standard_layout<mono_unboxed_type>::value, "Specialize convertor for non-scalar types");
 
 	static auto to_mono(const cpp_type& obj) -> mono_unboxed_type
 	{

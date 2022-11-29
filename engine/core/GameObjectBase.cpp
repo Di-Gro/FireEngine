@@ -3,13 +3,9 @@
 #include "Game.h"
 
 
-GameObjectBase::GameObjectBase(GameObject* gameObject) 
-	: transform(gameObject->transform) 
-{ }
-
 Game* GameObjectBase::game() {
 	if (!IsDestroyed())
-		return friend_gameObject->friend_game;
+		return friend_gameObject->f_game;
 	return nullptr;
 }
 
@@ -37,11 +33,11 @@ void GameObjectBase::Destroy() {
 }
 
 bool GameObjectBase::HasParent() { 
-	return friend_gameObject->friend_parent != nullptr; 
+	return friend_gameObject->f_parent != nullptr; 
 }
 
 GameObject* GameObjectBase::GetParent() { 
-	return friend_gameObject->friend_parent; 
+	return friend_gameObject->f_parent; 
 }
 
 void GameObjectBase::SetParent(GameObjectBase* parent) {

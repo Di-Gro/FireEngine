@@ -5,6 +5,10 @@
 #include <tuple>
 #include <type_traits>
 #include <vector>
+#include <type_traits>
+
+#include "../mono_game_types.h"
+
 
 namespace mono
 {
@@ -169,6 +173,9 @@ inline const std::map<index_t, type_names_t>& get_types()
 	// clang-format off
 	static const std::map<index_t, type_names_t> types =
     {
+		{id<CppRef>(), {"CppRef", "Engine.CppRef"}},
+		{id<CsRef>(), {"CsRef", "Engine.CsRef"}},
+
         {id<std::int8_t>(), {"sbyte", "System.SByte"}},
         {id<std::uint8_t>(), {"byte", "System.Byte"}}, 
         {id<std::int16_t>(), {"short", "System.Int16"}},
@@ -225,7 +232,7 @@ inline std::pair<std::string, bool> get_args_signature(const std::tuple<Args...>
 		return result;
 	};
 
-	auto args = apply(inv, tup);
+	auto args = mono::apply(inv, tup);
 	return std::make_pair(args, all_types_known);
 }
 

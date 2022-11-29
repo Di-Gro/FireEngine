@@ -14,39 +14,88 @@ using namespace DirectX::SimpleMath;
 
 
 class MeshComponent : public Component {
-public:
+	COMPONENT;
 
+public:
 	bool isDebug = false;
+	bool visible = true;
 
 private:
+	Mesh4* m_dynamicMesh = nullptr;
 	const Mesh4* m_mesh = nullptr;
-	const std::vector<const Material*>* m_materials;
-	std::vector<Material> m_selfMaterials;
-	std::vector<const Material*> m_selfConstMaterials;
+	std::vector<const Material*> m_materials;
+	std::vector<Material*> m_dynamicMaterials;
 
-	bool m_visible = true;
-	bool m_isMeshHolder = false;
+private:
+	static bool mono_inited;
+	static mono::mono_method_invoker<void(CsRef, CppRef)> mono_SetFromCpp;
 
 public:
-	MeshComponent(GameObject* gameObject) : Component(gameObject) {}
+	const Mesh4* mesh() {
+		return m_mesh;
+	}
 
-	const Mesh4* mesh() { return m_mesh; }
+	bool IsDynamic() { return m_dynamicMesh != nullptr; }
+	bool IsStatic() { return m_dynamicMesh == nullptr; }
+	int MaterialCount() { return m_materials.size(); }
 
+	void mesh(const Mesh4* mesh);
+
+	void SetMeshFromCs(const Mesh4* mesh);
+
+	void AddShape(
+		std::vector<Mesh4::Vertex>* verteces, 
+		std::vector<int>* indeces, 
+		size_t materialIndex = 0);
+	
+	void AddShape(
+		Mesh4::Vertex* verteces,
+		int vertecesLength,
+		int* indeces,
+		int indecesLength,
+		int materialIndex);
+	
+	void SetMaterial(size_t index, const fs::path& shaderPath);
+	void SetMaterial(size_t index, const Material* other);
+
+	const Material* GetMaterial(size_t index);
+
+	void RemoveMaterial(size_t index);
+	void RemoveMaterials();
+	void ClearMesh();
+
+	void OnInit() override;
 	void OnDraw() override;
 	void OnDrawDebug() override;
 	void OnDestroy() override;
 
-	void CreateMesh(std::string meshPath);
-	void CreateMesh(
-		std::vector<Mesh4::Vertex>* verteces,
-		std::vector<int>* indeces,
-		fs::path shaderPath = "../../data/engine/shaders/default.hlsl");
-
-	void ShowNormals(std::vector<Mesh4::Vertex>* verteces);
-
-	void SetVisibility(bool value) { m_visible = value; }
-
 private:
+	void m_SetMaterialsFromMesh();
+	void m_InitMono();
+	void m_InitDynamic();
 	void m_Draw();
+	void m_DeleteResources();
+	void m_DeleteMaterials();
+	void m_DeleteLocalDynamicMaterial(int index);
+	void m_FillByDefaultMaterial(int targetSize);
 
 };
+DEC_COMPONENT(MeshComponent);
+
+PROP_GET(MeshComponent, bool, IsDynamic)
+PROP_GET(MeshComponent, bool, IsStatic)
+PROP_GET(MeshComponent, bool, MaterialCount)
+
+FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef);
+
+FUNC(MeshComponent, AddShape, void)(CppRef compRef, Mesh4::Vertex* verteces, int vength, int* indeces, int ilength, int matIndex);
+
+FUNC(MeshComponent, RemoveMaterials, void)(CppRef compRef);
+FUNC(MeshComponent, RemoveMaterial, void)(CppRef compRef, int index);
+FUNC(MeshComponent, ClearMesh, void)(CppRef compRef);
+
+FUNC(MeshComponent, SetMaterial, void)(CppRef compRef, size_t index, CppRef materialRef);
+FUNC(MeshComponent, GetMaterial, CppRef)(CppRef compRef, size_t index);
+
+
+

@@ -13,27 +13,26 @@
 #include "MonoInst.h"
 
 #include "Game.h"
+#include "Bridge.h"
+#include "smono/SMono.h"
 
-#define ASSEMBLY_PATH "C:/GitHub/FireEngine/engine/mono/bin/Debug/netstandard2.0/Mono.dll"
+#define ASSEMBLY_PATH "C:/GitHub/FireEngine/x64/Debug/netstandard2.0/Mono.dll"
 
 
 static void RunGame(MonoInst* imono) {
-	Game game;
-	game.Init(imono);
-	game.Run();
+	try {
+		Game game;
+		game.Init(imono);
+		game.Run();
+	}
+	catch (mono::mono_thunk_exception ex) {
+		std::cout << "+: mono_exception: \n" << ex.what() << "'\n";
+	}
 }
 
+
 static void InsideAssemply(MonoInst* imono) {
-
-	//Ref<ClassInfo> classInfo;
-	//classInfo.obj = ClassInfo::Create<CppClass>();
-
-	//CSLinked<CppClass> cppObj(imono);
-
-	//cppObj.Link("EngineMono", "CSClass", classInfo.RefId());
-
 	RunGame(imono);
-
 }
 
 static void InsideMono() {
@@ -49,7 +48,7 @@ static void InsideMono() {
 
 
 int main() {
-
+		
 	if (!mono::init("mono", true))
 		return 1;
 

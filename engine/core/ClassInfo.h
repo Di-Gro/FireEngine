@@ -1,11 +1,18 @@
 #pragma once
 #include <iostream>
 
+#include "CSBridge.h"
+
 
 class ClassInfo {
 public:
 	int offsetCount = 0;
 	int* offsets = nullptr;
+
+private:
+	bool m_inited = false;
+
+public:
 
 	ClassInfo() {}
 
@@ -13,19 +20,25 @@ public:
 
 		offsetCount = count;
 
-		offsets = new int[offsetCount];
-		writeOffsets(offsets);
+		if (offsetCount > 0) {
+			offsets = new int[offsetCount];
+			writeOffsets(offsets);
+		}
+		m_inited = true;
 	}
 
 	ClassInfo(ClassInfo&& other) noexcept {
 		this->operator=(std::move(other));
+		m_inited = true;
 	}
 
 	ClassInfo& operator=(ClassInfo&& other) noexcept {
 		if (this != &other) {
 			offsetCount = other.offsetCount;
 			offsets = other.offsets;
+			m_inited = true;
 			other.offsets = nullptr;
+			other.m_inited = false;
 		}
 		return *this;
 	}
@@ -35,10 +48,20 @@ public:
 			delete[] offsets;
 	}
 
-	template<typename TClass>
+	template<HasMetaOffsets TClass>
 	static ClassInfo Create() {
-		auto info = ClassInfo(TClass::OffsetCount(), [](int* offsets) {TClass::WriteOffsets(offsets); });
+		auto info = ClassInfo(TClass::meta_offsetCount, [](int* offsets) {TClass::meta_WriteOffsets(offsets); });
 		return info;
+	}
+
+	template<HasMetaOffsets TClass>
+	static ClassInfo* Get() {
+		ClassInfo& info = TClass::meta_offsets;
+
+		if (!info.m_inited)
+			TClass::meta_offsets = ClassInfo::Create<TClass>();
+
+		return &TClass::meta_offsets;
 	}
 
 	void Print() {

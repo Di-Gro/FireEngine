@@ -8,6 +8,7 @@
 
 using namespace DirectX::SimpleMath;
 
+class MeshComponent;
 
 class LinedPlain : public Component {
 private:
@@ -19,7 +20,7 @@ private:
 	MeshComponent* m_meshComponent;
 
 public:
-	LinedPlain(GameObject* gameObject) : Component(gameObject) {}
+	//LinedPlain(GameObject* gameObject) : Component(gameObject) {}
 
 	void OnInit() override;
 	void OnDestroy() override;

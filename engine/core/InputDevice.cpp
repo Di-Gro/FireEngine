@@ -32,11 +32,21 @@ void InputDevice::Init(Game* inGame) {
 		auto errorCode = GetLastError();
 		std::cout << "ERROR: " << errorCode << std::endl;
 	}
+
+	//m_InitMono();
 }
 
 InputDevice::~InputDevice() {
 	delete m_keys;
 }
+
+//void InputDevice::m_InitMono() {
+//	auto type = m_game->mono()->GetType("Engine", "Input");
+//	auto method_SetRef = mono::make_method_invoker<void(CppRef)>(type, "cpp_SetInputDeviceRef");
+//
+//	CppRef cppRef = RefCpp((Refs::Create(this).id()));
+//	method_SetRef(cppRef);
+//}
 
 void InputDevice::OnInput(LPARAM lparam) {
 	UINT dwSize = 0;

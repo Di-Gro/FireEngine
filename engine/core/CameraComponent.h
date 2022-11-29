@@ -10,6 +10,7 @@
 class Shader;
 
 class CameraComponent : public Component {
+	COMPONENT;
 public:
 	float orthoWidth = 600;
 	float orthoHeight = 600;
@@ -22,7 +23,6 @@ public:
 	bool drawDebug = true;
 	bool callPixelShader = true;
 	bool setShaderMap = true;
-	//Shader* shader = nullptr;
 
 private:
 
@@ -32,8 +32,6 @@ private:
 	bool m_useOrthographic = false;
 
 public:
-
-	CameraComponent(GameObject* gameObject) : Component(gameObject) {}
 
 	Matrix cameraMatrix() { return m_viewMatrix * m_projMatrix; }
 
@@ -48,32 +46,13 @@ public:
 	void Attach();
 	bool IsAttached();
 
-	void UpdateProjectionMatrix(Window* window);
+	void UpdateProjectionMatrix(/*Window* window*/);
 
 };
+DEC_COMPONENT(CameraComponent);
 
-//Vector3 GetForward() {
-//	Matrix invert;
-//	m_viewMatrix.Invert(invert);
-//	return invert.Forward();
-//}
+PROP_GET(CameraComponent, bool, IsAttached)
+PROP_GETSET(CameraComponent, bool, orthographic)
 
-//Vector3 GetUp() {
-//	Matrix invert;
-//	m_viewMatrix.Invert(invert);
-//	return invert.Up();
-//}
-
-//Vector3 GetRight() {
-//	Matrix invert;
-//	m_viewMatrix.Invert(invert);
-//	return invert.Right();
-//}
-
-//Vector3 GetPosition() {
-//	//return -m_viewMatrix.Translation();
-//	Matrix invert;
-//	m_viewMatrix.Invert(invert);
-//	return invert.Translation(); 
-//}
-
+FUNC(CameraComponent, Attach, void)(CppRef compRef);
+FUNC(CameraComponent, UpdateProjMatrix, void)(CppRef compRef);

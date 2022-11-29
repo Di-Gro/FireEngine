@@ -5,9 +5,10 @@
 
 class LineComponent : public MeshComponent {
 public:
-	LineComponent(GameObject* gameObject) : MeshComponent(gameObject) { }
 
-	void OnInit() { }
+	void OnInit() override { 
+		MeshComponent::OnInit();
+	}
 
 	void SetPoint(Vector3 worldPos, Vector4 color) {
 		std::vector<Mesh4::Vertex> verteces;
@@ -21,8 +22,9 @@ public:
 		vertex2.position = Vector4(worldPos);
 		vertex2.color = color;
 
-		CreateMesh(&verteces, &indeces, "../../data/engine/shaders/vertex_color.hlsl");
-		mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+		this->AddShape(&verteces, &indeces);
+		this->SetMaterial(0, "../../data/engine/shaders/vertex_color.hlsl");
+		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 
 	void SetPoints(Vector3 begin, Vector3 end, Vector4 color) {
@@ -37,7 +39,8 @@ public:
 		vertex2.position = Vector4(end);
 		vertex2.color = color;
 
-		CreateMesh(&verteces, &indeces, "../../data/engine/shaders/vertex_color.hlsl");
-		mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+		this->AddShape(&verteces, &indeces);
+		this->SetMaterial(0, "../../data/engine/shaders/vertex_color.hlsl");
+		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 };

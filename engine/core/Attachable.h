@@ -22,7 +22,7 @@ private:
 	bool m_canAttach = false;
 
 public:
-	Attachable(GameObject* gameObject) : Component(gameObject) { }
+	//Attachable(GameObject* gameObject) : Component(gameObject) { }
 
 	void OnInit() override;
 	void OnStart() override;

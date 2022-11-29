@@ -26,6 +26,27 @@
 #pragma pack(pop)
 
 
+Mesh4::Mesh4(const Mesh4& other) {
+	if (&other == nullptr || &other == this)
+		return;
+
+	for (auto& shape : other.m_shapes) {
+		std::vector<Vertex> verteces;
+		std::vector<int> indeces;
+
+		verteces.reserve(shape.vertecesSize);
+		indeces.reserve(shape.indecesSize);
+
+		for (int i = 0; i < shape.vertecesSize; i++)
+			verteces.push_back(shape.verteces[i]);
+
+		for (int i = 0; i < shape.indecesSize; i++)
+			indeces.push_back(shape.indeces[i]);
+
+		this->AddShape(&verteces, &indeces, other.m_render, shape.materialIndex);
+	}
+}
+
 Mesh4::~Mesh4() {
 	for (auto& shape : m_shapes) {
 		if (shape.verteces != nullptr)
@@ -37,11 +58,45 @@ Mesh4::~Mesh4() {
 }
 
 void Mesh4::AddShape(
+	Vertex* verteces,
+	int vertecesLength,
+	int* indeces,
+	int indecesLength,
+	Render* render,
+	int materialIndex)
+{
+	m_render = render;
+
+	m_shapes.emplace_back();
+	auto& shape = m_shapes.back();
+
+	shape.verteces = new Vertex[vertecesLength];
+	std::copy(verteces, verteces + vertecesLength, shape.verteces);
+
+	shape.indeces = new int[indecesLength];
+	std::copy(indeces, indeces + indecesLength, shape.indeces);
+
+	shape.vertecesSize = vertecesLength;
+	shape.indecesSize = indecesLength;
+	shape.indexBuffer = nullptr;
+	shape.vertexBuffer = nullptr;
+	shape.constBuffer = nullptr;
+	shape.materialConstBuffer = nullptr;
+	shape.sampler = nullptr;
+	shape.materialIndex = materialIndex;
+
+	m_InitShape(shape);
+}
+
+
+void Mesh4::AddShape(
 	std::vector<Vertex>* verteces,
 	std::vector<int>* indeces,
 	Render* render,
 	int materialIndex)
 {
+	m_render = render;
+
 	m_shapes.emplace_back();
 	auto& shape = m_shapes.back();
 		
@@ -60,6 +115,10 @@ void Mesh4::AddShape(
 	shape.sampler = nullptr;
 	shape.materialIndex = materialIndex;
 
+	m_InitShape(shape);
+}
+
+void Mesh4::m_InitShape(Mesh4::Shape& shape) {
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -134,15 +193,14 @@ void Mesh4::AddShape(
 	compSampleDesc.BorderColor[3] = 1.0f;
 	compSampleDesc.MaxLOD = INT_MAX;
 
-	render->device()->CreateBuffer(&vertexBufferDesc, &vertexData, shape.vertexBuffer.GetAddressOf());
-	render->device()->CreateBuffer(&indexBufferDesc, &indexData, shape.indexBuffer.GetAddressOf());
-	render->device()->CreateBuffer(&constBufferDesc, nullptr, shape.constBuffer.GetAddressOf());
-	render->device()->CreateBuffer(&materialCBufferDesc, nullptr, shape.materialConstBuffer.GetAddressOf());
-	render->device()->CreateBuffer(&dirLightCBufferDesc, nullptr, shape.directionLightCBuffer.GetAddressOf());
-	
-	render->device()->CreateSamplerState(&sampleDesc, shape.sampler.GetAddressOf());
-	render->device()->CreateSamplerState(&compSampleDesc, shape.compSampler.GetAddressOf());
-	
+	m_render->device()->CreateBuffer(&vertexBufferDesc, &vertexData, shape.vertexBuffer.GetAddressOf());
+	m_render->device()->CreateBuffer(&indexBufferDesc, &indexData, shape.indexBuffer.GetAddressOf());
+	m_render->device()->CreateBuffer(&constBufferDesc, nullptr, shape.constBuffer.GetAddressOf());
+	m_render->device()->CreateBuffer(&materialCBufferDesc, nullptr, shape.materialConstBuffer.GetAddressOf());
+	m_render->device()->CreateBuffer(&dirLightCBufferDesc, nullptr, shape.directionLightCBuffer.GetAddressOf());
+
+	m_render->device()->CreateSamplerState(&sampleDesc, shape.sampler.GetAddressOf());
+	m_render->device()->CreateSamplerState(&compSampleDesc, shape.compSampler.GetAddressOf());
 }
 
 void Mesh4::Draw(const DynamicData& data) const {
@@ -196,7 +254,7 @@ void Mesh4::Draw(const DynamicData& data) const {
 
 		auto* cbuf2 = (DirectionLightCBuffer*)res3.pData;
 		cbuf2->uvMatrix = data.directionLight->uvMatrix();
-		cbuf2->direction = data.directionLight->transform.forward();
+		cbuf2->direction = data.directionLight->transform->forward();
 		cbuf2->color = data.directionLight->color;
 		cbuf2->intensity = data.directionLight->intensity;
 
@@ -224,4 +282,22 @@ void Mesh4::Draw(const DynamicData& data) const {
 
 Mesh4::Shape* Mesh4::GetShape(int index) {
 	return &m_shapes[index];
+}
+
+int Mesh4::maxMaterialIndex() const {
+	int maxIndex = 0;
+	for (int i = 0; i < m_shapes.size(); i++) {
+		if (m_shapes[i].materialIndex > maxIndex)
+			maxIndex = m_shapes[i].materialIndex;
+	}
+	return maxIndex;
+}
+
+
+DEF_FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref) {
+	return Refs::ThrowPointer<Mesh4>(mesh4Ref)->shapeCount();
+}
+
+DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
+	return Refs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
 }

@@ -14,6 +14,7 @@ class mono_type;
 class mono_method
 {
 public:
+	mono_method() {}
 	explicit mono_method(MonoMethod* method);
 	explicit mono_method(const mono_type& type, const std::string& name_with_args);
 	explicit mono_method(const mono_type& type, const std::string& name, int argc);

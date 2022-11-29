@@ -12,7 +12,7 @@ void PlayerCamera::OnInit() {
 	//farPlane *= 100;
 
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &PlayerCamera::m_OnMouseMove);
-	UpdateProjectionMatrix(game()->window());
+	UpdateProjectionMatrix(/*game()->window()*/);
 	Attach();
 }
 
@@ -25,28 +25,28 @@ void PlayerCamera::OnUpdate() {
 		return;
 
 	if (m_updateRotation) {
-		auto rot = m_cameraRoot->transform.localRotation();
+		auto rot = m_cameraRoot->transform->localRotation();
 		rot += m_rotationDelta;
-		m_cameraRoot->transform.localRotation(rot);
+		m_cameraRoot->transform->localRotation(rot);
 		m_rotationDelta = Vector3::Zero;
 		m_updateRotation = false;
 	}
 
 	if (m_updateDistance) {
-		auto pos = transform.localPosition();
+		auto pos = transform->localPosition();
 		pos.z += m_distanceDelta;
-		transform.localPosition(pos);
+		transform->localPosition(pos);
 		m_distanceDelta = 0;
 		m_updateDistance = false;
 	}
 
-	auto rot = m_cameraRoot->transform.localRotation();
+	auto rot = m_cameraRoot->transform->localRotation();
 	auto rotator = Matrix::CreateFromYawPitchRoll(rot.y, rot.x, 0);
 
-	auto wpos = transform.worldPosition();// *100;
+	auto wpos = transform->worldPosition();// *100;
 	auto newMatrix = Matrix::CreateLookAt(wpos, wpos + rotator.Forward(), rotator.Up());
 	viewMatrix(newMatrix);
-	UpdateProjectionMatrix(game()->window());
+	UpdateProjectionMatrix(/*game()->window()*/);
 
 }
 

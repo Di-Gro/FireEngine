@@ -19,7 +19,7 @@ private:
 	DelegateHandle m_mouseMoveHandle;
 
 public:
-	GameController(GameObject* gameObject) : Component(gameObject) {}
+	//GameController(GameObject* gameObject) : Component(gameObject) {}
 
 	void OnInit() override;
 	void OnDestroy() override;

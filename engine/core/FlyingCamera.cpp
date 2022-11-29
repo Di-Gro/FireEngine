@@ -5,7 +5,7 @@
 
 void FlyingCamera::OnInit() {
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &FlyingCamera::m_OnMouseMove);
-	UpdateProjectionMatrix(game()->window());
+	UpdateProjectionMatrix(/*game()->window()*/);
 
 	game()->hotkeys()->RegisterHotkey(Keys::O);
 }
@@ -23,14 +23,14 @@ void FlyingCamera::OnUpdate() {
 		orthographic(!orthographic());
 
 	if (m_updateRotation) {
-		auto rot = transform.localRotation();
+		auto rot = transform->localRotation();
 		rot += m_rotationDelta;
-		transform.localRotation(rot);
+		transform->localRotation(rot);
 		m_rotationDelta = Vector3::Zero;
 		m_updateRotation = false;
 	}
 
-	auto rot = transform.localRotation();
+	auto rot = transform->localRotation();
 	auto rotator = Matrix::CreateFromYawPitchRoll(rot.y, rot.x, 0);
 
 	auto input = game()->input();
@@ -48,14 +48,14 @@ void FlyingCamera::OnUpdate() {
 		auto direction = rotator.Forward() * axis.x + Vector3::Up * axis.y + rotator.Right() * axis.z;
 		direction.Normalize();
 
-		auto newPos = transform.localPosition() + direction * m_speed * game()->deltaTime();
-		transform.localPosition(newPos);
+		auto newPos = transform->localPosition() + direction * m_speed * game()->deltaTime();
+		transform->localPosition(newPos);
 	}
 
-	//auto m = transform.GetWorldMatrix();
-	auto newMatrix = Matrix::CreateLookAt(transform.worldPosition(), transform.worldPosition() + rotator.Forward(), rotator.Up());
+	//auto m = transform->GetWorldMatrix();
+	auto newMatrix = Matrix::CreateLookAt(transform->worldPosition(), transform->worldPosition() + rotator.Forward(), rotator.Up());
 	viewMatrix(newMatrix);
-	UpdateProjectionMatrix(game()->window());
+	UpdateProjectionMatrix(/*game()->window()*/);
 
 	if (printTransform)
 		game()->SendGameMessage(std::to_string(gameObject()->Id()) + " tr");

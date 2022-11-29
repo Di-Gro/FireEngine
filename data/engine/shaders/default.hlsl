@@ -97,7 +97,7 @@ float4 PSMain(PS_IN input) : SV_Target {
     // float x = (smuv.z * 2 - 1);
     // float bias = max(0.005 * (1.0 - dot(input.normal, dirLight.direction)), 0.0005);
     // float bias = (dot(input.normal, dirLight.direction) + 1 * 0.5) * 0.006 + 0.0005;
-    float bias = 0.0005;
+    float bias = 0.0008;
     float x = smuv.z - bias;
     // return float4(x,x,x,x);
     // return dot(input.normal, dirLight.direction) + 1 * 0.5;
@@ -112,7 +112,8 @@ float4 PSMain(PS_IN input) : SV_Target {
 
     float4 diffuseColor = float4(material.diffuseColor.xyz, 1.0);
 
-    float3 kd = diffuseTexColor.xyz * input.color.xyz;
+    // Не уверен, что зддесь правильно умножать на diffuseColor
+    float3 kd = diffuseColor * diffuseTexColor.xyz * input.color.xyz;
     float3 normal = normalize(input.normal.xyz);
 
     float3 viewDir = normalize(meshData.cameraPosition.xyz - input.worldPos.xyz);

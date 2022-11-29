@@ -171,11 +171,23 @@
     <ClCompile Include="MonoInst.cpp">
       <Filter>bridge</Filter>
     </ClCompile>
-    <ClCompile Include="Ref.cpp">
-      <Filter>bridge</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bridge.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="Refs.cpp">
+      <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="CSComponent.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicMeshComponent.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CS.cpp">
+      <Filter>bridge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,7 +359,22 @@
     <ClInclude Include="MonoInst.h">
       <Filter>bridge</Filter>
     </ClInclude>
-    <ClInclude Include="Ref.h">
+    <ClInclude Include="Bridge.h">
+      <Filter>bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="Refs.h">
+      <Filter>bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="CSComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CsLink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicMeshComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CS.h">
       <Filter>bridge</Filter>
     </ClInclude>
   </ItemGroup>
@@ -368,6 +395,9 @@
     </None>
     <None Include="GameObjectBase.inl">
       <Filter>Components</Filter>
+    </None>
+    <None Include="Refs.inl">
+      <Filter>bridge</Filter>
     </None>
   </ItemGroup>
 </Project>
