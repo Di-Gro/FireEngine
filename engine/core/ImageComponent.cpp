@@ -3,6 +3,7 @@
 #include "CameraComponent.h"
 #include "Render.h"
 
+DEF_PURE_COMPONENT(ImageComponent);
 
 void ImageComponent::size(Vector2 size) {
 	auto window = game()->window();

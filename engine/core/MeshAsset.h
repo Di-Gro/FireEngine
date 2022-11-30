@@ -44,12 +44,12 @@ private:
 		Asset(size_t hash) {
 			mesh = new Mesh4();
 			mesh->f_assetHash = hash;
-			mesh->f_ref = Refs::Create(mesh);
+			mesh->f_ref = CppRefs::Create(mesh);
 			mesh->f_cppRef = mesh->f_ref.id();
 		}
 
 		~Asset() {
-			Refs::Remove(mesh->f_ref);
+			CppRefs::Remove(mesh->f_ref);
 			delete mesh;
 		}
 	};

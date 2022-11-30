@@ -28,6 +28,7 @@
 
 using namespace DirectX::SimpleMath;
 
+DEF_PURE_COMPONENT(GameController);
 
 static inline Vector3 deg(Vector3 vec) {
 	return Vector3(deg(vec.x), deg(vec.y), deg(vec.z));

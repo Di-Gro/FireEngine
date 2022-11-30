@@ -4,6 +4,8 @@
 #include "CameraComponent.h"
 
 class PlayerCamera : public CameraComponent {
+	PURE_COMPONENT;
+
 private:
 	float m_rotationSense = 1.0f;
 	float m_scrollSense = 1.0f;
@@ -28,4 +30,3 @@ public:
 private:
 	void m_OnMouseMove(const InputDevice::MouseMoveArgs& args);
 };
-

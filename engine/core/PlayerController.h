@@ -6,6 +6,7 @@ class Player;
 class PlayerCamera;
 
 class PlayerController : public Component {
+	PURE_COMPONENT;
 private:
 	Player* m_player = nullptr;
 

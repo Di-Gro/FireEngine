@@ -44,7 +44,7 @@ InputDevice::~InputDevice() {
 //	auto type = m_game->mono()->GetType("Engine", "Input");
 //	auto method_SetRef = mono::make_method_invoker<void(CppRef)>(type, "cpp_SetInputDeviceRef");
 //
-//	CppRef cppRef = RefCpp((Refs::Create(this).id()));
+//	CppRef cppRef = RefCpp((CppRefs::Create(this).id()));
 //	method_SetRef(cppRef);
 //}
 

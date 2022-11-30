@@ -32,7 +32,7 @@ void MeshComponent::m_InitDynamic() {
 		return;
 
 	auto* newMesh = new Mesh4(*m_mesh);
-	newMesh->f_ref = Refs::Create(newMesh);
+	newMesh->f_ref = CppRefs::Create(newMesh);
 	newMesh->f_cppRef = newMesh->f_ref.id();
 		
 	mesh(newMesh);
@@ -71,7 +71,7 @@ void MeshComponent::ClearMesh() {
 
 void MeshComponent::m_DeleteResources() {
 	if (IsDynamic()) {
-		Refs::Remove(m_dynamicMesh->f_ref);
+		CppRefs::Remove(m_dynamicMesh->f_ref);
 		delete m_dynamicMesh;
 		m_dynamicMesh = nullptr;
 		m_mesh = nullptr;
@@ -257,8 +257,8 @@ DEF_PROP_GET(MeshComponent, bool, IsStatic)
 DEF_PROP_GET(MeshComponent, bool, MaterialCount)
 
 DEF_FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef) {
-	auto component = Refs::ThrowPointer<MeshComponent>(compRef);
-	auto mesh = Refs::ThrowPointer<Mesh4>(meshRef);
+	auto component = CppRefs::ThrowPointer<MeshComponent>(compRef);
+	auto mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
 
 	component->SetMeshFromCs(mesh);
 }
@@ -272,30 +272,30 @@ DEF_FUNC(MeshComponent, AddShape, void)(
 	int ilength, 
 	int matIndex) 
 {
-	auto component = Refs::ThrowPointer<MeshComponent>(compRef);
+	auto component = CppRefs::ThrowPointer<MeshComponent>(compRef);
 	component->AddShape(verteces, vlength, indeces, ilength, matIndex);
 }
 
 DEF_FUNC(MeshComponent, RemoveMaterials, void)(CppRef compRef) {
-	Refs::ThrowPointer<MeshComponent>(compRef)->RemoveMaterials();
+	CppRefs::ThrowPointer<MeshComponent>(compRef)->RemoveMaterials();
 }
 
 DEF_FUNC(MeshComponent, RemoveMaterial, void)(CppRef compRef, int index) {
-	Refs::ThrowPointer<MeshComponent>(compRef)->RemoveMaterial(index);
+	CppRefs::ThrowPointer<MeshComponent>(compRef)->RemoveMaterial(index);
 }
 
 DEF_FUNC(MeshComponent, ClearMesh, void)(CppRef compRef) {
-	Refs::ThrowPointer<MeshComponent>(compRef)->ClearMesh();
+	CppRefs::ThrowPointer<MeshComponent>(compRef)->ClearMesh();
 }
 
 DEF_FUNC(MeshComponent, SetMaterial, void)(CppRef compRef, size_t index, CppRef materialRef) {
-	auto material = Refs::ThrowPointer<Material>(materialRef);
-	auto meshComp = Refs::ThrowPointer<MeshComponent>(compRef);
+	auto material = CppRefs::ThrowPointer<Material>(materialRef);
+	auto meshComp = CppRefs::ThrowPointer<MeshComponent>(compRef);
 	
 	meshComp->SetMaterial(index, material);
 }
 
 DEF_FUNC(MeshComponent, GetMaterial, CppRef)(CppRef compRef, size_t index) {
-	auto material = Refs::ThrowPointer<MeshComponent>(compRef)->GetMaterial(index);
+	auto material = CppRefs::ThrowPointer<MeshComponent>(compRef)->GetMaterial(index);
 	return material != nullptr ? material->f_cppRef : RefCpp(0);
 }

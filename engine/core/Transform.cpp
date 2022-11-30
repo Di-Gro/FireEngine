@@ -182,7 +182,7 @@ DEF_PROP_GET(Transform, Vector3, right)
 
 
 //Vector3 Transform_localPosition_get(CppRef objRef) {
-//	auto* a = Refs::GetPointer<Transform>(objRef);
+//	auto* a = CppRefs::GetPointer<Transform>(objRef);
 //	if (a != nullptr)
 //		return a->localPosition();
 //	else
@@ -192,7 +192,7 @@ DEF_PROP_GET(Transform, Vector3, right)
 //}
 //
 //void Transform_localPosition_set(CppRef objRef, Vector3 value) {		
-//	auto* a = Refs::GetPointer<Transform>(objRef);
+//	auto* a = CppRefs::GetPointer<Transform>(objRef);
 //	if (a != nullptr)
 //		a->localPosition(value);
 //	else

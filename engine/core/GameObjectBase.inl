@@ -1,11 +1,29 @@
 #pragma once
 
-template<typename TComponent, typename>
+/// ->
+
+//template<typename TComponent, typename>
+//TComponent* GameObjectBase::AddComponent() {
+//	if (!IsDestroyed())
+//		return gameObject()->AddComponent<TComponent>();
+//	return nullptr;
+//}
+
+template<HasCsMetaData TComponent, typename>
 TComponent* GameObjectBase::AddComponent() {
 	if (!IsDestroyed())
 		return gameObject()->AddComponent<TComponent>();
 	return nullptr;
 }
+//
+//template<IsCSpp TComponent, typename>
+//TComponent* GameObjectBase::AddComponent() {
+//	if (!IsDestroyed())
+//		return gameObject()->AddComponent<TComponent>();
+//	return nullptr;
+//}
+
+/// <-
 
 template<typename TComponent, typename>
 TComponent* GameObjectBase::GetComponent() {

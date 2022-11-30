@@ -5,6 +5,7 @@
 #include "Forms.h"
 #include "Collider.h"
 
+DEF_PURE_COMPONENT(Player);
 
 void Player::OnInit() {
 	m_rotationSpeed = rad(speed / (2 * pi * radius) * 360);

@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "PlayerCamera.h"
 
+DEF_PURE_COMPONENT(PlayerController);
 
 void PlayerController::OnStart() {
 	m_player = GetComponent<Player>();

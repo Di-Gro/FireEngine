@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Transform.h"
+#include "GameObjectConcepts.h"
 
 
 class GameObjectBase : public CsLink {
@@ -45,8 +46,18 @@ public:
 	GameObject* CreateGameObject(std::string name = "");
 	void Destroy();
 
-	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	/// ->
+
+	//template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	//TComponent* AddComponent();
+
+	template<HasCsMetaData TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* AddComponent();
+
+	//template<IsCSpp TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	//TComponent* AddComponent();
+
+	/// <- 
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* GetComponent();

@@ -7,6 +7,8 @@
 #include "MeshComponent.h"
 #include "LineComponent.h"
 
+DEF_PURE_COMPONENT(DirectionLight);
+
 void DirectionLight::OnInit() {
 	auto render = game()->render()->device();
 	auto window = game()->window();

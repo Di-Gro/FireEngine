@@ -14,7 +14,7 @@ DEF_PROP_GETSET(CppClass, long, longValue)
 DEF_PROP_GETSET(CppClass, Vector3, vector3m)
 
 DEF_FUNC(CppClass, SomeFunc, float) (CppRef objRef) {
-	auto* a = Refs::GetPointer<CppClass>(objRef);
+	auto* a = CppRefs::GetPointer<CppClass>(objRef);
 	if (a != nullptr)
 		return a->SomeFunc();
 	return 0;

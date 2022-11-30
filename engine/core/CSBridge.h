@@ -7,23 +7,6 @@
 
 class ClassInfo;
 
-template<typename T>
-concept HasMetaOffsets =
-requires(T a, int* b) {
-	{ T::meta_offsets };
-	{ T::meta_offsetCount };
-	{ T::meta_WriteOffsets(b)} -> std::same_as<void>;
-};
-
-template<typename T>
-concept IsCppComponent =
-requires(T a, int* b) {
-	{ T::meta_csComponentName };
-	{ T::meta_offsets };
-	{ T::meta_offsetCount };
-	{ T::meta_WriteOffsets(b)} -> std::same_as<void>;
-};
-
 struct CppObjectInfo {
 	CppRef cppRef;
 	CppRef classRef;
@@ -56,7 +39,7 @@ namespace CSBridge {
 
 #define DEF_PROP_GET(ClassName, propType, propName)\
 	propType ClassName##_##propName##_get(CppRef objRef) {\
-		auto* a = Refs::GetPointer<ClassName>(objRef);\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
 		if (a != nullptr)\
 			return a->propName();\
 		else\
@@ -67,7 +50,7 @@ namespace CSBridge {
 
 #define DEF_PROP_SET(ClassName, propType, propName)\
 	void ClassName##_##propName##_set(CppRef objRef, propType value) {\
-		auto* a = Refs::GetPointer<ClassName>(objRef);\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
 		if (a != nullptr)\
 			a->propName(value);\
 		else\
@@ -90,11 +73,11 @@ FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \
 DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
 	CppObjectInfo strct;\
 \
-	auto* gameObject = Refs::GetPointer<GameObject>(cppObjRef);\
+	auto* gameObject = CppRefs::GetPointer<GameObject>(cppObjRef);\
 	if (gameObject != nullptr) {\
-		auto classInfoRef = Refs::Create(ClassInfo::Get<ClassName>());\
+		auto classInfoRef = CppRefs::Create(ClassInfo::Get<ClassName>());\
 \
-		strct.cppRef = gameObject->CreateComponent<ClassName>(csCompRef);\
+		strct.cppRef = gameObject->CreateComponent<ClassName>(RefCs(csCompRef)).value;\
 		strct.classRef = classInfoRef.id();\
 \
 		return strct;\
@@ -118,6 +101,18 @@ const char* ClassName##::meta_csComponentName = #CsClassName;\
 DEF_COMPONENT_CREATE(ClassName)\
 void ClassName##::meta_WriteOffsets(int* offsets)\
 
+
+#define PURE_NAME ""\
+
+#define PURE_COMPONENT COMPONENT\
+
+#define DEF_PURE_COMPONENT(ClassName)\
+ClassInfo ClassName##::meta_offsets;\
+const int ClassName##::meta_offsetCount = 0;\
+const char* ClassName##::meta_csComponentName = PURE_NAME;\
+void ClassName##::meta_WriteOffsets(int* offsets){ }\
+
+#define IS_PURE_COMPONENT(ClassName) ClassName##::meta_csComponentName == PURE_NAME\
 
 #define OBJECT public:\
 static ClassInfo meta_offsets;\

@@ -11,32 +11,8 @@
 #include "monopp/mono_type.h"
 #include "monopp/mono_method_invoker.h"
 
-//class CSMethodBase {
-//public:
-//	template<typename... Args>
-//	void Invoke(Args... args) {
-//		return m_method_invoker.invoke(m_obj, std::forward<Args>(args)...);
-//	}
-//};
 
-//template<typename RetType, typename... Args>
-//class CSMethod {
-//private:
-//	const mono::mono_object* m_obj;
-//	mono::mono_method m_method;
-//	mono::mono_method_invoker<RetType(Args...)> m_method_invoker;
-//
-//public:
-//	CSMethod(const mono::mono_object& obj, const std::string& name, int argc)
-//		: m_obj(&obj), m_method(name, argc), m_method_invoker(m_method)
-//	{
-//
-//	}
-//	
-//	RetType operator()(Args... args) {
-//		return m_method_invoker.invoke(m_obj, std::forward<Args>(args)...);
-//	}
-//};
+#include "GameObjectConcepts.h"
 
 
 template<HasMetaOffsets T>
@@ -58,7 +34,7 @@ private:
 
 
 public:
-	//T* obj() { return Refs::GetPointer(m_ref); }
+	//T* obj() { return CppRefs::GetPointer(m_ref); }
 	//void obj(const T& value) { m_ref.obj = value; }
 
 	size_t csRef() { return m_csRef; }
@@ -79,7 +55,7 @@ public:
 	}
 
 	void PreLink(T& cppObj) {
-		m_ref = Refs::Create(&cppObj);
+		m_ref = CppRefs::Create(&cppObj);
 	}
 
 	//void CreateInstance(const std::string& name_space, const std::string& name) {
@@ -94,7 +70,7 @@ public:
 
 	void Link( T& cppObj, const std::string& name_space, const std::string& name) {
 		PreLink(cppObj);
-		// m_ref =  // Refs::Create<T>(&cppObj);
+		// m_ref =  // CppRefs::Create<T>(&cppObj);
 
 		m_namespace = name_space;
 		m_name = name;
@@ -108,7 +84,7 @@ public:
 		m_objectIter = pair.first;
 
 		auto csObj = (*m_objectIter).second;
-		auto classInfoRef = Refs::Create(ClassInfo::Get<T>());
+		auto classInfoRef = CppRefs::Create(ClassInfo::Get<T>());
 
 		CppRef classRef = RefCpp(classInfoRef.id());
 		CppRef objRef = RefCpp(cppRef());

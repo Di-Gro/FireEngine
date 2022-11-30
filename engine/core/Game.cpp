@@ -13,6 +13,8 @@
 #include "ShadowMapRender.h"
 #include "ImageComponent.h"
 #include "MeshComponent.h"
+#include "Player.h"
+#include "PlayerCamera.h"
 
 #include "MonoInst.h"
 #include "ClassInfo.h"
@@ -55,7 +57,10 @@ void Game::m_InitMono(MonoInst* imono) {
 	auto gameType = m_mono->GetType("Engine", "Game");
 	auto method_SetGameRef = mono::make_method_invoker<void(CppRef)>(gameType, "cpp_SetGameRef");
 
-	auto gameRef = Refs::Create(this);
+	auto gameObjectType = m_mono->GetType("Engine", "GameObject");
+	mono_create = mono::make_method_invoker<CppRef()>(gameObjectType, "cpp_Create");
+
+	auto gameRef = CppRefs::Create(this);
 	method_SetGameRef(CppRef::Create(gameRef.id()));
 }
 
@@ -162,40 +167,31 @@ void Game::m_Destroy() {
 }
 
 GameObject* Game::CreateGameObject(std::string name) {
-	GameObject* gameObject = new GameObject();
-	auto it = m_gameObjects.insert(m_gameObjects.end(), gameObject);
+	std::cout << "+: Game.CreateGameObject()" << std::endl;
 
-	gameObject->f_Init(this, name);
-	gameObject->f_objectID = ++m_objectCount;
+	auto cppRef = mono_create();
+	
+	GameObject* gameObject = CppRefs::ThrowPointer<GameObject>(cppRef);
+	gameObject->name = name != "" ? name : "GameObject";
 
 	return gameObject;
 }
 
-GameObject* Game::CreateGameObjectCs(std::string name) {
-	std::cout << "+: Game.CreateGameObjectCs()" << std::endl;
-
-	auto gameType = m_mono->GetType("Engine", "GameObject");
-	auto method_create = mono::make_method_invoker<CppRef()>(gameType, "cpp_Create");
-
-	auto cppRef = method_create();
-
-	return Refs::GetPointer<GameObject>(cppRef);
-}
-
-GameObjectInfo Game::CreateGameObjectFromCS(CsRef csRef) {
+GameObjectInfo Game::m_CreateGameObject(CsRef csRef, std::string name) {
 	std::cout << "+: Game.CreateGameObjectFromCS(): csRef:" << csRef << std::endl;
 
-	auto classInfoRef = Refs::Create(ClassInfo::Get<GameObject>());
+	auto classInfoRef = CppRefs::Create(ClassInfo::Get<GameObject>());
 
-	GameObject* gameObject = CreateGameObject();
-	GameObjectBase* ptr2 = (GameObjectBase*)gameObject;
-	CsLink* ptr3= (CsLink*)gameObject;
-	GameObject* ptr4 = (GameObject*)ptr3;
+	GameObject* gameObject = new GameObject();
+	m_gameObjects.insert(m_gameObjects.end(), gameObject);
 
-	gameObject->f_ref = Refs::Create(gameObject);
+	gameObject->f_objectID = ++m_objectCount;
+	gameObject->f_ref = CppRefs::Create(gameObject);
 	gameObject->f_cppRef = gameObject->f_ref.id();
 	gameObject->f_csRef = csRef;
 
+	gameObject->f_Init(this, name);
+		
 	GameObjectInfo objectInfo;
 	objectInfo.classRef = RefCpp(classInfoRef.id());
 	objectInfo.objectRef = gameObject->cppRef();
@@ -210,9 +206,9 @@ void Game::DestroyGameObject(GameObject* gameObject) {
 
 		gameObject->f_Destroy();
 
-		if (Refs::IsValid(gameObject->f_ref)) {
-			Refs::Remove(gameObject->f_ref);
-			std::cout << "+: Refs.Remove(): " << gameObject->cppRef() << std::endl;
+		if (CppRefs::IsValid(gameObject->f_ref)) {
+			CppRefs::Remove(gameObject->f_ref);
+			std::cout << "+: CppRefs.Remove(): " << gameObject->cppRef() << std::endl;
 		}
 	}
 }
@@ -272,6 +268,6 @@ void Game::SendGameMessage(const std::string& msg) {
 	}
 }
 
-DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef) {
-	return Refs::ThrowPointer<Game>(gameRef)->CreateGameObjectFromCS(csRef);
+DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, const char* name) {
+	return CppRefs::ThrowPointer<Game>(gameRef)->m_CreateGameObject(csRef, name);
 }

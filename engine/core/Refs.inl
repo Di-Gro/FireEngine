@@ -4,15 +4,15 @@
 
 
 template<typename T>
-T* Refs::GetPointer(const Ref2& ref) {
+T* CppRefs::GetPointer(const Ref2& ref) {
 	if (!ref.isInitialized())
 		return nullptr;
 
-	return Refs::GetPointer<T>(ref.id());
+	return CppRefs::GetPointer<T>(ref.id());
 }
 
 template<typename T>
-T* Refs::GetPointer(CppRef refId) {
+T* CppRefs::GetPointer(CppRef refId) {
 	auto it = m_idMap.find(refId);
 
 	if (it != m_idMap.end())
@@ -22,11 +22,11 @@ T* Refs::GetPointer(CppRef refId) {
 }
 
 template<typename T>
-T* Refs::ThrowPointer(CppRef refId) {
-	auto* pointer = Refs::GetPointer<T>(refId);
+T* CppRefs::ThrowPointer(CppRef refId) {
+	auto* pointer = CppRefs::GetPointer<T>(refId);
 	if (pointer != nullptr)
 		return pointer;
 
-	std::cout << "+: Refs::ThrowPointer(): NullptrException" << std::endl;
-	throw std::exception("+: Refs::ThrowPointer(): NullptrException");
+	std::cout << "+: CppRefs::ThrowPointer(): NullptrException" << std::endl;
+	throw std::exception("+: CppRefs::ThrowPointer(): NullptrException");
 }

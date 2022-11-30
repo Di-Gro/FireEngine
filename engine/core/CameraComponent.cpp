@@ -37,9 +37,9 @@ DEF_PROP_GET(CameraComponent, bool, IsAttached)
 DEF_PROP_GETSET(CameraComponent, bool, orthographic)
 
 DEF_FUNC(CameraComponent, Attach, void)(CppRef compRef) {
-	Refs::ThrowPointer<CameraComponent>(compRef)->Attach();
+	CppRefs::ThrowPointer<CameraComponent>(compRef)->Attach();
 }
 
 DEF_FUNC(CameraComponent, UpdateProjMatrix, void)(CppRef compRef) {
-	Refs::ThrowPointer<CameraComponent>(compRef)->UpdateProjectionMatrix();
+	CppRefs::ThrowPointer<CameraComponent>(compRef)->UpdateProjectionMatrix();
 }

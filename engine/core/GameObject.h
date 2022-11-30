@@ -6,9 +6,12 @@
 #include <list>
 #include <vector>
 
-#include "GameObjectBase.h"
 #include "CSLinked.h"
 #include "CSBridge.h"
+
+#include "GameObjectConcepts.h"
+#include "GameObjectBase.h"
+
 
 class Render;
 
@@ -46,44 +49,16 @@ public:
 
 	int Id() { return f_objectID; }
 
-	//template<IsCppComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	//TComponent* AddComponentFromCpp();
-
-	/// <summary>
-	/// Инстанцирует новый С++ конмонент. 
-	/// </summary>
-	/// <param name="csRef"> - Ссылка на C# компонент.</param>
-	/// <returns>Ссылка на созданный C++ компонент.</returns>
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	size_t CreateComponent(size_t csRef);
+	CppRef CreateComponent(CsRef csRef);
 
-	/// <summary>
-	/// Инстанцирует и добавлняет новый C#/C++ компонент.
-	/// </summary>
-	/// <param name="TComponent"> - Класс C++ компонента.</param>
-	/// <returns>Указатель на созданный C++ компонент.</returns>
-	template<IsCppComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* AddComponentCs();
-
-	/// <summary>
-	/// Инстанцирует и добавлняет новый C#/C++ компонент.
-	/// </summary>
-	/// <param name="className"> - Имя C# класса вместе с namespace.</param>
-	/// <returns>Указатель на созданный C++ компонент.</returns>
-	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* AddComponentCs(const std::string& className);
-
-	/// <summary>
-	/// Добавляет C#/C++ компонент.
-	/// </summary>
-	/// <param name="cppComponentRef">Ссылка на C++ компонент.</param>
-	void AddComponentByRef(CppRef cppComponentRef);
-
-	/// <summary>
-	/// Инстанцирует и добавлняет новый C++ компонент.
-	/// </summary>
-	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	template<HasCsMetaData TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* AddComponent();
+
+	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	TComponent* AddCsComponent(const std::string& className);
+
+	void AddComponentByRef(CppRef cppComponentRef);
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* GetComponent();
@@ -131,6 +106,13 @@ private:
 	inline void m_OnStartComponent(Component* component);
 	inline void m_OnUpdateComponent(Component* component);
 	inline void m_OnDestroyComponent(Component* component);
+
+
+	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	TComponent* m_AddPureCppComponent();
+
+	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	TComponent* m_AddCsCppComponent();
 
 };
 

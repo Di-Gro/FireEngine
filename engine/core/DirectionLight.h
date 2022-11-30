@@ -8,6 +8,7 @@ class LineComponent;
 class CameraComponent;
 
 class DirectionLight : public Component {
+	PURE_COMPONENT;
 public:
 	Vector3 color = Vector3::One;
 	float intensity = 1.0f;

@@ -49,7 +49,7 @@ void MeshAsset::InitMono() {
 	auto type = m_game->mono()->GetType("Engine", "Game");
 	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_SetMeshAssetRef");
 
-	auto ref = Refs::Create(this);
+	auto ref = CppRefs::Create(this);
 	method(CppRef::Create(ref.id()));
 }
 
@@ -70,13 +70,13 @@ MeshAsset::~MeshAsset() {
 
 Material* MeshAsset::m_NewMaterial() {
 	auto* material = new Material();
-	material->f_ref = Refs::Create(material);
+	material->f_ref = CppRefs::Create(material);
 	material->f_cppRef = material->f_ref.id();
 	return material;
 }
 
 void MeshAsset::m_DeleteMaterial(Material* material) {
-	Refs::Remove(material->f_ref);
+	CppRefs::Remove(material->f_ref);
 	delete material;
 }
 
@@ -554,20 +554,20 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<GameObject*>* objects) 
 
 
 DEF_FUNC(MeshAsset, CreateHash, size_t)(CppRef meshAssetRef, const char* fileName) {
-	return Refs::ThrowPointer<MeshAsset>(meshAssetRef)->CreateHash(fileName);
+	return CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->CreateHash(fileName);
 }
 
 FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, size_t assetHash) {
-	Refs::ThrowPointer<MeshAsset>(meshAssetRef)->Load(assetHash);
+	CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->Load(assetHash);
 }
 
 DEF_FUNC(MeshAsset, GetMesh, CppRef)(CppRef meshAssetRef, size_t assetHash) {
-	return Refs::ThrowPointer<MeshAsset>(meshAssetRef)->GetMesh(assetHash)->f_cppRef;
+	return CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->GetMesh(assetHash)->f_cppRef;
 }
 
 DEF_FUNC(MeshAsset, CreateDynamicMaterial, CppRef)(CppRef meshAssetRef, CppRef otherMaterialRef) {
-	auto material = Refs::ThrowPointer<Material>(otherMaterialRef);
-	auto meshAsset = Refs::ThrowPointer<MeshAsset>(meshAssetRef);
+	auto material = CppRefs::ThrowPointer<Material>(otherMaterialRef);
+	auto meshAsset = CppRefs::ThrowPointer<MeshAsset>(meshAssetRef);
 
 	auto newMaterial = meshAsset->CreateDynamicMaterial(material);
 
@@ -575,8 +575,8 @@ DEF_FUNC(MeshAsset, CreateDynamicMaterial, CppRef)(CppRef meshAssetRef, CppRef o
 }
 
 DEF_FUNC(MeshAsset, DeleteDynamicMaterial, void)(CppRef meshAssetRef, CppRef otherMaterialRef) {
-	auto material = Refs::ThrowPointer<Material>(otherMaterialRef);
-	auto meshAsset = Refs::ThrowPointer<MeshAsset>(meshAssetRef);
+	auto material = CppRefs::ThrowPointer<Material>(otherMaterialRef);
+	auto meshAsset = CppRefs::ThrowPointer<MeshAsset>(meshAssetRef);
 
 	meshAsset->DeleteDynamicMaterial(material);
 }

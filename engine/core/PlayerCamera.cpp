@@ -3,6 +3,9 @@
 #include <iostream>
 
 
+DEF_PURE_COMPONENT(PlayerCamera);
+
+
 void PlayerCamera::OnInit() {
 	m_cameraRoot = GetParent();
 	if(!m_cameraRoot)

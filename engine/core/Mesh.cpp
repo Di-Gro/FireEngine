@@ -295,9 +295,9 @@ int Mesh4::maxMaterialIndex() const {
 
 
 DEF_FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref) {
-	return Refs::ThrowPointer<Mesh4>(mesh4Ref)->shapeCount();
+	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->shapeCount();
 }
 
 DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
-	return Refs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
+	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
 }

@@ -10,6 +10,7 @@ class Mesh4;
 class Material;
 
 class Player : public Component {
+	PURE_COMPONENT;
 private:
 	PlayerCamera* m_playerCamera = nullptr;
 	GameObject* m_playerMesh = nullptr;

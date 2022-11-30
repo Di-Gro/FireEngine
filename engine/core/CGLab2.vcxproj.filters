@@ -399,5 +399,8 @@
     <None Include="Refs.inl">
       <Filter>bridge</Filter>
     </None>
+    <None Include="GameObjectConcepts.h">
+      <Filter>Components</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include "DirectionLight.h"
 
 class TestComponent : public Component {
+	PURE_COMPONENT;
 public:
 	ImageComponent* targetImage = nullptr;
 
@@ -48,3 +49,4 @@ public:
 
 };
 
+DEF_PURE_COMPONENT(TestComponent);

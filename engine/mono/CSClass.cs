@@ -47,7 +47,7 @@ namespace Engine {
                 m_meshComp.SetMaterial(0, m_material);
 
                 var pos = transform.localPosition;
-                pos = pos.SetX(pos.X + 100);
+				pos.X -= 100;
                 transform.localPosition = pos;
             }
 

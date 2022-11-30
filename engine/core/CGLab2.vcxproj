@@ -144,6 +144,7 @@
     <None Include="GameObject.inl" />
     <None Include="GameObjectBase.h" />
     <None Include="GameObjectBase.inl" />
+    <None Include="GameObjectConcepts.h" />
     <None Include="Refs.inl" />
   </ItemGroup>
   <ItemGroup>

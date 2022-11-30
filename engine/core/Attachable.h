@@ -6,6 +6,7 @@ class Player;
 class MeshComponent;
 
 class Attachable : public Component {
+	PURE_COMPONENT;
 public:
 	Player* player = nullptr;
 

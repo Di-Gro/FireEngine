@@ -25,16 +25,19 @@ namespace Engine {
 
         #region Public
 
-        public GameObject() {
-            Console.WriteLine($"#: GameObject(): {csRef}, -> ");
+        public GameObject() : this("GameObject") { }
 
-            var info = dll_CreateGameObjectFromCS(Game.gameRef, csRef);
+        public GameObject(string name) {
+            Console.WriteLine($"#: GameObject(\"{name}\"): {csRef}, -> ");
+
+            var info = dll_CreateGameObjectFromCS(Game.gameRef, csRef, name);
             Link(info.classRef, info.objectRef);
 
             m_transformRef = info.transformRef;
 
             Console.WriteLine($"#: -> {cppRef}");
         }
+
 
         public void Destroy() {
             dll_Destroy(cppRef);
@@ -230,8 +233,8 @@ namespace Engine {
         #region Dll
 
 
-        [DllImport(MonoClass.ExePath, EntryPoint = "Game_CreateGameObjectFromCS")]
-        private static extern GameObjectInfo dll_CreateGameObjectFromCS(CppRef gameRef, CsRef objRef);
+        [DllImport(MonoClass.ExePath, EntryPoint = "Game_CreateGameObjectFromCS", CharSet = CharSet.Ansi)]
+        private static extern GameObjectInfo dll_CreateGameObjectFromCS(CppRef gameRef, CsRef objRef, string name);
 
         [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_AddComponentByRef")]
         private static extern void dll_AddComponentByRef(CppRef objRef, CppRef compRef);

@@ -17,7 +17,7 @@ void HotKeys::m_InitMono() {
 	auto type = m_game->mono()->GetType("Engine", "Input");
 	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_OnInit");
 
-	CppRef cppRef = RefCpp((Refs::Create(this).id()));
+	CppRef cppRef = RefCpp((CppRefs::Create(this).id()));
 	method(cppRef);
 }
 
@@ -110,27 +110,27 @@ void HotKeys::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
 
 
 DEF_FUNC(HotKeys, GetButtonDown, bool)(CppRef objRef, int keyCode) {
-	return Refs::ThrowPointer<HotKeys>(objRef)->GetButtonDown((Keys)keyCode);
+	return CppRefs::ThrowPointer<HotKeys>(objRef)->GetButtonDown((Keys)keyCode);
 }
 
 DEF_FUNC(HotKeys, GetButtonUp, bool)(CppRef objRef, int keyCode) {
-	return Refs::ThrowPointer<HotKeys>(objRef)->GetButtonUp((Keys)keyCode);
+	return CppRefs::ThrowPointer<HotKeys>(objRef)->GetButtonUp((Keys)keyCode);
 }
 
 DEF_FUNC(HotKeys, GetButton, bool)(CppRef objRef, int keyCode) {
-	return Refs::ThrowPointer<HotKeys>(objRef)->GetButton((Keys)keyCode);
+	return CppRefs::ThrowPointer<HotKeys>(objRef)->GetButton((Keys)keyCode);
 }
 
 DEF_FUNC(HotKeys, RegisterHotkey, void)(CppRef objRef, int keyCode) {
-	Refs::ThrowPointer<HotKeys>(objRef)->RegisterHotkey((Keys)keyCode);
+	CppRefs::ThrowPointer<HotKeys>(objRef)->RegisterHotkey((Keys)keyCode);
 }
 
 DEF_FUNC(HotKeys, UnregisterHotkey, void)(CppRef objRef, int keyCode) {
-	Refs::ThrowPointer<HotKeys>(objRef)->UnregisterHotkey((Keys)keyCode);
+	CppRefs::ThrowPointer<HotKeys>(objRef)->UnregisterHotkey((Keys)keyCode);
 }
 
 DEF_FUNC(HotKeys, MousePosition, CS::float2)(CppRef objRef) {
-	return CS::ToCS(Refs::ThrowPointer<HotKeys>(objRef)->GetMousePosition());
+	return CS::ToCS(CppRefs::ThrowPointer<HotKeys>(objRef)->GetMousePosition());
 }
 
 DEF_PROP_GET(HotKeys, int, wheelDelta)

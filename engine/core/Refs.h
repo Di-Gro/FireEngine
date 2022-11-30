@@ -6,7 +6,7 @@
 
 
 class Ref2 {
-	friend class Refs;
+	friend class CppRefs;
 
 private:
 	size_t m_refId = 0;
@@ -31,7 +31,7 @@ private:
 };
 
 
-class Refs {
+class CppRefs {
 private:
 	static std::unordered_map<size_t, void*> m_idMap;
 	static std::unordered_map<void*, size_t> m_ptrMap;

@@ -7,6 +7,7 @@ class Player;
 
 
 class GameController : public Component {
+	PURE_COMPONENT; 
 private:
 	CameraComponent* m_defaultCamera;
 	CameraComponent* m_playerCamera;

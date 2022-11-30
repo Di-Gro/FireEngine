@@ -25,7 +25,10 @@ class CameraComponent;
 class ShadowMapRender;
 class MonoInst;
 
+extern "C" __declspec(dllexport) GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, const char* name);
+
 class Game {
+	friend GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, const char* name);
 
 private:
 	MonoInst* m_mono;
@@ -48,6 +51,8 @@ private:
 
 	bool m_onExit = false;
 	int m_objectCount = 0;
+
+	mono::mono_method_invoker<CppRef()> mono_create;
 
 public:
 
@@ -75,9 +80,6 @@ public:
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
 	GameObject* CreateGameObject(std::string name = "");
-	GameObject* CreateGameObjectCs(std::string name = "");
-
-	GameObjectInfo CreateGameObjectFromCS(CsRef csRef);
 
 	void DestroyGameObject(GameObject* gameObject);
 
@@ -94,14 +96,10 @@ private:
 	void m_Update();
 	void m_Destroy();
 
+	GameObjectInfo m_CreateGameObject(CsRef csRef, std::string name);
+
 	std::list<GameObject*>::iterator m_EraseGameObject(std::list<GameObject*>::iterator it);
 
 	void m_PrintSceneTree(const std::string& prefix, const GameObject* node);
 
 };
-
-
-
-FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef);
-
-//FUNC(Game, AddComponentFromCS, CppObjectInfo)(CppRef gameRef, CsRef csRef);

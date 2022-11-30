@@ -2,6 +2,9 @@
 
 #include "Player.h"
 
+
+DEF_PURE_COMPONENT(Attachable);
+
 void Attachable::OnInit() {
 	m_mesh = AddComponent<MeshComponent>();
 	m_bound = AddComponent<MeshComponent>();
