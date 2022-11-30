@@ -3,7 +3,6 @@
 #include "InputDevice.h"
 #include "Game.h"
 #include "CSBridge.h"
-//#include "CS.h"
 
 //using namespace CS;
 
@@ -130,12 +129,8 @@ DEF_FUNC(HotKeys, UnregisterHotkey, void)(CppRef objRef, int keyCode) {
 	Refs::ThrowPointer<HotKeys>(objRef)->UnregisterHotkey((Keys)keyCode);
 }
 
-DEF_FUNC(HotKeys, MousePosition, float2)(CppRef objRef) {
-	auto pos = Refs::ThrowPointer<HotKeys>(objRef)->GetMousePosition();
-	float2 res;
-	res._1 = pos.x;
-	res._2 = pos.y;
-	return res;
+DEF_FUNC(HotKeys, MousePosition, CS::float2)(CppRef objRef) {
+	return CS::ToCS(Refs::ThrowPointer<HotKeys>(objRef)->GetMousePosition());
 }
 
 DEF_PROP_GET(HotKeys, int, wheelDelta)

@@ -5,7 +5,7 @@
 #include "InputDevice.h"
 #include "SimpleMath.h"
 #include "CSBridge.h"
-//#include "CS.h"
+#include "CS.h"
 
 class Game;
 
@@ -59,5 +59,6 @@ struct float2 {
 	float _2;
 };
 
-FUNC(HotKeys, MousePosition, float2)(CppRef objRef);
+FUNC(HotKeys, MousePosition, CS::float2)(CppRef objRef);
+
 PROP_GET(HotKeys, int, wheelDelta)

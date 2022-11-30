@@ -69,12 +69,20 @@ void Game::Run() {
 	std::string mesnName2 = "../../data/assets/levels/farm/meshes/Coffin.obj";
 	std::string mesnName3 = "../../data/assets/levels/farm/meshes/Daisy.obj";
 
+	//auto gameObject = CreateGameObject();
+
+	//auto quat = gameObject->transform->localRotationQ();
+	//std::cout << "+: quat:" << quat.x << ", " << quat.y << ", " << quat.z << ", " << quat.w  << std::endl;
+
+	//quat.x = 45;
+	//gameObject->transform->localRotationQ(quat);
+	//quat = gameObject->transform->localRotationQ();
+	//std::cout << "+: quat:" << quat.x << ", " << quat.y << ", " << quat.z << ", " << quat.w << std::endl;
+
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
 	csLink.Link(cppObj, "EngineMono", "CSClass");
-
-	//auto gameObject = CreateGameObjectCs();
 
 	///
 

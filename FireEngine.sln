@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mono", "engine\mono\Mono.cs
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monopp", "engine\monopp\monopp.vcxproj", "{672496C0-45CB-41CD-B4A3-A1A62897169C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vim-math", "engine\vim-math\vim-math.csproj", "{866F0AEA-4729-43D0-A5C2-1736545FB165}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{672496C0-45CB-41CD-B4A3-A1A62897169C}.Release|x64.Build.0 = Release|x64
 		{672496C0-45CB-41CD-B4A3-A1A62897169C}.Release|x86.ActiveCfg = Release|Win32
 		{672496C0-45CB-41CD-B4A3-A1A62897169C}.Release|x86.Build.0 = Release|Win32
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Debug|x64.Build.0 = Debug|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Debug|x86.Build.0 = Debug|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|Any CPU.Build.0 = Release|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|x64.ActiveCfg = Release|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|x64.Build.0 = Release|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|x86.ActiveCfg = Release|Any CPU
+		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -29,8 +29,7 @@ namespace Engine {
 			//transform.localScale = new Vector3(100, 100, 100);
 
 			m_meshComp = gameObject.AddComponent<MeshComponent>();
-			m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
-
+            m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
             m_material = new DynamicMaterial(m_meshComp.GetMaterial(0));
 
             m_meshComp.SetMaterial(0, m_material);
@@ -38,26 +37,25 @@ namespace Engine {
 
         public override void OnUpdate() {
 
-            if (Input.GetButtonDown(Key.Enter)) {
+			transform.localRotationQ = transform.localRotationQ * Quaternion.CreateXRotation(0.006f);
+
+
+			if (Input.GetButtonDown(Key.Enter)) {
                 m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
                 m_index = (m_index + 1) % m_meshNames.Length;
 
                 m_meshComp.SetMaterial(0, m_material);
 
                 var pos = transform.localPosition;
-                pos.x += 150;
+                pos = pos.SetX(pos.X + 100);
                 transform.localPosition = pos;
             }
 
-			if (Input.WheelDelta != 0 && Input.GetButton(Key.LeftShift)) {
-				var color = m_material.DiffuseColor;
-				color.x += 0.05f * Input.WheelDelta;
-				color.y += 0.05f * Input.WheelDelta;
-				color.z += 0.05f * Input.WheelDelta;
-				m_material.DiffuseColor = color;
+            if (Input.WheelDelta != 0 && Input.GetButton(Key.M)) {
+                m_material.DiffuseColor = m_material.DiffuseColor + Vector3.One * 0.05f * Input.WheelDelta;
 
-				Console.WriteLine($"# OhMyMesh: color={m_material.DiffuseColor}");
-			}
+                Console.WriteLine($"# OhMyMesh: color={m_material.DiffuseColor}");
+            }
 
         }
     }
@@ -114,22 +112,34 @@ namespace EngineMono {
 		public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			CsRef csRef = base.Link(classInfoRef, objRef);
 
-			var gameObject = new GameObject().AddComponent<OhMyMesh>();
+            var gameObject = new GameObject().AddComponent<OhMyMesh>();
 
 
-            //Console.WriteLine($"# {gameObject.transform.localScale}");
+            /// Передача vector2, vector3 и quaternion ->
+            //var gameObject2 = new GameObject();
 
-            //var pos = gameObject.transform.localScale;
-			//pos.SetX(0);
+            //Console.WriteLine($"# pos:{gameObject2.transform.localScale}");
 
+            //var pos = gameObject2.transform.localScale;
+            ////pos = pos.SetX(48);
+            //pos.X = 48;
+            //gameObject2.transform.localScale = pos;
 
-			//gameObject.transform.localScale = new Vector3(1,2,3);
+            //Console.WriteLine($"# pos:{gameObject2.transform.localScale}");
 
-            //Console.WriteLine($"# {gameObject.transform.localScale}");
+            //Console.WriteLine($"# quat:{gameObject2.transform.localRotationQ}");
+
+            //var quat = gameObject2.transform.localRotationQ;
+            ////quat = quat.SetX(48);
+            //quat.X = 48;
+            //gameObject2.transform.localRotationQ = quat;
+
+            //Console.WriteLine($"# quat:{gameObject2.transform.localRotationQ}");
 
             //var mpos = Input.MousePosition;
+            //Console.WriteLine($"# mpos:{mpos}");
+            /// <-
 
-            //Console.WriteLine($"# mpos: {mpos}");
 
             return csRef;
 		}
