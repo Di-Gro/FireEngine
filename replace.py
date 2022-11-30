@@ -39,9 +39,13 @@ strings = {
 }
 
 for path in paths:
+    orig = ""
     with open(path, "r") as inp:
-        text = inp.read()
-        for source, target in strings.items():
-            text = text.replace(source, target)
-        with open(path + ".replace", "w+") as out:
-            out.write(text)
+        orig = inp.read()
+    text = orig
+    for source, target in strings.items():
+        text = text.replace(source, target)
+    with open(path + ".orig", "w") as out:
+        out.write(orig)
+    with open(path, "w") as out:
+        out.write(text)
