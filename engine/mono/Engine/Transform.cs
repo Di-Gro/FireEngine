@@ -40,7 +40,7 @@ namespace Engine {
 		private Transform() { }
 
 		private static CsRef cpp_Create(CppRef classRef, CppRef objRef) {
-			Console.WriteLine($"#: Transform.cpp_Create(class={classRef}, obj={objRef})");
+			//Console.WriteLine($"#: Transform.cpp_Create(class={classRef}, obj={objRef})");
 
 			var transform = new Transform();
 			transform.Link(classRef, objRef);

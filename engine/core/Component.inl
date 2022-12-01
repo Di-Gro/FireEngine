@@ -14,5 +14,7 @@ public:
 	
 	virtual ~Component() {}
 
+	virtual ComponentMeta GetMeta() = 0;
+
 };
 

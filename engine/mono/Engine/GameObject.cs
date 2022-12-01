@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using EngineMono;
@@ -28,14 +29,14 @@ namespace Engine {
         public GameObject() : this("GameObject") { }
 
         public GameObject(string name) {
-            Console.WriteLine($"#: GameObject(\"{name}\"): {csRef}, -> ");
+            //Console.WriteLine($"#: GameObject(\"{name}\"): {csRef}, -> ");
 
             var info = dll_CreateGameObjectFromCS(Game.gameRef, csRef, name);
             Link(info.classRef, info.objectRef);
 
             m_transformRef = info.transformRef;
 
-            Console.WriteLine($"#: -> {cppRef}");
+            Console.WriteLine($"#: GameObject({csRef}, {cppRef}): \"{name}\"");
         }
 
 
@@ -45,7 +46,7 @@ namespace Engine {
         }
 
         ~GameObject() {
-            Console.WriteLine($"#: ~GameObject({csRef}, {cppRef})(): {cppRef}, {csRef}");
+            //Console.WriteLine($"#: ~GameObject({csRef}, {cppRef})(): {cppRef}, {csRef}");
         }
 
         public TComponent AddComponent<TComponent>() where TComponent : Component, new() {
@@ -56,9 +57,20 @@ namespace Engine {
 
             var info = component.CreateFromCS(this);
             component.Link(info.classRef, info.objectRef);
-            dll_AddComponentByRef(cppRef, component.cppRef);
+            dll_InitComponent(cppRef, component.cppRef);
 
             return component;
+        }
+
+        private CsRef m_AddComponentFromCpp<TComponent>(CppObjectInfo info) where TComponent : Component, new() {
+            var component = new TComponent();
+            component.LinkGameObject(csRef, transform.csRef);
+
+            //Console.WriteLine($"#: GameObject({csRef}, {cppRef}).m_AddComponentFromCpp<{typeof(TComponent).Name}>({component.csRef}, {info.objectRef})");
+
+            component.Link(info.classRef, info.objectRef);
+
+            return component.csRef;
         }
 
         public TComponent GetComponent<TComponent>() where TComponent : Component {
@@ -164,30 +176,38 @@ namespace Engine {
         #region Cpp
 
         private static CppRef cpp_Create() {
-            Console.WriteLine($"#: GameObject.cpp_Create()");
+            //Console.WriteLine($"#: GameObject.cpp_Create()");
 
             var gameObject = new GameObject();
             return gameObject.cppRef;
         }
 
-        private static CppRef cpp_AddComponent(CsRef objRef, ulong ptr, ulong length) {
-            Console.WriteLine($"#: GameObject.cpp_AddComponent(): obj: {objRef} -> ");
+  
+        private static CsRef cpp_AddComponent(CsRef objRef, ulong ptr, ulong length, CppObjectInfo info) {
 
-            string name = "";
+            string name = ReadCString(ptr, length);
 
-            unsafe {
-                byte[] bytes = new byte[length];
+            //Console.WriteLine($"#: GameObject({objRef}).cpp_AddComponent(\"{name}\") -> ");
 
-                byte* bptr = (byte*)ptr;
-                for (ulong i = 0; i < length; i++, bptr++) {
-                    bytes[i] = *bptr;
-                }
-                name = Encoding.UTF8.GetString(bytes);
-            }
+            var componentType = Type.GetType(name);
+            var addComponent = typeof(GameObject).GetMethod(nameof(GameObject.m_AddComponentFromCpp), BindingFlags.NonPublic | BindingFlags.Instance);
+
+            addComponent = addComponent.MakeGenericMethod(componentType);
+
+            var gameObject = CppLinked.GetObjectByRef(objRef) as GameObject;
+            var result = addComponent.Invoke(gameObject, new object[] { info });
+
+            return (CsRef)result;
+        }
+
+        private static CppRef cpp_AddCsComponent(CsRef objRef, ulong ptr, ulong length) {
+            //Console.WriteLine($"#: GameObject.cpp_AddCsComponent(): obj: {objRef} -> ");
+
+            string name = ReadCString(ptr, length);
 
             var componentType = Type.GetType(name);
             var componentCppRefProp = componentType.GetProperty(nameof(CppLinked.cppRef));
-            var componentCsRefProp = componentType.GetProperty(nameof(CppLinked.csRef));
+            //var componentCsRefProp = componentType.GetProperty(nameof(CppLinked.csRef));
 
             var addComponent = typeof(GameObject).GetMethod(nameof(GameObject.AddComponent));
             addComponent = addComponent.MakeGenericMethod(componentType);
@@ -196,11 +216,24 @@ namespace Engine {
             var component = addComponent.Invoke(gameObject, null);
 
             var cppRef = (CppRef)componentCppRefProp.GetValue(component);
-            var csRef = (CsRef)componentCsRefProp.GetValue(component);
+            //var csRef = (CsRef)componentCsRefProp.GetValue(component);
 
-            Console.WriteLine($"#: -> {csRef}, {cppRef} ");
+            //Console.WriteLine($"#: -> {csRef}, {cppRef} ");
 
             return cppRef;
+        }
+
+        private static string ReadCString(ulong ptr, ulong length) {
+            string str = "";
+            unsafe {
+                byte[] bytes = new byte[length];
+                byte* bptr = (byte*)ptr;
+                for (ulong i = 0; i < length; i++, bptr++) {
+                    bytes[i] = *bptr;
+                }
+                str = Encoding.UTF8.GetString(bytes);
+            }
+            return str;
         }
 
         private static void cpp_InitComponent(CsRef compRef) {
@@ -236,8 +269,8 @@ namespace Engine {
         [DllImport(MonoClass.ExePath, EntryPoint = "Game_CreateGameObjectFromCS", CharSet = CharSet.Ansi)]
         private static extern GameObjectInfo dll_CreateGameObjectFromCS(CppRef gameRef, CsRef objRef, string name);
 
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_AddComponentByRef")]
-        private static extern void dll_AddComponentByRef(CppRef objRef, CppRef compRef);
+        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_InitComponent")]
+        private static extern void dll_InitComponent(CppRef objRef, CppRef compRef);
 
         [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_Destroy")]
         private static extern void dll_Destroy(CppRef objRef);

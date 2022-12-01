@@ -23,11 +23,14 @@ private:
     IWin32InputHandler* m_inputHandler = nullptr;
     bool m_showCursor = true;
 
+    RECT m_rcOldClip; // previous area for ClipCursor
+
 public:
 
     Window() {};
 
     void Init(LPCWSTR name, int width, int height);
+    void Destroy();
 
     int GetHeight() override { return m_height; }
     int GetWidth() override { return m_width; }

@@ -5,6 +5,8 @@
 
 class CppRef {
 public:
+	static const CppRef Void;
+
 	size_t value = 0;
 
 	//CppRef() {}
@@ -28,6 +30,8 @@ public:
 
 class CsRef {
 public:
+	static const CsRef Void;
+
 	size_t value = 0;
 
 	//CsRef() {}
@@ -47,6 +51,24 @@ public:
 	}
 
 	friend std::ostream& operator<< (std::ostream& out, const CsRef& ref);
+};
+
+class CppObjectInfo {
+public:
+	CppRef cppRef;
+	CppRef classRef;
+};
+
+class GameObjectInfo {
+public:
+	CppRef objectRef;
+	CppRef classRef;
+	CsRef transformRef;
+};
+
+class GameUpdateData {
+public:
+	float deltaTime;
 };
 
 CppRef RefCpp(size_t v);

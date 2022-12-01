@@ -1,5 +1,9 @@
 #include "mono_game_types.h"
 
+const CppRef CppRef::Void = RefCpp(0);
+const CsRef CsRef::Void = RefCs(0);
+
+
 std::ostream& operator<< (std::ostream& out, const CsRef& ref) {
 	out << "cs:" << ref.value;
 	return out;

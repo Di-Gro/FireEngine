@@ -7,15 +7,15 @@ size_t CppRefs::m_nextId = 1;
 
 
 bool CppRefs::IsValid(const Ref2& ref) {
-	return ref.isInitialized() && m_idMap.contains(ref.id());
+	return ref.isInitialized() && m_idMap.contains(ref.cppRef());
 }
 
 bool CppRefs::IsRemoved(const Ref2& ref) {
-	return ref.isInitialized() && !m_idMap.contains(ref.id());
+	return ref.isInitialized() && !m_idMap.contains(ref.cppRef());
 }
 
 Ref2 CppRefs::Create(const Ref2& ref) {
-	return Ref2(ref.id());
+	return Ref2(ref.cppRef());
 }
 
 Ref2 CppRefs::Create(void* ptr) {
@@ -35,13 +35,13 @@ void CppRefs::Reset(Ref2& ref, void* ptr) {
 		ref = CppRefs::Create(ptr);
 		return;
 	}
-	auto it = m_idMap.find(ref.id());
+	auto it = m_idMap.find(ref.cppRef());
 
 	if (it != m_idMap.end())
 		m_ptrMap.erase(it->second);
 
-	m_idMap[ref.id()] = ptr;
-	m_ptrMap[ptr] = ref.id();
+	m_idMap[ref.cppRef()] = ptr;
+	m_ptrMap[ptr] = ref.cppRef();
 }
 
 void CppRefs::Reset(void* oldPtr, void* newPtr) {
@@ -61,7 +61,7 @@ void CppRefs::Remove(const Ref2& ref) {
 	if (!ref.isInitialized())
 		return;
 
-	auto it = m_idMap.find(ref.id());
+	auto it = m_idMap.find(ref.cppRef());
 
 	if (it != m_idMap.end()) {
 		m_ptrMap.erase(it->second);

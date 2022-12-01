@@ -13,6 +13,9 @@
 #include "GameObjectBase.h"
 
 
+extern "C" __declspec(dllexport) void GameObject_InitComponent(CppRef objRef, CppRef compRef);
+
+
 class Render;
 
 class GameObject : public GameObjectBase {
@@ -21,6 +24,8 @@ class GameObject : public GameObjectBase {
 	friend class Game;
 	friend class GameObjectBase;
 	friend class Render;
+
+	friend void GameObject_InitComponent(CppRef objRef, CppRef compRef);
 
 public:
 	std::string name = "";
@@ -35,7 +40,8 @@ private:
 	std::vector<GameObject*> m_childs;
 
 	static bool mono_inited;
-	static mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> mono_AddComponent;
+	static mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> mono_AddComponent;
+	static mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> mono_AddCsComponent;
 	static mono::mono_method_invoker<CsRef(CppRef, CppRef)> mono_CreateTransform;
 	static mono::mono_method_invoker<void(CsRef)> mono_RemoveTransform;
 
@@ -50,15 +56,13 @@ public:
 	int Id() { return f_objectID; }
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	CppRef CreateComponent(CsRef csRef);
+	TComponent* CreateComponent(CsRef csRef = CsRef::Void);
 
-	template<HasCsMetaData TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	template<IsCppAddableComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* AddComponent();
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* AddCsComponent(const std::string& className);
-
-	void AddComponentByRef(CppRef cppComponentRef);
+	TComponent* AddComponent(const std::string& className);
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* GetComponent();
@@ -93,7 +97,6 @@ private:
 
 	void f_SetParent(GameObject* gameObject);
 
-	void m_InitComponent(Component* component);
 	std::list<Component*>::iterator m_EraseComponent(std::list<Component*>::iterator it);
 
 	void m_DeleteFromParent();
@@ -102,17 +105,12 @@ private:
 	void m_CreateTransform();
 	void m_RemoveTransform();
 
+	void m_InitComponent(Component* component);
+
 	inline void m_OnInitComponent(Component* component);
 	inline void m_OnStartComponent(Component* component);
 	inline void m_OnUpdateComponent(Component* component);
 	inline void m_OnDestroyComponent(Component* component);
-
-
-	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* m_AddPureCppComponent();
-
-	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* m_AddCsCppComponent();
 
 };
 
@@ -121,7 +119,6 @@ FUNC(GameObject, gameObject_get, CsRef)(CppRef objBaseRef);
 FUNC(GameObject, parent_get, CsRef)(CppRef objRef);
 FUNC(GameObject, parent_set, void)(CppRef objRef, CppRef newObjRef);
 
-FUNC(GameObject, AddComponentByRef, void)(CppRef objRef, CppRef compRef);
 FUNC(GameObject, DestroyComponent, void)(CppRef compRef);
 FUNC(GameObject, Destroy, void)(CppRef objRef);
 

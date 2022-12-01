@@ -19,7 +19,7 @@ private:
 	//CppRef f_cppRef;
 	//CsRef f_csRef;
 
-	GameObject* friend_gameObject = nullptr;
+	GameObject* friend_gameObject = nullptr; // <- ÑC
 	Component* friend_component = nullptr;
 	int friend_timeToDestroy = 1;
 	bool friend_isStarted = false;
@@ -46,18 +46,9 @@ public:
 	GameObject* CreateGameObject(std::string name = "");
 	void Destroy();
 
-	/// ->
 
-	//template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	//TComponent* AddComponent();
-
-	template<HasCsMetaData TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
+	template<IsCppAddableComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* AddComponent();
-
-	//template<IsCSpp TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	//TComponent* AddComponent();
-
-	/// <- 
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* GetComponent();

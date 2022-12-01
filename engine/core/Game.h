@@ -53,6 +53,7 @@ private:
 	int m_objectCount = 0;
 
 	mono::mono_method_invoker<CppRef()> mono_create;
+	mono::mono_method_invoker<void(GameUpdateData)> mono_setUpdateData;
 
 public:
 

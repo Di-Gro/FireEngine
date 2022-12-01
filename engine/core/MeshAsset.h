@@ -45,7 +45,7 @@ private:
 			mesh = new Mesh4();
 			mesh->f_assetHash = hash;
 			mesh->f_ref = CppRefs::Create(mesh);
-			mesh->f_cppRef = mesh->f_ref.id();
+			mesh->f_cppRef = mesh->f_ref.cppRef();
 		}
 
 		~Asset() {

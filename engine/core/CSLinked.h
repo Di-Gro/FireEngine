@@ -38,7 +38,7 @@ public:
 	//void obj(const T& value) { m_ref.obj = value; }
 
 	size_t csRef() { return m_csRef; }
-	size_t cppRef() { return m_ref.id(); }
+	size_t cppRef() { return m_ref.cppRef(); }
 
 	const mono::mono_object& csObj() {return (*m_objectIter).second; }
 	
@@ -86,7 +86,7 @@ public:
 		auto csObj = (*m_objectIter).second;
 		auto classInfoRef = CppRefs::Create(ClassInfo::Get<T>());
 
-		CppRef classRef = RefCpp(classInfoRef.id());
+		CppRef classRef = RefCpp(classInfoRef.cppRef());
 		CppRef objRef = RefCpp(cppRef());
 
 		m_csRef = invoker_Link(csObj, classRef, objRef);

@@ -79,6 +79,7 @@
     <ClInclude Include="ClassInfo.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.inl" />
+    <ClInclude Include="ComponentMeta.h" />
     <ClInclude Include="CppClass.h" />
     <ClInclude Include="CS.h" />
     <ClInclude Include="CSBridge.h" />

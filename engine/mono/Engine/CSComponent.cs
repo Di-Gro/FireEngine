@@ -30,7 +30,7 @@ namespace Engine {
         public void Destroy() => dll_Destroy(cppRef);
 
         public void LinkGameObject(CsRef objectRef, CsRef transformRef) {
-            Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).LinkGameObject({objectRef}, {transformRef})");
+            //Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).LinkGameObject({objectRef}, {transformRef})");
 
             m_objectRef = objectRef;
             m_transformRef = transformRef;

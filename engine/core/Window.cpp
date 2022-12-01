@@ -57,6 +57,16 @@ void Window::Create() {
     ShowWindow(m_hWnd, SW_SHOW);
     SetForegroundWindow(m_hWnd);
     ShowCursor(m_showCursor);
+
+    // Record the area in which the cursor can move. 
+    GetClipCursor(&m_rcOldClip);
+    //GetWindowRect(m_hWnd, &windowRect); // Get the dimensions of the application's window. 
+    ClipCursor(&windowRect);  // Confine the cursor to the application's window.  
+
+}
+
+void Window::Destroy() {
+    ClipCursor(&m_rcOldClip); // Restore the cursor to its previous area.
 }
 
 void Window::Exit(int code) { PostQuitMessage(code); }
@@ -80,6 +90,13 @@ LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM l
         if (m_inputHandler != nullptr)
             m_inputHandler->OnInput(lparam);
     }
+    //case WM_SETFOCUS:
+    //    std::cout << "Got the focus\n";
+    //    break;
+
+    //case WM_KILLFOCUS:
+    //    std::cout << "Lost the focus\n";
+    //    break;
     // Fall is OK
     default:
         return DefWindowProc(hwnd, umessage, wparam, lparam);

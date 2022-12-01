@@ -21,10 +21,11 @@ namespace Engine {
 		public static object GetObjectByRef(CsRef csRef) {
 			if (s_refs.ContainsKey(csRef))
 				return s_refs[csRef];
+			Console.WriteLine($"#: CppLinked.GetObjectByRef: NULL)");
 			return null;
 		}
 		public static void RemoveObjectByRef(CsRef csRef) {
-			Console.WriteLine($"#: CppLinked.RemoveObjectByRef({csRef})");
+			//Console.WriteLine($"#: CppLinked.RemoveObjectByRef({csRef})");
 			s_refs.Remove(csRef);
 		}
 		/// <- Static
@@ -46,7 +47,7 @@ namespace Engine {
 		public virtual CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			cppRef = objRef;
 
-			Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).Link(class:{classInfoRef}, obj:{objRef})");
+			//Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).Link(class:{classInfoRef}, obj:{objRef})");
 
 			classInfo = ClassInfo.GetClassInfo(classInfoRef);
 

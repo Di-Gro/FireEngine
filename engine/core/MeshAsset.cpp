@@ -50,7 +50,7 @@ void MeshAsset::InitMono() {
 	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_SetMeshAssetRef");
 
 	auto ref = CppRefs::Create(this);
-	method(CppRef::Create(ref.id()));
+	method(CppRef::Create(ref.cppRef()));
 }
 
 MeshAsset::~MeshAsset() {
@@ -71,7 +71,7 @@ MeshAsset::~MeshAsset() {
 Material* MeshAsset::m_NewMaterial() {
 	auto* material = new Material();
 	material->f_ref = CppRefs::Create(material);
-	material->f_cppRef = material->f_ref.id();
+	material->f_cppRef = material->f_ref.cppRef();
 	return material;
 }
 

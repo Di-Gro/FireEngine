@@ -175,6 +175,9 @@ inline const std::map<index_t, type_names_t>& get_types()
     {
 		{id<CppRef>(), {"CppRef", "Engine.CppRef"}},
 		{id<CsRef>(), {"CsRef", "Engine.CsRef"}},
+		{id<CppObjectInfo>(), {"CppObjectInfo", "Engine.CppObjectInfo"}},
+		{id<GameObjectInfo>(), {"GameObjectInfo", "Engine.GameObjectInfo"}},
+		{id<GameUpdateData>(), {"GameUpdateData", "Engine.GameUpdateData"}},
 
         {id<std::int8_t>(), {"sbyte", "System.SByte"}},
         {id<std::uint8_t>(), {"byte", "System.Byte"}}, 

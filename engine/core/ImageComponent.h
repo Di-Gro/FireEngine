@@ -14,7 +14,7 @@
 
 
 class ImageComponent : public Component {
-	PURE_COMPONENT;
+	PURE_COMPONENT(ImageComponent);
 public:
 	std::string shaderPath = "../../data/engine/shaders/image.hlsl";
 

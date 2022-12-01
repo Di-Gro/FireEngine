@@ -14,7 +14,7 @@ using namespace DirectX::SimpleMath;
 
 
 class MeshComponent : public Component {
-	COMPONENT;
+	COMPONENT(MeshComponent)
 
 public:
 	bool isDebug = false;

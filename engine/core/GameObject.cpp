@@ -15,7 +15,8 @@ DEF_OBJECT(GameObject, 0) { }
 
 bool GameObject::mono_inited;
 
-mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> GameObject::mono_AddComponent;
+mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> GameObject::mono_AddComponent;
+mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> GameObject::mono_AddCsComponent;
 mono::mono_method_invoker<CsRef(CppRef, CppRef)> GameObject::mono_CreateTransform;
 mono::mono_method_invoker<void(CsRef)> GameObject::mono_RemoveTransform;
 mono::mono_method_invoker<void(CsRef)> GameObject::mono_OnInit;
@@ -33,10 +34,10 @@ void GameObject::m_CreateTransform() {
 	transform->friend_gameObject = this;
 
 	transform->f_ref = CppRefs::Create(transform);
-	transform->f_cppRef = transform->f_ref.id();
+	transform->f_cppRef = transform->f_ref.cppRef();
 
 	auto arg_obj = transform->f_cppRef;
-	auto arg_class = RefCpp(CppRefs::Create(ClassInfo::Get<Transform>()).id());
+	auto arg_class = RefCpp(CppRefs::Create(ClassInfo::Get<Transform>()).cppRef());
 	transform->f_csRef = mono_CreateTransform(arg_class, arg_obj);
 }
 
@@ -61,7 +62,8 @@ void GameObject::m_InitMono() {
 		return;
 
 	auto type = game()->mono()->GetType("Engine", "GameObject");
-	mono_AddComponent = mono::make_method_invoker<CppRef(CsRef, size_t, size_t)>(type, "cpp_AddComponent");
+	mono_AddComponent = mono::make_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)>(type, "cpp_AddComponent");
+	mono_AddCsComponent = mono::make_method_invoker<CppRef(CsRef, size_t, size_t)>(type, "cpp_AddCsComponent");
 	mono_OnInit = mono::make_method_invoker<void(CsRef)>(type, "cpp_InitComponent");
 	mono_OnStart = mono::make_method_invoker<void(CsRef)>(type, "cpp_StartComponent");
 	mono_OnUpdate = mono::make_method_invoker<void(CsRef)>(type, "cpp_UpdateComponent");
@@ -189,17 +191,6 @@ void GameObject::m_DeleteFromParent() {
 	}
 }
 
-//int GameObject::GetÑhildrenCount() {
-//	int count = 0;
-//
-//	for (auto child : m_childs) {
-//		if (!child->IsDestroyed() && child->csRef() > 0) {
-//			count++;
-//		}
-//	}
-//	return count;
-//}
-
 int GameObject::GetComponentsCount() {
 	int count = 0;
 
@@ -227,6 +218,8 @@ GameObject* GameObject::GetChild(int index) {
 		return m_childs[index];
 	return nullptr;
 }
+
+
 
 static inline Vector3 deg(Vector3 vec) {
 	return Vector3(deg(vec.x), deg(vec.y), deg(vec.z));
@@ -273,18 +266,6 @@ void GameObject::RecieveGameMessage(const std::string& msg) {
 	}
 }
 
-void GameObject::AddComponentByRef(CppRef cppComponentRef) {
-	std::cout << "+: GameObject(" << csRef() << ", " << cppRef() << ").AddComponentByRef(): " << cppComponentRef << std::endl;
-
-	auto* component = CppRefs::ThrowPointer<Component>(cppComponentRef);
-	if (component != nullptr) {
-		m_InitComponent(component);
-	}
-	else {
-		std::cout << "+: GameObject.AddComponentByRef(): NULL component" << std::endl;
-	}
-}
-
 void GameObject::m_OnInitComponent(Component* component) {
 	component->OnInit();
 	if (component->csRef().value > 0)
@@ -327,8 +308,10 @@ DEF_FUNC(GameObject, parent_set, void)(CppRef objRef, CppRef newObjRef) {
 	object->SetParent(parent);
 }
 
-DEF_FUNC(GameObject, AddComponentByRef, void)(CppRef objRef, CppRef compRef) {
-	CppRefs::ThrowPointer<GameObject>(objRef)->AddComponentByRef(compRef);
+void GameObject_InitComponent(CppRef objRef, CppRef compRef) {
+	auto* gameObject = CppRefs::ThrowPointer<GameObject>(objRef);
+	auto* component = CppRefs::ThrowPointer<Component>(compRef);
+	gameObject->m_InitComponent(component);
 }
 
 DEF_FUNC(GameObject, DestroyComponent, void)(CppRef compRef) {

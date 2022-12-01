@@ -56,12 +56,13 @@ void Game::m_InitMono(MonoInst* imono) {
 
 	auto gameType = m_mono->GetType("Engine", "Game");
 	auto method_SetGameRef = mono::make_method_invoker<void(CppRef)>(gameType, "cpp_SetGameRef");
+	mono_setUpdateData = mono::make_method_invoker<void(GameUpdateData)>(gameType, "cpp_SetUpdateData");
 
 	auto gameObjectType = m_mono->GetType("Engine", "GameObject");
 	mono_create = mono::make_method_invoker<CppRef()>(gameObjectType, "cpp_Create");
 
 	auto gameRef = CppRefs::Create(this);
-	method_SetGameRef(CppRef::Create(gameRef.id()));
+	method_SetGameRef(CppRef::Create(gameRef.cppRef()));
 }
 
 void Game::Run() {
@@ -70,20 +71,6 @@ void Game::Run() {
 
 	///
 	
-	std::string mesnName1 = "../../data/assets/levels/farm/meshes/House_Purple.obj";
-	std::string mesnName2 = "../../data/assets/levels/farm/meshes/Coffin.obj";
-	std::string mesnName3 = "../../data/assets/levels/farm/meshes/Daisy.obj";
-
-	//auto gameObject = CreateGameObject();
-
-	//auto quat = gameObject->transform->localRotationQ();
-	//std::cout << "+: quat:" << quat.x << ", " << quat.y << ", " << quat.z << ", " << quat.w  << std::endl;
-
-	//quat.x = 45;
-	//gameObject->transform->localRotationQ(quat);
-	//quat = gameObject->transform->localRotationQ();
-	//std::cout << "+: quat:" << quat.x << ", " << quat.y << ", " << quat.z << ", " << quat.w << std::endl;
-
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
@@ -117,11 +104,9 @@ void Game::Run() {
 			break;
 		}
 
-		m_hotkeys.Update(input());
 		m_Update();
 		m_render.Draw();
-		m_hotkeys.LateUpdate();
-
+		
 		m_fpsCounter.Update();
 		if (m_fpsCounter.HasChanges()) {
 			WCHAR text[256];
@@ -141,6 +126,13 @@ void Game::Exit(int code) {
 }
 
 void Game::m_Update() {
+	/// Pre Update
+	GameUpdateData updateData;
+	updateData.deltaTime = deltaTime();
+	mono_setUpdateData(updateData);
+	m_hotkeys.Update(input());
+
+	/// Update
 	auto it = m_gameObjects.begin();
 	while (it != m_gameObjects.end()) {
 
@@ -154,20 +146,26 @@ void Game::m_Update() {
 		gameObject->f_Update();
 		it++;
 	}
+
+	/// Post Update
+	m_hotkeys.LateUpdate();
 }
 
 void Game::m_Destroy() {
 	m_hotkeys.Destroy();
+	m_window.Destroy();
 
 	auto it = m_gameObjects.begin();
 	while (it != m_gameObjects.end()) {
 		DestroyGameObject(*it);
 		it = m_EraseGameObject(it);
 	}
+
+
 }
 
 GameObject* Game::CreateGameObject(std::string name) {
-	std::cout << "+: Game.CreateGameObject()" << std::endl;
+	//std::cout << "+: Game.CreateGameObject()" << std::endl;
 
 	auto cppRef = mono_create();
 	
@@ -178,7 +176,7 @@ GameObject* Game::CreateGameObject(std::string name) {
 }
 
 GameObjectInfo Game::m_CreateGameObject(CsRef csRef, std::string name) {
-	std::cout << "+: Game.CreateGameObjectFromCS(): csRef:" << csRef << std::endl;
+	//std::cout << "+: Game.CreateGameObjectFromCS(): csRef:" << csRef << std::endl;
 
 	auto classInfoRef = CppRefs::Create(ClassInfo::Get<GameObject>());
 
@@ -187,13 +185,13 @@ GameObjectInfo Game::m_CreateGameObject(CsRef csRef, std::string name) {
 
 	gameObject->f_objectID = ++m_objectCount;
 	gameObject->f_ref = CppRefs::Create(gameObject);
-	gameObject->f_cppRef = gameObject->f_ref.id();
+	gameObject->f_cppRef = gameObject->f_ref.cppRef();
 	gameObject->f_csRef = csRef;
 
 	gameObject->f_Init(this, name);
 		
 	GameObjectInfo objectInfo;
-	objectInfo.classRef = RefCpp(classInfoRef.id());
+	objectInfo.classRef = RefCpp(classInfoRef.cppRef());
 	objectInfo.objectRef = gameObject->cppRef();
 	objectInfo.transformRef = gameObject->transform->csRef();
 
@@ -208,7 +206,7 @@ void Game::DestroyGameObject(GameObject* gameObject) {
 
 		if (CppRefs::IsValid(gameObject->f_ref)) {
 			CppRefs::Remove(gameObject->f_ref);
-			std::cout << "+: CppRefs.Remove(): " << gameObject->cppRef() << std::endl;
+			//std::cout << "+: CppRefs.Remove(): " << gameObject->cppRef() << std::endl;
 		}
 	}
 }

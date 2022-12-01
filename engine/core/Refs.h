@@ -13,7 +13,7 @@ private:
 
 public:
 
-	size_t id() const { return m_refId; }
+	size_t cppRef() const { return m_refId; }
 	bool isInitialized() const { return m_refId > 0; }
 
 	Ref2() { }

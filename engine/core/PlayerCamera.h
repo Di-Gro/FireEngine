@@ -4,7 +4,7 @@
 #include "CameraComponent.h"
 
 class PlayerCamera : public CameraComponent {
-	PURE_COMPONENT;
+	PURE_COMPONENT(PlayerCamera)
 
 private:
 	float m_rotationSense = 1.0f;

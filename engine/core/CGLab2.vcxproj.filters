@@ -377,6 +377,9 @@
     <ClInclude Include="CS.h">
       <Filter>bridge</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentMeta.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Delegates.natvis">

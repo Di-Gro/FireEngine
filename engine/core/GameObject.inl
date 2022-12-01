@@ -1,53 +1,48 @@
 #pragma once
 #include "CSBridge.h"
-
+#include "ComponentMeta.h"
 
 
 template<typename TComponent, typename>
-CppRef GameObject::CreateComponent(CsRef csRef) {
+TComponent* GameObject::CreateComponent(CsRef csRef) {
 	Component* component = new TComponent();
 
 	component->f_ref = CppRefs::Create(component);
-	component->f_cppRef = component->f_ref.id();
+	component->f_cppRef = component->f_ref.cppRef();
 	component->f_csRef = csRef;
 
-	std::cout << "+: GameObject(" << this->csRef() << ", " << cppRef() << ").CreateComponent() -> (" << component->f_csRef << ",  " << component->f_cppRef << ")" << std::endl;
+	//auto className = component->GetMeta().name;
+	//std::cout << "+: GameObject(" << this->csRef() << ", " << this->cppRef() << ").CreateComponent<" << className << ">() -> (" << component->csRef() << ",  " << component->cppRef() << ")" << std::endl;
 
-	return component->f_cppRef;
+	return (TComponent*)component;
 }
 
-template<HasCsMetaData TComponent, typename>
+template<IsCppAddableComponent TComponent, typename >
 TComponent* GameObject::AddComponent() {
+	Component* component = CreateComponent<TComponent>();
+	auto meta = component->GetMeta();
 
-	if (IS_PURE_COMPONENT(TComponent))
-		return m_AddPureCppComponent<TComponent>();
+	std::cout << "+: GameObject(" << this->csRef() << ", " << this->cppRef() << ").AddComponent<\"" << meta.name << "\">() ->" << std::endl;
 
-	return m_AddCsCppComponent<TComponent>();
-}
+	if (!meta.isPure) {
+		CppObjectInfo info;
+		info.cppRef = component->cppRef();
+		info.classRef = meta.classInfoRef;
 
-template<typename TComponent, typename>
-TComponent* GameObject::m_AddPureCppComponent() {
-	std::cout << "+: GameObject(" << csRef() << ", " << cppRef() << ").m_AddPureCppComponent()" << std::endl;
-
-	auto cppCompRef = CreateComponent<TComponent>(RefCs(0));
-	Component* component = CppRefs::ThrowPointer<TComponent>(cppCompRef);
+		auto csCompRef = mono_AddComponent(this->csRef(), (size_t)meta.name, std::strlen(meta.name), info);
+		component->f_csRef = csCompRef;
+	}
 	m_InitComponent(component);
+
+	std::cout << "+: -> " << component->csRef() << ", " << component->cppRef() << std::endl;
 	return (TComponent*)component;
 }
 
 template<typename TComponent, typename>
-TComponent* GameObject::m_AddCsCppComponent() {
-	std::cout << "+: GameObject(" << csRef() << ", " << cppRef() << ").m_AddCsCppComponent()" << std::endl;
+TComponent* GameObject::AddComponent(const std::string& className) {
+	std::cout << "+: GameObject(" << csRef() << ", " << cppRef() << ").AddComponent(" << className << ")" << std::endl;
 
-	return AddCsComponent<TComponent>(TComponent::meta_csComponentName);
-}
-
-
-template<typename TComponent, typename>
-TComponent* GameObject::AddCsComponent(const std::string& className) {
-	std::cout << "+: GameObject(" << csRef() << ", " << cppRef() << ").AddComponentCs(" << className << ")" << std::endl;
-
-	auto cppCompRef = mono_AddComponent(this->csRef(), (size_t)className.c_str(), className.size());
+	auto cppCompRef = mono_AddCsComponent(this->csRef(), (size_t)className.c_str(), className.size());
 
 	return CppRefs::ThrowPointer<TComponent>(cppCompRef);
 }

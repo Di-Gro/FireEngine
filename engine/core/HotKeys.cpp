@@ -17,7 +17,7 @@ void HotKeys::m_InitMono() {
 	auto type = m_game->mono()->GetType("Engine", "Input");
 	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_OnInit");
 
-	CppRef cppRef = RefCpp((CppRefs::Create(this).id()));
+	CppRef cppRef = RefCpp((CppRefs::Create(this).cppRef()));
 	method(cppRef);
 }
 

@@ -8,7 +8,7 @@ T* CppRefs::GetPointer(const Ref2& ref) {
 	if (!ref.isInitialized())
 		return nullptr;
 
-	return CppRefs::GetPointer<T>(ref.id());
+	return CppRefs::GetPointer<T>(ref.cppRef());
 }
 
 template<typename T>

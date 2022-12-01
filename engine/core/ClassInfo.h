@@ -13,6 +13,7 @@ private:
 	bool m_inited = false;
 
 public:
+	bool IsInited() { return m_inited; }
 
 	ClassInfo() {}
 

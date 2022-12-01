@@ -37,8 +37,9 @@ namespace Engine {
 
         public override void OnUpdate() {
 
-			transform.localRotationQ = transform.localRotationQ * Quaternion.CreateXRotation(0.006f);
+			transform.localRotationQ = transform.localRotationQ * Quaternion.CreateXRotation(Game.DeltaTime * 1f);
 
+			//Console.WriteLine($"# DeltaTime: color={m_material.DiffuseColor}");
 
 			if (Input.GetButtonDown(Key.Enter)) {
                 m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
@@ -112,7 +113,9 @@ namespace EngineMono {
 		public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			CsRef csRef = base.Link(classInfoRef, objRef);
 
-            var gameObject = new GameObject().AddComponent<OhMyMesh>();
+			var gameObject = new GameObject();
+			gameObject.AddComponent<OhMyMesh>();
+			//gameObject.AddComponent<OhMyMesh>();
 
 
             /// Передача vector2, vector3 и quaternion ->

@@ -33,7 +33,7 @@ void MeshComponent::m_InitDynamic() {
 
 	auto* newMesh = new Mesh4(*m_mesh);
 	newMesh->f_ref = CppRefs::Create(newMesh);
-	newMesh->f_cppRef = newMesh->f_ref.id();
+	newMesh->f_cppRef = newMesh->f_ref.cppRef();
 		
 	mesh(newMesh);
 	m_dynamicMesh = newMesh;

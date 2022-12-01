@@ -10,7 +10,7 @@
 class Shader;
 
 class CameraComponent : public Component {
-	COMPONENT;
+	COMPONENT(CameraComponent)
 public:
 	float orthoWidth = 600;
 	float orthoHeight = 600;

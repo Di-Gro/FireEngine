@@ -2,26 +2,12 @@
 
 /// ->
 
-//template<typename TComponent, typename>
-//TComponent* GameObjectBase::AddComponent() {
-//	if (!IsDestroyed())
-//		return gameObject()->AddComponent<TComponent>();
-//	return nullptr;
-//}
-
-template<HasCsMetaData TComponent, typename>
+template<IsCppAddableComponent TComponent, typename>
 TComponent* GameObjectBase::AddComponent() {
 	if (!IsDestroyed())
 		return gameObject()->AddComponent<TComponent>();
 	return nullptr;
 }
-//
-//template<IsCSpp TComponent, typename>
-//TComponent* GameObjectBase::AddComponent() {
-//	if (!IsDestroyed())
-//		return gameObject()->AddComponent<TComponent>();
-//	return nullptr;
-//}
 
 /// <-
 
