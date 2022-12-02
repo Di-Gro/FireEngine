@@ -53,6 +53,9 @@ public:
 	friend std::ostream& operator<< (std::ostream& out, const CsRef& ref);
 };
 
+CppRef RefCpp(size_t v);
+CsRef RefCs(size_t v);
+
 class CppObjectInfo {
 public:
 	CppRef cppRef;
@@ -63,7 +66,7 @@ class GameObjectInfo {
 public:
 	CppRef objectRef;
 	CppRef classRef;
-	CsRef transformRef;
+	//CsRef transformRef;
 };
 
 class GameUpdateData {
@@ -71,5 +74,11 @@ public:
 	float deltaTime;
 };
 
-CppRef RefCpp(size_t v);
-CsRef RefCs(size_t v);
+class ComponentCallbacks {
+public:
+	void(*onInit)();
+	void(*onStart)();
+	void(*onUpdate)();
+	void(*onDestroy)();
+
+};

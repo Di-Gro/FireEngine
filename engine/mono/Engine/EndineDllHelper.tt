@@ -1,0 +1,78 @@
+﻿<#@ import namespace="System.Runtime.InteropServices" #>
+<#+
+    private void PROP_GETSET(string className, string propType, string propName)
+    {
+        PROP_GET(className, propType, propName);
+        PROP_SET(className, propType, propName);
+    }
+#>
+<#+
+    private void PROP_GET(string className, string propType, string propName)
+    {
+        var cppGetterName = className + "_" + propName + "_get";
+        var csGetterName = propName + "_get";
+#>
+            [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "<#= cppGetterName #>")]
+		    public static extern <#= propType #> <#= csGetterName #>(CppRef objRef);
+
+<#+
+    }
+#>
+<#+
+    private void PROP_SET(string className, string propType, string propName)
+    {
+        var cppGetterName = className + "_" + propName + "_set";
+        var csGetterName = propName + "_set";
+#>
+            [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "<#= cppGetterName #>")]
+		    public static extern void <#= csGetterName #>(CppRef objRef, <#= propType #> value);
+
+<#+
+    }
+#>
+<#+
+    private void FUNC(string className, string funcName, string retType, string args)
+    {
+        var fullName = className + "_" + funcName;
+#>
+            [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "<#= fullName #>")]
+		    public static extern <#= retType #> <#= funcName #>(<#= args #>);
+
+<#+
+    }
+#>
+<#+
+    private void ANSI_FUNC(string className, string funcName, string retType, string args)
+    {
+        var fullName = className + "_" + funcName;
+                    
+#>
+            [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "<#= fullName #>", CharSet = CharSet.Ansi)]
+		    public static extern <#= retType #> <#= funcName #>(<#= args #>);
+
+<#+
+    }
+#>
+<#+
+    private void CDECL_FUNC(string className, string funcName, string retType, string args)
+    {
+        var fullName = className + "_" + funcName;
+                    
+#>
+            [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "<#= fullName #>", CallingConvention = CallingConvention.Cdecl)]
+		    public static extern <#= retType #> <#= funcName #>(<#= args #>);
+
+<#+
+    }
+#>
+<#+
+    private void DEC_COMPONENT(string className)
+    {
+        var fullName = className + "_" + "Create";
+#>
+            [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "<#= fullName #>")]
+		    public static extern CppObjectInfo Create(CppRef cppObjRef, CsRef csCompRef);
+
+<#+
+    }
+#>

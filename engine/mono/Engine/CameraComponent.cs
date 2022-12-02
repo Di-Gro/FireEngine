@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-using EngineMono;
+using EngineDll;
 
 namespace Engine {
     sealed class CameraComponent : CppComponent {
@@ -28,34 +28,20 @@ namespace Engine {
 
         public bool DrawDebug { get => prop_drawDebug.value; set => prop_drawDebug.value = value; }
 
-        public bool IsAttached => dll_IsAttached_get(cppRef);
-        public bool Orthographic { get => dll_orthographic_get(cppRef); set => dll_orthographic_set(cppRef, value); }
+        public bool IsAttached => Dll.CameraComponent.IsAttached_get(cppRef);
 
-        public void Attach() => dll_Attach(cppRef);
-        public void UpdateProjMatrix() => dll_UpdateProjMatrix(cppRef);
-
-
-        public override CppObjectInfo CreateFromCS(GameObject target) {
-            return dll_Create(target.cppRef, csRef);
+        public bool Orthographic { 
+            get => Dll.CameraComponent.orthographic_get(cppRef); 
+            set => Dll.CameraComponent.orthographic_set(cppRef, value); 
         }
 
+        public void Attach() => Dll.CameraComponent.Attach(cppRef);
+        public void UpdateProjMatrix() => Dll.CameraComponent.UpdateProjMatrix(cppRef);
 
-        [DllImport(MonoClass.ExePath, EntryPoint = "CameraComponent_Create")]
-        private static extern CppObjectInfo dll_Create(CppRef cppObjRef, CsRef csCompRef);
 
-        [DllImport(MonoClass.ExePath, EntryPoint = "CameraComponent_IsAttached_get")]
-        private static extern bool dll_IsAttached_get(CppRef cppObjRef);
+        public override CppObjectInfo CreateFromCS(Actor target) {
+            return Dll.CameraComponent.Create(target.cppRef, csRef);
+        }
 
-        [DllImport(MonoClass.ExePath, EntryPoint = "CameraComponent_orthographic_get")]
-        private static extern bool dll_orthographic_get(CppRef cppObjRef);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "CameraComponent_orthographic_set")]
-        private static extern void dll_orthographic_set(CppRef cppObjRef, bool value);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "CameraComponent_Attach")]
-        private static extern void dll_Attach(CppRef cppObjRef);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "CameraComponent_UpdateProjMatrix")]
-        private static extern void dll_UpdateProjMatrix(CppRef cppObjRef);
     }
 }

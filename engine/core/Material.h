@@ -62,7 +62,6 @@ FUNC(Material, ambient_set, void)(CppRef matRef, float value);
 FUNC(Material, specular_set, void)(CppRef matRef, float value);
 FUNC(Material, shininess_set, void)(CppRef matRef, float value);
 
-//FUNC(Material, name_get, const char*)(CppRef matRef);
 FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth);
 
 //extern "C" __declspec(dllexport) char* _cdecl Material_name_get(CppRef matRef);

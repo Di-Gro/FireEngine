@@ -15,7 +15,43 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Engine\EngineDll.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EngineDll.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\vim-math\vim-math.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Engine\EndineDllHelper.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EndineDllHelper.cs</LastGenOutput>
+    </None>
+    <None Update="Engine\EngineDll.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EngineDll.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Engine\EndineDllHelper.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EndineDllHelper.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Engine\EngineDll.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EngineDll.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

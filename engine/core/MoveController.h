@@ -18,7 +18,7 @@ private:
 	Vector3 m_delta;
 
 public:
-	//MoveController(GameObject* gameObject) : Component(gameObject) {}
+	//MoveController(Actor* gameObject) : Component(gameObject) {}
 
 	void OnInit() override;
 	void OnUpdate() override;

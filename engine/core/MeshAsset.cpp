@@ -93,7 +93,7 @@ void MeshAsset::m_Load(size_t hash, fs::path path) {
 	if (m_assets.count(hash) > 0)
 		return;
 
-	std::cout << "+: MeshAsset.m_Load(hash:" << hash << " path:" << path << ")" << std::endl;
+	//std::cout << "+: MeshAsset.m_Load(hash:" << hash << " path:" << path << ")" << std::endl;
 
 	auto* asset = m_CreateMeshAsset(hash, path);
 	m_assets.insert({ hash, asset });
@@ -478,7 +478,7 @@ static void s_LoadSceneData(std::ifstream& file, SceneData* scene) {
 	}
 }
 
-void MeshAsset::LoadScene(fs::path levelDir, std::vector<GameObject*>* objects) {
+void MeshAsset::LoadScene(fs::path levelDir, std::vector<Actor*>* objects) {
 	auto dir = levelDir.string();
 	auto sceneJsonPath = levelDir.string() + "/scene.json";
 	auto meshesJsonPath = levelDir.string() + "/meshes.json";
@@ -504,7 +504,7 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<GameObject*>* objects) 
 	auto sceneMeshPath = dir + "/" + scene.sceneObj;
 	Load(sceneMeshPath);
 
-	auto sceneObj = m_game->CreateGameObject("scene");
+	auto sceneObj = m_game->CreateActor("scene");
 	sceneObj->AddComponent<MeshComponent>()->mesh(GetMesh(sceneMeshPath));
 
 	if (objects != nullptr)
@@ -514,12 +514,12 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<GameObject*>* objects) 
 		auto meshPath = dir + "/" + data.obj;
 		Load(meshPath);
 
-		auto meshComp = m_game->CreateGameObject(data.name)->AddComponent<MeshComponent>();
+		auto meshComp = m_game->CreateActor(data.name)->AddComponent<MeshComponent>();
 		meshComp->mesh(GetMesh(meshPath));
 
-		meshComp->transform->localPosition(data.pos);
-		meshComp->transform->localRotation(data.rot);
-		meshComp->transform->localScale(data.scale / meshScales[data.name + ".obj"]);
+		meshComp->localPosition(data.pos);
+		meshComp->localRotation(data.rot);
+		meshComp->localScale(data.scale / meshScales[data.name + ".obj"]);
 
 		DirectX::BoundingBox box;
 		auto mesh = m_GetMeshMutable(meshPath);
@@ -537,17 +537,17 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<GameObject*>* objects) 
 		auto hs = box.Extents;
 		float radius = (hs.x + hs.y + hs.z) / 3;
 
-		auto attachable = m_game->CreateGameObject("Attachable")->AddComponent<Attachable>();
-		attachable->SetParent(meshComp);
-		attachable->transform->localPosition(box.Center);
+		auto attachable = m_game->CreateActor("Attachable")->AddComponent<Attachable>();
+		attachable->actor()->parent(meshComp->actor());
+		attachable->localPosition(box.Center);
 		attachable->boundRadius = radius;
 		attachable->attachParent = true;
 		attachable->showCenter = false;
 		attachable->showBound = false;
 
 		if (objects != nullptr) {
-			objects->push_back(meshComp->gameObject());
-			objects->push_back(attachable->gameObject());
+			objects->push_back(meshComp->actor());
+			objects->push_back(attachable->actor());
 		}
 	}
 }

@@ -53,6 +53,8 @@ namespace CSBridge {
 
 #define FUNC(ClassName, funcName, retType) extern "C" __declspec(dllexport) retType ClassName##_##funcName
 
+#define FRIEND_FUNC(ClassName, funcName, retType) friend retType ClassName##_##funcName
+
 #define DEF_FUNC(ClassName, funcName, retType) retType ClassName##_##funcName 
 
 //#define DEC_COMPONENT_CREATE(ClassName)\
@@ -62,11 +64,11 @@ namespace CSBridge {
 //DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
 //	CppObjectInfo strct;\
 //\
-//	auto* gameObject = CppRefs::GetPointer<GameObject>(cppObjRef);\
-//	if (gameObject != nullptr) {\
+//	auto* actor = CppRefs::GetPointer<Actor>(cppObjRef);\
+//	if (actor != nullptr) {\
 //		auto classInfoRef = CppRefs::Create(ClassInfo::Get<ClassName>());\
 //\
-//		strct.cppRef = gameObject->CreateComponent<ClassName>(RefCs(csCompRef)).value;\
+//		strct.cppRef = actor->inner_CreateComponent<ClassName>(RefCs(csCompRef)).value;\
 //		strct.classRef = classInfoRef.cppRef();\
 //\
 //		return strct;\
@@ -123,9 +125,9 @@ FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \
 
 #define DEF_COMPONENT_CREATE(ClassName)\
 DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
-	auto* gameObject = CppRefs::ThrowPointer<GameObject>(cppObjRef);\
+	auto* actor = CppRefs::ThrowPointer<Actor>(cppObjRef);\
 \
-	Component* component = gameObject->CreateComponent<ClassName>(csCompRef);\
+	Component* component = actor->inner_CreateComponent<ClassName>(csCompRef);\
 	auto meta = component->GetMeta();\
 \
 	CppObjectInfo strct;\

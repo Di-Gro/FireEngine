@@ -4,7 +4,7 @@
 
 
 template<typename TComponent, typename>
-TComponent* GameObject::CreateComponent(CsRef csRef) {
+TComponent* Actor::inner_CreateComponent(CsRef csRef) {
 	Component* component = new TComponent();
 
 	component->f_ref = CppRefs::Create(component);
@@ -12,17 +12,17 @@ TComponent* GameObject::CreateComponent(CsRef csRef) {
 	component->f_csRef = csRef;
 
 	//auto className = component->GetMeta().name;
-	//std::cout << "+: GameObject(" << this->csRef() << ", " << this->cppRef() << ").CreateComponent<" << className << ">() -> (" << component->csRef() << ",  " << component->cppRef() << ")" << std::endl;
+	//std::cout << "+: Actor(" << this->csRef() << ", " << this->cppRef() << ").inner_CreateComponent<" << className << ">() -> (" << component->csRef() << ",  " << component->cppRef() << ")" << std::endl;
 
 	return (TComponent*)component;
 }
 
 template<IsCppAddableComponent TComponent, typename >
-TComponent* GameObject::AddComponent() {
-	Component* component = CreateComponent<TComponent>();
+TComponent* Actor::AddComponent() {
+	Component* component = inner_CreateComponent<TComponent>();
 	auto meta = component->GetMeta();
 
-	std::cout << "+: GameObject(" << this->csRef() << ", " << this->cppRef() << ").AddComponent<\"" << meta.name << "\">() ->" << std::endl;
+	//std::cout << "+: Actor(" << this->csRef() << ", " << this->cppRef() << ").AddComponent<\"" << meta.name << "\">() ->" << std::endl;
 
 	if (!meta.isPure) {
 		CppObjectInfo info;
@@ -34,13 +34,13 @@ TComponent* GameObject::AddComponent() {
 	}
 	m_InitComponent(component);
 
-	std::cout << "+: -> " << component->csRef() << ", " << component->cppRef() << std::endl;
+	//std::cout << "+: -> " << component->csRef() << ", " << component->cppRef() << std::endl;
 	return (TComponent*)component;
 }
 
 template<typename TComponent, typename>
-TComponent* GameObject::AddComponent(const std::string& className) {
-	std::cout << "+: GameObject(" << csRef() << ", " << cppRef() << ").AddComponent(" << className << ")" << std::endl;
+TComponent* Actor::AddComponent(const std::string& className) {
+	//std::cout << "+: Actor(" << csRef() << ", " << cppRef() << ").AddComponent(" << className << ")" << std::endl;
 
 	auto cppCompRef = mono_AddCsComponent(this->csRef(), (size_t)className.c_str(), className.size());
 
@@ -48,7 +48,7 @@ TComponent* GameObject::AddComponent(const std::string& className) {
 }
 
 template<typename TComponent, typename>
-TComponent* GameObject::GetComponent() {
+TComponent* Actor::GetComponent() {
 	TComponent* ptr = nullptr;
 	for (auto component : m_components) {
 		ptr = dynamic_cast<TComponent*>(component);
@@ -59,7 +59,7 @@ TComponent* GameObject::GetComponent() {
 } 
 
 template<typename TComponent, typename>
-TComponent* GameObject::GetComponentInChild() {
+TComponent* Actor::GetComponentInChild() {
 	auto* ptr = GetComponent<TComponent>();
 	if (ptr != nullptr)
 		return ptr;

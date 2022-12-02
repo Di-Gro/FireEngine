@@ -1,5 +1,7 @@
 
-class Component : public GameObjectBase {
+class Component : public ActorBase {
+	friend class Actor;
+
 public:
 	Component() { }
 
@@ -15,6 +17,9 @@ public:
 	virtual ~Component() {}
 
 	virtual ComponentMeta GetMeta() = 0;
+
+private:
+	ComponentCallbacks m_callbacks;
 
 };
 

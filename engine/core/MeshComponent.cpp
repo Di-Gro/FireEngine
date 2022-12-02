@@ -1,4 +1,5 @@
 #include "MeshComponent.h"
+#include <list>
 
 #include <SimpleMath.h>
 
@@ -15,6 +16,7 @@ mono::mono_method_invoker<void(CsRef, CppRef)> MeshComponent::mono_SetFromCpp;
 
 void MeshComponent::OnInit() {
 	m_InitMono();
+	m_renderHandle = game()->render()->SubscribeForDrawin(this);
 }
 
 void MeshComponent::m_InitMono() {
@@ -41,6 +43,7 @@ void MeshComponent::m_InitDynamic() {
 
 void MeshComponent::OnDestroy() {
 	m_DeleteResources();
+	game()->render()->UnSubscribeFromDrawin(m_renderHandle);
 }
 
 void MeshComponent::RemoveMaterial(size_t index) {
@@ -231,8 +234,8 @@ void MeshComponent::m_Draw() {
 		return;
 
 	auto camera = game()->render()->camera();
-	auto cameraPosition = camera->transform->worldPosition();
-	auto worldMatrix = transform->GetWorldMatrix(); // *Matrix::CreateScale(100, 100, 100);
+	auto cameraPosition = camera->worldPosition();
+	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
 	Mesh4::DynamicData data;
@@ -254,7 +257,7 @@ DEF_COMPONENT(MeshComponent, Engine.MeshComponent, 2) {
 
 DEF_PROP_GET(MeshComponent, bool, IsDynamic)
 DEF_PROP_GET(MeshComponent, bool, IsStatic)
-DEF_PROP_GET(MeshComponent, bool, MaterialCount)
+DEF_PROP_GET(MeshComponent, int, MaterialCount)
 
 DEF_FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef) {
 	auto component = CppRefs::ThrowPointer<MeshComponent>(compRef);

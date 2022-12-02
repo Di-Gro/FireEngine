@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "CSBridge.h"
-#include "GameObjectConcepts.h"
+#include "ActorConcepts.h"
 
 class ClassInfo {
 public:

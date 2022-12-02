@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <list>
 
 #include "SimpleMath.h"
 
@@ -26,8 +27,10 @@ private:
 
 	bool m_visible = true;
 
+	std::list<Component*>::iterator m_renderHandle;
+
 public:
-	//ImageComponent(GameObject* gameObject) : Component(gameObject) {}
+	//ImageComponent(Actor* gameObject) : Component(gameObject) {}
 
 	void visibility(bool value) { m_visible = value; }
 	bool visibility() { return m_visible; }
@@ -35,6 +38,7 @@ public:
 	void OnInit() override;
 	void OnStart() override;
 	void OnDrawUI() override;
+	void OnDestroy() override;
 
 	void SetImage(const ImageAsset::Image* image);
 	void SetImage(comptr<ID3D11Texture2D> texture2D);

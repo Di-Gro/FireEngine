@@ -46,19 +46,19 @@ static std::string ToString(Transform* transform) {
 	return str;
 }
 
-GameObject* GameController::CreatePlayer() {
+Actor* GameController::CreatePlayer() {
 
-	auto player = CreateGameObject("player");
+	auto player = CreateActor("player");
 	player->AddComponent<Player>();
 	player->AddComponent<PlayerController>();
 	
-	auto cameraRoot = CreateGameObject("camera root");
-	cameraRoot->SetParent(player);
-	cameraRoot->transform->localPosition({ 0, 0, 0 });
+	auto cameraRoot = CreateActor("camera root");
+	cameraRoot->parent(player);
+	cameraRoot->localPosition({ 0, 0, 0 });
 
-	auto camera = CreateGameObject("player camera");
-	camera->SetParent(cameraRoot);
-	camera->transform->localPosition({ 0, 0, 300 });
+	auto camera = CreateActor("player camera");
+	camera->parent(cameraRoot);
+	camera->localPosition({ 0, 0, 300 });
 	camera->AddComponent<PlayerCamera>();
 
 	auto test = player->AddComponent<TestComponent>();
@@ -91,12 +91,12 @@ void GameController::OnInit() {
 	AddComponent<LineComponent>()->SetPoint(Vector3::Right * 100, { 1, 0, 0, 1 });
 
 	m_defaultCamera = game()->mainCamera();
-	m_defaultCamera->transform->localPosition({ 0, 100,-300 });
+	m_defaultCamera->localPosition({ 0, 100,-300 });
 
 	m_player = CreatePlayer()->GetComponent<Player>();
 	m_playerCamera = m_player->GetComponentInChild<PlayerCamera>();
 
-	std::vector<GameObject*> newObjects;
+	std::vector<Actor*> newObjects;
 	game()->meshAsset()->LoadScene("../../data/assets/levels/farm", &newObjects);
 	
 	for (auto gobj : newObjects) {
@@ -106,12 +106,12 @@ void GameController::OnInit() {
 	}
 
 	
-	auto sprite = CreateGameObject("UI Image")->AddComponent<ImageComponent>();
+	auto sprite = CreateActor("UI Image")->AddComponent<ImageComponent>();
 	sprite->SetImage(game()->lighting()->directionLight()->shadowRT.depthTexture());
 
 	auto imgSize = sprite->size() * 0.1f;
 
-	sprite->transform->localPosition({ 20, 1080 - imgSize.y - 35, 0 });
+	sprite->localPosition({ 20, 1080 - imgSize.y - 35, 0 });
 	sprite->size(imgSize);
 
 	auto test = m_player->GetComponentInChild<TestComponent>();
@@ -134,6 +134,10 @@ void GameController::OnUpdate() {
 	if (hotkeys->Is(Keys::Esc, KeyState::Press)) {
 		std::cout << "Exit" << std::endl;
 		game()->Exit(0);
+	}
+
+	if (hotkeys->GetButtonDown(Keys::K)) {
+		game()->Stat();
 	}
 
 	if (hotkeys->Is(Keys::Tab, KeyState::Press)) {

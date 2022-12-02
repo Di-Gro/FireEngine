@@ -54,10 +54,10 @@ void DirectionLight::drawDebug(bool value) {
 
 CameraComponent* DirectionLight::camera() {
 
-	auto rot = transform->localRotation();
+	auto rot = localRotation();
 	auto rotator = Matrix::CreateFromYawPitchRoll(rot.y, rot.x, 0);
 
-	auto newMatrix = Matrix::CreateLookAt(transform->worldPosition(), transform->worldPosition() + rotator.Forward(), rotator.Up());
+	auto newMatrix = Matrix::CreateLookAt(worldPosition(), worldPosition() + rotator.Forward(), rotator.Up());
 	m_camera->viewMatrix(newMatrix);
 	m_camera->UpdateProjectionMatrix(/*game()->window()*/);
 

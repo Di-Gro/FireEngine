@@ -4,7 +4,7 @@
 
 class TransformTest : public Component {
 public:
-	//TransformTest(GameObject* go) : Component(go) {}
+	//TransformTest(Actor* go) : Component(go) {}
 
 	void OnUpdate() override;
 	

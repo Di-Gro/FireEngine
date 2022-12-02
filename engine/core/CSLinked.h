@@ -12,7 +12,7 @@
 #include "monopp/mono_method_invoker.h"
 
 
-#include "GameObjectConcepts.h"
+#include "ActorConcepts.h"
 
 
 template<HasMetaOffsets T>

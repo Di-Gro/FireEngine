@@ -27,7 +27,7 @@ private:
 	bool m_needDrawDebug = true;
 
 public:
-	//DirectionLight(GameObject* gameObject) : Component(gameObject) { }
+	//DirectionLight(Actor* actor) : Component(actor) { }
 
 	bool drawDebug() { return m_needDrawDebug; }
 	void drawDebug(bool value);

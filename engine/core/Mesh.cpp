@@ -254,7 +254,7 @@ void Mesh4::Draw(const DynamicData& data) const {
 
 		auto* cbuf2 = (DirectionLightCBuffer*)res3.pData;
 		cbuf2->uvMatrix = data.directionLight->uvMatrix();
-		cbuf2->direction = data.directionLight->transform->forward();
+		cbuf2->direction = data.directionLight->forward();
 		cbuf2->color = data.directionLight->color;
 		cbuf2->intensity = data.directionLight->intensity;
 

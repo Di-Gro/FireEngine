@@ -12,7 +12,7 @@
 #include "Forms.h"
 
 class Game;
-class GameObject;
+class Actor;
 class Material;
 
 namespace tinyobj {
@@ -77,7 +77,7 @@ public:
 
 	void Load(fs::path path);
 	void Load(size_t hash);
-	void LoadScene(fs::path path, std::vector<GameObject*>* objects = nullptr);
+	void LoadScene(fs::path path, std::vector<Actor*>* objects = nullptr);
 
 	void ReloadMaterials();
 

@@ -5,9 +5,6 @@
 
 #include "Refs.h"
 
-
-
-
 const Vector3 Transform::localPosition() { 
 	return m_localPosition; 
 }
@@ -15,6 +12,30 @@ const Vector3 Transform::localPosition() {
 void Transform::localPosition(const Vector3& value) { 
 	m_localPosition = value;
 	m_localMatrix.Translation(m_localPosition);
+}
+
+void Transform::worldPosition(const Vector3& value) {
+	localPosition(m_localPosition + value - worldPosition());
+}
+
+void Transform::worldRotationQ(const Quaternion& value) {
+	Quaternion iwrot;
+	worldRotationQ().Inverse(iwrot);
+	localRotationQ(localRotationQ() * (value * iwrot));
+}
+
+void Transform::worldScale(const Vector3& value) {
+	auto parentWorldScale = Vector3::One; // parentWorldScale
+	auto newLocalScale = Vector3::Zero;
+
+	if (friend_gameObject->HasParent())
+		parentWorldScale = friend_gameObject->parent()->worldScale();
+
+	if (parentWorldScale.x != 0) newLocalScale.x = value.x / parentWorldScale.x;
+	if (parentWorldScale.y != 0) newLocalScale.y = value.y / parentWorldScale.y;
+	if (parentWorldScale.z != 0) newLocalScale.z = value.z / parentWorldScale.z;
+
+	localScale(newLocalScale);
 }
 
 const Vector3 Transform::localRotation() { 
@@ -45,8 +66,8 @@ void Transform::localRotation(const Vector3& value) {
 	auto q = Quaternion::CreateFromYawPitchRoll(m_localRotation);
 	m_localRotationMatrix = Matrix::CreateFromQuaternion(q);
 
-	m_localMatrix = Matrix::CreateScale(m_scale);
-	m_localMatrix *= m_localRotationMatrix; // Matrix::CreateFromQuaternion(q);
+	m_localMatrix = Matrix::CreateScale(m_localScale);
+	m_localMatrix *= m_localRotationMatrix;
 	m_localMatrix *= Matrix::CreateTranslation(m_localPosition);
 }
 
@@ -54,8 +75,8 @@ void Transform::localRotationQ(const Quaternion& value) {
 	m_localRotation = value.ToEuler();
 	m_localRotationMatrix = Matrix::CreateFromQuaternion(value);
 
-	m_localMatrix = Matrix::CreateScale(m_scale);
-	m_localMatrix *= m_localRotationMatrix; // Matrix::CreateFromQuaternion(value);
+	m_localMatrix = Matrix::CreateScale(m_localScale);
+	m_localMatrix *= m_localRotationMatrix;
 	m_localMatrix *= Matrix::CreateTranslation(m_localPosition);
 }
 
@@ -64,23 +85,22 @@ void Transform::localRotation(const Vector3& axis, float angle) {
 	m_localRotation = q.ToEuler();
 	m_localRotationMatrix = Matrix::CreateFromQuaternion(q);
 
-	m_localMatrix = Matrix::CreateScale(m_scale);
-	m_localMatrix *= m_localRotationMatrix; // Matrix::CreateFromQuaternion(q);
+	m_localMatrix = Matrix::CreateScale(m_localScale);
+	m_localMatrix *= m_localRotationMatrix;
 	m_localMatrix *= Matrix::CreateTranslation(m_localPosition);
 }
 
 void Transform::localScale(const Vector3& value) {
-	m_scale = value;
+	m_localScale = value;
 
-	//auto q = Quaternion::CreateFromYawPitchRoll(m_localRotation);
 	auto q = Quaternion::CreateFromRotationMatrix(m_localRotationMatrix);
 
-	m_localMatrix = Matrix::CreateScale(m_scale);
-	m_localMatrix *= m_localRotationMatrix; // Matrix::CreateFromQuaternion(q);
+	m_localMatrix = Matrix::CreateScale(m_localScale);
+	m_localMatrix *= m_localRotationMatrix;
 	m_localMatrix *= Matrix::CreateTranslation(m_localPosition);
 }
 
-const Vector3 Transform::localScale() { return m_scale; }
+const Vector3 Transform::localScale() { return m_localScale; }
 
 const Vector3 Transform::localForward() { return m_localMatrix.Forward(); }
 const Vector3 Transform::localUp()		{ return m_localMatrix.Up(); }
@@ -92,15 +112,11 @@ const Vector3 Transform::right()	{ return GetWorldMatrix().Right(); }
 
 Matrix Transform::GetWorldMatrix() {
 	auto matrix = GetLocalMatrix();
-
-	auto parent = friend_gameObject->GetParent();
-
-	//if (parent == nullptr)
-	//	matrix *= Matrix::CreateScale({ 2, 2, 2 });
+	auto parent = friend_gameObject->parent();
 
 	while (parent != nullptr) {
-		matrix *= parent->transform->GetLocalMatrix();
-		parent = parent->GetParent();
+		matrix *= parent->GetLocalMatrix();
+		parent = parent->parent();
 	}
 	m_matrix = matrix;
 	return m_matrix;
@@ -118,7 +134,7 @@ Matrix Transform::tmp_GetMatrixRL() {
 	auto parentsWorldMatrix = Matrix::Identity;
 
 	if (friend_gameObject->HasParent())
-		parentsWorldMatrix = friend_gameObject->GetParent()->transform->GetWorldMatrix();
+		parentsWorldMatrix = friend_gameObject->parent()->GetWorldMatrix();
 
 	return parentsWorldMatrix * GetLocalMatrix();
 }
@@ -127,12 +143,32 @@ Vector3 Transform::worldRotation() {
 	return tmp_GetMatrixRL().ToEuler();
 }
 
-Vector3 Transform::worldScale() {
+Quaternion Transform::worldRotationQ() {
+	auto wmat = GetWorldMatrix();
+
 	Quaternion quat;
 	Vector3 nScale;
 	Vector3 nPos;
-	GetWorldMatrix().Decompose(nScale, quat, nPos);
-	return nScale;
+	bool res = wmat.Decompose(nScale, quat, nPos);
+
+	return quat;
+}
+
+Vector3 Transform::worldScale() {
+	auto scale = localScale();
+	auto parent = friend_gameObject->parent();
+
+	while (parent != nullptr) {
+		scale *= parent->localScale();
+		parent = parent->parent();
+	}
+	return scale;
+
+	//Quaternion quat;
+	//Vector3 nScale;
+	//Vector3 nPos;
+	//GetWorldMatrix().Decompose(nScale, quat, nPos);
+	//return nScale;
 }
 
 void PrintMatrix(Matrix m) {
@@ -143,61 +179,34 @@ void PrintMatrix(Matrix m) {
 	std::cout << "\n";
 }
 
-void Transform::friend_ChangeParent(GameObject* newParent) {
+void Transform::friend_ChangeParent(Actor* newParent) {
 	auto m = GetWorldMatrix();
 
-	if (newParent != nullptr) {
-		m *= newParent->transform->GetWorldMatrix().Invert();
-	}
+	if (newParent != nullptr)
+		m *= newParent->GetWorldMatrix().Invert();
 	
+	Quaternion quat = Quaternion::Identity;
+	Vector3 nScale = Vector3::Zero;
+	Vector3 nPos = Vector3::Zero;
+
+	if (IsNaN(m)) 
+		FixNaN(m);
+	else 
+		bool res = m.Decompose(nScale, quat, nPos);
+
 	m_localMatrix = m;
-
-	Quaternion quat;
-	Vector3 nScale;
-	Vector3 nPos;
-	bool res = m.Decompose(nScale, quat, nPos);
-
 	m_localPosition = m_localMatrix.Translation();
 	m_localRotation = quat.ToEuler();
 	m_localRotationMatrix = Matrix::CreateFromQuaternion(quat);
+	m_localScale = nScale;
 }
 
-#pragma warning( push )
-#pragma warning( disable : 4190)
-
-DEF_OBJECT(Transform, 0) { }
-
-DEF_PROP_GETSET(Transform, Vector3, localPosition)
-DEF_PROP_GETSET(Transform, Vector3, localRotation)
-DEF_PROP_GETSET(Transform, Quaternion, localRotationQ)
-DEF_PROP_GETSET(Transform, Vector3, localScale)
-
-DEF_PROP_GET(Transform, Vector3, localForward)
-DEF_PROP_GET(Transform, Vector3, localUp)
-DEF_PROP_GET(Transform, Vector3, localRight)
-
-DEF_PROP_GET(Transform, Vector3, forward)
-DEF_PROP_GET(Transform, Vector3, up)
-DEF_PROP_GET(Transform, Vector3, right)
-
-
-//Vector3 Transform_localPosition_get(CppRef objRef) {
-//	auto* a = CppRefs::GetPointer<Transform>(objRef);
-//	if (a != nullptr)
-//		return a->localPosition();
-//	else
-//		std::cout << "+: prop_get::GetPointer<>(" << objRef << "): NULL" << std::endl;
+//#pragma warning( push )
+//#pragma warning( disable : 4190)
 //
-//	return Vector3();
-//}
+//DEF_OBJECT(Transform, 0) { }
 //
-//void Transform_localPosition_set(CppRef objRef, Vector3 value) {		
-//	auto* a = CppRefs::GetPointer<Transform>(objRef);
-//	if (a != nullptr)
-//		a->localPosition(value);
-//	else
-//		std::cout << "+: prop_set::GetPointer<>(" << objRef << "): NULL" << std::endl;
 //
-//}
-
-#pragma warning( pop ) 
+//
+//
+//#pragma warning( pop ) 

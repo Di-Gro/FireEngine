@@ -1,4 +1,5 @@
 #include "ImageComponent.h"
+#include <list>
 
 #include "CameraComponent.h"
 #include "Render.h"
@@ -9,17 +10,21 @@ void ImageComponent::size(Vector2 size) {
 	auto window = game()->window();
 	Vector3 imageSize(size.x, size.y, 1);
 	Vector3 screenSize(window->GetWidth(), window->GetHeight(), 1);
-	transform->localScale(imageSize / screenSize);
+	localScale(imageSize / screenSize);
 }
 
 Vector2 ImageComponent::size() {
 	auto window = game()->window();
 	Vector2 screenSize(window->GetWidth(), window->GetHeight());
-	return Vector2(transform->localScale()) * screenSize;
+	return Vector2(localScale()) * screenSize;
 }
 
 void ImageComponent::OnInit() {
-	
+	m_renderHandle = game()->render()->SubscribeForUIDrawin(this);
+}
+
+void ImageComponent::OnDestroy() {
+	game()->render()->UnSubscribeFromUIDrawin(m_renderHandle);
 }
 
 void ImageComponent::OnStart() {
@@ -95,8 +100,8 @@ void ImageComponent::OnDrawUI() {
 	Vector3 screenSize(window->GetWidth(), window->GetHeight(), 1);
 
 	auto camera = game()->render()->camera();
-	auto cameraPosition = camera->transform->worldPosition();
-	auto worldMatrix = transform->GetWorldMatrix();
+	auto cameraPosition = camera->worldPosition();
+	auto worldMatrix = GetWorldMatrix();
 
 	worldMatrix.Translation((worldMatrix.Translation() / screenSize) * 2 - Vector3(1, 1, 0));
 

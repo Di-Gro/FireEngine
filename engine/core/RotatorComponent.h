@@ -40,7 +40,7 @@ public:
 		return perp;
 	}
 
-	//RotatorComponent(GameObject* gameObject) : Component(gameObject) {}
+	//RotatorComponent(Actor* gameObject) : Component(gameObject) {}
 
 	void OnInit() override {
 		auto random = Random();
@@ -58,14 +58,14 @@ public:
 	void OnUpdate() override {
 		if (byAxis) {
 			tatalAngle += angle * game()->deltaTime();
-			transform->localRotation(axis, tatalAngle);
+			localRotation(axis, tatalAngle);
 		}
 		else {
-			transform->localRotation(transform->localRotation() + angles * game()->deltaTime());
+			localRotation(localRotation() + angles * game()->deltaTime());
 		}
 
 		if(printTransform)
-			game()->SendGameMessage(std::to_string(gameObject()->Id()) + " tr");
+			game()->SendGameMessage(std::to_string(actor()->Id()) + " tr");
 	}
 
 	void RecieveGameMessage(const std::string& msg) override {

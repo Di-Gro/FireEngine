@@ -5,66 +5,94 @@ using System.Text;
 using EngineMono;
 using System.Runtime.InteropServices;
 
+using EngineDll;
 
 namespace Engine {
 
-    sealed class GameObject : CppLinked {
-        private CsRef m_transformRef;
+    sealed class Actor : CppLinked {
+        //private CsRef m_transformRef;
 
+        public Vector3 localPosition {
+            get => Dll.Actor.localPosition_get(cppRef);
+            set => Dll.Actor.localPosition_set(cppRef, value);
+        }
 
-        public Transform transform => GetObjectByRef(m_transformRef) as Transform;
+        public Vector3 localRotation {
+            get => Dll.Actor.localRotation_get(cppRef);
+            set => Dll.Actor.localRotation_set(cppRef, value);
+        }
 
-        public GameObject parent {
-            get => (GameObject)GetObjectByRef(dll_parent_get(cppRef));
-            set => dll_parent_set(cppRef, value.cppRef);
+        public Quaternion localRotationQ {
+            get => Dll.Actor.localRotationQ_get(cppRef);
+            set => Dll.Actor.localRotationQ_set(cppRef, value);
+        }
+
+        public Vector3 localScale {
+            get => Dll.Actor.localScale_get(cppRef);
+            set => Dll.Actor.localScale_set(cppRef, value);
+        }
+
+        public Vector3 localForward => Dll.Actor.localForward_get(cppRef);
+        public Vector3 localUp => Dll.Actor.localUp_get(cppRef);
+        public Vector3 localRight => Dll.Actor.localRight_get(cppRef);
+
+        public Vector3 forward => Dll.Actor.forward_get(cppRef);
+        public Vector3 up => Dll.Actor.up_get(cppRef);
+        public Vector3 right => Dll.Actor.right_get(cppRef);
+
+        //public Transform transform => GetObjectByRef(m_transformRef) as Transform;
+
+        public Actor parent {
+            get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
+            set => Dll.Actor.parent_set(cppRef, value.cppRef);
         }
 
         public bool IsDestroyed => GetObjectByRef(csRef) == null;
 
-        public int GetChildrenCount() => dll_GetChildrenCount(cppRef);
+        public int GetChildrenCount() => Dll.Actor.GetChildrenCount(cppRef);
 
 
         #region Public
 
-        public GameObject() : this("GameObject") { }
+        public Actor() : this("GameObject") { }
 
-        public GameObject(string name) {
+        public Actor(string name) {
             //Console.WriteLine($"#: GameObject(\"{name}\"): {csRef}, -> ");
 
-            var info = dll_CreateGameObjectFromCS(Game.gameRef, csRef, name);
+            var info = Dll.Game.CreateGameObjectFromCS(Game.gameRef, csRef, name);
             Link(info.classRef, info.objectRef);
 
-            m_transformRef = info.transformRef;
+            //m_transformRef = info.transformRef;
 
-            Console.WriteLine($"#: GameObject({csRef}, {cppRef}): \"{name}\"");
+            //Console.WriteLine($"#: GameObject({csRef}, {cppRef}): \"{name}\"");
         }
 
 
         public void Destroy() {
-            dll_Destroy(cppRef);
+            Dll.Actor.Destroy(cppRef);
             RemoveObjectByRef(csRef);
         }
 
-        ~GameObject() {
+        ~Actor() {
             //Console.WriteLine($"#: ~GameObject({csRef}, {cppRef})(): {cppRef}, {csRef}");
         }
 
         public TComponent AddComponent<TComponent>() where TComponent : Component, new() {
             var component = new TComponent();
-            component.LinkGameObject(csRef, transform.csRef);
+            component.LinkGameObject(csRef/*, transform.csRef*/);
 
-            Console.WriteLine($"#: GameObject({csRef}, {cppRef}).AddComponent<{typeof(TComponent).Name}>(): {component.csRef}");
+            //Console.WriteLine($"#: GameObject({csRef}, {cppRef}).AddComponent<{typeof(TComponent).Name}>(): {component.csRef}");
 
             var info = component.CreateFromCS(this);
             component.Link(info.classRef, info.objectRef);
-            dll_InitComponent(cppRef, component.cppRef);
+            Dll.Actor.InitComponent(cppRef, component.cppRef);
 
             return component;
         }
 
         private CsRef m_AddComponentFromCpp<TComponent>(CppObjectInfo info) where TComponent : Component, new() {
             var component = new TComponent();
-            component.LinkGameObject(csRef, transform.csRef);
+            component.LinkGameObject(csRef/*, transform.csRef*/);
 
             //Console.WriteLine($"#: GameObject({csRef}, {cppRef}).m_AddComponentFromCpp<{typeof(TComponent).Name}>({component.csRef}, {info.objectRef})");
 
@@ -77,9 +105,11 @@ namespace Engine {
             var refs = m_GetComponentRefs();
 
             foreach (var compRef in refs) {
-                var component = GetObjectByRef(compRef);
-                if (component is TComponent)
-                    return component as TComponent;
+                if (compRef.value != 0) {
+                    var component = GetObjectByRef(compRef);
+                    if (component is TComponent)
+                        return component as TComponent;
+                }
             }
             return null;
         }
@@ -113,12 +143,12 @@ namespace Engine {
             return list;
         }
 
-        public GameObject GetChild(int index) {
+        public Actor GetChild(int index) {
             if (index < 0 || index >= GetChildrenCount())
                 return null;
 
-            var childRef = dll_GetChild(cppRef, index);
-            return GetObjectByRef(childRef) as GameObject;
+            var childRef = Dll.Actor.GetChild(cppRef, index);
+            return GetObjectByRef(childRef) as Actor;
         }
 
         #endregion
@@ -128,9 +158,11 @@ namespace Engine {
             var refs = m_GetComponentRefs();
 
             foreach (var compRef in refs) {
-                var component = GetObjectByRef(compRef);
-                if (component is TComponent)
-                    list.Add(component as TComponent);
+                if (compRef.value != 0) {
+                    var component = GetObjectByRef(compRef);
+                    if (component is TComponent)
+                        list.Add(component as TComponent);
+                }
             }
         }
 
@@ -145,15 +177,19 @@ namespace Engine {
             }
         }
 
+        /// <summary>
+        /// Возвращает список ссылок на прикрепленные к объекту компоненты.
+        /// </summary>
+        /// <returns>C# ссылка на компонент. Если компонента нет в C#, ссылка будет невалидна. </returns>
         private CsRef[] m_GetComponentRefs() {
-            int length = dll_GetComponentsCount(cppRef);
+            int length = Dll.Actor.GetComponentsCount(cppRef);
             CsRef[] refs = new CsRef[length];
 
             unsafe {
                 IntPtr ptr = Marshal.AllocHGlobal(length * Marshal.SizeOf(typeof(ulong)));
                 var refPtr = (ulong*)ptr.ToPointer();
 
-                dll_WriteComponentsRefs(cppRef, (ulong)refPtr);
+                Dll.Actor.WriteComponentsRefs(cppRef, (ulong)refPtr);
 
                 for (int i = 0; i < length; i++, refPtr++) {
                     ulong value = *refPtr;
@@ -162,12 +198,6 @@ namespace Engine {
                 }
                 Marshal.FreeHGlobal(ptr);
             }
-
-            //Console.Write($"#: GameObject.m_GetComponentsRefs(): refs({refs.Length}): ");
-            //foreach (var compRef in refs) {
-            //    Console.Write($"{compRef}, ");
-            //}
-            //Console.WriteLine();
 
             return refs;
         }
@@ -178,7 +208,7 @@ namespace Engine {
         private static CppRef cpp_Create() {
             //Console.WriteLine($"#: GameObject.cpp_Create()");
 
-            var gameObject = new GameObject();
+            var gameObject = new Actor();
             return gameObject.cppRef;
         }
 
@@ -190,11 +220,11 @@ namespace Engine {
             //Console.WriteLine($"#: GameObject({objRef}).cpp_AddComponent(\"{name}\") -> ");
 
             var componentType = Type.GetType(name);
-            var addComponent = typeof(GameObject).GetMethod(nameof(GameObject.m_AddComponentFromCpp), BindingFlags.NonPublic | BindingFlags.Instance);
+            var addComponent = typeof(Actor).GetMethod(nameof(Actor.m_AddComponentFromCpp), BindingFlags.NonPublic | BindingFlags.Instance);
 
             addComponent = addComponent.MakeGenericMethod(componentType);
 
-            var gameObject = CppLinked.GetObjectByRef(objRef) as GameObject;
+            var gameObject = CppLinked.GetObjectByRef(objRef) as Actor;
             var result = addComponent.Invoke(gameObject, new object[] { info });
 
             return (CsRef)result;
@@ -209,10 +239,10 @@ namespace Engine {
             var componentCppRefProp = componentType.GetProperty(nameof(CppLinked.cppRef));
             //var componentCsRefProp = componentType.GetProperty(nameof(CppLinked.csRef));
 
-            var addComponent = typeof(GameObject).GetMethod(nameof(GameObject.AddComponent));
+            var addComponent = typeof(Actor).GetMethod(nameof(Actor.AddComponent));
             addComponent = addComponent.MakeGenericMethod(componentType);
 
-            var gameObject = CppLinked.GetObjectByRef(objRef) as GameObject;
+            var gameObject = CppLinked.GetObjectByRef(objRef) as Actor;
             var component = addComponent.Invoke(gameObject, null);
 
             var cppRef = (CppRef)componentCppRefProp.GetValue(component);
@@ -261,37 +291,6 @@ namespace Engine {
 
             RemoveObjectByRef(compRef);
         }
-
-        #endregion
-        #region Dll
-
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "Game_CreateGameObjectFromCS", CharSet = CharSet.Ansi)]
-        private static extern GameObjectInfo dll_CreateGameObjectFromCS(CppRef gameRef, CsRef objRef, string name);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_InitComponent")]
-        private static extern void dll_InitComponent(CppRef objRef, CppRef compRef);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_Destroy")]
-        private static extern void dll_Destroy(CppRef objRef);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_GetComponentsCount")]
-        private static extern int dll_GetComponentsCount(CppRef objRef);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_WriteComponentsRefs")]
-        private static extern void dll_WriteComponentsRefs(CppRef objRef, ulong listPtr);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_GetChildrenCount")]
-        private static extern int dll_GetChildrenCount(CppRef objRef);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_GetChild")]
-        private static extern CsRef dll_GetChild(CppRef objRef, int index);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_parent_get")]
-        private static extern CsRef dll_parent_get(CppRef objRef);
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "GameObject_parent_set")]
-        private static extern void dll_parent_set(CppRef objRef, CppRef parent);
 
         #endregion
     }

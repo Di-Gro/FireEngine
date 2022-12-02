@@ -47,9 +47,9 @@ namespace Engine {
 		public virtual CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			cppRef = objRef;
 
-			//Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).Link(class:{classInfoRef}, obj:{objRef})");
+            //Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).Link(class:{classInfoRef}, obj:{objRef})");
 
-			classInfo = ClassInfo.GetClassInfo(classInfoRef);
+            classInfo = ClassInfo.GetClassInfo(classInfoRef);
 
 			LinkProps();
 			return csRef;

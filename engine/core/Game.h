@@ -19,7 +19,7 @@
 #include "Math.h"
 #include "CSBridge.h"
 
-#include "GameObject.h"
+#include "Actor.h"
 
 class CameraComponent;
 class ShadowMapRender;
@@ -47,7 +47,7 @@ private:
 	CameraComponent* m_defaultCamera = nullptr;
 	CameraComponent* m_mainCamera = nullptr;
 
-	std::list<GameObject*> m_gameObjects;
+	std::list<Actor*> m_actors;
 
 	bool m_onExit = false;
 	int m_objectCount = 0;
@@ -80,16 +80,18 @@ public:
 
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
-	GameObject* CreateGameObject(std::string name = "");
+	Actor* CreateActor(std::string name = "");
 
-	void DestroyGameObject(GameObject* gameObject);
+	void DestroyActor(Actor* actor);
 
 	void PrintSceneTree();
 
 	void SendGameMessage(const std::string& msg);
 
-	std::list<GameObject*>::iterator BeginGameObject() { return m_gameObjects.begin(); }
-	std::list<GameObject*>::iterator EndGameObject() { return m_gameObjects.end(); }
+	void Stat();
+
+	std::list<Actor*>::iterator BeginActor() { return m_actors.begin(); }
+	std::list<Actor*>::iterator EndActor() { return m_actors.end(); }
 	
 private:
 	void m_InitMono(MonoInst* imono);
@@ -97,10 +99,10 @@ private:
 	void m_Update();
 	void m_Destroy();
 
-	GameObjectInfo m_CreateGameObject(CsRef csRef, std::string name);
+	GameObjectInfo m_CreateActor(CsRef csRef, std::string name);
 
-	std::list<GameObject*>::iterator m_EraseGameObject(std::list<GameObject*>::iterator it);
+	std::list<Actor*>::iterator m_EraseActor(std::list<Actor*>::iterator it);
 
-	void m_PrintSceneTree(const std::string& prefix, const GameObject* node);
+	void m_PrintSceneTree(const std::string& prefix, const Actor* node);
 
 };

@@ -3,23 +3,19 @@
 #include <string>
 
 #include "Transform.h"
-#include "GameObjectConcepts.h"
+#include "ActorConcepts.h"
 
 
-class GameObjectBase : public CsLink {
+class ActorBase : public CsLink, public ActorTransform {
 	friend class Game;
-	friend class GameObject;
+	friend class Actor;
 
-public:
-	Transform* transform;
+private:
+	//Transform* transform;
 
 private:
 
-	//Ref2<GameObjectBase> f_ref;
-	//CppRef f_cppRef;
-	//CsRef f_csRef;
-
-	GameObject* friend_gameObject = nullptr; // <- ÑC
+	Actor* friend_gameObject = nullptr;
 	Component* friend_component = nullptr;
 	int friend_timeToDestroy = 1;
 	bool friend_isStarted = false;
@@ -28,22 +24,18 @@ private:
 	
 
 public:
-	GameObjectBase() {}
+	ActorBase() {}
 
 	Game* game();
-	GameObject* gameObject();
+	Actor* actor();
 
-	//CppRef cppRef() { return f_cppRef; }
-	//CsRef csRef() { return f_csRef; }
+	bool HasParent();
+	Actor* parent();
+	void parent(ActorBase* parent);
 
 	bool IsDestroyed();
 
-	bool HasParent();
-	GameObject* GetParent();
-	void SetParent(GameObjectBase* parent);
-
-
-	GameObject* CreateGameObject(std::string name = "");
+	Actor* CreateActor(std::string name = "");
 	void Destroy();
 
 

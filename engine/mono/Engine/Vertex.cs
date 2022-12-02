@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Engine {
 
     [StructLayout(LayoutKind.Sequential)]
-    struct Vertex {
+    public struct Vertex {
         public Vector4 position;
         public Vector4 color;
         public Vector4 normal;

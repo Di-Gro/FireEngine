@@ -14,20 +14,20 @@ private:
 
 	Player* m_player;
 
-	GameObject* m_ñenter;
-	GameObject* m_collider;
+	Actor* m_ñenter;
+	Actor* m_collider;
 
 	DelegateHandle m_mouseMoveHandle;
 
 public:
-	//GameController(GameObject* gameObject) : Component(gameObject) {}
+	//GameController(Actor* actor) : Component(actor) {}
 
 	void OnInit() override;
 	void OnDestroy() override;
 
 	void OnUpdate() override;
 
-	GameObject* CreatePlayer();
+	Actor* CreatePlayer();
 
 private:
 	void m_OnMouseMove(const InputDevice::MouseMoveArgs& args);

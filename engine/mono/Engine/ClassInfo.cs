@@ -6,16 +6,16 @@ using System.Runtime.InteropServices;
 namespace Engine {
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CppObjectInfo {
+    public struct CppObjectInfo {
         public CppRef objectRef;
         public CppRef classRef;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct GameObjectInfo {
+    public struct GameObjectInfo {
         public CppRef objectRef;
         public CppRef classRef;
-        public CsRef transformRef;
+        //public CsRef transformRef;
     }
 
     class ClassInfo {

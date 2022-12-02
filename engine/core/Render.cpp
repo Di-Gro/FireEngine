@@ -7,11 +7,14 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
+#include <list>
 
 #include "Game.h"
 #include "RenderTarget.h"
 #include "DirectionLight.h"
 #include "ImageComponent.h"
+#include "CameraComponent.h"
+#include "Refs.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -27,7 +30,7 @@ void Render::Init(Game* game, Window* window) {
 }
 
 void Render::Start() {
-	m_screenQuad = m_game->CreateGameObject("Screen Quad")->AddComponent<ImageComponent>();
+	m_screenQuad = m_game->CreateActor("Screen Quad")->AddComponent<ImageComponent>();
 	m_screenQuad->shaderPath = "../../data/engine/shaders/screen_quad.hlsl";
 	m_screenQuad->SetImage(m_mainRT.renderTexture());
 	m_screenQuad->visibility(false);
@@ -44,8 +47,8 @@ void Render::Draw() {
 	rt = &m_game->lighting()->directionLight()->shadowRT;
 	rt->PrepareRender();
 
-	m_ForEachGameObject(&Render::m_Draw);
-
+	m_Draw(); // m_ForEachGameObject(&Render::m_Draw);
+	
 	rt->FinishRender();
 
 	// Opaque
@@ -55,8 +58,8 @@ void Render::Draw() {
 	rt = &m_mainRT;
 	rt->PrepareRender();
 
-	m_ForEachGameObject(&Render::m_Draw);
-	m_ForEachGameObject(&Render::m_DrawUI);
+	m_Draw(); // m_ForEachGameObject(&Render::m_Draw);
+	m_DrawUI(); // m_ForEachGameObject(&Render::m_DrawUI);
 
 	rt->FinishRender();
 
@@ -73,21 +76,54 @@ void Render::Draw() {
 
 }
 
-void Render::m_Draw(GameObject* gameObject) {
-	if (!gameObject->IsDestroyed())
-		gameObject->f_Draw();
+std::list<Component*>::iterator Render::SubscribeForDrawin(Component* component) {
+	return m_drawers.insert(m_drawers.end(), component);
 }
 
-void Render::m_DrawUI(GameObject* gameObject) {
-	if (!gameObject->IsDestroyed())
-		gameObject->f_DrawUI();
+void Render::UnSubscribeFromDrawin(std::list<Component*>::iterator handle) {
+	m_drawers.erase(handle);
 }
 
-void Render::m_ForEachGameObject(void (Render::*func) (GameObject*)) {
-	for (auto it = m_game->BeginGameObject(); it != m_game->EndGameObject(); it++) {
-		(this->*func)(*it);
+std::list<Component*>::iterator Render::SubscribeForUIDrawin(Component* component) {
+	return m_uiDrawers.insert(m_uiDrawers.end(), component);
+}
+
+void Render::UnSubscribeFromUIDrawin(std::list<Component*>::iterator handle) {
+	m_uiDrawers.erase(handle);
+}
+
+//void Render::m_Draw(Actor* gameObject) {
+//	if (!gameObject->IsDestroyed())
+//		gameObject->f_Draw();
+//}
+//
+//void Render::m_DrawUI(Actor* gameObject) {
+//	if (!gameObject->IsDestroyed())
+//		gameObject->f_DrawUI();
+//}
+
+void Render::m_Draw() {
+	for (auto* component : m_drawers) {
+		if (!component->IsDestroyed())
+			component->OnDraw();
+
+		if (m_camera->drawDebug)
+			component->OnDrawDebug();
 	}
 }
+
+void Render::m_DrawUI() {
+	for (auto* component : m_uiDrawers) {
+		if (!component->IsDestroyed())
+			component->OnDraw();
+	}
+}
+
+//void Render::m_ForEachGameObject(void (Render::*func) (Actor*)) {
+//	for (auto it = m_game->BeginActor(); it != m_game->EndActor(); it++) {
+//		(this->*func)(*it);
+//	}
+//}
 
 void Render::Clear() {
 	m_device.Clear();

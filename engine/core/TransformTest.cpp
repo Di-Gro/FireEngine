@@ -123,28 +123,28 @@ void TransformTest::m_TestLocalPosition2() {
 
 	//return;
 
-	std::cout << "TransformTest 2" << std::endl;
-	std::cout << std::endl;
+	//std::cout << "TransformTest 2" << std::endl;
+	//std::cout << std::endl;
 
-	auto box1 = CreateGameObject("box1");
-	box1->transform->localPosition({ 200, 45, 50 });
-	box1->transform->localRotation({ rad(0), rad(80), rad(0) });
-	//box1->transform->scale = { 1, 2, 0.5f };
+	//auto box1 = CreateActor("box1");
+	//box1->localPosition({ 200, 45, 50 });
+	//box1->localRotation({ rad(0), rad(80), rad(0) });
+	////box1->scale = { 1, 2, 0.5f };
 
-	auto box2 = CreateGameObject("box2");
-	box2->transform->localPosition({ 100, 0, 0 });
-	box2->transform->localRotation({ rad(0), rad(90), rad(0) });
+	//auto box2 = CreateActor("box2");
+	//box2->localPosition({ 100, 0, 0 });
+	//box2->localRotation({ rad(0), rad(90), rad(0) });
 
-	std::cout << "box1\n" << ToString(box1->transform) << std::endl;
-	std::cout << "box2\n" << ToString(box2->transform) << std::endl;
+	//std::cout << "box1\n" << ToString(box1->transform) << std::endl;
+	//std::cout << "box2\n" << ToString(box2->transform) << std::endl;
 
-	std::cout << "box2.SetParent( box1 )" << std::endl << std::endl;
-	box2->SetParent(box1);
+	//std::cout << "box2.SetParent( box1 )" << std::endl << std::endl;
+	//box2->parent(box1);
 
-	std::cout << "box2\n" << ToString(box2->transform) << std::endl;
+	//std::cout << "box2\n" << ToString(box2->transform) << std::endl;
 
-	std::cout << "box2.SetParent( null )" << std::endl << std::endl;
-	box2->SetParent(nullptr);
+	//std::cout << "box2.SetParent( null )" << std::endl << std::endl;
+	//box2->parent(nullptr);
 
-	std::cout << "box2\n" << ToString(box2->transform) << std::endl;
+	//std::cout << "box2\n" << ToString(box2->transform) << std::endl;
 }

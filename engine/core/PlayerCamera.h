@@ -16,12 +16,12 @@ private:
 	Vector3 m_rotationDelta;
 	float m_distanceDelta;
 
-	GameObject* m_cameraRoot = nullptr;
+	Actor* m_cameraRoot = nullptr;
 
 	DelegateHandle m_mouseMoveHandle;
 
 public:
-	//PlayerCamera(GameObject* gameObject) : CameraComponent(gameObject) { }
+	//PlayerCamera(Actor* gameObject) : CameraComponent(gameObject) { }
 
 	void OnInit() override;
 	void OnDestroy() override;

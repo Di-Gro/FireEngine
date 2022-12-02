@@ -25,6 +25,7 @@
 
 std::vector<std::string> shaderPaths = {
 	 "../../data/engine/shaders/vertex_color.hlsl",
+	 "../../data/engine/shaders/defuse_color.hlsl",
 	 "../../data/engine/shaders/default.hlsl",
 	 "../../data/engine/shaders/image.hlsl",
 	 "../../data/engine/shaders/shadow_map.hlsl",
@@ -58,7 +59,7 @@ void Game::m_InitMono(MonoInst* imono) {
 	auto method_SetGameRef = mono::make_method_invoker<void(CppRef)>(gameType, "cpp_SetGameRef");
 	mono_setUpdateData = mono::make_method_invoker<void(GameUpdateData)>(gameType, "cpp_SetUpdateData");
 
-	auto gameObjectType = m_mono->GetType("Engine", "GameObject");
+	auto gameObjectType = m_mono->GetType("Engine", "Actor");
 	mono_create = mono::make_method_invoker<CppRef()>(gameObjectType, "cpp_Create");
 
 	auto gameRef = CppRefs::Create(this);
@@ -70,25 +71,25 @@ void Game::Run() {
 	m_meshAsset.Start();
 
 	///
-	
+
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
-	csLink.Link(cppObj, "EngineMono", "CSClass");
+	csLink.Link(cppObj, "EngineMono", "CSClass");	
 
 	///
 
-	m_defaultCamera = CreateGameObject("default camera")->AddComponent<FlyingCamera>();
-	m_defaultCamera->transform->localPosition({ 0, 0, 300 });
-	m_defaultCamera->transform->localRotation({ rad(-45), rad(45 + 180), 0 });
+	m_defaultCamera = CreateActor("default camera")->AddComponent<FlyingCamera>();
+	m_defaultCamera->localPosition({ 0, 0, 300 });
+	m_defaultCamera->localRotation({ rad(-45), rad(45 + 180), 0 });
 	m_defaultCamera->Attach();
 	m_defaultCamera->drawDebug = false;
 
 	m_lighting.f_directionLight = m_defaultCamera->AddComponent<DirectionLight>();
-	m_lighting.f_directionLight->transform->localRotation({ rad(-45), rad(45 + 180), 0 });
+	m_lighting.f_directionLight->localRotation({ rad(-45), rad(45 + 180), 0 });
 	m_lighting.f_directionLight->drawDebug(true);
 
-	CreateGameObject("GameController")->AddComponent<GameController>();
+	CreateActor("GameController")->AddComponent<GameController>();
 	
 
 	MSG msg = {};
@@ -133,17 +134,17 @@ void Game::m_Update() {
 	m_hotkeys.Update(input());
 
 	/// Update
-	auto it = m_gameObjects.begin();
-	while (it != m_gameObjects.end()) {
+	auto it = m_actors.begin();
+	while (it != m_actors.end()) {
 
-		auto gameObject = (*it);
-		if (gameObject->IsDestroyed()) {
-			gameObject->friend_timeToDestroy--;
-			if (gameObject->friend_timeToDestroy <= 0)
-				it = m_EraseGameObject(it);
+		auto actor = (*it);
+		if (actor->IsDestroyed()) {
+			actor->friend_timeToDestroy--;
+			if (actor->friend_timeToDestroy <= 0)
+				it = m_EraseActor(it);
 			continue;
 		}
-		gameObject->f_Update();
+		actor->f_Update();
 		it++;
 	}
 
@@ -155,81 +156,81 @@ void Game::m_Destroy() {
 	m_hotkeys.Destroy();
 	m_window.Destroy();
 
-	auto it = m_gameObjects.begin();
-	while (it != m_gameObjects.end()) {
-		DestroyGameObject(*it);
-		it = m_EraseGameObject(it);
+	auto it = m_actors.begin();
+	while (it != m_actors.end()) {
+		DestroyActor(*it);
+		it = m_EraseActor(it);
 	}
 
 
 }
 
-GameObject* Game::CreateGameObject(std::string name) {
-	//std::cout << "+: Game.CreateGameObject()" << std::endl;
+Actor* Game::CreateActor(std::string name) {
+	//std::cout << "+: Game.CreateActor()" << std::endl;
 
 	auto cppRef = mono_create();
 	
-	GameObject* gameObject = CppRefs::ThrowPointer<GameObject>(cppRef);
-	gameObject->name = name != "" ? name : "GameObject";
+	Actor* actor = CppRefs::ThrowPointer<Actor>(cppRef);
+	actor->name = name != "" ? name : "Actor";
 
-	return gameObject;
+	return actor;
 }
 
-GameObjectInfo Game::m_CreateGameObject(CsRef csRef, std::string name) {
+GameObjectInfo Game::m_CreateActor(CsRef csRef, std::string name) {
 	//std::cout << "+: Game.CreateGameObjectFromCS(): csRef:" << csRef << std::endl;
 
-	auto classInfoRef = CppRefs::Create(ClassInfo::Get<GameObject>());
+	auto classInfoRef = CppRefs::Create(ClassInfo::Get<Actor>());
 
-	GameObject* gameObject = new GameObject();
-	m_gameObjects.insert(m_gameObjects.end(), gameObject);
+	Actor* actor = new Actor();
+	m_actors.insert(m_actors.end(), actor);
 
-	gameObject->f_objectID = ++m_objectCount;
-	gameObject->f_ref = CppRefs::Create(gameObject);
-	gameObject->f_cppRef = gameObject->f_ref.cppRef();
-	gameObject->f_csRef = csRef;
+	actor->f_actorID = ++m_objectCount;
+	actor->f_ref = CppRefs::Create(actor);
+	actor->f_cppRef = actor->f_ref.cppRef();
+	actor->f_csRef = csRef;
 
-	gameObject->f_Init(this, name);
+	actor->f_Init(this, name);
 		
 	GameObjectInfo objectInfo;
 	objectInfo.classRef = RefCpp(classInfoRef.cppRef());
-	objectInfo.objectRef = gameObject->cppRef();
-	objectInfo.transformRef = gameObject->transform->csRef();
+	objectInfo.objectRef = actor->cppRef();
+	//objectInfo.transformRef = actor->transformCsRef();
 
 	return objectInfo;
 }
 
-void Game::DestroyGameObject(GameObject* gameObject) {
-	if (gameObject->GameObjectBase::friend_CanDestroy()) {
-		gameObject->GameObjectBase::friend_StartDestroy();
+void Game::DestroyActor(Actor* actor) {
+	if (actor->ActorBase::friend_CanDestroy()) {
+		actor->ActorBase::friend_StartDestroy();
 
-		gameObject->f_Destroy();
+		actor->f_Destroy();
 
-		if (CppRefs::IsValid(gameObject->f_ref)) {
-			CppRefs::Remove(gameObject->f_ref);
-			//std::cout << "+: CppRefs.Remove(): " << gameObject->cppRef() << std::endl;
+		if (CppRefs::IsValid(actor->f_ref)) {
+			CppRefs::Remove(actor->f_ref);
+			//std::cout << "+: CppRefs.Remove(): " << actor->cppRef() << std::endl;
 		}
 	}
 }
 
-std::list<GameObject*>::iterator Game::m_EraseGameObject(std::list<GameObject*>::iterator it) {
-	auto* gameObject = *it;
-	auto next = m_gameObjects.erase(it);
-	delete gameObject;
+std::list<Actor*>::iterator Game::m_EraseActor(std::list<Actor*>::iterator it) {
+	auto* actor = *it;
+	auto next = m_actors.erase(it);
+	delete actor;
 	return next;
 }
 
 void Game::PrintSceneTree() {
-	auto it = m_gameObjects.begin();
-	for (int i = 0; it != m_gameObjects.end(); it++, i++) {
+	auto it = m_actors.begin();
+	for (int i = 0; it != m_actors.end(); it++, i++) {
 		if (!(*it)->HasParent())
 			m_PrintSceneTree("", *it);
 	}
 }
 
-void Game::m_PrintSceneTree(const std::string& prefix, const GameObject* node) {
+void Game::m_PrintSceneTree(const std::string& prefix, const Actor* node) {
 	if (node != nullptr) {
 		std::cout << prefix << "* " << node->name;
-		std::cout << " (" << node->f_objectID << ")" << std::endl;
+		std::cout << " (" << node->f_actorID << ")" << std::endl;
 
 		for (int i = 0; i < node->m_childs.size(); i++) {
 			auto n = node->m_childs[i];
@@ -260,12 +261,41 @@ void Game::SendGameMessage(const std::string& msg) {
 	std::getline(ss, lostMsg);
 	auto s = lostMsg.erase(0, 1);
 
-	for (auto gameObject : m_gameObjects) {
-		if (gameObject->f_objectID == objId && !gameObject->IsDestroyed())
-			gameObject->RecieveGameMessage(s);
+	for (auto actor : m_actors) {
+		if (actor->f_actorID == objId && !actor->IsDestroyed())
+			actor->RecieveGameMessage(s);
 	}
 }
 
+void Game::Stat() {
+	int actorsCount = 0;
+	int csComponents = 0;
+	int cppComponents = 0;
+
+	for (auto* actor : m_actors) {
+		actorsCount++;
+
+		int count = actor->GetComponentsCount();
+		size_t* refs = new size_t[count]();
+		actor->WriteComponentsRefs(refs);
+
+		for (int i = 0; i < count; i++) {
+			if (refs[i] == 0)
+				cppComponents++;
+			else
+				csComponents++;
+		}
+
+		delete refs;
+	}
+
+	std::cout << "+ Game.Stat() -> " << std::endl;
+	std::cout << "+ actorsCount: " << actorsCount << std::endl;
+	std::cout << "+ csComponents: " << csComponents << std::endl;
+	std::cout << "+ cppComponents: " << cppComponents << std::endl;
+	std::cout << "+ <- " << std::endl;
+}
+
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, const char* name) {
-	return CppRefs::ThrowPointer<Game>(gameRef)->m_CreateGameObject(csRef, name);
+	return CppRefs::ThrowPointer<Game>(gameRef)->m_CreateActor(csRef, name);
 }

@@ -20,7 +20,7 @@ private:
 	MeshComponent* m_meshComponent;
 
 public:
-	//LinedPlain(GameObject* gameObject) : Component(gameObject) {}
+	//LinedPlain(Actor* gameObject) : Component(gameObject) {}
 
 	void OnInit() override;
 	void OnDestroy() override;

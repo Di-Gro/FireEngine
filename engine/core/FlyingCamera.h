@@ -26,7 +26,7 @@ private:
 
 public:
 
-	//FlyingCamera(GameObject* gameObject) : CameraComponent(gameObject) {}
+	//FlyingCamera(Actor* actor) : CameraComponent(actor) {}
 
 	void OnInit() override;
 	void OnDestroy() override;

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace Engine {
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CppRef {
+    public struct CppRef {
         public ulong value;
 
         CppRef(ulong v) => value = v;
@@ -17,7 +17,7 @@ namespace Engine {
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct CsRef {
+    public struct CsRef {
         public UInt64 value;
 
         CsRef(UInt64 v) => value = v;

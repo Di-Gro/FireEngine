@@ -1,8 +1,8 @@
-//#include "GameObject.h"
+//#include "Actor.h"
 //
 //#include "Game.h"
 //
-//Component::Component(GameObject* gameObject)
-//	: GameObjectBase(gameObject) 
+//Component::Component(Actor* actor)
+//	: ActorBase(actor) 
 //{ }
 

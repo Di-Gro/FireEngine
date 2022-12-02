@@ -9,30 +9,24 @@
 
 using namespace DirectX::SimpleMath;
 
-///
-/// При добавлении в другой объект, нужно пересчитатьт локальную позицию так, 
-/// чтобы мировая позиция не изменилась. 
-///
-
 class Game;
-class GameObject;
+class Actor;
 class Component;
 
-
-class Transform : public CsLink {
+class Transform /*: public CsLink*/ {
 	OBJECT;
 
-	friend class GameObject;
+	friend class Actor;
 
 private:
 	Vector3 m_localPosition = Vector3::Zero;
 	Vector3 m_localRotation = Vector3::Zero;
-	Vector3 m_scale = Vector3::One;
+	Vector3 m_localScale = Vector3::One;
 
 	Matrix m_localMatrix;
 	Matrix m_localRotationMatrix;
 
-	GameObject* friend_gameObject;
+	Actor* friend_gameObject;
 
 	Matrix m_matrix = Matrix::Identity;
 
@@ -61,30 +55,59 @@ public:
 
 	Vector3 worldPosition();
 	Vector3 worldRotation();
+	Quaternion worldRotationQ();
 	Matrix tmp_GetMatrixRL();
 	Vector3 worldScale();
+
+	void worldPosition(const Vector3& value);
+	void worldRotationQ(const Quaternion& value);
+	void worldScale(const Vector3& value);
 
 private:
 	Transform() = default; 
 
-	void friend_ChangeParent(GameObject* newParent);
+	void friend_ChangeParent(Actor* newParent);
 };
 
-#pragma warning( push )
-#pragma warning( disable : 4190)
+class ActorTransform {
+	friend class Actor;
 
-PROP_GETSET(Transform, Vector3, localPosition)
-PROP_GETSET(Transform, Vector3, localRotation)
-PROP_GETSET(Transform, Quaternion, localRotationQ)
-PROP_GETSET(Transform, Vector3, localScale)
+private:
+	Transform* transform;
 
-PROP_GET(Transform, Vector3, localForward)
-PROP_GET(Transform, Vector3, localUp)
-PROP_GET(Transform, Vector3, localRight)
+public:
+	//CsRef transformCsRef() { return transform->csRef(); }
+	//CppRef transformCppRef() { return transform->cppRef(); }
 
-PROP_GET(Transform, Vector3, forward)
-PROP_GET(Transform, Vector3, up)
-PROP_GET(Transform, Vector3, right)
+	inline Matrix GetWorldMatrix() { return transform->GetWorldMatrix(); }
+	inline Matrix GetLocalMatrix() { return transform->GetLocalMatrix(); }
 
+	inline const Vector3 localPosition() { return transform->localPosition(); }
+	inline const Vector3 localRotation() { return transform->localRotation(); }
+	inline const Quaternion localRotationQ() { return transform->localRotationQ(); }
+	inline const Vector3 localScale() { return transform->localScale(); }
 
-#pragma warning( pop ) 
+	inline const Vector3 localForward() { return transform->localForward(); }
+	inline const Vector3 localUp() { return transform->localUp(); }
+	inline const Vector3 localRight() { return transform->localRight(); }
+
+	inline const Vector3 forward() { return transform->forward(); }
+	inline const Vector3 up() { return transform->up(); }
+	inline const Vector3 right() { return transform->right(); }
+
+	inline void localPosition(const Vector3& value) { transform->localPosition(value); }
+	inline void localRotation(const Vector3& value) { transform->localRotation(value); }
+	inline void localRotationQ(const Quaternion& value) { transform->localRotationQ(value); }
+	inline void localRotation(const Vector3& axis, float angle) { transform->localRotation(axis, angle); }
+	inline void localScale(const Vector3& value) { transform->localScale(value); }
+
+	inline Vector3 worldPosition() { return transform->worldPosition(); }
+	inline Vector3 worldRotation() { return transform->worldRotation(); }
+	inline Quaternion worldRotationQ() { return transform->worldRotationQ(); }
+	inline Matrix tmp_GetMatrixRL() { return transform->tmp_GetMatrixRL(); }
+	inline Vector3 worldScale() { return transform->worldScale(); }
+
+	inline void worldPosition(const Vector3& value) { transform->worldPosition(value); }
+	inline void worldRotationQ(const Quaternion& value) { transform->worldRotationQ(value); }
+	inline void worldScale(const Vector3& value) { transform->worldScale(value); }
+};

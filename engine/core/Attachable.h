@@ -20,14 +20,18 @@ private:
 	MeshComponent* m_mesh;
 	MeshComponent* m_bound;
 
+	Material* m_meshMaterial;
+	Material* m_boundMaterial;
+
 	bool m_canAttach = false;
 
 public:
-	//Attachable(GameObject* gameObject) : Component(gameObject) { }
+	//Attachable(Actor* actor) : Component(actor) { }
 
 	void OnInit() override;
 	void OnStart() override;
 	void OnUpdate() override;
+	void OnDestroy() override;
 	
 };
 

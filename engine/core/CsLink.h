@@ -3,11 +3,11 @@
 #include "CSBridge.h"
 
 class Game;
-class GameObject;
+class Actor;
 
 class CsLink {
 	friend class Game;
-	friend class GameObject;
+	friend class Actor;
 
 public:
 	Ref2 f_ref;

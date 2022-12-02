@@ -9,54 +9,49 @@
 #include "CSLinked.h"
 #include "CSBridge.h"
 
-#include "GameObjectConcepts.h"
-#include "GameObjectBase.h"
+#include "ActorConcepts.h"
+#include "ActorBase.h"
 
 
-extern "C" __declspec(dllexport) void GameObject_InitComponent(CppRef objRef, CppRef compRef);
-
+FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
+FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, ComponentCallbacks callbacks);
 
 class Render;
 
-class GameObject : public GameObjectBase {
+class Actor : public ActorBase {
 	OBJECT;
 
 	friend class Game;
-	friend class GameObjectBase;
+	friend class ActorBase;
 	friend class Render;
 
-	friend void GameObject_InitComponent(CppRef objRef, CppRef compRef);
+	FRIEND_FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
+	FRIEND_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, ComponentCallbacks callbacks);
 
 public:
 	std::string name = "";
 
 private:
 	Game* f_game = nullptr;
-	int f_objectID;
+	int f_actorID;
 
-	GameObject* f_parent = nullptr;
+	Actor* f_parent = nullptr;
 
+	Transform m_transform;
 	std::list<Component*> m_components;
-	std::vector<GameObject*> m_childs;
+	std::vector<Actor*> m_childs;
 
 	static bool mono_inited;
 	static mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> mono_AddComponent;
 	static mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> mono_AddCsComponent;
-	static mono::mono_method_invoker<CsRef(CppRef, CppRef)> mono_CreateTransform;
-	static mono::mono_method_invoker<void(CsRef)> mono_RemoveTransform;
-
-	static mono::mono_method_invoker<void(CsRef)> mono_OnInit;
-	static mono::mono_method_invoker<void(CsRef)> mono_OnStart;
-	static mono::mono_method_invoker<void(CsRef)> mono_OnUpdate;
-	static mono::mono_method_invoker<void(CsRef)> mono_OnDestroy;
 
 
 public:
 
-	int Id() { return f_objectID; }
+	int Id() { return f_actorID; }
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* CreateComponent(CsRef csRef = CsRef::Void);
+	TComponent* inner_CreateComponent(CsRef csRef = CsRef::Void);
 
 	template<IsCppAddableComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* AddComponent();
@@ -73,19 +68,19 @@ public:
 	int GetChildrenCount() { return m_childs.size(); }
 	int GetComponentsCount();
 
-	GameObject* GetChild(int index);
+	Actor* GetChild(int index);
 
 	void WriteComponentsRefs(size_t *csRefsList);
 
 	void RecieveGameMessage(const std::string& msg) override;
 
-	~GameObject();
+	~Actor();
 
 private:
 
-	GameObject();
-	GameObject(const GameObject&) = delete;
-	GameObject(GameObject&&) = delete;
+	Actor();
+	Actor(const Actor&) = delete;
+	Actor(Actor&&) = delete;
 
 	void f_DestroyComponent(Component* component);
 
@@ -95,7 +90,7 @@ private:
 	void f_DrawUI();
 	void f_Destroy();
 
-	void f_SetParent(GameObject* gameObject);
+	void f_SetParent(Actor* actor);
 
 	std::list<Component*>::iterator m_EraseComponent(std::list<Component*>::iterator it);
 
@@ -103,9 +98,10 @@ private:
 
 	void m_InitMono();
 	void m_CreateTransform();
-	void m_RemoveTransform();
+	//void m_RemoveTransform();
 
 	void m_InitComponent(Component* component);
+	void m_SetComponentCallbacks(Component* component, ComponentCallbacks callbacks);
 
 	inline void m_OnInitComponent(Component* component);
 	inline void m_OnStartComponent(Component* component);
@@ -113,21 +109,44 @@ private:
 	inline void m_OnDestroyComponent(Component* component);
 
 };
+#pragma warning( push )
+#pragma warning( disable : 4190)
 
-FUNC(GameObject, gameObject_get, CsRef)(CppRef objBaseRef);
+FUNC(Actor, gameObject_get, CsRef)(CppRef objBaseRef);
 
-FUNC(GameObject, parent_get, CsRef)(CppRef objRef);
-FUNC(GameObject, parent_set, void)(CppRef objRef, CppRef newObjRef);
+FUNC(Actor, parent_get, CsRef)(CppRef objRef);
+FUNC(Actor, parent_set, void)(CppRef objRef, CppRef newObjRef);
 
-FUNC(GameObject, DestroyComponent, void)(CppRef compRef);
-FUNC(GameObject, Destroy, void)(CppRef objRef);
+FUNC(Actor, DestroyComponent, void)(CppRef compRef);
+FUNC(Actor, Destroy, void)(CppRef objRef);
 
-FUNC(GameObject, GetComponentsCount, int)(CppRef objRef);
-FUNC(GameObject, WriteComponentsRefs, void)(CppRef objRef, size_t listPtr);
+FUNC(Actor, GetComponentsCount, int)(CppRef objRef);
+FUNC(Actor, WriteComponentsRefs, void)(CppRef objRef, size_t listPtr);
 
-FUNC(GameObject, GetChildrenCount, int)(CppRef objRef);
-FUNC(GameObject, GetChild, CsRef)(CppRef objRef, int index);
+FUNC(Actor, GetChildrenCount, int)(CppRef objRef);
+FUNC(Actor, GetChild, CsRef)(CppRef objRef, int index);
 
-#include "GameObject.inl"
-#include "GameObjectBase.inl"
+
+PROP_GETSET(Actor, Vector3, localPosition)
+PROP_GETSET(Actor, Vector3, localRotation)
+PROP_GETSET(Actor, Quaternion, localRotationQ)
+PROP_GETSET(Actor, Vector3, localScale)
+
+PROP_GETSET(Actor, Vector3, worldPosition)
+PROP_GETSET(Actor, Quaternion, worldRotationQ)
+PROP_GETSET(Actor, Vector3, worldScale)
+
+PROP_GET(Actor, Vector3, localForward)
+PROP_GET(Actor, Vector3, localUp)
+PROP_GET(Actor, Vector3, localRight)
+
+PROP_GET(Actor, Vector3, forward)
+PROP_GET(Actor, Vector3, up)
+PROP_GET(Actor, Vector3, right)
+
+
+#pragma warning( pop ) 
+
+#include "Actor.inl"
+#include "ActorBase.inl"
 #include "Component.inl"

@@ -42,8 +42,8 @@
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameController.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameObjectBase.cpp" />
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="ActorBase.cpp" />
     <ClCompile Include="HotKeys.cpp" />
     <ClCompile Include="ImageAsset.cpp" />
     <ClCompile Include="ImageComponent.cpp" />
@@ -141,11 +141,11 @@
     <Natvis Include="Delegates.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameObject.h" />
-    <None Include="GameObject.inl" />
-    <None Include="GameObjectBase.h" />
-    <None Include="GameObjectBase.inl" />
-    <None Include="GameObjectConcepts.h" />
+    <None Include="Actor.h" />
+    <None Include="Actor.inl" />
+    <None Include="ActorBase.h" />
+    <None Include="ActorBase.inl" />
+    <None Include="ActorConcepts.h" />
     <None Include="Refs.inl" />
   </ItemGroup>
   <ItemGroup>

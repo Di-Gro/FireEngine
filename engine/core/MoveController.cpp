@@ -34,10 +34,10 @@ void MoveController::OnUpdate() {
 	auto direction = Vector3::Forward * axis.x + Vector3::Up * axis.y + Vector3::Right * axis.z;
 
 	direction.Normalize();
-	auto newPos = transform->localPosition() + direction * speed * game()->deltaTime();
-	transform->localPosition(newPos);
+	auto newPos = localPosition() + direction * speed * game()->deltaTime();
+	localPosition(newPos);
 
-	//transform->position += m_delta;
+	//position += m_delta;
 	//m_delta = Vector3::Zero;
 }
 
@@ -51,5 +51,5 @@ void MoveController::OnUpdate() {
 //	direction.Normalize();
 //
 //
-//	transform->position += direction * speed * game()->deltaTime() * mouseSense;
+//	position += direction * speed * game()->deltaTime() * mouseSense;
 //}

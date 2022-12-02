@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <list>
 
 #include <d3d11.h>
 #include <SimpleMath.h>
@@ -20,11 +21,15 @@ public:
 	bool isDebug = false;
 	bool visible = true;
 
+	Vector3 meshScale = Vector3::One;
+
 private:
 	Mesh4* m_dynamicMesh = nullptr;
 	const Mesh4* m_mesh = nullptr;
 	std::vector<const Material*> m_materials;
 	std::vector<Material*> m_dynamicMaterials;
+
+	std::list<Component*>::iterator m_renderHandle;
 
 private:
 	static bool mono_inited;
@@ -84,7 +89,7 @@ DEC_COMPONENT(MeshComponent);
 
 PROP_GET(MeshComponent, bool, IsDynamic)
 PROP_GET(MeshComponent, bool, IsStatic)
-PROP_GET(MeshComponent, bool, MaterialCount)
+PROP_GET(MeshComponent, int, MaterialCount)
 
 FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef);
 

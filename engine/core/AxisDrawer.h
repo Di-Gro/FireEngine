@@ -8,7 +8,7 @@
 //	float length = 100;
 //
 //public:
-//	AxisDrawer(GameObject* gameObject) : MeshComponent(gameObject) { }
+//	AxisDrawer(Actor* actor) : MeshComponent(actor) { }
 //
 //	//void OnStart() override {}
 //

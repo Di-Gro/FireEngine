@@ -13,8 +13,8 @@ class Player : public Component {
 	PURE_COMPONENT(Player)
 private:
 	PlayerCamera* m_playerCamera = nullptr;
-	GameObject* m_playerMesh = nullptr;
-	GameObject* m_playerBound = nullptr;
+	Actor* m_playerMesh = nullptr;
+	Actor* m_playerBound = nullptr;
 
 	float m_rotationSpeed = 0;
 	float m_startRadius = 0;
@@ -31,7 +31,7 @@ private:
 	bool m_updatePosition = false;
 	bool m_updateRotation = false;
 
-	GameObject* m_velPoint = nullptr;
+	Actor* m_velPoint = nullptr;
 
 	Material* m_boxMeshMaterial;
 	Material* m_boundSphereMaterial;
@@ -50,7 +50,7 @@ public:
 
 	void Move(Vector3 direction);
 
-	void Attach(GameObject* attachableObj);
+	void Attach(Actor* attachableObj);
 	void OnCollisionBegin(BoxCollider* collider);
 	void OnCollision(BoxCollider* collider);
 	void OnCollisionEnd(BoxCollider* collider);

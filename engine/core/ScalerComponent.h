@@ -23,7 +23,7 @@ private:
 
 public:
 
-	//ScalerComponent(GameObject* gameObject) : Component(gameObject) {}
+	//ScalerComponent(Actor* gameObject) : Component(gameObject) {}
 
 	void OnInit() override {
 		m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &ScalerComponent::m_OnMouseMove);
@@ -36,7 +36,7 @@ public:
 	void OnUpdate() override {
 		if (m_needUpdate) {
 			m_needUpdate = false;
-			transform->localScale(m_scale);
+			localScale(m_scale);
 		}
 	}
 

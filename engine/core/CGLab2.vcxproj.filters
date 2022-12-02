@@ -75,12 +75,6 @@
     <ClCompile Include="GameController.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectBase.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="LinedPlain.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -188,6 +182,12 @@
     </ClCompile>
     <ClCompile Include="CS.cpp">
       <Filter>bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorBase.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -387,22 +387,22 @@
     </Natvis>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameObject.h">
-      <Filter>Components</Filter>
-    </None>
-    <None Include="GameObject.inl">
-      <Filter>Components</Filter>
-    </None>
-    <None Include="GameObjectBase.h">
-      <Filter>Components</Filter>
-    </None>
-    <None Include="GameObjectBase.inl">
-      <Filter>Components</Filter>
-    </None>
     <None Include="Refs.inl">
       <Filter>bridge</Filter>
     </None>
-    <None Include="GameObjectConcepts.h">
+    <None Include="Actor.h">
+      <Filter>Components</Filter>
+    </None>
+    <None Include="Actor.inl">
+      <Filter>Components</Filter>
+    </None>
+    <None Include="ActorBase.h">
+      <Filter>Components</Filter>
+    </None>
+    <None Include="ActorBase.inl">
+      <Filter>Components</Filter>
+    </None>
+    <None Include="ActorConcepts.h">
       <Filter>Components</Filter>
     </None>
   </ItemGroup>

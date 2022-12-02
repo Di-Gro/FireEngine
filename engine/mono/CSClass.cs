@@ -28,7 +28,7 @@ namespace Engine {
         public override void OnInit() {
 			//transform.localScale = new Vector3(100, 100, 100);
 
-			m_meshComp = gameObject.AddComponent<MeshComponent>();
+			m_meshComp = actor.AddComponent<MeshComponent>();
             m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
             m_material = new DynamicMaterial(m_meshComp.GetMaterial(0));
 
@@ -37,7 +37,7 @@ namespace Engine {
 
         public override void OnUpdate() {
 
-			transform.localRotationQ = transform.localRotationQ * Quaternion.CreateXRotation(Game.DeltaTime * 1f);
+			actor.localRotationQ = actor.localRotationQ * Quaternion.CreateXRotation(Game.DeltaTime * 1f);
 
 			//Console.WriteLine($"# DeltaTime: color={m_material.DiffuseColor}");
 
@@ -47,9 +47,9 @@ namespace Engine {
 
                 m_meshComp.SetMaterial(0, m_material);
 
-                var pos = transform.localPosition;
+                var pos = actor.localPosition;
 				pos.X -= 100;
-                transform.localPosition = pos;
+                actor.localPosition = pos;
             }
 
             if (Input.WheelDelta != 0 && Input.GetButton(Key.M)) {
@@ -59,6 +59,7 @@ namespace Engine {
             }
 
         }
+
     }
 }
 
@@ -66,54 +67,11 @@ namespace EngineMono {
 
 	class CSClass : CppLinked {
 
-		public Transform transform { get; private set; }
-
-		/// напрямую в C# через указатели
-		public float floatValue { 
-			get => prop_floatValue.value; 
-			set => prop_floatValue.value = value; 
-		}
-
-		public int intValue { 
-			get => prop_intValue.value; 
-			set => prop_intValue.value = value; 
-		}
-
-		public Vector3 vector3 {
-			get => prop_vector3.value;
-			set => prop_vector3.value = value;
-        }
-
-		public Quaternion quaternion {
-			get => prop_quat.value;
-			set => prop_quat.value = value;
-		}
-
-		private Prop<float> prop_floatValue = new Prop<float>(0);
-		private Prop<int> prop_intValue = new Prop<int>(1);
-
-		private Prop<Vector3> prop_vector3 = new Prop<Vector3>(2);
-		private Prop<Quaternion> prop_quat = new Prop<Quaternion>(3);
-
-		/// через геттеры и сеттеры в C++
-		public long longValue { 
-			get => m_longValue_get(cppRef); 
-			set => m_longValue_set(cppRef, value); 
-		}
-
-		public Vector3 vector3m {
-			get => m_vector3m_get(cppRef);
-			set => m_vector3m_set(cppRef, value);
-		}
-
-		/// функция из C++
-		public float SomeFunc() => m_SomeFunc(cppRef);
-
 		/// Связывание с C++ объектом
 		public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			CsRef csRef = base.Link(classInfoRef, objRef);
 
-			var gameObject = new GameObject();
+			var gameObject = new Actor();
 			gameObject.AddComponent<OhMyMesh>();
 			//gameObject.AddComponent<OhMyMesh>();
 
@@ -146,25 +104,6 @@ namespace EngineMono {
 
             return csRef;
 		}
-
-        /// Связывание с DLL
-
-        [DllImport(MonoClass.ExePath, EntryPoint = "CppClass_longValue_get")]
-		private static extern long m_longValue_get(CppRef objRef);
-
-		[DllImport(MonoClass.ExePath, EntryPoint = "CppClass_longValue_set")]
-		private static extern void m_longValue_set(CppRef objRef, long value);
-
-
-		[DllImport(MonoClass.ExePath, EntryPoint = "CppClass_vector3m_get")]
-		private static extern Vector3 m_vector3m_get(CppRef objRef);
-
-		[DllImport(MonoClass.ExePath, EntryPoint = "CppClass_vector3m_set")]
-		private static extern void m_vector3m_set(CppRef objRef, Vector3 value);
-
-
-		[DllImport(MonoClass.ExePath, EntryPoint = "CppClass_SomeFunc")]
-		private static extern float m_SomeFunc(CppRef objRef);
 
 	};
 }
