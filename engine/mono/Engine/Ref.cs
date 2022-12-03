@@ -66,7 +66,7 @@ namespace Engine {
         }
 
 
-        [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "Ref_GetPointer")]
+        [DllImport(Paths.Exe, EntryPoint = "Ref_GetPointer")]
         private static extern unsafe void* m_GetPointer(CppRef objectRefId);
 
 

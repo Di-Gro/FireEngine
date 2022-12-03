@@ -4,8 +4,7 @@ using System.Runtime.InteropServices;
 namespace EngineMono {
 
     public class MonoClass {
-        public const string ExePath = "../Core.exe";
-
+        
         private UInt64 m_refId;
 
         public void Func() {
@@ -35,7 +34,7 @@ namespace EngineMono {
         }
 
 
-        [DllImport(ExePath, EntryPoint = "setValue")]
+        [DllImport(Engine.Paths.Exe, EntryPoint = "setValue")]
         public static extern void CppFunc(UInt64 refId, float value);
 
         //[DllImport(ExePath, EntryPoint = "setValue")]

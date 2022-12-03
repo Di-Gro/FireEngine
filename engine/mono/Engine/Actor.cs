@@ -10,7 +10,7 @@ using EngineDll;
 namespace Engine {
 
     sealed class Actor : CppLinked {
-        //private CsRef m_transformRef;
+        public string Name { get; set; }
 
         public Vector3 localPosition {
             get => Dll.Actor.localPosition_get(cppRef);
@@ -40,8 +40,6 @@ namespace Engine {
         public Vector3 up => Dll.Actor.up_get(cppRef);
         public Vector3 right => Dll.Actor.right_get(cppRef);
 
-        //public Transform transform => GetObjectByRef(m_transformRef) as Transform;
-
         public Actor parent {
             get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
             set => Dll.Actor.parent_set(cppRef, value.cppRef);
@@ -54,12 +52,16 @@ namespace Engine {
 
         #region Public
 
-        public Actor() : this("GameObject") { }
-
-        public Actor(string name) {
+        public Actor(string name = "Actor") : this(name, null) { }
+        public Actor(Actor targetParent) : this("Actor", targetParent) { }
+        
+        public Actor(string name, Actor targetParent) {
             //Console.WriteLine($"#: GameObject(\"{name}\"): {csRef}, -> ");
+            Name = name;
 
-            var info = Dll.Game.CreateGameObjectFromCS(Game.gameRef, csRef, name);
+            CppRef parentRef = targetParent != null ? targetParent.cppRef : 0;
+
+            var info = Dll.Game.CreateGameObjectFromCS(Game.gameRef, csRef, parentRef);
             Link(info.classRef, info.objectRef);
 
             //m_transformRef = info.transformRef;
@@ -251,6 +253,13 @@ namespace Engine {
             //Console.WriteLine($"#: -> {csRef}, {cppRef} ");
 
             return cppRef;
+        }
+
+        private static void cpp_SetName(CsRef objRef, ulong ptr, ulong length) {
+            var actor = CppLinked.GetObjectByRef(objRef) as Actor;
+            actor.Name = ReadCString(ptr, length);
+
+            //Console.WriteLine($"#: Actor.cpp_SetName('{actor.Name}')");
         }
 
         private static string ReadCString(ulong ptr, ulong length) {

@@ -58,6 +58,14 @@ namespace Engine {
                 Console.WriteLine($"# OhMyMesh: color={m_material.DiffuseColor}");
             }
 
+            //if (Input.GetButtonDown(Key.Tab)) {
+            //    var actors = Game.GetRootActors();
+
+            //    foreach(var actor in actors) {
+            //        Console.WriteLine($"# root-> {actor.Name}");
+            //    }
+            //}
+
         }
 
     }
@@ -73,8 +81,7 @@ namespace EngineMono {
 
 			var gameObject = new Actor();
 			gameObject.AddComponent<OhMyMesh>();
-			//gameObject.AddComponent<OhMyMesh>();
-
+            gameObject.AddComponent<UI.TestImGui>();
 
             /// Передача vector2, vector3 и quaternion ->
             //var gameObject2 = new GameObject();

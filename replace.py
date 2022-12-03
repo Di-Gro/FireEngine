@@ -34,8 +34,8 @@ strings = {
     r"C:/GitHub/FireEngine/x64/Debug/",
 
 # Путь до выходных файлов FireEngine.Mono
-    r"C:/GitHub/FireEngine/x64/Debug/netstandard2.0/Mono.dll":
-    r"C:/GitHub/FireEngine/x64/Debug/netstandard2.0/Mono.dll",
+    r"C:/GitHub/FireEngine/x64/Debug/netstandard2.1/Mono.dll":
+    r"C:/GitHub/FireEngine/x64/Debug/netstandard2.1/Mono.dll",
 }
 
 for path in paths:

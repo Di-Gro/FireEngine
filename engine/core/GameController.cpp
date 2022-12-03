@@ -140,12 +140,12 @@ void GameController::OnUpdate() {
 		game()->Stat();
 	}
 
-	if (hotkeys->Is(Keys::Tab, KeyState::Press)) {
-		std::cout << "send game message: ";
-		std::string msg;
-		std::getline(std::cin, msg);
-		game()->SendGameMessage(msg);
-	}
+	//if (hotkeys->Is(Keys::Tab, KeyState::Press)) {
+	//	std::cout << "send game message: ";
+	//	std::string msg;
+	//	std::getline(std::cin, msg);
+	//	game()->SendGameMessage(msg);
+	//}
 
 	if (hotkeys->Is(Keys::F, KeyState::Press)) {
 		if (m_defaultCamera->IsAttached()) {

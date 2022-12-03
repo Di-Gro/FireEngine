@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-//using EngineMono;
 using EngineDll;
 
 namespace Engine {
@@ -61,7 +60,7 @@ namespace Engine {
             return res;
         }
 
-        [DllImport(EngineMono.MonoClass.ExePath, EntryPoint = "Actor_SetComponentCallbacks")]
+        [DllImport(Paths.Exe, EntryPoint = "Actor_SetComponentCallbacks")]
         private static extern void dll_SetComponentCallbacks(CppRef componentRef, ComponentCallbacks callbacks);
     }
 

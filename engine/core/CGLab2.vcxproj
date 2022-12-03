@@ -27,6 +27,12 @@
     <ClCompile Include="CS.cpp" />
     <ClCompile Include="CSComponent.cpp" />
     <ClCompile Include="DynamicMeshComponent.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ClassInfo.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -100,6 +106,14 @@
     <ClInclude Include="IApp.h" />
     <ClInclude Include="ImageAsset.h" />
     <ClInclude Include="ImageComponent.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="imgui\imgui_impl_win32.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="IWin32InputHandler.h" />
     <ClInclude Include="IWindow.h" />

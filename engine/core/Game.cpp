@@ -4,6 +4,10 @@
 #include <sstream>
 #include <chrono>
 
+#include "imgui\imgui.h"
+#include "imgui\imgui_impl_dx11.h"
+#include "imgui\imgui_impl_win32.h"
+
 #include "Window.h"
 #include "RenderTarget.h"
 #include "FPSCounter.h"
@@ -50,6 +54,8 @@ void Game::Init(MonoInst* imono) {
 		m_shaderAsset.CompileShader(path);
 
 	m_lighting.Init(this);
+
+	m_InitImGui();
 }
 
 void Game::m_InitMono(MonoInst* imono) {
@@ -106,6 +112,10 @@ void Game::Run() {
 		}
 
 		m_Update();
+
+		// Any application code here
+		//ImGui::Text("Hello, world!");
+
 		m_render.Draw();
 		
 		m_fpsCounter.Update();
@@ -133,6 +143,9 @@ void Game::m_Update() {
 	mono_setUpdateData(updateData);
 	m_hotkeys.Update(input());
 
+	/// ImGui Update
+	m_BeginUpdateImGui();
+
 	/// Update
 	auto it = m_actors.begin();
 	while (it != m_actors.end()) {
@@ -150,9 +163,12 @@ void Game::m_Update() {
 
 	/// Post Update
 	m_hotkeys.LateUpdate();
+
+	m_EndUpdateImGui();
 }
 
 void Game::m_Destroy() {
+	m_DestroyImGui();
 	m_hotkeys.Destroy();
 	m_window.Destroy();
 
@@ -161,22 +177,26 @@ void Game::m_Destroy() {
 		DestroyActor(*it);
 		it = m_EraseActor(it);
 	}
-
-
 }
 
-Actor* Game::CreateActor(std::string name) {
+Actor* Game::CreateActor(Actor* parent, std::string name) {
 	//std::cout << "+: Game.CreateActor()" << std::endl;
 
 	auto cppRef = mono_create();
 	
 	Actor* actor = CppRefs::ThrowPointer<Actor>(cppRef);
-	actor->name = name != "" ? name : "Actor";
+	if (name != "")
+		actor->SetName(name);
 
+	if (parent != nullptr) {
+		actor->parent(parent);
+		actor->localScale({ 1, 1, 1 });
+	}
 	return actor;
 }
 
-GameObjectInfo Game::m_CreateActor(CsRef csRef, std::string name) {
+
+GameObjectInfo Game::m_CreateActorFromCs(CsRef csRef, CppRef parentRef) {
 	//std::cout << "+: Game.CreateGameObjectFromCS(): csRef:" << csRef << std::endl;
 
 	auto classInfoRef = CppRefs::Create(ClassInfo::Get<Actor>());
@@ -189,12 +209,16 @@ GameObjectInfo Game::m_CreateActor(CsRef csRef, std::string name) {
 	actor->f_cppRef = actor->f_ref.cppRef();
 	actor->f_csRef = csRef;
 
-	actor->f_Init(this, name);
-		
+	actor->f_Init(this);
+
+	if (parentRef.value != 0) {
+		auto parent = CppRefs::ThrowPointer<Actor>(parentRef);
+		actor->parent(parent);
+		actor->localScale({ 1, 1, 1 });
+	}
 	GameObjectInfo objectInfo;
 	objectInfo.classRef = RefCpp(classInfoRef.cppRef());
 	objectInfo.objectRef = actor->cppRef();
-	//objectInfo.transformRef = actor->transformCsRef();
 
 	return objectInfo;
 }
@@ -220,15 +244,15 @@ std::list<Actor*>::iterator Game::m_EraseActor(std::list<Actor*>::iterator it) {
 }
 
 void Game::PrintSceneTree() {
-	auto it = m_actors.begin();
+	/*auto it = m_actors.begin();
 	for (int i = 0; it != m_actors.end(); it++, i++) {
 		if (!(*it)->HasParent())
 			m_PrintSceneTree("", *it);
-	}
+	}*/
 }
 
 void Game::m_PrintSceneTree(const std::string& prefix, const Actor* node) {
-	if (node != nullptr) {
+	/*if (node != nullptr) {
 		std::cout << prefix << "* " << node->name;
 		std::cout << " (" << node->f_actorID << ")" << std::endl;
 
@@ -236,7 +260,7 @@ void Game::m_PrintSceneTree(const std::string& prefix, const Actor* node) {
 			auto n = node->m_childs[i];
 			m_PrintSceneTree(prefix + "  ", n);
 		}
-	}
+	}*/
 }
 
 void Game::SendGameMessage(const std::string& msg) {
@@ -296,6 +320,79 @@ void Game::Stat() {
 	std::cout << "+ <- " << std::endl;
 }
 
-DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, const char* name) {
-	return CppRefs::ThrowPointer<Game>(gameRef)->m_CreateActor(csRef, name);
+/// ImGui 
+/// -> 
+
+void Game::m_InitImGui() {
+	// Application init: create a dear imgui context, setup some options, load fonts
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+
+	// TODO: Set optional io.ConfigFlags values, e.g. 'io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard' to enable keyboard controls.
+	// TODO: Fill optional fields of the io structure later.
+	// TODO: Load TTF/OTF fonts if you don't want to use the default font.
+
+	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
+
+	io.WantCaptureMouse = true;
+			
+	// Initialize helper Platform and Renderer backends (here we are using imgui_impl_win32.cpp and imgui_impl_dx11.cpp)
+	ImGui_ImplWin32_Init(window()->GetHWindow());
+	ImGui_ImplDX11_Init(render()->device(), render()->context());
+}
+
+void Game::m_DestroyImGui() {
+	// Shutdown
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+}
+
+void Game::m_BeginUpdateImGui() {
+	// Feed inputs to dear imgui, start new frame
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+}
+
+void Game::m_EndUpdateImGui() {
+	ImGui::EndFrame();
+	ImGui::Render();
+	ImGui::UpdatePlatformWindows();
+}
+
+/// <-
+/// ImGui 
+
+int Game::GetRootActorsCount() {
+	int count = 0;
+	for (auto actor : m_actors) {
+		if (!actor->HasParent())
+			count++;
+	}
+	return count;
+}
+
+void Game::WriteRootActorsRefs(CsRef* refs) {
+	CsRef* ptr = refs;
+	for (auto actor : m_actors) {
+		if (!actor->HasParent()) {
+			*ptr = actor->csRef();
+			ptr++;
+		}
+	}
+}
+
+DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, CppRef parentRef) {
+	return CppRefs::ThrowPointer<Game>(gameRef)->m_CreateActorFromCs(csRef, parentRef);
+}
+
+DEF_FUNC(Game, GetRootActorsCount, int)(CppRef gameRef) {
+	return CppRefs::ThrowPointer<Game>(gameRef)->GetRootActorsCount();
+}
+
+DEF_FUNC(Game, WriteRootActorsRefs, void)(CppRef gameRef, CsRef* refs) {
+	CppRefs::ThrowPointer<Game>(gameRef)->WriteRootActorsRefs(refs);
 }

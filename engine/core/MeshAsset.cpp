@@ -537,9 +537,13 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<Actor*>* objects) {
 		auto hs = box.Extents;
 		float radius = (hs.x + hs.y + hs.z) / 3;
 
-		auto attachable = m_game->CreateActor("Attachable")->AddComponent<Attachable>();
-		attachable->actor()->parent(meshComp->actor());
-		attachable->localPosition(box.Center);
+		//auto attachable = m_game->CreateActor("Attachable")->AddComponent<Attachable>();
+		//attachable->actor()->parent(meshComp->actor());
+		auto attachable = meshComp->actor()->AddComponent<Attachable>();
+
+		//attachable->localPosition(box.Center);
+		attachable->boundCenter = box.Center;
+
 		attachable->boundRadius = radius;
 		attachable->attachParent = true;
 		attachable->showCenter = false;

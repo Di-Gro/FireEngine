@@ -1,5 +1,9 @@
 #include "Window.h"
 
+#include "imgui\imgui_impl_win32.h"
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) {
     using Iwindow = DiGro::GameFramework::IWindow;
@@ -98,9 +102,14 @@ LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM l
     //    std::cout << "Lost the focus\n";
     //    break;
     // Fall is OK
-    default:
-        return DefWindowProc(hwnd, umessage, wparam, lparam);
+    //default:
+        //return DefWindowProc(hwnd, umessage, wparam, lparam);
     }
+
+    auto res = ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
+    if (res != 0)
+        return res;
+    return DefWindowProc(hwnd, umessage, wparam, lparam);
 }
 
 Vector2 Window::ScreenToViewport(Vector2 screenPositon) {

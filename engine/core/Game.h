@@ -25,10 +25,10 @@ class CameraComponent;
 class ShadowMapRender;
 class MonoInst;
 
-extern "C" __declspec(dllexport) GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, const char* name);
+extern "C" __declspec(dllexport) GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
 
 class Game {
-	friend GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, const char* name);
+	friend GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
 
 private:
 	MonoInst* m_mono;
@@ -80,9 +80,13 @@ public:
 
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
-	Actor* CreateActor(std::string name = "");
+	Actor* CreateActor(std::string name = "") { return CreateActor(nullptr, name); }
+	Actor* CreateActor(Actor* parent, std::string name = "");
 
 	void DestroyActor(Actor* actor);
+
+	int GetRootActorsCount();
+	void WriteRootActorsRefs(CsRef* refs);
 
 	void PrintSceneTree();
 
@@ -95,14 +99,22 @@ public:
 	
 private:
 	void m_InitMono(MonoInst* imono);
+	void m_InitImGui();
+	void m_DestroyImGui();
 
 	void m_Update();
 	void m_Destroy();
 
-	GameObjectInfo m_CreateActor(CsRef csRef, std::string name);
+	void m_BeginUpdateImGui();
+	void m_EndUpdateImGui();
+
+	GameObjectInfo m_CreateActorFromCs(CsRef csRef, CppRef parentRef);
 
 	std::list<Actor*>::iterator m_EraseActor(std::list<Actor*>::iterator it);
 
 	void m_PrintSceneTree(const std::string& prefix, const Actor* node);
 
 };
+
+FUNC(Game, GetRootActorsCount, int)(CppRef gameRef);
+FUNC(Game, WriteRootActorsRefs, void)(CppRef gameRef, CsRef* refs);

@@ -61,7 +61,8 @@ void PlayerCamera::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
 	bool hasKey2 = game()->input()->IsKeyDown(Keys::Key2);
 	bool hasKey3 = game()->input()->IsKeyDown(Keys::Key3);
 	bool hasKey4 = game()->input()->IsKeyDown(Keys::Key4);
-	if (hasKey1 || hasKey2 || hasKey3 || hasKey4)
+	bool hasKey5 = game()->input()->IsKeyDown(Keys::Tab);
+	if (hasKey1 || hasKey2 || hasKey3 || hasKey4 || hasKey5)
 		return;
 
 	m_rotationDelta.y -= args.Offset.x * 0.003f * m_rotationSense;

@@ -15,6 +15,8 @@ public:
 
 	bool showCenter = true;
 	bool showBound = true;
+
+	Vector3 boundCenter;
 	
 private:
 	MeshComponent* m_mesh;

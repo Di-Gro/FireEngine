@@ -17,6 +17,7 @@ bool Actor::mono_inited;
 
 mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> Actor::mono_AddComponent;
 mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> Actor::mono_AddCsComponent;
+mono::mono_method_invoker<void(CsRef, size_t, size_t)> Actor::mono_SetName;
 
 
 Actor::Actor() {  }
@@ -31,8 +32,7 @@ void Actor::m_CreateTransform() {
 //void Actor::m_RemoveTransform() {
 //}
 
-void Actor::f_Init(Game* game, std::string name) {
-	this->name = name;
+void Actor::f_Init(Game* game) {
 	f_game = game;
 	friend_gameObject = this;
 
@@ -47,7 +47,8 @@ void Actor::m_InitMono() {
 	auto type = game()->mono()->GetType("Engine", "Actor");
 	mono_AddComponent = mono::make_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)>(type, "cpp_AddComponent");
 	mono_AddCsComponent = mono::make_method_invoker<CppRef(CsRef, size_t, size_t)>(type, "cpp_AddCsComponent");
-	
+	mono_SetName = mono::make_method_invoker<void(CsRef, size_t, size_t)>(type, "cpp_SetName");
+
 	mono_inited = true;
 }
 
@@ -166,6 +167,10 @@ void Actor::m_DeleteFromParent() {
 	}
 }
 
+void Actor::SetName(const std::string& value) {
+	mono_SetName(csRef(), (size_t)value.c_str(), value.size());
+}
+
 int Actor::GetComponentsCount() {
 	int count = 0;
 
@@ -214,29 +219,29 @@ static std::string ToString(Transform& transform) {
 
 void Actor::RecieveGameMessage(const std::string& msg) {
 
-	if (msg == "tr") {
-		std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
-		std::cout << "transform:" << std::endl;
-		std::cout << ToString(*transform) << std::endl;
-		std::cout << std::endl;
-	}
-	else if (msg == "tr.lpos") {
-		std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
-		std::cout << "local position: ";
-		std::cout << ToString(localPosition()) << std::endl;
-		std::cout << std::endl;
-	} 
-	else if (msg == "tr.lrot") {
-		std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
-		std::cout << "local rotation: ";
-		std::cout << ToString(deg(localRotation())) << std::endl;
-		std::cout << std::endl;
-	}
+	//if (msg == "tr") {
+	//	std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
+	//	std::cout << "transform:" << std::endl;
+	//	std::cout << ToString(*transform) << std::endl;
+	//	std::cout << std::endl;
+	//}
+	//else if (msg == "tr.lpos") {
+	//	std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
+	//	std::cout << "local position: ";
+	//	std::cout << ToString(localPosition()) << std::endl;
+	//	std::cout << std::endl;
+	//} 
+	//else if (msg == "tr.lrot") {
+	//	std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
+	//	std::cout << "local rotation: ";
+	//	std::cout << ToString(deg(localRotation())) << std::endl;
+	//	std::cout << std::endl;
+	//}
 
-	for (auto component : m_components) {
-		if (!component->IsDestroyed())
-			component->RecieveGameMessage(msg);
-	}
+	//for (auto component : m_components) {
+	//	if (!component->IsDestroyed())
+	//		component->RecieveGameMessage(msg);
+	//}
 }
 
 void Actor::m_OnInitComponent(Component* component) {
@@ -333,7 +338,7 @@ DEF_PROP_GET(Actor, Vector3, forward)
 DEF_PROP_GET(Actor, Vector3, up)
 DEF_PROP_GET(Actor, Vector3, right)
 
-DEF_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, ComponentCallbacks callbacks) {
+DEF_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks) {
 	auto component = CppRefs::ThrowPointer<Component>(componentRef);
 	component->actor()->m_SetComponentCallbacks(component, callbacks);
 }

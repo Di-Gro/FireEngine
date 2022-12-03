@@ -9,6 +9,9 @@
 #include <directxmath.h>
 #include <list>
 
+#include "imgui\imgui.h"
+#include "imgui\imgui_impl_dx11.h"
+
 #include "Game.h"
 #include "RenderTarget.h"
 #include "DirectionLight.h"
@@ -71,6 +74,9 @@ void Render::Draw() {
 	m_screenQuad->visibility(true);
 	m_screenQuad->OnDrawUI();
 	m_screenQuad->visibility(false);
+
+	// ImGui
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	m_device.EndFrame();
 

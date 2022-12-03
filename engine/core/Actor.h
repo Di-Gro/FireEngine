@@ -14,7 +14,7 @@
 
 
 FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
-FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, ComponentCallbacks callbacks);
+FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
 class Render;
 
@@ -26,10 +26,10 @@ class Actor : public ActorBase {
 	friend class Render;
 
 	FRIEND_FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
-	FRIEND_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, ComponentCallbacks callbacks);
+	FRIEND_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
 public:
-	std::string name = "";
+	//std::string name = "";
 
 private:
 	Game* f_game = nullptr;
@@ -44,11 +44,14 @@ private:
 	static bool mono_inited;
 	static mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> mono_AddComponent;
 	static mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> mono_AddCsComponent;
+	static mono::mono_method_invoker<void(CsRef, size_t, size_t)> mono_SetName;
 
 
 public:
 
 	int Id() { return f_actorID; }
+
+	void SetName(const std::string& value);
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* inner_CreateComponent(CsRef csRef = CsRef::Void);
@@ -84,7 +87,7 @@ private:
 
 	void f_DestroyComponent(Component* component);
 
-	void f_Init(Game* game, std::string name = "");
+	void f_Init(Game* game);
 	void f_Update();
 	void f_Draw();
 	void f_DrawUI();

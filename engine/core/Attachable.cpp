@@ -69,7 +69,7 @@ void Attachable::OnUpdate() {
 		return;
 
 	auto playerPos = player->worldPosition();
-	auto dist = (worldPosition() - playerPos).Length();
+	auto dist = (worldPosition() + boundCenter - playerPos).Length();
 
 	if (dist <= boundRadius + player->radius) {
 

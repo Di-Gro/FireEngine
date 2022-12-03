@@ -58,5 +58,7 @@ enum class Keys {
 	W = 87,
 	X = 88,
 	Y = 89,
-	Z = 90
+	Z = 90,
+	Ctrl = 0x11,
+	ALT = 0x12,
 };
