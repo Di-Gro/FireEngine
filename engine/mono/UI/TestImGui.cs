@@ -38,50 +38,50 @@ namespace UI {
 
 
         public override void OnUpdate() {
-
-            // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-            {
-                ImGui.Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-                ImGui.Text("This is some useful text.");               // Display some text (you can use a format strings too)
-                ImGui.Checkbox("Demo Window", ref show_demo_window[0]);      // Edit bools storing our window open/close state
-                ImGui.Checkbox("Another Window", ref show_another_window[0]);
-
-                ImGui.SliderFloat("float", ref f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-                ImGui.ColorEdit3("clear color", ref clear_color.X); // Edit 3 floats representing a color
-
-                if (ImGui.Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                    counter++;
-                ImGui.SameLine();
-                ImGui.Text($"counter = {counter}");
-
-                var p = ImGui.GetIO();
-                var i = (ImGuiIO)Marshal.PtrToStructure(p, typeof(ImGuiIO));
-                ImGui.Text($"Application average {1000.0f / i.Framerate:F3} ms/frame ({i.Framerate:F1} FPS)");
-                ImGui.End();
-            }
-
-            // 3. Show another simple window.
-            if (show_another_window[0]) {
-                using var pin = Pin.Create(show_another_window);
-                ImGui.Begin("Another Window", pin);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-                ImGui.Text("Hello from another window!");
-                if (ImGui.Button("Close Me"))
-                    show_another_window[0] = false;
-                ImGui.End();
-            }
-
             if (m_timeToUpdate > 0)
                 m_timeToUpdate -= Engine.Game.DeltaTime;
 
-            if (true/*Engine.Input.GetButton(Engine.Key.Tab)*/) {
+            if (Engine.Input.GetButton(Engine.Key.Tab)) {
+                // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+                {
+                    ImGui.Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+                    ImGui.Text("This is some useful text.");               // Display some text (you can use a format strings too)
+                    ImGui.Checkbox("Demo Window", ref show_demo_window[0]);      // Edit bools storing our window open/close state
+                    ImGui.Checkbox("Another Window", ref show_another_window[0]);
+
+                    ImGui.SliderFloat("float", ref f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+                    ImGui.ColorEdit3("clear color", ref clear_color.X); // Edit 3 floats representing a color
+
+                    if (ImGui.Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+                        counter++;
+                    ImGui.SameLine();
+                    ImGui.Text($"counter = {counter}");
+
+                    var p = ImGui.GetIO();
+                    var i = (ImGuiIO)Marshal.PtrToStructure(p, typeof(ImGuiIO));
+                    ImGui.Text($"Application average {1000.0f / i.Framerate:F3} ms/frame ({i.Framerate:F1} FPS)");
+                    ImGui.End();
+                }
+
+                // 3. Show another simple window.
+                if (show_another_window[0]) {
+                    using var pin = Pin.Create(show_another_window);
+                    ImGui.Begin("Another Window", pin);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+                    ImGui.Text("Hello from another window!");
+                    if (ImGui.Button("Close Me"))
+                        show_another_window[0] = false;
+                    ImGui.End();
+                }
+
+                // Иерархия сцены
                 if (m_timeToUpdate <= 0) {
                     m_timeToUpdate = 1.0f;
                     m_text = "";
                     var actors = Engine.Game.GetRootActors();
                     foreach (var actor in actors)
                         AddActorText(ref m_text, actor, 0);
-                } 
+                }
                 ImGui.Begin("Root Actors");
                 ImGui.Text(m_text);
                 ImGui.End();
