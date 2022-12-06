@@ -5,6 +5,13 @@ std::unordered_map<void*, size_t> CppRefs::m_ptrMap = std::unordered_map<void*, 
 
 size_t CppRefs::m_nextId = 1;
 
+bool CppRefs::IsValidPointer(const void* ptr) {
+	return m_ptrMap.contains((void *)ptr);
+}
+
+bool CppRefs::IsValid(const CppRef& ref) {
+	return m_idMap.contains(ref);
+}
 
 bool CppRefs::IsValid(const Ref2& ref) {
 	return ref.isInitialized() && m_idMap.contains(ref.cppRef());

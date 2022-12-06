@@ -31,8 +31,13 @@ namespace Engine {
 			m_meshComp = actor.AddComponent<MeshComponent>();
             m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
             m_material = new DynamicMaterial(m_meshComp.GetMaterial(0));
-
+            
             m_meshComp.SetMaterial(0, m_material);
+        }
+
+        public override void OnDestroy() {
+            m_meshComp.RemoveMaterial(0);
+            m_material.Delete();
         }
 
         public override void OnUpdate() {

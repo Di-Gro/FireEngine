@@ -14,6 +14,6 @@ public:
 	CppRef f_cppRef;
 	CsRef f_csRef;
 
-	CppRef cppRef() { return f_cppRef; }
-	CsRef csRef() { return f_csRef; }
+	CppRef cppRef() const { return f_cppRef; }
+	CsRef csRef() const { return f_csRef; }
 };

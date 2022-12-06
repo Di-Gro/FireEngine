@@ -22,7 +22,7 @@
 #include "Actor.h"
 
 class CameraComponent;
-class ShadowMapRender;
+//class ShadowMapRender;
 class MonoInst;
 
 extern "C" __declspec(dllexport) GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);

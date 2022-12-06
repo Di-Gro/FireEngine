@@ -261,14 +261,14 @@ void Mesh4::Draw(const DynamicData& data) const {
 		context->Unmap(shape.directionLightCBuffer.Get(), 0);
 		/// <-
 		/// Resources ->
-		auto shadowMapSrv = data.directionLight->shadowRT.depthSRV();
+		auto shadowMapSrv = data.directionLight->DS()->shaderResource();
 
 		context->PSSetSamplers(0, 1, shape.sampler.GetAddressOf());
 		context->PSSetSamplers(1, 1, shape.compSampler.GetAddressOf());
 
 		ID3D11ShaderResourceView* shaderResources[] = {
 			mat->diffuse.srv.Get(),
-			camera->setShaderMap ? shadowMapSrv.Get() : nullptr,
+			camera->setShaderMap ? shadowMapSrv : nullptr,
 		};
 
 		//context->PSSetShaderResources(0, 1, mat->diffuse.srv.GetAddressOf());
@@ -278,6 +278,119 @@ void Mesh4::Draw(const DynamicData& data) const {
 		/// <-
 		context->DrawIndexed(shape.indecesSize, 0, 0);
 	}
+}
+
+void Mesh4::DrawShape(const DynamicData& data, int index) const {
+	auto* context = data.render->context();
+	auto* camera = data.render->camera();
+	bool callPixelShader = camera->callPixelShader;
+
+	auto& shape = m_shapes[index];
+	auto* mat = data.materials->at(shape.materialIndex);
+	auto* shader = mat->shader;
+	
+	context->IASetInputLayout(shader->layout.Get()); /// в материал
+	context->IASetPrimitiveTopology(topology);
+	context->IASetIndexBuffer(shape.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetVertexBuffers(0, 1, shape.vertexBuffer.GetAddressOf(), m_strides, m_offsets);
+
+	context->VSSetShader(shader->vertex.Get(), nullptr, 0);
+
+	if (callPixelShader)
+		context->PSSetShader(shader->pixel.Get(), nullptr, 0);
+
+	context->VSSetConstantBuffers(0, 1, shape.constBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(0, 1, shape.constBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(1, 1, shape.materialConstBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(2, 1, shape.directionLightCBuffer.GetAddressOf());
+
+	/// Mesh ->
+	D3D11_MAPPED_SUBRESOURCE res = {};
+	context->Map(shape.constBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+
+	auto* cbuf = (MeshCBuffer*)res.pData;
+	cbuf->wvpMatrix = *data.transfMatrix;
+	cbuf->worldMatrix = *data.worldMatrix;
+	cbuf->cameraPosition = *data.cameraPosition;
+
+	context->Unmap(shape.constBuffer.Get(), 0);
+	/// <-
+
+	/// Material ->
+	D3D11_MAPPED_SUBRESOURCE res2 = {};
+	context->Map(shape.materialConstBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res2);
+	memcpy(res2.pData, &mat->data, sizeof(Material::Data));
+	context->Unmap(shape.materialConstBuffer.Get(), 0);
+	/// <-
+
+	/// Direction Light ->
+	D3D11_MAPPED_SUBRESOURCE res3 = {};
+	context->Map(shape.directionLightCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res3);
+
+	auto* cbuf2 = (DirectionLightCBuffer*)res3.pData;
+	cbuf2->uvMatrix = data.directionLight->uvMatrix();
+	cbuf2->direction = data.directionLight->forward();
+	cbuf2->color = data.directionLight->color;
+	cbuf2->intensity = data.directionLight->intensity;
+
+	context->Unmap(shape.directionLightCBuffer.Get(), 0);
+	/// <-
+	/// Resources ->
+	auto shadowMapSrv = data.directionLight->DS()->shaderResource();
+
+	context->PSSetSamplers(0, 1, shape.sampler.GetAddressOf());
+	context->PSSetSamplers(1, 1, shape.compSampler.GetAddressOf());
+
+	ID3D11ShaderResourceView* shaderResources[] = {
+		mat->diffuse.srv.Get(),
+		camera->setShaderMap ? shadowMapSrv : nullptr,
+	};
+
+	//context->PSSetShaderResources(0, 1, mat->diffuse.srv.GetAddressOf());
+
+	context->PSSetShaderResources(0, 2, shaderResources);  /// в render pass
+
+	/// <-
+	context->DrawIndexed(shape.indecesSize, 0, 0);
+}
+
+void ScreenQuad::Init(Render* render, const Shader* shader) {
+	m_render = render;
+	m_shader = shader;
+
+	D3D11_SAMPLER_DESC sampleDesc = {};
+	sampleDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampleDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampleDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampleDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampleDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	sampleDesc.BorderColor[0] = 1.0f;
+	sampleDesc.BorderColor[1] = 0.0f;
+	sampleDesc.BorderColor[2] = 0.0f;
+	sampleDesc.BorderColor[3] = 1.0f;
+	sampleDesc.MaxLOD = INT_MAX;
+
+	m_render->device()->CreateSamplerState(&sampleDesc, m_sampler.GetAddressOf());
+}
+
+void ScreenQuad::Draw() const {
+	auto* context = m_render->context();
+	auto* camera = m_render->camera();
+
+	context->IASetInputLayout(nullptr);
+	context->IASetPrimitiveTopology(topology);
+
+	context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+	//context->IASetVertexBuffers(0, 1, nullptr, nullptr, nullptr);
+
+	context->VSSetShader(m_shader->vertex.Get(), nullptr, 0);
+	context->PSSetShader(m_shader->pixel.Get(), nullptr, 0);
+
+	ID3D11ShaderResourceView* resources[] = { deffuseSRV };
+	context->PSSetShaderResources(0, 1, resources);
+	context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
+
+	context->Draw(4, 0);
 }
 
 Mesh4::Shape* Mesh4::GetShape(int index) {

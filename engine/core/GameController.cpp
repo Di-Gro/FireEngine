@@ -25,6 +25,7 @@
 #include "LineComponent.h"
 #include "DirectionLight.h"
 #include "TestComponent.h"
+#include "ShadowPass.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -61,7 +62,7 @@ Actor* GameController::CreatePlayer() {
 	camera->localPosition({ 0, 0, 300 });
 	camera->AddComponent<PlayerCamera>();
 
-	auto test = player->AddComponent<TestComponent>();
+	//auto test = player->AddComponent<TestComponent>();
 	
 	return player;
 }
@@ -106,16 +107,16 @@ void GameController::OnInit() {
 	}
 
 	
-	auto sprite = CreateActor("UI Image")->AddComponent<ImageComponent>();
-	sprite->SetImage(game()->lighting()->directionLight()->shadowRT.depthTexture());
+	//auto sprite = CreateActor("UI Image")->AddComponent<ImageComponent>();
+	//sprite->SetImage(game()->lighting()->directionLight()->depthTexture());
 
-	auto imgSize = sprite->size() * 0.1f;
+	//auto imgSize = sprite->size() * 0.1f;
 
-	sprite->localPosition({ 20, 1080 - imgSize.y - 35, 0 });
-	sprite->size(imgSize);
+	//sprite->localPosition({ 20, 1080 - imgSize.y - 35, 0 });
+	//sprite->size(imgSize);
 
-	auto test = m_player->GetComponentInChild<TestComponent>();
-	test->targetImage = sprite;
+	//auto test = m_player->GetComponentInChild<TestComponent>();
+	//test->targetImage = sprite;
 
 	game()->hotkeys()->RegisterHotkey(Keys::Esc);
 	game()->hotkeys()->RegisterHotkey(Keys::Tab);
@@ -123,6 +124,8 @@ void GameController::OnInit() {
 	game()->hotkeys()->RegisterHotkey(Keys::R);
 
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &GameController::m_OnMouseMove);
+
+	m_shadowPass = (ShadowPass*)game()->render()->GetRenderPass("Shadow Pass");
 }
 
 void GameController::OnDestroy() {
@@ -164,6 +167,9 @@ void GameController::OnUpdate() {
 
 void GameController::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
 
+	if (m_shadowPass == nullptr)
+		return;
+
 	static int v1 = 0;
 	static float v2 = 0, v3 = 0;
 	static D3D11_CULL_MODE CullMode = D3D11_CULL_FRONT; //D3D11_CULL_BACK;
@@ -194,7 +200,7 @@ void GameController::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
 		CullMode = CullMode == D3D11_CULL_FRONT ? D3D11_CULL_BACK : D3D11_CULL_FRONT;
 
 	if (hasKey1 || hasKey2 || hasKey3 || hasKey4) {
-		game()->lighting()->directionLight()->shadowRT.ResetRastState(v1, v2, v3, CullMode);
+		m_shadowPass->ResetRastState(v1, v2, v3, CullMode);
 		std::cout << v1 << ", " << v2 << ", " << v3 << std::endl;
 	}
 }

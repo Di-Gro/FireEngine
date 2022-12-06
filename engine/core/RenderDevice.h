@@ -8,7 +8,6 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "ImageAsset.h"
-#include "Material.h"
 
 class CameraComponent;
 
@@ -38,12 +37,15 @@ public:
 	ID3D11DeviceContext* GetContext() { return m_context.Get(); }
 	IDXGISwapChain* GetSwapChain() { return m_swapChain.Get(); }
 	comptr<ID3D11RenderTargetView> GetRTV() { return m_rtv; }
+	D3D11_VIEWPORT* viewport() { return &m_viewport; }
+	ID3D11RasterizerState* rastState() { return m_rastState.Get(); } 
+	//ID3D11DepthStencilView* depthStencil() { return m_dsv.Get(); }
 
 	void Create(HWND hwnd, int width, int height);
 
-	void Clear();
-	void PrepareFrame();
-	void EndFrame();
+	//void Clear();
+	void BeginDraw();
+	void EndDraw();
 
 };
 

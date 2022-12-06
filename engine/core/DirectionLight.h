@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "RenderTarget.h"
+#include "DepthStencil.h"
 
 class MeshComponent;
 class LineComponent;
@@ -13,9 +14,9 @@ public:
 	Vector3 color = Vector3::One;
 	float intensity = 1.0f;
 
-	RenderTarget shadowRT;
-
 private:
+	RenderTarget m_shadowRT;
+	DepthStencil m_depthStencil;
 
 	CameraComponent* m_camera = nullptr;
 
@@ -27,7 +28,11 @@ private:
 	bool m_needDrawDebug = true;
 
 public:
-	//DirectionLight(Actor* actor) : Component(actor) { }
+	RenderTarget* RT() { { return &m_shadowRT; } };
+	DepthStencil* DS() { { return &m_depthStencil; } };
+	ID3D11RenderTargetView* renderTarget() { return m_shadowRT.renderTarget(); }
+	ID3D11DepthStencilView* depthStencil() { return m_depthStencil.depthStencil(); }
+	ID3D11Texture2D* depthTexture() { return m_depthStencil.texture(); }
 
 	bool drawDebug() { return m_needDrawDebug; }
 	void drawDebug(bool value);

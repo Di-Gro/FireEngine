@@ -175,7 +175,10 @@ void MeshAsset::ReloadMaterials() {
 		std::vector<tinyobj::material_t> materials;
 
 		std::string warn, err;
-		assert(tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), dir.c_str()));
+		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), dir.c_str())) {
+			std::cout << err << std::endl;
+			return;
+		}
 
 		//asset->materials.clear();
 		asset->staticMaterials.clear();
@@ -205,6 +208,7 @@ Material* MeshAsset::CreateDynamicMaterial(const Material* other) {
 	auto* images = m_game->imageAsset();
 
 	auto mat = m_NewMaterial();
+	mat->priority = other->priority;
 	mat->isDynamic = true;
 	mat->name(other->name());
 	mat->shader = other->shader;
@@ -224,6 +228,8 @@ Material* MeshAsset::CreateDynamicMaterial(const Material* other) {
 void MeshAsset::DeleteDynamicMaterial(Material* mat) {
 	if (m_dynamicMaterials.count(mat->cppRef()) == 0)
 		return;
+
+	m_game->render()->UnRegisterMaterial(mat);
 
 	m_dynamicMaterials.erase(mat->cppRef());
 	m_DeleteMaterial(mat);

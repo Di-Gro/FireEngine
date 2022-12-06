@@ -4,7 +4,7 @@
 
 class CameraComponent;
 class Player;
-
+class ShadowPass;
 
 class GameController : public Component {
 	PURE_COMPONENT(GameController)
@@ -18,6 +18,8 @@ private:
 	Actor* m_collider;
 
 	DelegateHandle m_mouseMoveHandle;
+
+	ShadowPass* m_shadowPass;
 
 public:
 	//GameController(Actor* actor) : Component(actor) {}

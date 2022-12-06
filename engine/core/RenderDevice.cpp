@@ -12,6 +12,7 @@
 
 #include "IWindow.h"
 #include "Mesh.h"
+#include "Material.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -121,19 +122,21 @@ void RenderDevice::Create(HWND hwnd, int width, int height) {
 
 }
 
-void RenderDevice::Clear() {
-	m_context->ClearState();
-	m_context->RSSetState(m_rastState.Get());
-	m_context->RSSetViewports(1, &m_viewport);
-}
+//void RenderDevice::Clear() {
+//	m_context->ClearState();
+//	m_context->RSSetState(m_rastState.Get());
+//	m_context->RSSetViewports(1, &m_viewport);
+//}
 
-void RenderDevice::PrepareFrame() {
-	m_context->OMSetRenderTargets(1, m_rtv.GetAddressOf(), m_dsv.Get()); // Вызываем каждый кадо, если SwapEffect = FLIP
+void RenderDevice::BeginDraw() {
+
+	ID3D11RenderTargetView* m_dxRenderTargets[8] = { m_rtv.Get(), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+	m_context->OMSetRenderTargets(8, m_dxRenderTargets, m_dsv.Get()); // Вызываем каждый кадо, если SwapEffect = FLIP
 	
 	m_context->ClearRenderTargetView(m_rtv.Get(), clearColor);
 	m_context->ClearDepthStencilView(m_dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-void RenderDevice::EndFrame() {
+void RenderDevice::EndDraw() {
 	m_swapChain->Present(0, 0); // делит RefreshRate на 1 -> 60 раз в сек.
 }

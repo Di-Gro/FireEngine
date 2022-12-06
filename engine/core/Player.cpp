@@ -27,16 +27,16 @@ void Player::OnInit() {
 	m_boundSphereMaterial->data.diffuseColor = { 0, 0.6, 0, 1 };
 
 	float boxSize = radius * 2 * 0.9;
-	auto boxMesh = m_playerMesh->AddComponent<MeshComponent>();
-	boxMesh->localScale({ boxSize, boxSize, boxSize });
-	boxMesh->mesh(meshAsset->GetMesh(MeshAsset::formBox));
-	boxMesh->SetMaterial(0, m_boxMeshMaterial);
+	m_boxMesh = m_playerMesh->AddComponent<MeshComponent>();
+	m_boxMesh->localScale({ boxSize, boxSize, boxSize });
+	m_boxMesh->mesh(meshAsset->GetMesh(MeshAsset::formBox));
+	m_boxMesh->SetMaterial(0, m_boxMeshMaterial);
 
-	auto boundSphere = m_playerBound->AddComponent<MeshComponent>();
-	boundSphere->localScale({ radius * 2, radius * 2, radius * 2 });
-	boundSphere->mesh(meshAsset->GetMesh(MeshAsset::formSphereLined));
-	boundSphere->SetMaterial(0, m_boundSphereMaterial);
-	boundSphere->isDebug = true;
+	m_boundSphere = m_playerBound->AddComponent<MeshComponent>();
+	m_boundSphere->localScale({ radius * 2, radius * 2, radius * 2 });
+	m_boundSphere->mesh(meshAsset->GetMesh(MeshAsset::formSphereLined));
+	m_boundSphere->SetMaterial(0, m_boundSphereMaterial);
+	m_boundSphere->isDebug = true;
 
 	if (showAxis) {
 		AddComponent<LineComponent>()->SetPoint(Vector3::Forward * 100, { 1, 1, 1, 1 });

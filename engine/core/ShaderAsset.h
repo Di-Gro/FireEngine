@@ -20,6 +20,7 @@ public:
 
 	bool HasShader(size_t hashCode) { return m_shaders.count(hashCode) > 0; }
 	Shader* GetShader(size_t hashCode) { return &m_shaders.at(hashCode); }
+	Shader* GetShader(const fs::path& path) { return GetShader(GetShaderHash(path)); }
 
 	size_t GetShaderHash(const fs::path& path) { return std::hash<std::string>()(path.string()); }
 

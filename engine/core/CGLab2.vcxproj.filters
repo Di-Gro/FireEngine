@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -34,40 +30,47 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{74002109-e0c2-4b09-8c1c-e5c2c5d8aacf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{4a6a2856-ba60-41d3-9966-03f750887cf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render\Lighting">
+      <UniqueIdentifier>{480c5b19-1851-4939-9aa7-23f209b4fa53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Not Components">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Render\Render Passes">
+      <UniqueIdentifier>{281a90ee-65a1-4199-bcb7-a73dd73e0212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render\Resources">
+      <UniqueIdentifier>{bf3080bd-d488-4ac0-aed8-b2aa68d536c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
       <Filter>Delegates</Filter>
     </ClCompile>
     <ClCompile Include="Forms.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="FPSCounter.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="HotKeys.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="InputDevice.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="LineMath.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Components</Filter>
@@ -84,9 +87,6 @@
     <ClCompile Include="MoveController.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="TransformTest.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -97,7 +97,7 @@
       <Filter>Assets</Filter>
     </ClCompile>
     <ClCompile Include="FileSystem.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Components</Filter>
@@ -121,37 +121,13 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="SimpleMath.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshComponent.cpp">
-      <Filter>Components</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="CameraComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="ImageComponent.cpp">
       <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="ShadowMapRender.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectionLight.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Render.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Lighting.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderDevice.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderTarget.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderAsset.cpp">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="ClassInfo.cpp">
       <Filter>bridge</Filter>
@@ -169,19 +145,13 @@
       <Filter>bridge</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="Bridge.cpp">
       <Filter>bridge</Filter>
     </ClCompile>
     <ClCompile Include="Refs.cpp">
       <Filter>bridge</Filter>
-    </ClCompile>
-    <ClCompile Include="CSComponent.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DynamicMeshComponent.cpp">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="CS.cpp">
       <Filter>bridge</Filter>
@@ -210,64 +180,115 @@
     <ClCompile Include="imgui\imgui_impl_win32.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Render.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderDevice.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapRender.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Lighting.cpp">
+      <Filter>Render\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionLight.cpp">
+      <Filter>Render\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderAsset.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="CSComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Not Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshComponent.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencil.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowPass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="OldPass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="OpaquePass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="Tmp.cpp">
+      <Filter>Not Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderResource.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="IApp.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="InputDevice.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="IWin32InputHandler.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="IWindow.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Keys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="wrl.h_d3d11_alias.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Delegates.h">
       <Filter>Delegates</Filter>
     </ClInclude>
     <ClInclude Include="Random.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="HotKeys.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="LineMath.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Math.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Easing.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Forms.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="tiny_obj_loader.h">
       <Filter>TinyObjLoader</Filter>
@@ -293,9 +314,6 @@
     <ClInclude Include="ScalerComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="TransformTest.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -306,10 +324,10 @@
       <Filter>Assets</Filter>
     </ClInclude>
     <ClInclude Include="FileSystem.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="SimpleMath.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Components</Filter>
@@ -329,12 +347,6 @@
     <ClInclude Include="json.hpp">
       <Filter>Json</Filter>
     </ClInclude>
-    <ClInclude Include="MeshComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectionLight.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="CameraComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -344,26 +356,8 @@
     <ClInclude Include="ImageComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowMapRender.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestComponent.h">
       <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Render.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lighting.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderDevice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderAsset.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClassInfo.h">
       <Filter>bridge</Filter>
@@ -386,14 +380,8 @@
     <ClInclude Include="Refs.h">
       <Filter>bridge</Filter>
     </ClInclude>
-    <ClInclude Include="CSComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CsLink.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DynamicMeshComponent.h">
-      <Filter>Header Files</Filter>
+      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="CS.h">
       <Filter>bridge</Filter>
@@ -424,6 +412,72 @@
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_win32.h">
       <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Render.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderDevice.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapRender.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Lighting.h">
+      <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionLight.h">
+      <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderAsset.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="CSComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponent.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencil.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowPass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="OldPass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="OpaquePass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="Tmp.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialAlias.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderResource.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Render\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

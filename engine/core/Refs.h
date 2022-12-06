@@ -40,7 +40,10 @@ private:
 
 public:
 
+	static bool IsValidPointer(const void* ptr);
+
 	static bool IsValid(const Ref2& ref);
+	static bool IsValid(const CppRef& ref);
 	static bool IsRemoved(const Ref2& ref);
 
 	static Ref2 Create(const Ref2& ref);

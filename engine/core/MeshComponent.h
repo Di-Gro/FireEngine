@@ -10,9 +10,11 @@
 #include "Forms.h"
 #include "Mesh.h"
 #include "Game.h"
+#include "MaterialAlias.h"
 
 using namespace DirectX::SimpleMath;
 
+class Render;
 
 class MeshComponent : public Component {
 	COMPONENT(MeshComponent)
@@ -24,12 +26,16 @@ public:
 	Vector3 meshScale = Vector3::One;
 
 private:
+	Render* m_render;
+	MeshAsset* m_meshAsset;
 	Mesh4* m_dynamicMesh = nullptr;
 	const Mesh4* m_mesh = nullptr;
 	std::vector<const Material*> m_materials;
 	std::vector<Material*> m_dynamicMaterials;
+	std::vector<Pass::ShapeIter> m_shapeIters;
 
-	std::list<Component*>::iterator m_renderHandle;
+	bool m_castShadow = true;
+	Pass::ShadowCaster m_shadowCaster;
 
 private:
 	static bool mono_inited;
@@ -43,6 +49,9 @@ public:
 	bool IsDynamic() { return m_dynamicMesh != nullptr; }
 	bool IsStatic() { return m_dynamicMesh == nullptr; }
 	int MaterialCount() { return m_materials.size(); }
+
+	bool castShadow() { return m_castShadow; }
+	void castShadow(bool value);
 
 	void mesh(const Mesh4* mesh);
 
@@ -71,6 +80,7 @@ public:
 
 	void OnInit() override;
 	void OnDraw() override;
+	void OnDrawShape(int index) override;
 	void OnDrawDebug() override;
 	void OnDestroy() override;
 
@@ -83,6 +93,9 @@ private:
 	void m_DeleteMaterials();
 	void m_DeleteLocalDynamicMaterial(int index);
 	void m_FillByDefaultMaterial(int targetSize);
+
+	void m_RegisterShapesWithMaterial(int materialIndex);
+	void m_UnRegisterShapesWithMaterial(int materialIndex);
 
 };
 DEC_COMPONENT(MeshComponent);

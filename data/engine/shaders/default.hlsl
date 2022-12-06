@@ -87,7 +87,7 @@ float4 PSMain(PS_IN input) : SV_Target {
     float3 smuv = mul(input.worldPos, dirLight.uvMatrix); // wpos пикселя в texcoord shadow map
     // smuv = (smuv + float3(1,1,0)) * float3(0.5,0.5,1);
     smuv.y = 1 - smuv.y;
-    smuv.xy = smuv.xy;
+    smuv.xy = smuv.xy / 1;
 
     // float4 shadowDepth = ShadowMap.Sample(Sampler, smuv.xy);
     // // shadowDepth = float4(1,1,1,1) - shadowDepth.xxxx;
@@ -104,7 +104,7 @@ float4 PSMain(PS_IN input) : SV_Target {
     //
     // float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
     float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
-    //return float4(shadow,shadow,shadow,shadow);
+    // return float4(shadow,shadow,shadow,shadow);
 
 
     float4 diffuseTexColor = DiffuseMap.Sample(Sampler, float2(input.uv.x, 1-input.uv.y));

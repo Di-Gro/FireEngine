@@ -70,6 +70,10 @@ namespace Engine {
             Name = Encoding.ASCII.GetString(buf);
         }
 
+        ~DynamicMaterial() {
+            Console.WriteLine("#: ~DynamicMaterial()");
+        }
+
         public void Delete() {
             Dll.MeshAsset.DeleteDynamicMaterial(Game.meshAssetRef, matRef);
         }

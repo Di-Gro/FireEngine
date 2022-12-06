@@ -20,6 +20,9 @@ void Attachable::OnInit() {
 }
 
 void Attachable::OnDestroy() {
+	m_mesh->RemoveMaterials();
+	m_bound->RemoveMaterials();
+
 	game()->meshAsset()->DeleteDynamicMaterial(m_meshMaterial);
 	game()->meshAsset()->DeleteDynamicMaterial(m_boundMaterial);
 }

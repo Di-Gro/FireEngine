@@ -25,7 +25,9 @@ void DirectionLight::OnInit() {
 	m_camera->orthoNearPlane = -3000;
 	m_camera->orthoFarPlane = 3000;
 
-	shadowRT.Init(game(), window->GetWidth(), window->GetHeight());
+	int mul = 1;
+	m_shadowRT.Init(game(), window->GetWidth()* mul, window->GetHeight()* mul, true);
+	m_depthStencil.Init(game(), window->GetWidth()* mul, window->GetHeight()* mul, true);
 }
 
 void DirectionLight::drawDebug(bool value) {

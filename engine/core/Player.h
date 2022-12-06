@@ -33,6 +33,9 @@ private:
 
 	Actor* m_velPoint = nullptr;
 
+	MeshComponent* m_boxMesh;
+	MeshComponent* m_boundSphere;
+
 	Material* m_boxMeshMaterial;
 	Material* m_boundSphereMaterial;
 

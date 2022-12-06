@@ -14,7 +14,7 @@
 #include "GameController.h"
 #include "DirectionLight.h"
 #include "FlyingCamera.h"
-#include "ShadowMapRender.h"
+//#include "ShadowMapRender.h"
 #include "ImageComponent.h"
 #include "MeshComponent.h"
 #include "Player.h"
@@ -83,6 +83,21 @@ void Game::Run() {
 
 	csLink.Link(cppObj, "EngineMono", "CSClass");	
 
+	//using float2 = Vector2;
+	//using float4 = Vector4;
+
+	//struct {
+	//	float4 uv;
+	//	float4 pos;
+	//} output;
+
+	//for (int id = 0; id < 4; id++) {
+	//	float2 uv = float2(id % 2, (id % 4) >> 1);
+	//	output.uv = float4(uv.x, uv.y, 0, 0);
+	//	output.pos = float4((uv.x - 0.5f) * 2, -(uv.y - 0.5f) * 2, 0, 1);
+	//}
+
+
 	///
 
 	m_defaultCamera = CreateActor("default camera")->AddComponent<FlyingCamera>();
@@ -112,10 +127,6 @@ void Game::Run() {
 		}
 
 		m_Update();
-
-		// Any application code here
-		//ImGui::Text("Hello, world!");
-
 		m_render.Draw();
 		
 		m_fpsCounter.Update();
@@ -163,20 +174,30 @@ void Game::m_Update() {
 
 	/// Post Update
 	m_hotkeys.LateUpdate();
+	
+	ImGui::Begin("Main Render Target");
+	ImGui::Image(render()->screenSRV(), { 1920 / 2, 1061 / 2 });
+	ImGui::End();
+
+	ImGui::Begin("Direction Light Shadow Map");
+	ImGui::Image(lighting()->directionLight()->DS()->shaderResource(), { 1920 / 4, 1061 / 4 });
+	ImGui::End();
 
 	m_EndUpdateImGui();
 }
 
 void Game::m_Destroy() {
-	m_DestroyImGui();
-	m_hotkeys.Destroy();
-	m_window.Destroy();
 
 	auto it = m_actors.begin();
 	while (it != m_actors.end()) {
 		DestroyActor(*it);
 		it = m_EraseActor(it);
 	}
+
+	m_DestroyImGui();
+	m_hotkeys.Destroy();
+	m_render.Destroy();
+	m_window.Destroy();
 }
 
 Actor* Game::CreateActor(Actor* parent, std::string name) {

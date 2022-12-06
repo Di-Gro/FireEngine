@@ -2,10 +2,7 @@
 
 #include "wrl.h_d3d11_alias.h"
 
-#include "RenderDevice.h"
-
-class Game;
-
+class Render;
 
 class RenderTarget {
 public:
@@ -14,33 +11,16 @@ public:
 private:
 	Game* m_game;
 
-	comptr<ID3D11Texture2D> m_renderTex;
-	comptr<ID3D11Texture2D> m_depthTex;
-
+	//comptr<ID3D11Texture2D> m_renderTex;
 	comptr<ID3D11RenderTargetView> m_rtv;
-	comptr<ID3D11DepthStencilView> m_dsv;
-	comptr<ID3D11ShaderResourceView> m_renderSRV;
-	comptr<ID3D11ShaderResourceView> m_depthSRV;
-
-	comptr<ID3D11RasterizerState> m_rastState;
-
+	
 public:
 
-	comptr<ID3D11Texture2D> renderTexture() { return m_renderTex; }
-	comptr<ID3D11Texture2D> depthTexture() { return m_depthTex; }
-	comptr<ID3D11ShaderResourceView> renderSRV() { return m_renderSRV; }
-	comptr<ID3D11ShaderResourceView> depthSRV() { return m_depthSRV; }
+	ID3D11Texture2D* texture() { return m_renderTex.Get(); }
+	ID3D11RenderTargetView* renderTarget() { return m_rtv.Get(); }
 
-	void Init(Game* game, int width, int height);
+	void Init(Render* render, int width, int height, bool createShaderResource);
 
-	void ResetRastState(
-		int depthBias,
-		float depthBiasClamp,
-		float slopeScaledDepthBias,
-		D3D11_CULL_MODE cullMode = D3D11_CULL_FRONT,
-		D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID);
-
-	void PrepareRender();
-	void FinishRender();
+	void Clear();
 
 };

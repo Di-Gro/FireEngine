@@ -11,6 +11,7 @@ public:
 	virtual void OnDestroy() {};
 
 	virtual void OnDraw() {};
+	virtual void OnDrawShape(int index) {};
 	virtual void OnDrawDebug() {};
 	virtual void OnDrawUI() {};
 	

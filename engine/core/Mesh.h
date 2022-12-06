@@ -17,9 +17,11 @@ using namespace DirectX::SimpleMath;
 class DirectionLight;
 class Render;
 class MeshAsset;
+class MeshComponent;
 
 class Mesh4 : public CsLink {
-	friend MeshAsset;
+	friend class MeshAsset;
+	friend class MeshComponent;
 
 public:
 	class Vertex {
@@ -34,6 +36,17 @@ public:
 	struct DynamicData {
 		Render* render;
 		const std::vector<const Material*>* materials;
+
+		const Matrix* worldMatrix;
+		const Matrix* transfMatrix;
+		const Vector3* cameraPosition;
+
+		DirectionLight* directionLight;
+	};
+
+	struct DynamicShapeData {
+		Render* render;
+		const Material* material;
 
 		const Matrix* worldMatrix;
 		const Matrix* transfMatrix;
@@ -95,8 +108,7 @@ public:
 
 
 	void Draw(const DynamicData& data) const;
-
-	//Mesh4 Clone(Render* render) const;
+	void DrawShape(const DynamicData& data, int index) const;
 
 	int shapeCount() const { return m_shapes.size(); }
 
@@ -104,6 +116,23 @@ public:
 
 	Shape* GetShape(int index);
 
+};
+
+class ScreenQuad {
+public:
+	mutable D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+
+	ID3D11ShaderResourceView* deffuseSRV = nullptr;
+
+private:
+	Render* m_render;
+	const Shader* m_shader;
+	comptr<ID3D11SamplerState> m_sampler;
+	
+public:
+
+	void Init(Render* render, const Shader* shader);
+	void Draw() const;
 };
 
 FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);

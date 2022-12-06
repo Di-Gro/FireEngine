@@ -7,10 +7,14 @@
 #include "FileSystem.h"
 #include "CsLink.h"
 #include "CSBridge.h"
+#include "MaterialAlias.h"
+//#include "Render.h"
 
 class Shader;
 
 class Material : public CsLink {
+	friend class Render;
+
 	#pragma pack(push, 4)
 	public: struct Data {
 		Vector3 diffuseColor = Vector3::One;	// 12
@@ -32,10 +36,16 @@ class Material : public CsLink {
 	};
 
 public:
+	std::string renderPass = "Opaque Pass";
+	size_t priority = 2000;
 	const Shader* shader;
 	Texture diffuse;
 	Data data;
 	bool isDynamic = false;
+
+private:
+	mutable int f_passIndex = -1;
+	mutable Pass::MaterialIter f_materialIter;
 
 private:
 	std::string m_name;
