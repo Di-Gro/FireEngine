@@ -19,7 +19,7 @@
 #include "Forms.h"
 
 std::string MeshAsset::defaultMaterialName = "Defaulf";
-std::string MeshAsset::defaultShader = "../../data/engine/shaders/rp_default.hlsl";
+std::string MeshAsset::defaultShader = "../../data/engine/shaders/opaque_default.hlsl";
 std::string MeshAsset::formBox = "runtime:/form/Box";
 std::string MeshAsset::formBoxLined = "runtime:/form/BoxLined";
 std::string MeshAsset::formSphere = "runtime:/form/Sphere";
@@ -406,7 +406,7 @@ Material* MeshAsset::m_LoadMaterial(
 {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
-	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(L"../../data/engine/shaders/rp_default.hlsl"));
+	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(L"../../data/engine/shaders/opaque_default.hlsl"));
 
 	auto material = m_NewMaterial();
 	m_materials.insert({ hash, material });

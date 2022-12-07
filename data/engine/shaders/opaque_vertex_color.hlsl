@@ -28,11 +28,19 @@ struct MaterialData {
 };
 
 struct DirectionLightData {
-    float4x4 uvMatrix;
     float3 direction;
     float intensity;
 	float3 color;
 };
+
+struct PSOpaque {
+    float4 diffuseRGB : SV_Target0;
+    float4 normal : SV_Target1;
+    float4 vertexColor : SV_Target2;
+    float4 worldPos : SV_Target3;
+    float4 matParams : SV_Target4;
+};
+
 
 // Buf_OpaquePass_Light_PS
 cbuffer PS_DirectionLightData : register(b1) { DirectionLightData dirLight; }
@@ -58,17 +66,36 @@ PS_IN VSMain(VS_IN input) {
     input.pos.w = 1.0f;
     input.normal.w = 0.0f;
 
+    // output.normal = normalize(mul(float4(input.normal.xyz, 0.0f), meshData.world));
+
     output.worldPos = mul(input.pos, meshData.world);
     output.pos = mul(input.pos, meshData.wvp);
     output.color = input.color;
     output.normal = normalize(mul(input.normal, meshData.world));
-    output.uv = input.uv;
+    output.normal = float4(output.normal.xyz, 1);
+    output.uv = float4(input.uv.xy, 1, 1);
 
     return output;
 }
 
-float4 PSMain(PS_IN input) : SV_Target {
-    float4 color = DiffuseMap.Sample(Sampler, float2(input.uv.x, 1-input.uv.y));
-    color = color.xxxx;
-    return saturate(color * 1.0f);
+// float4 PSMain(PS_IN input) : SV_Target0{
+//     float4 color = input.color;
+//     return color;
+// }
+
+PSOpaque PSMain(PS_IN input) {
+    PSOpaque output = (PSOpaque)0;
+
+    output.diffuseRGB = input.color;
+
+    output.matParams.r = material.diffuse;
+    output.matParams.g = material.ambient;
+    output.matParams.b = material.specular;
+    output.matParams.a = material.shininess;
+
+    output.normal = normalize(input.normal);
+    output.vertexColor = input.color;
+    output.worldPos = input.worldPos;
+
+    return output;
 }

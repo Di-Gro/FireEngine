@@ -9,6 +9,7 @@
 #include "RenderDevice.h"
 #include "RenderPass.h"
 #include "ShadowPass.h"
+#include "LightingPass.h"
 #include "OldPass.h"
 #include "OpaquePass.h"
 #include "DepthStencil.h"
@@ -31,9 +32,9 @@ class Render {
 	friend class OldPass;
 	friend class RenderPass;
 public:
-	static const std::string shadowPass;
-	static const std::string opaquePass;
-	static const std::string lightingPass;
+	static const std::string shadowPassName;
+	static const std::string opaquePassName;
+	static const std::string lightingPassName;
 	
 private:
 	Game* m_game;
@@ -56,20 +57,28 @@ private:
 	std::vector<RenderPass*> m_renderPipeline;
 
 	ShadowPass m_shadowPass;
-	OldPass m_oldPass;
 	OpaquePass m_opaquePass;
+	LightingPass m_lightingPass;
 
 	CameraComponent* m_camera = nullptr;
 
 public:
 	inline CameraComponent* camera() { return m_camera; }
 
+	inline RenderDevice* rdevice() { return &m_device; };
 	inline ID3D11Device* device() { return m_device.GetDevice(); };
 	inline ID3D11DeviceContext* context() { return m_device.GetContext(); }
 	inline IDXGISwapChain* swapChain() { return m_device.GetSwapChain(); }
 	inline comptr<ID3D11RenderTargetView> rtv() { return m_device.GetRTV(); }
 	inline ID3D11DepthStencilView* depthStencil() { return m_mainDepthStencil.get(); }
 	inline ID3D11ShaderResourceView* screenSRV() { return m_mainResource.get(); }
+
+	inline Texture* depthTexture() { return &m_mainDepthTexure; }
+	inline ShaderResource* depthRes() { return &m_mainDepthResource; }
+
+	inline ShadowPass* shadowPass() { return &m_shadowPass; }
+	inline OpaquePass* opaquePass() { return &m_opaquePass; }
+
 
 	void Init(Game* game, Window* window);
 	void Start();

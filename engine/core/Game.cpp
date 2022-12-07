@@ -14,7 +14,6 @@
 #include "GameController.h"
 #include "DirectionLight.h"
 #include "FlyingCamera.h"
-//#include "ShadowMapRender.h"
 #include "ImageComponent.h"
 #include "MeshComponent.h"
 #include "Player.h"
@@ -28,12 +27,13 @@
 
 
 std::vector<std::string> shaderPaths = {
-	 "../../data/engine/shaders/rp_vertex_color.hlsl",
-	 "../../data/engine/shaders/rp_defuse_color.hlsl",
-	 "../../data/engine/shaders/rp_default.hlsl",
+	 "../../data/engine/shaders/opaque_vertex_color.hlsl",
+	 "../../data/engine/shaders/opaque_defuse_color.hlsl",
+	 "../../data/engine/shaders/opaque_default.hlsl",
 	 "../../data/engine/shaders/rp_image.hlsl",
 	 "../../data/engine/shaders/shadow_map.hlsl",
 	 "../../data/engine/shaders/rp_screen_quad.hlsl",
+	 "../../data/engine/shaders/screen.hlsl",
 };
 
 
@@ -83,20 +83,6 @@ void Game::Run() {
 
 	csLink.Link(cppObj, "EngineMono", "CSClass");	
 
-	//using float2 = Vector2;
-	//using float4 = Vector4;
-
-	//struct {
-	//	float4 uv;
-	//	float4 pos;
-	//} output;
-
-	//for (int id = 0; id < 4; id++) {
-	//	float2 uv = float2(id % 2, (id % 4) >> 1);
-	//	output.uv = float4(uv.x, uv.y, 0, 0);
-	//	output.pos = float4((uv.x - 0.5f) * 2, -(uv.y - 0.5f) * 2, 0, 1);
-	//}
-
 
 	///
 
@@ -112,7 +98,6 @@ void Game::Run() {
 
 	CreateActor("GameController")->AddComponent<GameController>();
 	
-
 	MSG msg = {};
 	bool isExitRequested = false;
 	while (!isExitRequested) {

@@ -14,6 +14,23 @@
 
 using namespace DirectX::SimpleMath;
 
+#pragma pack(push, 4)
+static struct CameraCBuffer {
+	Vector3 position;
+	float _1[1];
+};
+#pragma pack(pop)
+
+#pragma pack(push, 4)
+static struct MeshCBuffer {
+	Matrix wvpMatrix;
+	Matrix worldMatrix;
+	Vector3 cameraPosition;
+	float _1[1];
+};
+#pragma pack(pop)
+
+
 class DirectionLight;
 class Render;
 class MeshAsset;

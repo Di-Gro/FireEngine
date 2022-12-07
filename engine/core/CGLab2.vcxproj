@@ -73,6 +73,7 @@
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
     <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="RenderPassUI.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ShaderAsset.cpp" />
     <ClCompile Include="ShaderResource.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="GameController.h" />
     <ClInclude Include="DepthStencil.h" />
     <ClInclude Include="LightingPass.h" />
+    <ClInclude Include="RenderPassUI.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tmp.h" />

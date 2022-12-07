@@ -23,15 +23,16 @@
 #include "OldPass.h"
 #include "Material.h"
 #include "MaterialAlias.h"
+#include "RenderPassUI.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxguid.lib")
 
-const std::string Render::shadowPass = "Shadow Pass";
-const std::string Render::opaquePass = "Opaque Pass";
-const std::string Render::lightingPass = "Lighting Pass";
+const std::string Render::shadowPassName = "Shadow Pass";
+const std::string Render::opaquePassName = "Opaque Pass";
+const std::string Render::lightingPassName = "Lighting Pass";
 
 
 void Render::Init(Game* game, Window* window) {
@@ -39,28 +40,28 @@ void Render::Init(Game* game, Window* window) {
 
 	m_device.Create(window->GetHWindow(), window->GetWidth(), window->GetHeight());
 
-	// m_mainTarget.Init(m_game, window->GetWidth(), window->GetHeight(), true);
 	m_mainTexure = Texture::Create(this, window->GetWidth(), window->GetHeight());
 	m_mainTarget = RenderTarget::Create(&m_mainTexure);
 	m_mainResource = ShaderResource::Create(&m_mainTexure);
 
-	//m_mainDS.Init(m_game, window->GetWidth(), window->GetHeight(), true);
 	m_mainDepthTexure = Texture::CreateDepthTexture(this, window->GetWidth(), window->GetHeight());
 	m_mainDepthStencil = DepthStencil::Create(&m_mainDepthTexure);
 	m_mainDepthResource = ShaderResource::Create(&m_mainDepthTexure);
-
-	// Установка стандартных render pass-ов
-	m_shadowPass.Init(m_game);
-	m_opaquePass.Init(m_game);
-	m_oldPass.Init(m_game);
-
-	AddRenderPass(Render::opaquePass, &m_opaquePass);
 	
 }
 
 void Render::Start() {
 	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
 	m_screenQuad.deffuseSRV = m_mainResource.get();
+
+	m_game->CreateActor("Render Pass UI")->AddComponent<RenderPassUI>();
+
+	m_shadowPass.Init(m_game);
+	m_opaquePass.Init(m_game);
+	m_lightingPass.Init(m_game);
+
+	AddRenderPass(Render::opaquePassName, &m_opaquePass);
+	//AddRenderPass(Render::lightingPassName, &tmp_lightingPass);
 }
 
 void Render::Destroy() {
@@ -84,19 +85,30 @@ void Render::Draw() {
 		once = false;
 
 		m_opaquePass.SetDepthStencil(&m_mainDepthStencil);
-		m_opaquePass.SetRenderTargets({ &m_mainTarget });
 		m_opaquePass.SetPSShaderResources({ m_game->lighting()->directionLight()->depthResource() });
 
-		m_oldPass.SetRenderTargets({ &m_mainTarget });
+		m_lightingPass.SetPSShaderResources({ 
+			m_game->lighting()->directionLight()->depthResource(),
+			&m_opaquePass.target0Res, 
+			&m_opaquePass.target1Res, 
+			&m_opaquePass.target2Res, 
+			&m_opaquePass.target3Res,
+			&m_opaquePass.target4Res,
+		});
+
+		m_lightingPass.SetRenderTargets({&m_mainTarget});
 	}
 
 	m_Clear();
 	m_camera = m_game->mainCamera();
 
 	m_shadowPass.Draw(m_shadowCasters);
-	
-	for (auto* renderPass : m_renderPipeline)
-		renderPass->Draw();
+	//
+	//for (auto* renderPass : m_renderPipeline)
+	//	renderPass->Draw();
+
+	m_opaquePass.Draw();
+	m_lightingPass.Draw();
 
 	// Quad 
 	m_device.BeginDraw();

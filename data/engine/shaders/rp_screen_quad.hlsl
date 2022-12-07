@@ -3,14 +3,10 @@ struct PS_IN {
     float4 pos : SV_POSITION;
     float4 uv : TEXCOORD;
 };
-//
-// // Res_RenderPass_PS
-// Texture2D ShadowMap : register(t0);
-// SamplerComparisonState CompSampler : register(s0);
 
 // Res_Material_PS
-Texture2D DiffuseMap : register(t0);
-SamplerState Sampler : register(s0);
+Texture2D DiffuseMap : register(t8);
+SamplerState Sampler : register(s8);
 
 
 PS_IN VSMain(uint id: SV_VertexID) {

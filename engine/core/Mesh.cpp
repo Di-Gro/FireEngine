@@ -6,14 +6,6 @@
 /// ¬ HLSL пол€ структур выравниваютс€ по 16 байт 
 /// и упаковываютс€ в прошлые 16 байт, если вмещаютс€.
 
-#pragma pack(push, 4)
-	static struct MeshCBuffer {
-		Matrix wvpMatrix;
-		Matrix worldMatrix;
-		Vector3 cameraPosition;
-		float _1[1];
-	};
-#pragma pack(pop)
 
 #pragma pack(push, 4)
 	static struct DirectionLightCBuffer {
@@ -224,11 +216,11 @@ void Mesh4::Draw(const DynamicData& data) const {
 		if (callPixelShader)
 			context->PSSetShader(shader->pixel.Get(), nullptr, 0);
 
-		context->PSSetConstantBuffers(Buf_OpaquePass_Light_PS, 1, shape.directionLightCBuffer.GetAddressOf());
-		context->PSSetConstantBuffers(Buf_Material_PS, 1, shape.materialConstBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(Buf_LightingPass_Light_PS, 1, shape.directionLightCBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(Buf_OpaquePass_Material_PS, 1, shape.materialConstBuffer.GetAddressOf());
 
-		context->VSSetConstantBuffers(Buf_Mesh_VS, 1, shape.meshCBuffer.GetAddressOf());
-		context->PSSetConstantBuffers(Buf_Mesh_PS, 1, shape.meshCBuffer.GetAddressOf());
+		context->VSSetConstantBuffers(Buf_OpaquePass_Mesh_VS, 1, shape.meshCBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(Buf_OpaquePass_Mesh_PS, 1, shape.meshCBuffer.GetAddressOf());
 		
 		/// Mesh ->
 		D3D11_MAPPED_SUBRESOURCE res = {};
@@ -290,8 +282,8 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	context->IASetIndexBuffer(shape.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	context->IASetVertexBuffers(0, 1, shape.vertexBuffer.GetAddressOf(), m_strides, m_offsets);
 
-	context->VSSetConstantBuffers(Buf_Mesh_VS, 1, shape.meshCBuffer.GetAddressOf());
-	context->PSSetConstantBuffers(Buf_Mesh_PS, 1, shape.meshCBuffer.GetAddressOf());
+	context->VSSetConstantBuffers(Buf_OpaquePass_Mesh_VS, 1, shape.meshCBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(Buf_OpaquePass_Mesh_PS, 1, shape.meshCBuffer.GetAddressOf());
 	
 	/// meshCBuffer ->
 	D3D11_MAPPED_SUBRESOURCE res = {};
@@ -341,14 +333,13 @@ void ScreenQuad::Draw() const {
 	context->IASetPrimitiveTopology(topology);
 
 	context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
-	//context->IASetVertexBuffers(0, 1, nullptr, nullptr, nullptr);
 
 	context->VSSetShader(m_shader->vertex.Get(), nullptr, 0);
 	context->PSSetShader(m_shader->pixel.Get(), nullptr, 0);
 
 	ID3D11ShaderResourceView* resources[] = { deffuseSRV };
-	context->PSSetShaderResources(0, 1, resources);
-	context->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
+	context->PSSetShaderResources(8, 1, resources);
+	context->PSSetSamplers(8, 1, m_sampler.GetAddressOf());
 
 	context->Draw(4, 0);
 }

@@ -246,6 +246,9 @@
     <ClCompile Include="LightingPass.cpp">
       <Filter>Render\Render Passes</Filter>
     </ClCompile>
+    <ClCompile Include="RenderPassUI.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -487,6 +490,9 @@
     </ClInclude>
     <ClInclude Include="LightingPass.h">
       <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPassUI.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

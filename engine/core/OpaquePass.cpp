@@ -12,38 +12,37 @@
 #include "ShaderResource.h"
 #include "DepthStencil.h"
 
-#pragma pack(push, 4)
-static struct DirectionLightCBuffer {
-	Matrix uvMatrix;
-	Vector3 direction;
-	float intensity;
-	Vector3 color;
-	float _1[1];
-};
-#pragma pack(pop)
-
 
 void OpaquePass::Init(Game* game) {
 	RenderPass::Init(game);
 
-	m_game = game;
+	auto width = m_game->window()->GetWidth();
+	auto height = m_game->window()->GetHeight();
 
-	D3D11_BUFFER_DESC dirLightCBufferDesc = {};
-	dirLightCBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	dirLightCBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	dirLightCBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-	dirLightCBufferDesc.MiscFlags = 0;
-	dirLightCBufferDesc.StructureByteStride = 0;
-	dirLightCBufferDesc.ByteWidth = sizeof(DirectionLightCBuffer);
+	target0Tex = Texture::Create(m_game->render(), width, height);
+	target1Tex = Texture::Create(m_game->render(), width, height);
+	target2Tex = Texture::Create(m_game->render(), width, height);
+	target3Tex = Texture::Create(m_game->render(), width, height);
+	target4Tex = Texture::Create(m_game->render(), width, height);
 
-	m_render->device()->CreateBuffer(&dirLightCBufferDesc, nullptr, m_directionLightCBuffer.GetAddressOf());
+	target0 = RenderTarget::Create(&target0Tex);
+	target1 = RenderTarget::Create(&target1Tex);
+	target2 = RenderTarget::Create(&target2Tex);
+	target3 = RenderTarget::Create(&target3Tex);
+	target4 = RenderTarget::Create(&target4Tex);
 
+	target0Res = ShaderResource::Create(&target0Tex);
+	target1Res = ShaderResource::Create(&target1Tex);
+	target2Res = ShaderResource::Create(&target2Tex);
+	target3Res = ShaderResource::Create(&target3Tex);
+	target4Res = ShaderResource::Create(&target4Tex);
+
+	SetRenderTargets({ &target0, &target1, &target2, &target3, &target4 });
 }
 
 void OpaquePass::Draw() {
 
 	BeginDraw();
-	m_SetLightConstBuffer();
 
 	for (auto& pair : f_sortedMaterials) {
 		auto *matShapes = &pair.second;
@@ -67,22 +66,4 @@ void OpaquePass::Draw() {
 	}
 
 	EndDraw();
-}
-
-void OpaquePass::m_SetLightConstBuffer() {
-	auto* context = m_render->context();
-	auto* dirLight = m_game->lighting()->directionLight();
-
-	context->PSSetConstantBuffers(Buf_OpaquePass_Light_PS, 1, m_directionLightCBuffer.GetAddressOf());
-
-	D3D11_MAPPED_SUBRESOURCE res3 = {};
-	context->Map(m_directionLightCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res3);
-
-	auto* cbuf2 = (DirectionLightCBuffer*)res3.pData;
-	cbuf2->uvMatrix = dirLight->uvMatrix();
-	cbuf2->direction = dirLight->forward();
-	cbuf2->color = dirLight->color;
-	cbuf2->intensity = dirLight->intensity;
-
-	context->Unmap(m_directionLightCBuffer.Get(), 0);
 }

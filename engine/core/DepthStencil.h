@@ -45,5 +45,6 @@ public:
 	void Clear();
 
 	static DepthStencil Create(Texture* texture);
+	static DepthStencil Create(Render* render, ID3D11Texture2D* texture);
 
 };

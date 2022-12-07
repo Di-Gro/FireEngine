@@ -10,6 +10,23 @@
 #include "wrl.h_d3d11_alias.h"
 #include "MaterialAlias.h"
 
+#define RTCount 8
+#define SRCount 8
+
+#define Res_RenderPass_PS 0
+#define Res_Material_PS SRCount
+
+/// CBuffers Pixel Shader
+#define Buf_RenderPass_Camera_PS 0
+#define Buf_LightingPass_Light_PS 1
+
+#define Buf_OpaquePass_Material_PS 2
+#define Buf_OpaquePass_Mesh_PS 3
+
+/// CBuffers Vertex Shader
+#define Buf_OpaquePass_Mesh_VS 3
+
+
 class Game;
 class Render;
 class RenderTarget;
@@ -19,19 +36,7 @@ class DepthStencil;
 class RenderPass {
 	friend class Render;
 
-#define RTCount 8
-#define SRCount 6
-
-#define Res_RenderPass_PS 0
-#define Res_Material_PS SRCount
-
-#define Buf_OpaquePass_Light_PS 0
-#define Buf_Material_PS 1
-#define Buf_Mesh_VS 2
-#define Buf_Mesh_PS 2
-
 protected: /// For class friends
-
 	Pass::SortedMaterials f_sortedMaterials;
 	void f_name(const std::string& value) { m_name = value; }
 
@@ -41,6 +46,7 @@ public:
 	D3D11_BLEND_DESC blendStateDesc;
 
 protected:
+	Game* m_game;
 	Render* m_render;
 
 private:
@@ -60,12 +66,14 @@ private:
 	ID3D11SamplerState* m_dxPSSamplers[SRCount] = { nullptr };
 	
 	comptr<ID3D11BlendState> m_blendState;
+
+	comptr<ID3D11Buffer> m_cameraBuffer;
 		
 public:
 	virtual ~RenderPass();
 
 	const std::string& name() { return m_name; }
-	inline ID3D11DepthStencilView* depthStencil();
+	inline DepthStencil* depthStencil() { return m_depthStencil; }
 
 	void SetRenderTargets(std::initializer_list<RenderTarget*> targets);
 
@@ -89,6 +97,8 @@ private:
 	inline void m_PrepareResources();
 	inline void m_PrepareTargets();
 	inline void m_ClearTargets();
+
+	inline void m_SetCameraConstBuffer();
 
 	inline void m_PrepareMaterialResources(const Material* material);
 	inline void m_SetShader(const Material* material);

@@ -34,6 +34,14 @@ struct DirectionLightData {
 	float3 color;
 };
 
+struct PSOpaque {
+    float4 diffuseRGB : SV_Target0;
+    float4 normal : SV_Target1;
+    float4 vertexColor : SV_Target2;
+    float4 worldPos : SV_Target3;
+    float4 matParams : SV_Target4;
+};
+
 // Buf_OpaquePass_Light_PS
 cbuffer PS_DirectionLightData : register(b1) { DirectionLightData dirLight; }
 
@@ -62,49 +70,30 @@ PS_IN VSMain(VS_IN input) {
     output.pos = mul(input.pos, meshData.wvp);
     output.color = input.color;
     output.normal = normalize(mul(input.normal, meshData.world));
-    output.uv = input.uv;
+    output.normal = float4(output.normal.xyz, 1);
+    output.uv = float4(input.uv.xy, 1, 1);
 
     return output;
 }
 
-float invLerp(float from, float to, float value){
-  return value - from;
-}
+// float4 PSMain(PS_IN input) : SV_Target0{
+//     float3 color = material.diffuseColor;
+//     return float4(color.x,  color.y, color.z, 1.0f);
+// }
 
-float remap(float origFrom, float origTo, float targetFrom, float targetTo, float value){
-  float rel = invLerp(origFrom, origTo, value);
-  return lerp(targetFrom, targetTo, rel);
-}
+PSOpaque PSMain(PS_IN input) {
+    PSOpaque output = (PSOpaque)0;
 
-float4 PSMain(PS_IN input) : SV_Target {
+    output.diffuseRGB = float4(material.diffuseColor.rgb, 1);
 
-    // wpos пикселя в texcoord shadow map
-    float3 smuv = mul(input.worldPos, dirLight.uvMatrix);
-    smuv.y = 1 - smuv.y;
-    smuv.xy = smuv.xy / 1;
+    output.matParams.r = material.diffuse;
+    output.matParams.g = material.ambient;
+    output.matParams.b = material.specular;
+    output.matParams.a = material.shininess;
 
-    float bias = 0.0008;
-    float x = smuv.z - bias;
-    float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
+    output.normal = normalize(input.normal);
+    output.vertexColor = input.color;
+    output.worldPos = input.worldPos;
 
-    float4 diffuseTexColor = DiffuseMap.Sample(Sampler, float2(input.uv.x, 1-input.uv.y));
-    clip(diffuseTexColor.a - 0.01f);
-
-    float4 diffuseColor = float4(material.diffuseColor.xyz, 1.0);
-
-    float3 kd = diffuseTexColor.xyz * input.color.xyz;
-    float3 normal = normalize(input.normal.xyz);
-
-    float3 viewDir = normalize(meshData.cameraPosition.xyz - input.worldPos.xyz);
-    float3 lightDir = -dirLight.direction.xyz;
-    float3 refVec = normalize(reflect(lightDir, normal));
-
-    float3 diffuse = max(0, dot(lightDir, normal)) * kd;
-    float3 ambient = kd * material.ambient;
-    float3 spec = pow(max(0, dot(-viewDir, refVec)), material.shininess) * material.specular;
-
-    float3 das = ambient + (diffuse + spec) * shadow;
-    float3 color = dirLight.color * dirLight.intensity.xxx * das;
-
-    return float4(color, 1.0f);
+    return output;
 }

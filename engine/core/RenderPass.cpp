@@ -8,12 +8,9 @@
 #include "CameraComponent.h"
 
 
-ID3D11DepthStencilView* RenderPass::depthStencil() { 
-	return m_depthStencil != nullptr ? m_depthStencil->get() : nullptr; 
-}
-
 void RenderPass::Init(Game* game) {
 	m_render = game->render();
+	m_game = game;
 
 	blendStateDesc = D3D11_BLEND_DESC{ false, false };
 	blendStateDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
@@ -26,6 +23,16 @@ void RenderPass::Init(Game* game) {
 	blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 
 	UpdateBlendState();
+
+	D3D11_BUFFER_DESC cameraBufferDesc = {};
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+	cameraBufferDesc.ByteWidth = sizeof(MeshCBuffer);
+
+	m_render->device()->CreateBuffer(&cameraBufferDesc, nullptr, m_cameraBuffer.GetAddressOf());
 }
 
 RenderPass::~RenderPass() { }
@@ -63,8 +70,10 @@ inline void RenderPass::BeginDraw() {
 	m_PrepareResources();
 	m_PrepareTargets();
 	m_ClearTargets();
+	m_SetCameraConstBuffer();
 
-	context->OMSetRenderTargets(8, m_dxTargets, depthStencil());
+	auto depthStencil = m_depthStencil != nullptr ? m_depthStencil->get() : nullptr;
+	context->OMSetRenderTargets(8, m_dxTargets, depthStencil);
 
 	context->VSSetShaderResources(0, SRCount, m_dxVSResources);
 	context->PSSetShaderResources(0, SRCount, m_dxPSResources);
@@ -75,7 +84,14 @@ inline void RenderPass::BeginDraw() {
 
 
 inline void RenderPass::EndDraw() {
-	
+	auto* context = m_render->context();
+
+	ID3D11RenderTargetView* targets[RTCount] = { nullptr };
+	context->OMSetRenderTargets(8, targets, nullptr);
+
+	ID3D11ShaderResourceView* resources[SRCount] = { nullptr };
+	context->VSSetShaderResources(0, SRCount, resources);
+	context->PSSetShaderResources(0, SRCount, resources);
 }
 
 void RenderPass::PrepareMaterial(const Material* material) {
@@ -113,12 +129,26 @@ void RenderPass::m_SetShader(const Material* material) {
 void RenderPass::m_SetMaterialConstBuffer(const Material* material) {
 	auto* context = m_render->context();
 
-	context->PSSetConstantBuffers(Buf_Material_PS, 1, material->materialConstBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(Buf_OpaquePass_Material_PS, 1, material->materialConstBuffer.GetAddressOf());
 
 	D3D11_MAPPED_SUBRESOURCE res = {};
 	context->Map(material->materialConstBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 	memcpy(res.pData, &material->data, sizeof(Material::Data));
 	context->Unmap(material->materialConstBuffer.Get(), 0);
+}
+
+void RenderPass::m_SetCameraConstBuffer() {
+	auto* context = m_render->context();
+
+	context->PSSetConstantBuffers(Buf_RenderPass_Camera_PS, 1, m_cameraBuffer.GetAddressOf());
+
+	D3D11_MAPPED_SUBRESOURCE res = {};
+	context->Map(m_cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+
+	auto* cbuf = (CameraCBuffer*)res.pData;
+	cbuf->position = m_render->camera()->worldPosition();
+
+	context->Unmap(m_cameraBuffer.Get(), 0);
 }
 
 void RenderPass::m_PrepareResources() {

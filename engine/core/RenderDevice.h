@@ -16,7 +16,7 @@ public:
 	float clearColor[4] = { 48 / 255.0f, 37 / 255.0f, 60 / 255.0f, 1.0f }; // { 0.1f, 0.1f, 0.1f, 1.0f };
 
 	CameraComponent* camera = nullptr;
-
+	
 private:
 	comptr<ID3D11Device> m_device;
 	comptr<ID3D11DeviceContext> m_context;
@@ -27,6 +27,7 @@ private:
 
 	comptr<ID3D11RenderTargetView> m_rtv;
 	comptr<ID3D11DepthStencilView> m_dsv;
+
 
 	comptr<ID3D11RasterizerState> m_rastState;
 

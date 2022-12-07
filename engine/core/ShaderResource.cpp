@@ -62,6 +62,34 @@ ShaderResource ShaderResource::Create(Texture* texture) {
 	return res;
 }
 
+ShaderResource ShaderResource::Create(Render* render, ID3D11Texture2D* texture) {
+	ShaderResource res;
+	res.m_render = render;
+	auto device = res.m_render->device();
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
+	depthSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	depthSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	depthSRVDesc.Texture2D.MipLevels = 1;
+	depthSRVDesc.Texture2D.MostDetailedMip = 0;
+
+	res.samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	res.samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	res.samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	res.samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	res.samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	res.samplerDesc.BorderColor[0] = 1.0f;
+	res.samplerDesc.BorderColor[1] = 0.0f;
+	res.samplerDesc.BorderColor[2] = 0.0f;
+	res.samplerDesc.BorderColor[3] = 1.0f;
+	res.samplerDesc.MaxLOD = INT_MAX;
+
+	auto hres = device->CreateShaderResourceView(texture, &depthSRVDesc, res.m_view.GetAddressOf());
+	assert(SUCCEEDED(hres));
+
+	return res;
+}
+
 void ShaderResource::UpdateSampler() {
 	if (m_sampler.Get() != nullptr)
 		m_sampler.ReleaseAndGetAddressOf();

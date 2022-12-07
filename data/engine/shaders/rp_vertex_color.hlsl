@@ -34,21 +34,21 @@ struct DirectionLightData {
 };
 
 // Buf_OpaquePass_Light_PS
-cbuffer PS_DirectionLightData : register(b0) { DirectionLightData dirLight; }
+cbuffer PS_DirectionLightData : register(b1) { DirectionLightData dirLight; }
 
 // Buf_Material_PS
-cbuffer PS_MaterialData : register(b1) { MaterialData material; }
+cbuffer PS_MaterialData : register(b2) { MaterialData material; }
 
 // Buf_Mesh_VS + Buf_Mesh_PS
-cbuffer VS_PS_MeshData : register(b2) { MeshData meshData; }
+cbuffer VS_PS_MeshData : register(b3) { MeshData meshData; }
 
 // Res_RenderPass_PS
 Texture2D ShadowMap : register(t0);
 SamplerComparisonState CompSampler : register(s0);
 
 // Res_Material_PS
-Texture2D DiffuseMap : register(t6);
-SamplerState Sampler : register(s6);
+Texture2D DiffuseMap : register(t8);
+SamplerState Sampler : register(s8);
 
 
 PS_IN VSMain(VS_IN input) {
