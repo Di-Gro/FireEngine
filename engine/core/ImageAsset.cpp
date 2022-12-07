@@ -7,7 +7,7 @@ const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_1111 = "runtime:/generated/image
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_0001 = "runtime:/generated/image/2x2/rgba/0001"; 
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_1001 = "runtime:/generated/image/2x2/rgba/1001";
 
-void ImageAsset::Image::Init(int width, int height) {
+void Image::Init(int width, int height) {
 	this->width = width;
 	this->height = height;
 	lineSize = this->width * 4;
@@ -15,7 +15,7 @@ void ImageAsset::Image::Init(int width, int height) {
 	data = new BYTE[dataSize];
 }
 
-void ImageAsset::Image::Release() {
+void Image::Release() {
 	if (data != nullptr)
 		delete[] data;
 }
@@ -54,14 +54,14 @@ void ImageAsset::m_Load(size_t hash, fs::path path) {
 	m_images.insert({ hash, image });
 }
 
-const ImageAsset::Image* ImageAsset::Get(fs::path path) {
+const Image* ImageAsset::Get(fs::path path) {
 	auto hash = GetHash(path);
 
 	m_Load(hash, path);
 	return m_images.at(hash);
 }
 
-ImageAsset::Image* ImageAsset::m_CreateImage(fs::path path) {
+Image* ImageAsset::m_CreateImage(fs::path path) {
 	comptr<IWICBitmapDecoder> decoder;
 	comptr<IWICBitmapFrameDecode> frame;
 	comptr<IWICFormatConverter> converter;

@@ -308,7 +308,7 @@ void MeshComponent::m_Draw() {
 }
 
 void MeshComponent::OnDrawShape(int index) {
-	if (isDebug || !visible || m_mesh == nullptr)
+	if (!visible || m_mesh == nullptr)
 		return;
 
 	auto camera = m_render->camera();
@@ -316,12 +316,10 @@ void MeshComponent::OnDrawShape(int index) {
 	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
-	Mesh4::DynamicData data;
+	Mesh4::DynamicShapeData data;
 	data.render = m_render;
-	data.materials = &m_materials;
 	data.worldMatrix = &worldMatrix;
 	data.transfMatrix = &transMatrix;
-	data.directionLight = game()->lighting()->directionLight();
 	data.cameraPosition = &cameraPosition;
 
 	m_mesh->DrawShape(data, index);

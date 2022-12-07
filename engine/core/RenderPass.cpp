@@ -1,51 +1,146 @@
 #include "RenderPass.h"
+
+#include "Game.h"
 #include "Render.h"
+#include "RenderTarget.h"
+#include "ShaderResource.h"
+#include "DepthStencil.h"
+#include "CameraComponent.h"
 
 
-void RenderPass::Init(Render* render) {
-	m_render = render;
+ID3D11DepthStencilView* RenderPass::depthStencil() { 
+	return m_depthStencil != nullptr ? m_depthStencil->get() : nullptr; 
 }
 
-void RenderPass::SetRenderTargets(std::initializer_list<RenderTarget*> targets) {
+void RenderPass::Init(Game* game) {
+	m_render = game->render();
 
-	for (int i = 0; i < 8; i++) {
-		if (i < targets.size()) {
-			auto* rt = *(targets.begin() + i);
-			m_renderTargets[i] = rt;
-			m_dxRenderTargets[i] = rt->renderTarget();
-		}
-		else {
-			m_renderTargets[i] = nullptr;
-			m_dxRenderTargets[i] = nullptr;
-		}
-	}
+	blendStateDesc = D3D11_BLEND_DESC{ false, false };
+	blendStateDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+	blendStateDesc.RenderTarget[0].BlendEnable = true;
+	blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+
+	UpdateBlendState();
 }
 
-void RenderPass::m_BeginDraw() {
-	auto* depthStencil = useDepthStencil ? m_render->depthStencil() : nullptr;
+RenderPass::~RenderPass() { }
 
-	// Очищаем render target-ы 
-	for (int i = 0; i < 8; i++) {
-		if (m_renderTargets[i] != nullptr)
-			m_renderTargets[i]->Clear();
-	}
+void RenderPass::UpdateBlendState() {
+	if (m_blendState.Get() != nullptr)
+		m_blendState.ReleaseAndGetAddressOf();
 
-	// Устанавливаем render target-ы 
-	m_render->context()->OMSetRenderTargets(8, m_dxRenderTargets, depthStencil);
-
-	/// TODO: взять rastState из материала
-	m_render->context()->RSSetState(m_render->m_device.rastState());
-}
-
-//void RenderPass::SetMaterial(const Material*) {
-//
-//}
-
-void RenderPass::m_EndDraw() {
-	
+	m_render->device()->CreateBlendState(&blendStateDesc, m_blendState.GetAddressOf());
 }
 
 void RenderPass::Draw() {
-	m_BeginDraw();
-	m_EndDraw();
+	BeginDraw();
+	EndDraw();
 }
+
+void RenderPass::SetRenderTargets(std::initializer_list<RenderTarget*> targets) {
+	for (int i = 0; i < RTCount; i++)
+		m_targets[i] = i < targets.size() ? *(targets.begin() + i) : nullptr;
+}
+
+void RenderPass::SetVSShaderResources(std::initializer_list<ShaderResource*> resources) {
+	for (int i = 0; i < SRCount; i++)
+		m_VSResources[i] = i < resources.size() ? *(resources.begin() + i) : nullptr;
+}
+
+void RenderPass::SetPSShaderResources(std::initializer_list<ShaderResource*> resources) {
+	for (int i = 0; i < SRCount; i++)
+		m_PSResources[i] = i < resources.size() ? *(resources.begin() + i) : nullptr;
+}
+
+inline void RenderPass::BeginDraw() {
+	auto* context = m_render->context();
+
+	m_PrepareResources();
+	m_PrepareTargets();
+	m_ClearTargets();
+
+	context->OMSetRenderTargets(8, m_dxTargets, depthStencil());
+
+	context->VSSetShaderResources(0, SRCount, m_dxVSResources);
+	context->PSSetShaderResources(0, SRCount, m_dxPSResources);
+
+	context->VSSetSamplers(0, SRCount, m_dxVSSamplers);
+	context->PSSetSamplers(0, SRCount, m_dxPSSamplers);
+}
+
+
+inline void RenderPass::EndDraw() {
+	
+}
+
+void RenderPass::PrepareMaterial(const Material* material) {
+	m_PrepareMaterialResources(material);
+	m_SetShader(material);
+	m_SetMaterialConstBuffer(material);
+
+	m_render->context()->RSSetState(material->rastState.Get());
+}
+
+void RenderPass::m_PrepareMaterialResources(const Material* material) {
+	auto* context = m_render->context();
+
+	for (int i = 0; i < material->resources.size(); ++i) {
+		auto& resource = material->resources[i];
+
+		context->PSSetShaderResources(SRCount + i, 1, resource.getRef());
+		context->PSSetSamplers(SRCount + i, 1, resource.samplerRef());
+	}
+}
+
+void RenderPass::m_SetShader(const Material* material) {
+	auto* context = m_render->context();
+	auto* shader = material->shader;
+		
+	context->IASetInputLayout(shader->layout.Get());
+
+	context->VSSetShader(shader->vertex.Get(), nullptr, 0);
+
+	if (callPixelShader)
+		context->PSSetShader(shader->pixel.Get(), nullptr, 0);
+
+}
+
+void RenderPass::m_SetMaterialConstBuffer(const Material* material) {
+	auto* context = m_render->context();
+
+	context->PSSetConstantBuffers(Buf_Material_PS, 1, material->materialConstBuffer.GetAddressOf());
+
+	D3D11_MAPPED_SUBRESOURCE res = {};
+	context->Map(material->materialConstBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+	memcpy(res.pData, &material->data, sizeof(Material::Data));
+	context->Unmap(material->materialConstBuffer.Get(), 0);
+}
+
+void RenderPass::m_PrepareResources() {
+	for (int i = 0; i < SRCount; i++) {
+		m_dxVSResources[i] = m_VSResources[i] != nullptr ? m_VSResources[i]->get() : nullptr;
+		m_dxPSResources[i] = m_PSResources[i] != nullptr ? m_PSResources[i]->get() : nullptr;
+
+		m_dxVSSamplers[i] = m_VSResources[i] != nullptr ? m_VSResources[i]->sampler() : nullptr;
+		m_dxPSSamplers[i] = m_PSResources[i] != nullptr ? m_PSResources[i]->sampler() : nullptr;
+	}
+}
+
+void RenderPass::m_PrepareTargets() {
+	for (int i = 0; i < RTCount; i++) {
+		m_dxTargets[i] = m_targets[i] != nullptr ? m_targets[i]->get() : nullptr;
+	}
+}
+
+void RenderPass::m_ClearTargets() {
+	for (int i = 0; i < 8; i++) {
+		if (m_targets[i] != nullptr)
+			m_targets[i]->Clear();
+	}
+}
+

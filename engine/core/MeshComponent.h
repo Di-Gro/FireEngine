@@ -48,6 +48,7 @@ public:
 
 	bool IsDynamic() { return m_dynamicMesh != nullptr; }
 	bool IsStatic() { return m_dynamicMesh == nullptr; }
+	bool IsDrawable() { return visible && m_mesh != nullptr; }
 	int MaterialCount() { return m_materials.size(); }
 
 	bool castShadow() { return m_castShadow; }

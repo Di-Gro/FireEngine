@@ -1,26 +1,48 @@
 #pragma once
+#include  <utility>
 
 #include "wrl.h_d3d11_alias.h"
+#include "SimpleMath.h"
 
 class Render;
+class Texture;
 
 class RenderTarget {
 public:
-	float clearColor[4] = { 48 / 255.0f, 37 / 255.0f, 60 / 255.0f, 1.0f };
+	Vector4 clearColor = { 48 / 255.0f, 37 / 255.0f, 60 / 255.0f, 1.0f };
 
 private:
-	Game* m_game;
+	Render* m_render = nullptr;
 
-	//comptr<ID3D11Texture2D> m_renderTex;
-	comptr<ID3D11RenderTargetView> m_rtv;
+	comptr<ID3D11RenderTargetView> m_view;
 	
 public:
 
-	ID3D11Texture2D* texture() { return m_renderTex.Get(); }
-	ID3D11RenderTargetView* renderTarget() { return m_rtv.Get(); }
+	ID3D11RenderTargetView* get() { return m_view.Get(); }
+	
+	RenderTarget() {}
 
-	void Init(Render* render, int width, int height, bool createShaderResource);
+	RenderTarget(RenderTarget&& other) noexcept {
+		clearColor = other.clearColor;
+
+		m_render = other.m_render;
+		m_view = std::move(other.m_view);
+	}
+
+	RenderTarget& operator=(RenderTarget&& other) noexcept {
+		if (this == &other)
+			return *this;
+
+		clearColor = other.clearColor;
+
+		m_render = other.m_render;
+		m_view = std::move(other.m_view);
+
+		return *this;
+	}
 
 	void Clear();
+
+	static RenderTarget Create(Texture* texture);
 
 };

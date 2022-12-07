@@ -213,9 +213,6 @@
     <ClCompile Include="MeshComponent.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="DepthStencil.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="RenderPass.cpp">
       <Filter>Render\Render Passes</Filter>
     </ClCompile>
@@ -239,6 +236,15 @@
     </ClCompile>
     <ClCompile Include="ShaderResource.cpp">
       <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencil.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="LightingPass.cpp">
+      <Filter>Render\Render Passes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -446,9 +452,6 @@
     <ClInclude Include="MeshComponent.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="DepthStencil.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="RenderPass.h">
       <Filter>Render\Render Passes</Filter>
     </ClInclude>
@@ -478,6 +481,12 @@
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencil.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="LightingPass.h">
+      <Filter>Render\Render Passes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

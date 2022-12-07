@@ -11,6 +11,8 @@ public:
 	comptr<ID3DBlob> pixelBC;
 	comptr<ID3D11VertexShader> vertex;
 	comptr<ID3D11PixelShader> pixel;
+
+	/// TODO: удалить
 	comptr<ID3D11InputLayout> layout;
 };
 

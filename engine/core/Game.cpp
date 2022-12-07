@@ -28,12 +28,12 @@
 
 
 std::vector<std::string> shaderPaths = {
-	 "../../data/engine/shaders/vertex_color.hlsl",
-	 "../../data/engine/shaders/defuse_color.hlsl",
-	 "../../data/engine/shaders/default.hlsl",
-	 "../../data/engine/shaders/image.hlsl",
+	 "../../data/engine/shaders/rp_vertex_color.hlsl",
+	 "../../data/engine/shaders/rp_defuse_color.hlsl",
+	 "../../data/engine/shaders/rp_default.hlsl",
+	 "../../data/engine/shaders/rp_image.hlsl",
 	 "../../data/engine/shaders/shadow_map.hlsl",
-	 "../../data/engine/shaders/screen_quad.hlsl",
+	 "../../data/engine/shaders/rp_screen_quad.hlsl",
 };
 
 
@@ -175,13 +175,15 @@ void Game::m_Update() {
 	/// Post Update
 	m_hotkeys.LateUpdate();
 	
-	ImGui::Begin("Main Render Target");
-	ImGui::Image(render()->screenSRV(), { 1920 / 2, 1061 / 2 });
-	ImGui::End();
+	if (m_hotkeys.GetButton(Keys::Tab)) {
+		ImGui::Begin("Main Render Target");
+		ImGui::Image(render()->screenSRV(), { 1920 / 6, 1061 / 6 });
+		ImGui::End();
 
-	ImGui::Begin("Direction Light Shadow Map");
-	ImGui::Image(lighting()->directionLight()->DS()->shaderResource(), { 1920 / 4, 1061 / 4 });
-	ImGui::End();
+		ImGui::Begin("Direction Light Shadow Map");
+		ImGui::Image(lighting()->directionLight()->depthResource()->get(), { 1920 / 6, 1061 / 6 });
+		ImGui::End();
+	}
 
 	m_EndUpdateImGui();
 }
@@ -196,6 +198,7 @@ void Game::m_Destroy() {
 
 	m_DestroyImGui();
 	m_hotkeys.Destroy();
+	m_meshAsset.Destroy();
 	m_render.Destroy();
 	m_window.Destroy();
 }

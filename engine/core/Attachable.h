@@ -7,6 +7,12 @@ class MeshComponent;
 
 class Attachable : public Component {
 	PURE_COMPONENT(Attachable)
+
+private:
+	static Material* s_meshMaterial;
+	static Material* s_boundMaterial;
+	static size_t s_attachableCount;
+
 public:
 	Player* player = nullptr;
 
@@ -21,9 +27,6 @@ public:
 private:
 	MeshComponent* m_mesh;
 	MeshComponent* m_bound;
-
-	Material* m_meshMaterial;
-	Material* m_boundMaterial;
 
 	bool m_canAttach = false;
 

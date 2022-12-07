@@ -6,7 +6,6 @@
 #include <set>
 #include <unordered_map>
 
-#include "RenderTarget.h"
 #include "RenderDevice.h"
 #include "RenderPass.h"
 #include "ShadowPass.h"
@@ -14,6 +13,10 @@
 #include "OpaquePass.h"
 #include "DepthStencil.h"
 #include "MaterialAlias.h"
+
+#include "Texture.h"
+#include "ShaderResource.h"
+#include "RenderTarget.h"
 
 class Game;
 class Actor;
@@ -35,22 +38,19 @@ public:
 private:
 	Game* m_game;
 	RenderDevice m_device;
-	RenderTarget m_mainRT;
-	DepthStencil m_mainDS;
+
+	Texture m_mainTexure;
+	RenderTarget m_mainTarget;
+	ShaderResource m_mainResource;
+
+	Texture m_mainDepthTexure;
+	DepthStencil m_mainDepthStencil;
+	ShaderResource m_mainDepthResource;
 
 	ScreenQuad m_screenQuad;
 
-	CameraComponent* m_camera = nullptr;
-
 	std::list<Component*> m_shadowCasters;
 	std::list<Component*> m_uiDrawers;
-
-	//std::vector<size_t> m_renderPipeline;
-	//std::unordered_map<size_t, std::string> m_renderPassNemes;
-	//std::unordered_map<size_t, RenderPass*> m_renderPasses;
-
-	//std::multimap<MaterialPriority, MaterialRef> m_materials;
-	//std::unordered_map<MaterialRef, ShapeList*> m_shapes;
 
 	std::unordered_map<std::string, int> m_renderPassIndex;
 	std::vector<RenderPass*> m_renderPipeline;
@@ -59,6 +59,8 @@ private:
 	OldPass m_oldPass;
 	OpaquePass m_opaquePass;
 
+	CameraComponent* m_camera = nullptr;
+
 public:
 	inline CameraComponent* camera() { return m_camera; }
 
@@ -66,17 +68,13 @@ public:
 	inline ID3D11DeviceContext* context() { return m_device.GetContext(); }
 	inline IDXGISwapChain* swapChain() { return m_device.GetSwapChain(); }
 	inline comptr<ID3D11RenderTargetView> rtv() { return m_device.GetRTV(); }
-	inline ID3D11DepthStencilView* depthStencil() { return m_mainDS.depthStencil(); }
-	inline ID3D11ShaderResourceView* screenSRV() { return m_mainRT.shaderResource(); }
+	inline ID3D11DepthStencilView* depthStencil() { return m_mainDepthStencil.get(); }
+	inline ID3D11ShaderResourceView* screenSRV() { return m_mainResource.get(); }
 
 	void Init(Game* game, Window* window);
 	void Start();
 	void Destroy();
 	void Draw();
-
-	//void Clear();
-	//void PrepareFrame();
-	//void EndFrame();
 
 	void AddRenderPass(const std::string& name, RenderPass* renderPass, const std::string& afterRenderPass);
 	void AddRenderPass(const std::string& name, RenderPass* renderPass, int afterIndex = -0);
@@ -91,21 +89,11 @@ public:
 	Pass::ShadowCaster AddShadowCaster(Component* component);
 	void RemoveShadowCaster(Pass::ShadowCaster shadowCaster);
 
-	//std::list<Component*>::iterator RegisterUIDrawer(Component* gameObject);
-	//void UnRegisterUIDrawer(std::list<Component*>::iterator handle);
-
-	void CreateTexture(const ImageAsset::Image* image, Material::Texture& texture, bool useSRGB, bool generateMips);
-
 private:
 	void m_Clear();
 
 	void m_Draw();
 	void m_DrawUI();
-
-	//void m_Draw(Actor*);
-	//void m_DrawUI(Actor*);
-
-	//void m_ForEachGameObject(void (Render::* func) (Actor*));
 
 	size_t m_GetStringHash(const std::string& str) { return std::hash<std::string>()(str); }
 	int m_GetRenderPassIndex(const std::string& name);

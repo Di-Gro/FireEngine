@@ -33,6 +33,7 @@
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ClassInfo.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -79,6 +80,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowPass.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tmp.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformTest.cpp" />
@@ -108,6 +110,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="DepthStencil.h" />
+    <ClInclude Include="LightingPass.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tmp.h" />

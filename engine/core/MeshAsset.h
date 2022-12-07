@@ -69,11 +69,11 @@ private:
 
 public:
 	MeshAsset() {}
-	~MeshAsset();
 
 	void Init(Game* game);
-	void Start();
 	void InitMono();
+	void Start();
+	void Destroy();
 
 	void Load(fs::path path);
 	void Load(size_t hash);

@@ -3,10 +3,10 @@
 
 void OldPass::Draw() {
 
-	m_BeginDraw();
+	BeginDraw();
 
 	m_render->m_Draw();
 	//m_render->m_DrawUI();
 
-	m_EndDraw();
+	EndDraw();
 }

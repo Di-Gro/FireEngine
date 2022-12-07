@@ -46,13 +46,9 @@ public:
 
 	struct DynamicShapeData {
 		Render* render;
-		const Material* material;
-
 		const Matrix* worldMatrix;
 		const Matrix* transfMatrix;
 		const Vector3* cameraPosition;
-
-		DirectionLight* directionLight;
 	};
 
 private:
@@ -66,9 +62,10 @@ private:
 
 		comptr<ID3D11Buffer> vertexBuffer;
 		comptr<ID3D11Buffer> indexBuffer;
-		comptr<ID3D11Buffer> constBuffer;
-		comptr<ID3D11Buffer> materialConstBuffer;
-		comptr<ID3D11Buffer> directionLightCBuffer;
+		comptr<ID3D11Buffer> meshCBuffer;
+		comptr<ID3D11Buffer> materialConstBuffer; /// TODO: Удалить
+		comptr<ID3D11Buffer> directionLightCBuffer; /// TODO: Удалить
+
 		comptr<ID3D11SamplerState> sampler;
 		comptr<ID3D11SamplerState> compSampler;
 	};
@@ -108,7 +105,7 @@ public:
 
 
 	void Draw(const DynamicData& data) const;
-	void DrawShape(const DynamicData& data, int index) const;
+	void DrawShape(const DynamicShapeData& data, int index) const;
 
 	int shapeCount() const { return m_shapes.size(); }
 
@@ -123,6 +120,7 @@ public:
 	mutable D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 
 	ID3D11ShaderResourceView* deffuseSRV = nullptr;
+	comptr<ID3D11RasterizerState> rastState;
 
 private:
 	Render* m_render;

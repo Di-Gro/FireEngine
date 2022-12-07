@@ -3,8 +3,10 @@
 #include "DirectionLight.h"
 
 
-void ShadowPass::Init(Render* render) {
-	RenderPass::Init(render);
+void ShadowPass::Init(Game* game) {
+	RenderPass::Init(game);
+
+	callPixelShader = false;
 
 	CD3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.CullMode = D3D11_CULL_FRONT;
@@ -31,7 +33,7 @@ void ShadowPass::Draw(const std::list<Component*>& shadowCasters) {
 	rt->Clear();
 	light->DS()->Clear();
 
-	ID3D11RenderTargetView* targets[] = { rt->renderTarget() };
+	ID3D11RenderTargetView* targets[] = { rt->get() };
 	m_render->context()->OMSetRenderTargets(1, targets, light->depthStencil());
 	m_render->context()->RSSetState(m_rastState.Get());
 

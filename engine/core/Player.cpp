@@ -23,7 +23,7 @@ void Player::OnInit() {
 	m_boxMeshMaterial = meshAsset->CreateDynamicMaterial("boxMeshMaterial", MeshAsset::defaultShader);
 	m_boxMeshMaterial->data.diffuseColor = { 0.8, 0.6, 0.2, 1.0 };
 	
-	m_boundSphereMaterial = meshAsset->CreateDynamicMaterial("boundSphereMaterial", "../../data/engine/shaders/defuse_color.hlsl");
+	m_boundSphereMaterial = meshAsset->CreateDynamicMaterial("boundSphereMaterial", "../../data/engine/shaders/rp_defuse_color.hlsl");
 	m_boundSphereMaterial->data.diffuseColor = { 0, 0.6, 0, 1 };
 
 	float boxSize = radius * 2 * 0.9;
@@ -36,7 +36,8 @@ void Player::OnInit() {
 	m_boundSphere->localScale({ radius * 2, radius * 2, radius * 2 });
 	m_boundSphere->mesh(meshAsset->GetMesh(MeshAsset::formSphereLined));
 	m_boundSphere->SetMaterial(0, m_boundSphereMaterial);
-	m_boundSphere->isDebug = true;
+	m_boundSphere->isDebug = false;
+	m_boundSphere->castShadow(false);
 
 	if (showAxis) {
 		AddComponent<LineComponent>()->SetPoint(Vector3::Forward * 100, { 1, 1, 1, 1 });

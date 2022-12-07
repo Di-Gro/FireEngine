@@ -38,24 +38,29 @@ void Render::Init(Game* game, Window* window) {
 	m_game = game;
 
 	m_device.Create(window->GetHWindow(), window->GetWidth(), window->GetHeight());
-	m_mainRT.Init(m_game, window->GetWidth(), window->GetHeight(), true);	
-	m_mainDS.Init(m_game, window->GetWidth(), window->GetHeight(), true);
+
+	// m_mainTarget.Init(m_game, window->GetWidth(), window->GetHeight(), true);
+	m_mainTexure = Texture::Create(this, window->GetWidth(), window->GetHeight());
+	m_mainTarget = RenderTarget::Create(&m_mainTexure);
+	m_mainResource = ShaderResource::Create(&m_mainTexure);
+
+	//m_mainDS.Init(m_game, window->GetWidth(), window->GetHeight(), true);
+	m_mainDepthTexure = Texture::CreateDepthTexture(this, window->GetWidth(), window->GetHeight());
+	m_mainDepthStencil = DepthStencil::Create(&m_mainDepthTexure);
+	m_mainDepthResource = ShaderResource::Create(&m_mainDepthTexure);
 
 	// Установка стандартных render pass-ов
-	m_shadowPass.Init(this);
-	m_opaquePass.Init(this);
-	m_oldPass.Init(this);
+	m_shadowPass.Init(m_game);
+	m_opaquePass.Init(m_game);
+	m_oldPass.Init(m_game);
 
 	AddRenderPass(Render::opaquePass, &m_opaquePass);
 	
-	m_opaquePass.SetRenderTargets({ &m_mainRT });
-	m_oldPass.SetRenderTargets({ &m_mainRT });
-
 }
 
 void Render::Start() {
-	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/screen_quad.hlsl"));
-	m_screenQuad.deffuseSRV = m_mainRT.shaderResource();
+	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
+	m_screenQuad.deffuseSRV = m_mainResource.get();
 }
 
 void Render::Destroy() {
@@ -69,29 +74,34 @@ void Render::Destroy() {
 void Render::m_Clear() {
 	context()->ClearState();
 	context()->RSSetViewports(1, m_device.viewport());
-	context()->ClearDepthStencilView(m_mainDS.depthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	context()->ClearDepthStencilView(m_mainDepthStencil.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
+bool once = true;
 
 void Render::Draw() {
+
+	if (once) {
+		once = false;
+
+		m_opaquePass.SetDepthStencil(&m_mainDepthStencil);
+		m_opaquePass.SetRenderTargets({ &m_mainTarget });
+		m_opaquePass.SetPSShaderResources({ m_game->lighting()->directionLight()->depthResource() });
+
+		m_oldPass.SetRenderTargets({ &m_mainTarget });
+	}
 
 	m_Clear();
 	m_camera = m_game->mainCamera();
 
 	m_shadowPass.Draw(m_shadowCasters);
 	
-	/// Old Pass
-
-	//m_oldPass.Draw();
-
-	/// New Pass
-
 	for (auto* renderPass : m_renderPipeline)
 		renderPass->Draw();
 
-	///
-
 	// Quad 
 	m_device.BeginDraw();
+	context()->RSSetState(nullptr);
+
 	m_screenQuad.Draw();
 	
 	// ImGui
@@ -107,45 +117,6 @@ Pass::ShadowCaster Render::AddShadowCaster(Component* component) {
 
 void Render::RemoveShadowCaster(Pass::ShadowCaster shadowCaster) {
 	m_shadowCasters.erase(shadowCaster);
-}
-
-void Render::CreateTexture(
-	const ImageAsset::Image* image,
-	Material::Texture& tex,
-	bool useSRGB,
-	bool generateMips)
-{
-	D3D11_TEXTURE2D_DESC desc = {};
-	desc.Width = image->width;
-	desc.Height = image->height;
-	desc.ArraySize = 1;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.CPUAccessFlags = 0;
-	desc.Format = useSRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.MipLevels = generateMips ? 0 : 1;
-	desc.MiscFlags = generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-
-	if (generateMips)
-		desc.BindFlags = desc.BindFlags | D3D11_BIND_RENDER_TARGET;
-
-	D3D11_SUBRESOURCE_DATA data = {};
-	data.pSysMem = image->data;
-	data.SysMemPitch = image->lineSize;
-	data.SysMemSlicePitch = image->dataSize;
-
-	auto hres = device()->CreateTexture2D(&desc, generateMips ? nullptr : &data, tex.texture2D.GetAddressOf());
-	assert(SUCCEEDED(hres));
-
-	hres = device()->CreateShaderResourceView(tex.texture2D.Get(), nullptr, tex.srv.GetAddressOf());
-	assert(SUCCEEDED(hres));
-
-	if (generateMips) {
-		context()->UpdateSubresource(tex.texture2D.Get(), 0, nullptr, image->data, image->lineSize, image->dataSize);
-		context()->GenerateMips(tex.srv.Get());
-	}
 }
 
 int Render::m_GetRenderPassIndex(const std::string& name) {
@@ -184,6 +155,9 @@ void Render::RemoveRenderPass(const std::string& name) {
 }
 
 RenderPass* Render::GetRenderPass(const std::string& name) {
+	if (name == "Shadow Pass")
+		return &m_shadowPass;
+
 	auto it = m_renderPassIndex.find(name);
 	if (it != m_renderPassIndex.end())
 		return m_renderPipeline[it->second];

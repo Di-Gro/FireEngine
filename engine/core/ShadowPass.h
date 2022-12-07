@@ -8,7 +8,7 @@ private:
 	comptr<ID3D11RasterizerState> m_rastState;
 
 public:
-	void Init(Render* render) override;
+	void Init(Game* game) override;
 	void Draw(const std::list<Component*>& shadowCasters);
 
 	void ResetRastState(

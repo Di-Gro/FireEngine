@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "SimpleMath.h"
 #include "wrl.h_d3d11_alias.h"
@@ -8,9 +9,10 @@
 #include "CsLink.h"
 #include "CSBridge.h"
 #include "MaterialAlias.h"
-//#include "Render.h"
+#include "ShaderResource.h"
 
 class Shader;
+class Render;
 
 class Material : public CsLink {
 	friend class Render;
@@ -26,22 +28,22 @@ class Material : public CsLink {
 	};
 	#pragma pack(pop)
 
-	public: class Texture {
-	public:
-		fs::path path;
-		comptr<ID3D11Texture2D> texture2D;
-		comptr<ID3D11ShaderResourceView> srv;
-
-		bool empty() { return path.empty(); }
-	};
-
 public:
 	std::string renderPass = "Opaque Pass";
 	size_t priority = 2000;
 	const Shader* shader;
-	Texture diffuse;
-	Data data;
 	bool isDynamic = false;
+
+	std::vector<Texture> textures;
+	std::vector<ShaderResource> resources;
+
+	Data data;
+
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+
+	comptr<ID3D11Buffer> materialConstBuffer;
+	comptr<ID3D11RasterizerState> rastState;
+	comptr<ID3D11DepthStencilState> depthStencilState;
 
 private:
 	mutable int f_passIndex = -1;
@@ -50,6 +52,7 @@ private:
 private:
 	std::string m_name;
 	char m_name_cstr[80];
+	Render* m_render;
 	
 public:
 	std::string name() const {  return m_name;  }
@@ -58,6 +61,10 @@ public:
 		assert(value.size() <= 80);
 		m_name = value; 
 	}
+
+	void Init(Render* render);
+
+	void UpdateDepthStencilState();
 };
 
 FUNC(Material, diffuseColor_get, Vector3)(CppRef matRef);

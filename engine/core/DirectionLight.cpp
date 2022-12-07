@@ -10,7 +10,7 @@
 DEF_PURE_COMPONENT(DirectionLight);
 
 void DirectionLight::OnInit() {
-	auto render = game()->render()->device();
+	auto render = game()->render();
 	auto window = game()->window();
 
 	m_camera = AddComponent<CameraComponent>();
@@ -26,8 +26,15 @@ void DirectionLight::OnInit() {
 	m_camera->orthoFarPlane = 3000;
 
 	int mul = 1;
-	m_shadowRT.Init(game(), window->GetWidth()* mul, window->GetHeight()* mul, true);
-	m_depthStencil.Init(game(), window->GetWidth()* mul, window->GetHeight()* mul, true);
+
+	//m_renderTarget.Init(game(), window->GetWidth() * mul, window->GetHeight() * mul, true);
+	m_renderTexture = Texture::Create(render, window->GetWidth() * mul, window->GetHeight() * mul);
+	m_renderTarget = RenderTarget::Create(&m_renderTexture);
+
+	//m_depthStencil.Init(game(), window->GetWidth() * mul, window->GetHeight() * mul, true);
+	m_depthTexture = Texture::CreateDepthTexture(render, window->GetWidth() * mul, window->GetHeight() * mul);
+	m_depthStencil = DepthStencil::Create(&m_depthTexture);
+	m_depthResource = ShaderResource::Create(&m_depthTexture);
 }
 
 void DirectionLight::drawDebug(bool value) {
@@ -43,7 +50,7 @@ void DirectionLight::drawDebug(bool value) {
 
 		auto form = Forms4::SphereLined(10, 6, 6, { 0,1,0,1 });
 		m_debugMesh->AddShape(&form.verteces, &form.indexes, 0);
-		m_debugMesh->SetMaterial(0, "../../data/engine/shaders/vertex_color.hlsl");
+		m_debugMesh->SetMaterial(0, "../../data/engine/shaders/rp_vertex_color.hlsl");
 		m_debugMesh->mesh()->topology = form.topology;
 
 		m_debugLine = AddComponent<LineComponent>();
