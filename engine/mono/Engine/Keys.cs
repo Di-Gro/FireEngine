@@ -13,7 +13,7 @@ namespace Engine {
 		CapsLock = 20,
 		Esc = 27,
 		LeftShift = 16,
-		RightShift = 17,
+		RightShift = 17, 
 		Space = 32,
 		Left = 37,
 		Up = 38,
@@ -55,5 +55,8 @@ namespace Engine {
 		X = 88,
 		Y = 89,
 		Z = 90,
+		Ctrl = 0x11,
+		ALT = 0x12,
+		Tilda = 0xC0,
 	}
 }

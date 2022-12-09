@@ -19,7 +19,7 @@
 #include "Forms.h"
 
 std::string MeshAsset::defaultMaterialName = "Defaulf";
-std::string MeshAsset::defaultShader = "../../data/engine/shaders/opaque_default.hlsl";
+std::string MeshAsset::defaultShader =  "../../data/engine/shaders/opaque_default.hlsl";
 std::string MeshAsset::formBox = "runtime:/form/Box";
 std::string MeshAsset::formBoxLined = "runtime:/form/BoxLined";
 std::string MeshAsset::formSphere = "runtime:/form/Sphere";

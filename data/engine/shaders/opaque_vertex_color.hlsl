@@ -93,9 +93,10 @@ PSOpaque PSMain(PS_IN input) {
     output.matParams.b = material.specular;
     output.matParams.a = material.shininess;
 
-    output.normal = normalize(input.normal);
+    output.normal = input.normal;
     output.vertexColor = input.color;
     output.worldPos = input.worldPos;
 
     return output;
 }
+

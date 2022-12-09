@@ -11,6 +11,8 @@ void HotKeys::Init(Game* game) {
 	m_InitMono();
 
 	m_mouseMoveHandle = m_game->input()->MouseMove.AddRaw(this, &HotKeys::m_OnMouseMove);
+
+	RegisterHotkey(Keys::Tilda);
 }
 
 void HotKeys::m_InitMono() {

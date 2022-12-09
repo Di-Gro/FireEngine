@@ -41,7 +41,7 @@ namespace UI {
             if (m_timeToUpdate > 0)
                 m_timeToUpdate -= Engine.Game.DeltaTime;
 
-            if (Engine.Input.GetButton(Engine.Key.Tab)) {
+            if (Engine.Input.GetButton(Engine.Key.Tilda)) {
                 // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
                 {
                     ImGui.Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.

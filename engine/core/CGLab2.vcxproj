@@ -33,6 +33,7 @@
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\TextEditor\TextEditor.cpp" />
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ClassInfo.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="DepthStencil.h" />
+    <ClInclude Include="imgui\TextEditor\TextEditor.h" />
     <ClInclude Include="LightingPass.h" />
     <ClInclude Include="RenderPassUI.h" />
     <ClInclude Include="ShaderResource.h" />

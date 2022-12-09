@@ -206,6 +206,8 @@ void Mesh4::Draw(const DynamicData& data) const {
 		auto* mat = data.materials->at(shape.materialIndex);
 		auto* shader = /*camera->shader != nullptr ? camera->shader :*/ mat->shader;
 
+		//context->OMSetDepthStencilState(mat->depthStencilState.Get(), 0);
+
 		context->IASetInputLayout(shader->layout.Get());
 		context->IASetPrimitiveTopology(topology);
 		context->IASetIndexBuffer(shape.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
@@ -254,19 +256,17 @@ void Mesh4::Draw(const DynamicData& data) const {
 		context->Unmap(shape.directionLightCBuffer.Get(), 0);
 		/// <-
 		/// Resources ->
-		auto shadowMapSrv = data.directionLight->depthResource()->get();
-
-		context->PSSetSamplers(0, 1, shape.sampler.GetAddressOf());
-		context->PSSetSamplers(1, 1, shape.compSampler.GetAddressOf());
-
-		ID3D11ShaderResourceView* shaderResources[] = {
-			mat->resources[0].get(),
-			camera->setShaderMap ? shadowMapSrv : nullptr,
-		};
-
-		//context->PSSetShaderResources(0, 1, mat->diffuse.srv.GetAddressOf());
 		
-		context->PSSetShaderResources(0, 2, shaderResources);
+		/// Render Pass Resources
+		if (camera->setShaderMap) {
+			auto shadowMapSrv = data.directionLight->depthResource()->getRef();
+			context->PSSetShaderResources(Res_RenderPass_PS, 1, shadowMapSrv);
+			context->PSSetSamplers(Res_RenderPass_PS, 1, shape.compSampler.GetAddressOf());
+		}
+		
+		/// Material Resources
+		context->PSSetShaderResources(Res_Material_PS, 1, mat->resources[0].getRef());
+		context->PSSetSamplers(Res_Material_PS, 1, shape.sampler.GetAddressOf());
 
 		/// <-
 		context->DrawIndexed(shape.indecesSize, 0, 0);
@@ -338,8 +338,8 @@ void ScreenQuad::Draw() const {
 	context->PSSetShader(m_shader->pixel.Get(), nullptr, 0);
 
 	ID3D11ShaderResourceView* resources[] = { deffuseSRV };
-	context->PSSetShaderResources(8, 1, resources);
-	context->PSSetSamplers(8, 1, m_sampler.GetAddressOf());
+	context->PSSetShaderResources(Res_Material_PS, 1, resources);
+	context->PSSetSamplers(Res_Material_PS, 1, m_sampler.GetAddressOf());
 
 	context->Draw(4, 0);
 }

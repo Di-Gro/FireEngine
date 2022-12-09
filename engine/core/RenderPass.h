@@ -67,6 +67,7 @@ private:
 	
 	comptr<ID3D11BlendState> m_blendState;
 
+public:
 	comptr<ID3D11Buffer> m_cameraBuffer;
 		
 public:

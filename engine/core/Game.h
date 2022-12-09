@@ -21,6 +21,8 @@
 
 #include "Actor.h"
 
+extern std::vector<std::string> game_shaderPaths;
+
 class CameraComponent;
 //class ShadowMapRender;
 class MonoInst;
@@ -29,6 +31,9 @@ extern "C" __declspec(dllexport) GameObjectInfo Game_CreateGameObjectFromCS(CppR
 
 class Game {
 	friend GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
+
+public:
+	bool inFocus = true;
 
 private:
 	MonoInst* m_mono;

@@ -90,30 +90,28 @@ float4 PSMain(PS_IN input): SV_Target {
 
     // Shadow
     float3 smuv = mul(gbuf_worldPos, dirLight.uvMatrix);
-    smuv.y = 1 - smuv.y;
+    smuv.y = 1 - smuv.y; // smuv.xy = smuv.xy / 1;
 
     float bias = 0.0008;
     float x = smuv.z - bias;
     float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
 
     // Directional Light
-    float3 kd = gbuf_matDiffuse * gbuf_diffuse * gbuf_vertexColor;
-    float3 normal = gbuf_normal;
+    float3 kd = gbuf_diffuse.xyz * gbuf_vertexColor.xyz;
+    float3 normal = normalize(gbuf_normal.xyz);
 
     float3 viewDir = normalize(camera.position.xyz - gbuf_worldPos.xyz);
-    float3 lightDir = dirLight.direction.xyz;
-    float3 refVec = normalize(reflect(-lightDir, normal));
+    float3 lightDir = -dirLight.direction.xyz;
+    float3 refVec = normalize(reflect(lightDir, normal));
 
-    float3 diffuse = max(0, dot(-lightDir, normal)) * kd;
+    float3 diffuse = max(0, dot(lightDir, normal)) * kd;
     float3 ambient = kd * gbuf_matAmbient;
-    float3 spec = pow(max(0, dot(-viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
+    float3 spec = pow(max(0, dot(-viewDir, refVec)), gbuf_matShininess) * 0.1;
 
     float3 das = ambient + (diffuse + spec) * shadow;
     float3 color = dirLight.color * dirLight.intensity.xxx * das;
 
-	float3 cameraPos = camera.position.xyz;
-	float3 vec = cameraPos - gbuf_worldPos;
-    return float4(gbuf_diffuse.xyz, 1);
+    return float4(gbuf_diffuse.rgb, 1);
 }
 
 // float v = shadow;
@@ -121,7 +119,7 @@ float4 PSMain(PS_IN input): SV_Target {
 // // Directional Light
 // float3 kd = gbuf_diffuse; //* gbuf_vertexColor;
 /// ->
-// float3 normal = normalize(gbuf_normal);fffsdf
+// float3 normal = normalize(gbuf_normal);
 //
 // float3 viewDir = normalize(camera.position - gbuf_worldPos);
 // float3 lightDir = normalize(dirLight.direction.xyz);
@@ -143,4 +141,3 @@ float4 PSMain(PS_IN input): SV_Target {
 // // return float4(v,v,v, 1);
 // return float4(color.rgb, 1);
 // <-
-

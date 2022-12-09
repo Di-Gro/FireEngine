@@ -139,18 +139,11 @@ void GameController::OnUpdate() {
 		game()->Exit(0);
 	}
 
-	if (hotkeys->GetButtonDown(Keys::K)) {
+	if (hotkeys->GetButtonDown(Keys::K) && hotkeys->GetButton(Keys::Ctrl)) {
 		game()->Stat();
 	}
 
-	//if (hotkeys->Is(Keys::Tab, KeyState::Press)) {
-	//	std::cout << "send game message: ";
-	//	std::string msg;
-	//	std::getline(std::cin, msg);
-	//	game()->SendGameMessage(msg);
-	//}
-
-	if (hotkeys->Is(Keys::F, KeyState::Press)) {
+	if (hotkeys->Is(Keys::F, KeyState::Press) && game()->inFocus) {
 		if (m_defaultCamera->IsAttached()) {
 			m_playerCamera->Attach();
 		}
@@ -159,7 +152,7 @@ void GameController::OnUpdate() {
 		}
 	}
 
-	if (hotkeys->Is(Keys::R, KeyState::Press)) {
+	if (hotkeys->GetButtonDown(Keys::R) && hotkeys->GetButton(Keys::Ctrl)) {
 		game()->SendGameMessage("recompile");
 	}
 }
@@ -167,7 +160,7 @@ void GameController::OnUpdate() {
 
 void GameController::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
 
-	if (m_shadowPass == nullptr)
+	if (m_shadowPass == nullptr || !game()->inFocus)
 		return;
 
 	static int v1 = 0;

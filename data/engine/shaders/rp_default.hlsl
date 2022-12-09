@@ -85,7 +85,7 @@ float4 PSMain(PS_IN input) : SV_Target {
 
     float bias = 0.0008;
     float x = smuv.z - bias;
-    float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
+    float shadow = 1;//ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
 
     float4 diffuseTexColor = DiffuseMap.Sample(Sampler, float2(input.uv.x, 1-input.uv.y));
     clip(diffuseTexColor.a - 0.01f);
@@ -96,15 +96,19 @@ float4 PSMain(PS_IN input) : SV_Target {
     float3 normal = normalize(input.normal.xyz);
 
     float3 viewDir = normalize(meshData.cameraPosition.xyz - input.worldPos.xyz);
-    float3 lightDir = -dirLight.direction.xyz;
-    float3 refVec = normalize(reflect(lightDir, normal));
+    float3 lightDir = dirLight.direction.xyz;
+    float3 refVec = normalize(reflect(-lightDir, normal));
 
-    float3 diffuse = max(0, dot(lightDir, normal)) * kd;
+    float3 diffuse = max(0, dot(-lightDir, normal)) * kd;
     float3 ambient = kd * material.ambient;
     float3 spec = pow(max(0, dot(-viewDir, refVec)), material.shininess) * material.specular;
 
     float3 das = ambient + (diffuse + spec) * shadow;
     float3 color = dirLight.color * dirLight.intensity.xxx * das;
 
-    return float4(color, 1.0f);
+	float v = dot(-viewDir, refVec);
+	//return float4(v,v,v, 1.0f);
+    return float4(viewDir.xyz, 1.0f);
 }
+
+

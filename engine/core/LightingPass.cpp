@@ -26,10 +26,10 @@ static struct DirectionLightCBuffer {
 void LightingPass::Init(Game* game) {
 	RenderPass::Init(game);
 
-	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	//blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	//blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 
-	UpdateBlendState();
+	//UpdateBlendState();
 
 	D3D11_BUFFER_DESC dirLightCBufferDesc = {};
 	dirLightCBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -49,7 +49,7 @@ void LightingPass::Draw() {
 
 	BeginDraw();
 	m_SetLightConstBuffer();
-	context->RSSetState(nullptr);
+	context->RSSetState(m_render->rastCullBack.Get());
 
 	m_screenQuad.Draw();
 

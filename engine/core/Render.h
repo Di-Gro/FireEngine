@@ -63,6 +63,10 @@ private:
 	CameraComponent* m_camera = nullptr;
 
 public:
+	comptr<ID3D11RasterizerState> rastCullBack;
+	comptr<ID3D11RasterizerState> rastCullFront;
+
+public:
 	inline CameraComponent* camera() { return m_camera; }
 
 	inline RenderDevice* rdevice() { return &m_device; };
@@ -86,7 +90,7 @@ public:
 	void Draw();
 
 	void AddRenderPass(const std::string& name, RenderPass* renderPass, const std::string& afterRenderPass);
-	void AddRenderPass(const std::string& name, RenderPass* renderPass, int afterIndex = -0);
+	void AddRenderPass(const std::string& name, RenderPass* renderPass, int afterIndex = -1);
 	void RemoveRenderPass(const std::string& name);
 
 	RenderPass* GetRenderPass(const std::string& name);
@@ -103,6 +107,8 @@ private:
 
 	void m_Draw();
 	void m_DrawUI();
+
+	void m_OpaquePass();
 
 	size_t m_GetStringHash(const std::string& str) { return std::hash<std::string>()(str); }
 	int m_GetRenderPassIndex(const std::string& name);

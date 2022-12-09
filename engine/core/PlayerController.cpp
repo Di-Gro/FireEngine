@@ -14,7 +14,7 @@ void PlayerController::OnStart() {
 }
 
 void PlayerController::OnUpdate() {
-	if (!m_player)
+	if (!m_player || !game()->inFocus)
 		return;
 
 	auto input = game()->input();

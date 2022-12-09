@@ -26,10 +26,10 @@
 #include "CSComponent.h"
 
 
-std::vector<std::string> shaderPaths = {
-	 "../../data/engine/shaders/opaque_vertex_color.hlsl",
+std::vector<std::string> game_shaderPaths = {
+	  "../../data/engine/shaders/opaque_vertex_color.hlsl",
 	 "../../data/engine/shaders/opaque_defuse_color.hlsl",
-	 "../../data/engine/shaders/opaque_default.hlsl",
+	  "../../data/engine/shaders/opaque_default.hlsl",
 	 "../../data/engine/shaders/rp_image.hlsl",
 	 "../../data/engine/shaders/shadow_map.hlsl",
 	 "../../data/engine/shaders/rp_screen_quad.hlsl",
@@ -50,7 +50,7 @@ void Game::Init(MonoInst* imono) {
 	m_input.Init(this);
 	m_hotkeys.Init(this);
 
-	for (auto& path : shaderPaths)
+	for (auto& path : game_shaderPaths)
 		m_shaderAsset.CompileShader(path);
 
 	m_lighting.Init(this);
@@ -81,7 +81,11 @@ void Game::Run() {
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
-	csLink.Link(cppObj, "EngineMono", "CSClass");	
+	//csLink.Link(cppObj, "EngineMono", "CSClass");	
+
+	//auto actor = CreateActor();
+	//actor->AddComponent<MeshComponent>();
+	//actor->AddComponent<CsComponent>("Engine.OhMyMesh");
 
 
 	///
@@ -97,6 +101,10 @@ void Game::Run() {
 	m_lighting.f_directionLight->drawDebug(true);
 
 	CreateActor("GameController")->AddComponent<GameController>();
+
+	//auto tree = CreateActor()->AddComponent<MeshComponent>();
+	//tree->mesh(meshAsset()->GetMesh("../../data/assets/models/tree/tree.obj"));
+	//tree->localScale({ 100,100,100 });
 	
 	MSG msg = {};
 	bool isExitRequested = false;
@@ -159,8 +167,11 @@ void Game::m_Update() {
 
 	/// Post Update
 	m_hotkeys.LateUpdate();
+
+	if (m_hotkeys.GetButtonDown(Keys::Tilda))
+		inFocus = !inFocus;
 	
-	if (m_hotkeys.GetButton(Keys::Tab)) {
+	if (!inFocus) {
 		ImGui::Begin("Main Render Target");
 		ImGui::Image(render()->screenSRV(), { 1920 / 6, 1061 / 6 });
 		ImGui::End();

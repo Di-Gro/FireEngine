@@ -23,7 +23,7 @@ public:
 		vertex2.color = color;
 
 		this->AddShape(&verteces, &indeces);
-		this->SetMaterial(0, "../../data/engine/shaders/opaque_vertex_color.hlsl");
+		this->SetMaterial(0,  "../../data/engine/shaders/opaque_vertex_color.hlsl");
 		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 
@@ -40,7 +40,7 @@ public:
 		vertex2.color = color;
 
 		this->AddShape(&verteces, &indeces);
-		this->SetMaterial(0, "../../data/engine/shaders/opaque_vertex_color.hlsl");
+		this->SetMaterial(0,  "../../data/engine/shaders/opaque_vertex_color.hlsl");
 		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 };

@@ -48,20 +48,28 @@ void Render::Init(Game* game, Window* window) {
 	m_mainDepthStencil = DepthStencil::Create(&m_mainDepthTexure);
 	m_mainDepthResource = ShaderResource::Create(&m_mainDepthTexure);
 	
+	CD3D11_RASTERIZER_DESC rastDesc = {};
+	rastDesc.CullMode = D3D11_CULL_BACK;
+	rastDesc.FillMode = D3D11_FILL_SOLID;
+	device()->CreateRasterizerState(&rastDesc, rastCullBack.GetAddressOf());
+
+	rastDesc.CullMode = D3D11_CULL_FRONT;
+	device()->CreateRasterizerState(&rastDesc, rastCullFront.GetAddressOf());
 }
 
 void Render::Start() {
-	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
-	m_screenQuad.deffuseSRV = m_mainResource.get();
-
-	m_game->CreateActor("Render Pass UI")->AddComponent<RenderPassUI>();
-
 	m_shadowPass.Init(m_game);
 	m_opaquePass.Init(m_game);
 	m_lightingPass.Init(m_game);
 
 	AddRenderPass(Render::opaquePassName, &m_opaquePass);
-	//AddRenderPass(Render::lightingPassName, &tmp_lightingPass);
+	AddRenderPass(Render::lightingPassName, &m_lightingPass);
+
+	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
+	m_screenQuad.deffuseSRV = m_mainResource.get();
+	//m_screenQuad.deffuseSRV = m_opaquePass.target0Res.get();
+
+	m_game->CreateActor("Render Pass UI")->AddComponent<RenderPassUI>();
 }
 
 void Render::Destroy() {
@@ -84,35 +92,42 @@ void Render::Draw() {
 	if (once) {
 		once = false;
 
-		m_opaquePass.SetDepthStencil(&m_mainDepthStencil);
-		m_opaquePass.SetPSShaderResources({ m_game->lighting()->directionLight()->depthResource() });
+		auto shadowMap = m_game->lighting()->directionLight()->depthResource();
 
+		m_opaquePass.SetDepthStencil(&m_mainDepthStencil);
+		m_opaquePass.SetRenderTargets({ 
+			&m_opaquePass.target0,
+			&m_opaquePass.target1, 
+			&m_opaquePass.target2, 
+			&m_opaquePass.target3, 
+			&m_opaquePass.target4 
+		});
+
+		m_lightingPass.SetRenderTargets({ &m_mainTarget });
 		m_lightingPass.SetPSShaderResources({ 
-			m_game->lighting()->directionLight()->depthResource(),
+			shadowMap,
 			&m_opaquePass.target0Res, 
 			&m_opaquePass.target1Res, 
 			&m_opaquePass.target2Res, 
 			&m_opaquePass.target3Res,
 			&m_opaquePass.target4Res,
 		});
-
-		m_lightingPass.SetRenderTargets({&m_mainTarget});
 	}
 
 	m_Clear();
 	m_camera = m_game->mainCamera();
 
 	m_shadowPass.Draw(m_shadowCasters);
-	//
+	
 	//for (auto* renderPass : m_renderPipeline)
 	//	renderPass->Draw();
 
-	m_opaquePass.Draw();
+	m_OpaquePass();
 	m_lightingPass.Draw();
 
 	// Quad 
 	m_device.BeginDraw();
-	context()->RSSetState(nullptr);
+	context()->RSSetState(nullptr/*rastCullBack.Get()*/);
 
 	m_screenQuad.Draw();
 	
@@ -257,4 +272,105 @@ void Render::m_DrawUI() {
 		if (!component->IsDestroyed())
 			component->OnDraw();
 	}
+}
+
+void Render::m_OpaquePass() {
+
+	auto shadowMap = m_game->lighting()->directionLight()->depthResource();
+
+	/// RenderPass: PrepareTargets
+	ID3D11RenderTargetView* dxTargets[RTCount] = {
+		m_opaquePass.target0.get(),
+		m_opaquePass.target1.get(),
+		m_opaquePass.target2.get(),
+		m_opaquePass.target3.get(),
+		m_opaquePass.target4.get(),
+		nullptr,
+		nullptr,
+		nullptr,
+	};
+
+	/// RenderPass: PrepareResources
+	ID3D11ShaderResourceView* dxResources[SRCount] = { nullptr };
+	ID3D11SamplerState* dxSamplers[SRCount] = { nullptr };
+
+	/// RenderPass: ClearTargets
+	m_opaquePass.target0.Clear();
+	m_opaquePass.target1.Clear();
+	m_opaquePass.target2.Clear();
+	m_opaquePass.target3.Clear();
+	m_opaquePass.target4.Clear();
+
+	/// RenderPass: SetCameraConstBuffer
+	context()->PSSetConstantBuffers(Buf_RenderPass_Camera_PS, 1, m_opaquePass.m_cameraBuffer.GetAddressOf());
+
+	D3D11_MAPPED_SUBRESOURCE res = {};
+	context()->Map(m_opaquePass.m_cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+	auto* cbuf = (CameraCBuffer*)res.pData;
+	cbuf->position = camera()->worldPosition();
+	context()->Unmap(m_opaquePass.m_cameraBuffer.Get(), 0);
+
+	/// RenderPass: SetTargets
+	context()->OMSetRenderTargets(8, dxTargets, m_mainDepthStencil.get());
+
+	/// RenderPass: SetResources
+	context()->VSSetShaderResources(0, SRCount, dxResources);
+	context()->PSSetShaderResources(0, SRCount, dxResources);
+	context()->VSSetSamplers(0, SRCount, dxSamplers);
+	context()->PSSetSamplers(0, SRCount, dxSamplers);
+		
+	/// OpaquePass: Draw
+	for (auto& pair : m_opaquePass.f_sortedMaterials) {
+		auto* matShapes = &pair.second;
+		auto* material = matShapes->material;
+		auto* shapes = matShapes->shapes;
+
+		bool once = true;
+
+		for (auto shapeRef : *shapes) {
+			auto* meshComponent = shapeRef.first;
+			auto index = shapeRef.second;
+
+			if (!meshComponent->IsDestroyed() && meshComponent->IsDrawable()) {
+				if (once) {
+					once = false;
+
+					/// Material: SetResources
+					for (int i = 0; i < material->resources.size(); ++i) {
+						auto& resource = material->resources[i];
+
+						context()->PSSetShaderResources(SRCount + i, 1, resource.getRef());
+						context()->PSSetSamplers(SRCount + i, 1, resource.samplerRef());
+					}
+					/// Material: SetShader
+					auto* shader = material->shader;
+					context()->IASetInputLayout(shader->layout.Get());
+					context()->VSSetShader(shader->vertex.Get(), nullptr, 0);
+					context()->PSSetShader(shader->pixel.Get(), nullptr, 0);
+
+					/// Material: SetMaterialConstBuffer
+					context()->PSSetConstantBuffers(Buf_OpaquePass_Material_PS, 1, material->materialConstBuffer.GetAddressOf());
+
+					D3D11_MAPPED_SUBRESOURCE res = {};
+					context()->Map(material->materialConstBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+					memcpy(res.pData, &material->data, sizeof(Material::Data));
+					context()->Unmap(material->materialConstBuffer.Get(), 0);
+
+					/// Material: SetRasterizerState
+					//context()->RSSetState(material->rastState.Get());
+					context()->RSSetState(rastCullFront.Get());
+				}
+				meshComponent->OnDrawShape(index);
+			}
+		}
+	}
+
+	/// RenderPass: EndDraw
+	ID3D11RenderTargetView* targets[RTCount] = { nullptr };
+	context()->OMSetRenderTargets(8, targets, nullptr);
+
+	ID3D11ShaderResourceView* resources[SRCount] = { nullptr };
+	context()->VSSetShaderResources(0, SRCount, resources);
+	context()->PSSetShaderResources(0, SRCount, resources);
+
 }

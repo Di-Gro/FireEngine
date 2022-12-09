@@ -16,7 +16,7 @@ void FlyingCamera::OnDestroy() {
 }
 
 void FlyingCamera::OnUpdate() {
-	if (!IsAttached())
+	if (!IsAttached() || !game()->inFocus)
 		return;
 
 	if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
@@ -62,7 +62,7 @@ void FlyingCamera::OnUpdate() {
 }
 
 void FlyingCamera::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
-	if (!IsAttached())
+	if (!IsAttached() || !game()->inFocus)
 		return;
 
 	if (!game()->input()->IsKeyDown(Keys::RightButton))

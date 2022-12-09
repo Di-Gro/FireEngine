@@ -61,4 +61,5 @@ enum class Keys {
 	Z = 90,
 	Ctrl = 0x11,
 	ALT = 0x12,
+	Tilda = 0xC0,
 };

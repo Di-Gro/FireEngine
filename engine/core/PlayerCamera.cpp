@@ -54,15 +54,14 @@ void PlayerCamera::OnUpdate() {
 }
 
 void PlayerCamera::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
-	if (!IsAttached())
+	if (!IsAttached() || !game()->inFocus)
 		return;
 
 	bool hasKey1 = game()->input()->IsKeyDown(Keys::Key1);
 	bool hasKey2 = game()->input()->IsKeyDown(Keys::Key2);
 	bool hasKey3 = game()->input()->IsKeyDown(Keys::Key3);
 	bool hasKey4 = game()->input()->IsKeyDown(Keys::Key4);
-	bool hasKey5 = game()->input()->IsKeyDown(Keys::Tab);
-	if (hasKey1 || hasKey2 || hasKey3 || hasKey4 || hasKey5)
+	if (hasKey1 || hasKey2 || hasKey3 || hasKey4)
 		return;
 
 	m_rotationDelta.y -= args.Offset.x * 0.003f * m_rotationSense;

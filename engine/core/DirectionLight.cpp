@@ -50,7 +50,7 @@ void DirectionLight::drawDebug(bool value) {
 
 		auto form = Forms4::SphereLined(10, 6, 6, { 0,1,0,1 });
 		m_debugMesh->AddShape(&form.verteces, &form.indexes, 0);
-		m_debugMesh->SetMaterial(0, "../../data/engine/shaders/opaque_vertex_color.hlsl");
+		m_debugMesh->SetMaterial(0,  "../../data/engine/shaders/opaque_vertex_color.hlsl");
 		m_debugMesh->mesh()->topology = form.topology;
 
 		m_debugLine = AddComponent<LineComponent>();

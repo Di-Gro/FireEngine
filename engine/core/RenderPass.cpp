@@ -30,7 +30,7 @@ void RenderPass::Init(Game* game) {
 	cameraBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
 	cameraBufferDesc.MiscFlags = 0;
 	cameraBufferDesc.StructureByteStride = 0;
-	cameraBufferDesc.ByteWidth = sizeof(MeshCBuffer);
+	cameraBufferDesc.ByteWidth = sizeof(CameraCBuffer);
 
 	m_render->device()->CreateBuffer(&cameraBufferDesc, nullptr, m_cameraBuffer.GetAddressOf());
 }
