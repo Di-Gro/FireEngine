@@ -262,9 +262,6 @@ void MeshAsset::m_InitShape(
 	const tinyobj::shape_t& shape)
 {
 	auto& verts = attrib.vertices;
-	auto& colors = attrib.colors;
-	auto& normals = attrib.normals;
-	auto& texcoords = attrib.texcoords;
 
 	std::vector<Mesh4::Vertex> verteces;
 	std::vector<int> indeces;
@@ -272,26 +269,14 @@ void MeshAsset::m_InitShape(
 	verteces.reserve(verts.size() / 3);
 	indeces.reserve(shape.mesh.indices.size());
 
-	for (int i = 0; i < shape.mesh.indices.size(); ++i) {
-		Mesh4::Vertex vertex;
+	int faceSize = 3;
+	for (int i = 0; i < shape.mesh.indices.size(); i += faceSize) {
+		auto vertex1 = m_ReadVertex(attrib, shape.mesh.indices[i + 0]);
+		auto vertex2 = m_ReadVertex(attrib, shape.mesh.indices[i + 1]);
+		auto vertex3 = m_ReadVertex(attrib, shape.mesh.indices[i + 2]);
 
-		auto& index = shape.mesh.indices[i];
-		auto v = (size_t)index.vertex_index * 3;
-		auto n = (size_t)index.normal_index * 3;
-		auto t = (size_t)index.texcoord_index * 2;
-
-		if (index.vertex_index >= 0) {
-			vertex.position = { verts[v], verts[v + 1], verts[v + 2], 0.0f };
-			vertex.color = { colors[v], colors[v + 1], colors[v + 2], 1.0f };
-		}
-		if (index.normal_index >= 0)
-			vertex.normal = { normals[n], normals[n + 1], normals[n + 2], 1.0f };
-
-		if (index.texcoord_index >= 0)
-			vertex.uv = { texcoords[t], texcoords[t + 1] };
-
-		verteces.push_back(vertex);
-		indeces.push_back(i);
+		verteces.insert(verteces.end(), { vertex1 , vertex2, vertex3 });
+		indeces.insert(indeces.end(), { i + 2, i + 1, i + 0 });
 	}
 
 	int matIndex = shape.mesh.material_ids[0];
@@ -299,6 +284,75 @@ void MeshAsset::m_InitShape(
 
 	asset->mesh->AddShape(&verteces, &indeces, m_game->render(), matIndex);
 }
+
+Mesh4::Vertex MeshAsset::m_ReadVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index) {
+	auto& verts = attrib.vertices;
+	auto& colors = attrib.colors;
+	auto& normals = attrib.normals;
+	auto& texcoords = attrib.texcoords;
+
+	Mesh4::Vertex vertex;
+
+	auto v = (size_t)index.vertex_index * 3;
+	auto n = (size_t)index.normal_index * 3;
+	auto t = (size_t)index.texcoord_index * 2;
+
+	if (index.vertex_index >= 0) {
+		vertex.position = { verts[v], verts[v + 1], verts[v + 2], 0.0f };
+		vertex.color = { colors[v], colors[v + 1], colors[v + 2], 1.0f };
+	}
+	if (index.normal_index >= 0)
+		vertex.normal = { normals[n], normals[n + 1], normals[n + 2], 1.0f };
+
+	if (index.texcoord_index >= 0)
+		vertex.uv = { texcoords[t], texcoords[t + 1] };
+
+	return vertex;
+}
+
+//void MeshAsset::m_InitShape(
+//	Asset* asset,
+//	const tinyobj::attrib_t& attrib,
+//	const tinyobj::shape_t& shape)
+//{
+//	auto& verts = attrib.vertices;
+//	auto& colors = attrib.colors;
+//	auto& normals = attrib.normals;
+//	auto& texcoords = attrib.texcoords; 
+//
+//	std::vector<Mesh4::Vertex> verteces;
+//	std::vector<int> indeces;
+//
+//	verteces.reserve(verts.size() / 3);
+//	indeces.reserve(shape.mesh.indices.size());
+//
+//	for (int i = 0; i < shape.mesh.indices.size(); ++i) {
+//		Mesh4::Vertex vertex;
+//
+//		auto& index = shape.mesh.indices[i];
+//		auto v = (size_t)index.vertex_index * 3;
+//		auto n = (size_t)index.normal_index * 3;
+//		auto t = (size_t)index.texcoord_index * 2;
+//
+//		if (index.vertex_index >= 0) {
+//			vertex.position = { verts[v], verts[v + 1], verts[v + 2], 0.0f };
+//			vertex.color = { colors[v], colors[v + 1], colors[v + 2], 1.0f };
+//		}
+//		if (index.normal_index >= 0)
+//			vertex.normal = { normals[n], normals[n + 1], normals[n + 2], 1.0f };
+//
+//		if (index.texcoord_index >= 0)
+//			vertex.uv = { texcoords[t], texcoords[t + 1] };
+//
+//		verteces.push_back(vertex);
+//		indeces.push_back(i);
+//	}
+//
+//	int matIndex = shape.mesh.material_ids[0];
+//	matIndex = matIndex >= 0 ? matIndex : 0;
+//
+//	asset->mesh->AddShape(&verteces, &indeces, m_game->render(), matIndex);
+//}
 
 void MeshAsset::m_InitDefaultMaterials() {
 	auto* render = m_game->render();

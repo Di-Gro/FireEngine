@@ -49,6 +49,15 @@ namespace Forms {
 			1,2,6, 6,5,1, // зад
 		};
 
+		//form.indexes = {
+		//	1,2,3, 3,0,1, // низ
+		//	6,5,4, 4,7,6, // верх
+		//	6,1,0, 5,0,4, // лево
+		//	7,3,2, 2,6,7, // право
+		//	7,4,0, 0,3,7, // перед
+		//	6,2,1, 1,5,6, // зад
+		//};
+
 		return form;
 	}
 
@@ -244,9 +253,9 @@ namespace Forms4 {
 				float t = h * dh;
 
 				float x, y, z;
-				x = (float)(-radius * sin(rad(t)) * sin(rad(u)));
-				y = (float)(-radius * cos(rad(t)));
-				z = (float)(-radius * sin(rad(t)) * cos(rad(u)));
+				x = (float)(radius * sin(rad(t)) * sin(rad(u)));
+				y = (float)(radius * cos(rad(t)));
+				z = (float)(radius * sin(rad(t)) * cos(rad(u)));
 
 
 				auto& vertex = form.verteces.emplace_back();
@@ -312,13 +321,22 @@ namespace Forms4 {
 		};
 
 		if (topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+			//indexes = {
+			//	3,2,1, 1,0,3, // низ
+			//	4,5,6, 6,7,4, // верх
+			//	0,1,5, 4,0,5, // лево
+			//	2,3,7, 7,6,2, // право
+			//	0,4,7, 7,3,0, // перед
+			//	1,2,6, 6,5,1, // зад
+			//};
+
 			indexes = {
-				3,2,1, 1,0,3, // низ
-				4,5,6, 6,7,4, // верх
-				0,1,5, 4,0,5, // лево
-				2,3,7, 7,6,2, // право
-				0,4,7, 7,3,0, // перед
-				1,2,6, 6,5,1, // зад
+				1,2,3, 3,0,1, // низ
+				6,5,4, 4,7,6, // верх
+				5,1,0, 5,0,4, // лево
+				7,3,2, 2,6,7, // право
+				7,4,0, 0,3,7, // перед
+				6,2,1, 1,5,6, // зад
 			};
 
 			normals.insert(normals.end(), 6, Vector3::Down);

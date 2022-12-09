@@ -108,7 +108,8 @@ float4 PSMain(PS_IN input) : SV_Target {
 
 	float v = dot(-viewDir, refVec);
 	//return float4(v,v,v, 1.0f);
-    return float4(viewDir.xyz, 1.0f);
+    return float4(diffuseTexColor.xyz, 1.0f);
 }
+
 
 

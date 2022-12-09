@@ -61,6 +61,7 @@ void Render::Start() {
 	m_shadowPass.Init(m_game);
 	m_opaquePass.Init(m_game);
 	m_lightingPass.Init(m_game);
+	m_oldPass.Init(m_game);
 
 	AddRenderPass(Render::opaquePassName, &m_opaquePass);
 	AddRenderPass(Render::lightingPassName, &m_lightingPass);
@@ -112,6 +113,10 @@ void Render::Draw() {
 			&m_opaquePass.target3Res,
 			&m_opaquePass.target4Res,
 		});
+
+		m_oldPass.SetDepthStencil(&m_mainDepthStencil);;
+		m_oldPass.SetPSShaderResources({ shadowMap });
+		m_oldPass.SetRenderTargets({ &m_opaquePass.target0 });
 	}
 
 	m_Clear();
@@ -123,6 +128,7 @@ void Render::Draw() {
 	//	renderPass->Draw();
 
 	m_OpaquePass();
+	//m_oldPass.Draw();
 	m_lightingPass.Draw();
 
 	// Quad 
@@ -358,7 +364,7 @@ void Render::m_OpaquePass() {
 
 					/// Material: SetRasterizerState
 					//context()->RSSetState(material->rastState.Get());
-					context()->RSSetState(rastCullFront.Get());
+					context()->RSSetState(rastCullBack.Get());
 				}
 				meshComponent->OnDrawShape(index);
 			}

@@ -59,6 +59,7 @@ private:
 	ShadowPass m_shadowPass;
 	OpaquePass m_opaquePass;
 	LightingPass m_lightingPass;
+	OldPass m_oldPass;
 
 	CameraComponent* m_camera = nullptr;
 

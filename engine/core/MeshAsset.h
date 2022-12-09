@@ -19,6 +19,7 @@ namespace tinyobj {
 	struct shape_t;
 	struct attrib_t;
 	struct material_t;
+	struct index_t;
 }
 
 class MeshAsset {
@@ -108,6 +109,8 @@ private:
 	void m_Load(size_t hash, fs::path path);
 	void m_InitMesh(Asset* asset, const tinyobj::attrib_t& attrib, const std::vector<tinyobj::shape_t>& shapes);
 	void m_InitShape(Asset* asset, const tinyobj::attrib_t& attrib, const tinyobj::shape_t& shape);
+
+	Mesh4::Vertex m_ReadVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index);
 
 	void m_InitMaterials(Asset* asset, const std::vector<tinyobj::material_t>& materials, const std::string& directory);
 
