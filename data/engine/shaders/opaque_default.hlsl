@@ -1,3 +1,52 @@
+//
+// include
+//
+struct CameraData {
+    float3 position;
+};
+
+struct ShadowData {
+    float4x4 uvMatrix;
+};
+
+struct LightData {
+    float3 position;   float param1;
+    float3 direction;  float param2;
+    float3 color;      float param3;
+};
+
+struct MaterialData {
+    float3 diffuseColor;
+    float diffuse;	// Kd
+	float ambient;	// Ka
+	float specular;	// Ks
+	float shininess;// spec pow (Ns)
+};
+
+struct MeshData {
+    float4x4 wvp;
+    float4x4 world;
+    float3 cameraPosition;
+};
+
+// PASS_CB_CAMERA_PS 0
+// cbuffer PS_CameraData : register(b0) { CameraData cb_camera; }
+// PASS_CB_SHADOW_PS 1
+// cbuffer PS_ShadowData : register(b1) { ShadowData cb_shadow; }
+// PASS_CB_LIGHT_PS 2
+// cbuffer PS_LightData : register(b2) { LightData cb_light; }
+// PASS_CB_MATERIAL_PS 3
+cbuffer PS_MaterialData : register(b3) { MaterialData cb_material; }
+// PASS_CB_MESH_PS 4
+cbuffer VS_PS_MeshData : register(b4) { MeshData cb_mesh; }
+//
+// include
+//
+
+// Res_Material_PS
+Texture2D DiffuseMap : register(t8);
+SamplerState Sampler : register(s8);
+
 struct VS_IN {
     float4 pos : POSITION;
     float4 color : COLOR;
@@ -13,26 +62,21 @@ struct PS_IN {
     float4 uv : TEXCOORD1;
 };
 
-struct MeshData {
-    float4x4 wvp;
-    float4x4 world;
-    float3 cameraPosition;
-};
+PS_IN VSMain(VS_IN input) {
+    PS_IN output = (PS_IN)0;
 
-struct MaterialData {
-    float3 diffuseColor;
-    float diffuse;	// Kd
-	float ambient;	// Ka
-	float specular;	// Ks
-	float shininess;// spec pow (Ns)
-};
+    input.pos.w = 1.0f;
+    input.normal.w = 0.0f;
 
-struct DirectionLightData {
-    float4x4 uvMatrix;
-    float3 direction;
-    float intensity;
-	float3 color;
-};
+    output.worldPos = mul(input.pos, cb_mesh.world);
+    output.pos = mul(input.pos, cb_mesh.wvp);
+    output.color = input.color;
+    output.normal = normalize(mul(input.normal, cb_mesh.world));
+    output.normal.a = 1;
+    output.uv = float4(input.uv.xy, 1, 1);
+
+    return output;
+}
 
 struct PSOpaque {
     float4 diffuseRGB : SV_Target0;
@@ -42,59 +86,19 @@ struct PSOpaque {
     float4 matParams : SV_Target4;
 };
 
-// Buf_OpaquePass_Light_PS
-cbuffer PS_DirectionLightData : register(b1) { DirectionLightData dirLight; }
-
-// Buf_Material_PS
-cbuffer PS_MaterialData : register(b2) { MaterialData material; }
-
-// Buf_Mesh_VS + Buf_Mesh_PS
-cbuffer VS_PS_MeshData : register(b3) { MeshData meshData; }
-
-// Res_RenderPass_PS
-Texture2D ShadowMap : register(t0);
-SamplerComparisonState CompSampler : register(s0);
-
-// Res_Material_PS
-Texture2D DiffuseMap : register(t8);
-SamplerState Sampler : register(s8);
-
-
-PS_IN VSMain(VS_IN input) {
-    PS_IN output = (PS_IN)0;
-
-    input.pos.w = 1.0f;
-    input.normal.w = 0.0f;
-
-    output.worldPos = mul(input.pos, meshData.world);
-    output.pos = mul(input.pos, meshData.wvp);
-    output.color = input.color;
-    output.normal = normalize(mul(input.normal, meshData.world));
-    output.normal = float4(output.normal.xyz, 1);
-    output.uv = float4(input.uv.xy, 1, 1);
-
-    return output;
-}
-
-// float4 PSMain(PS_IN input) : SV_Target0 {
-//     float4 color = DiffuseMap.Sample(Sampler, float2(input.uv.x, 1-input.uv.y));
-//     return color;
-// }
-
 PSOpaque PSMain(PS_IN input) {
     PSOpaque output = (PSOpaque)0;
 
     float2 uv = float2(input.uv.x, 1-input.uv.y);
 
-    output.diffuseRGB.rgb = DiffuseMap.Sample(Sampler, uv).rgb;// * material.diffuseColor;
+    output.diffuseRGB.rgb = DiffuseMap.Sample(Sampler, uv).rgb;
     output.diffuseRGB.a = 1;
 
-    output.matParams.r = material.diffuse;
-    output.matParams.g = material.ambient;
-    output.matParams.b = material.specular;
-    output.matParams.a = material.shininess;
+    output.matParams.r = cb_material.diffuse;
+    output.matParams.g = cb_material.ambient;
+    output.matParams.b = cb_material.specular;
+    output.matParams.a = cb_material.shininess;
 
-    //output.normal = normalize(input.normal);
 	output.normal = input.normal;
     output.vertexColor = input.color;
     output.worldPos = input.worldPos;

@@ -14,6 +14,9 @@
 class Shader;
 class Render;
 
+enum class CullMode { Front, Back };
+enum class FillMode { Solid, Wireframe };
+
 class Material : public CsLink {
 	friend class Render;
 
@@ -39,10 +42,12 @@ public:
 
 	Data data;
 
+	CullMode cullMode = CullMode::Back;
+	FillMode fillMode = FillMode::Solid;
+
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 
 	comptr<ID3D11Buffer> materialConstBuffer;
-	comptr<ID3D11RasterizerState> rastState;
 	comptr<ID3D11DepthStencilState> depthStencilState;
 
 private:

@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AmbientLight.cpp" />
+    <ClCompile Include="Assets.cpp" />
     <ClCompile Include="Attachable.cpp" />
     <ClCompile Include="AxisDrawer.cpp" />
     <ClCompile Include="AxisDrawer.h" />
@@ -70,6 +72,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Refs.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
@@ -89,6 +92,8 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AmbientLight.h" />
+    <ClInclude Include="Assets.h" />
     <ClInclude Include="Attachable.h" />
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
@@ -112,8 +117,10 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="DepthStencil.h" />
+    <ClInclude Include="ILightSource.h" />
     <ClInclude Include="imgui\TextEditor\TextEditor.h" />
     <ClInclude Include="LightingPass.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="Texture.h" />

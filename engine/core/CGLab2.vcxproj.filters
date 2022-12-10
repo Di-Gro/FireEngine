@@ -255,6 +255,15 @@
     <ClCompile Include="imgui\TextEditor\TextEditor.cpp">
       <Filter>imgui\TextEditor</Filter>
     </ClCompile>
+    <ClCompile Include="Assets.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Render\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="AmbientLight.cpp">
+      <Filter>Render\Lighting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -502,6 +511,18 @@
     </ClInclude>
     <ClInclude Include="imgui\TextEditor\TextEditor.h">
       <Filter>imgui\TextEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="AmbientLight.h">
+      <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="ILightSource.h">
+      <Filter>Render\Lighting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

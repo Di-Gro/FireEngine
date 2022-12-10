@@ -35,6 +35,15 @@ void DirectionLight::OnInit() {
 	m_depthTexture = Texture::CreateDepthTexture(render, window->GetWidth() * mul, window->GetHeight() * mul);
 	m_depthStencil = DepthStencil::Create(&m_depthTexture);
 	m_depthResource = ShaderResource::Create(&m_depthTexture);
+
+	m_screenQuad.Init(game()->render(), game()->shaderAsset()->GetShader(Assets::ShaderDirectionLight));
+
+	m_lightSource = game()->render()->AddLightSource(this);
+	
+}
+
+void DirectionLight::OnDestroy() {
+	game()->render()->RemoveLightSource(m_lightSource);
 }
 
 void DirectionLight::drawDebug(bool value) {
@@ -50,7 +59,7 @@ void DirectionLight::drawDebug(bool value) {
 
 		auto form = Forms4::SphereLined(10, 6, 6, { 0,1,0,1 });
 		m_debugMesh->AddShape(&form.verteces, &form.indexes, 0);
-		m_debugMesh->SetMaterial(0,  "../../data/engine/shaders/opaque_vertex_color.hlsl");
+		m_debugMesh->SetMaterial(0, Assets::ShaderVertexColor);
 		m_debugMesh->mesh()->topology = form.topology;
 
 		m_debugLine = AddComponent<LineComponent>();
@@ -105,4 +114,23 @@ void DirectionLight::RecieveGameMessage(const std::string& msg) {
 
 	if (m_camera->orthoFarPlane <= m_camera->orthoNearPlane)
 		m_camera->orthoFarPlane = m_camera->orthoNearPlane + 50;
+}
+
+
+void DirectionLight::OnDrawLight() {
+	auto* render = game()->render();
+
+	render->context()->RSSetState(render->GetRastState(CullMode::Back));
+	m_screenQuad.Draw();
+}
+
+LightCBuffer DirectionLight::GetCBuffer() {
+	LightCBuffer cbuffer;
+
+	cbuffer.position = worldPosition();
+	cbuffer.color = color;
+	cbuffer.direction = forward();
+	cbuffer.param1 = intensity;
+
+	return cbuffer;
 }

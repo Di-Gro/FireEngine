@@ -14,10 +14,6 @@ void Material::Init(Render* render) {
 	materialCBufferDesc.StructureByteStride = 0;
 	materialCBufferDesc.ByteWidth = sizeof(Material::Data);
 
-	CD3D11_RASTERIZER_DESC rastDesc = {};
-	rastDesc.CullMode = D3D11_CULL_BACK;
-	rastDesc.FillMode = D3D11_FILL_SOLID;
-
 	depthStencilDesc = {};
 	depthStencilDesc.DepthEnable = true;
 	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -27,8 +23,6 @@ void Material::Init(Render* render) {
 	depthStencilDesc.StencilWriteMask = 0x00;
 
 	render->device()->CreateBuffer(&materialCBufferDesc, nullptr, materialConstBuffer.GetAddressOf());
-
-	render->device()->CreateRasterizerState(&rastDesc, rastState.GetAddressOf());
 
 	UpdateDepthStencilState();
 }

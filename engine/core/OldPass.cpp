@@ -5,7 +5,7 @@
 void OldPass::Draw() {
 
 	BeginDraw();
-	m_render->context()->RSSetState(m_render->rastCullBack.Get());
+	m_render->context()->RSSetState(m_render->GetRastState(CullMode::Back));
 	 
 	m_render->m_Draw();
 	//m_render->m_DrawUI();

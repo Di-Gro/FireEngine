@@ -60,7 +60,7 @@ void MeshComponent::RemoveMaterial(size_t index) {
 	m_DeleteLocalDynamicMaterial(index);
 
 	// Ставим стандартный материал
-	auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAsset::defaultMaterialName);
+	auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAsset::materialDefault);
 	m_materials[index] = defaultMaterial;
 	m_RegisterShapesWithMaterial(index);
 }
@@ -183,7 +183,7 @@ const Material* MeshComponent::GetMaterial(size_t index) {
 
 void MeshComponent::m_FillByDefaultMaterial(int targetSize) {
 	if (m_materials.size() < targetSize) {
-		auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAsset::defaultMaterialName);
+		auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAsset::materialDefault);
 
 		m_shapeIters.resize(m_mesh->shapeCount() > 0 ? m_mesh->shapeCount() : 1);
 

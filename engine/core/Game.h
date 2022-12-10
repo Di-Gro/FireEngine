@@ -18,6 +18,7 @@
 #include "ShaderAsset.h"
 #include "Math.h"
 #include "CSBridge.h"
+#include "Assets.h"
 
 #include "Actor.h"
 

@@ -24,6 +24,9 @@
 #include "Material.h"
 #include "MaterialAlias.h"
 #include "RenderPassUI.h"
+#include "Mesh.h"
+
+#include "ILightSource.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -51,24 +54,29 @@ void Render::Init(Game* game, Window* window) {
 	CD3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.CullMode = D3D11_CULL_BACK;
 	rastDesc.FillMode = D3D11_FILL_SOLID;
-	device()->CreateRasterizerState(&rastDesc, rastCullBack.GetAddressOf());
+	device()->CreateRasterizerState(&rastDesc, m_ñullSolidBack.GetAddressOf());
 
 	rastDesc.CullMode = D3D11_CULL_FRONT;
-	device()->CreateRasterizerState(&rastDesc, rastCullFront.GetAddressOf());
+	device()->CreateRasterizerState(&rastDesc, m_ñullSolidFront.GetAddressOf());
+
+	rastDesc.CullMode = D3D11_CULL_BACK;
+	rastDesc.FillMode = D3D11_FILL_WIREFRAME;
+	device()->CreateRasterizerState(&rastDesc, m_ñullWireframeBack.GetAddressOf());
+
+	rastDesc.CullMode = D3D11_CULL_FRONT;
+	device()->CreateRasterizerState(&rastDesc, m_ñullWireframeFront.GetAddressOf());
 }
 
 void Render::Start() {
 	m_shadowPass.Init(m_game);
 	m_opaquePass.Init(m_game);
 	m_lightingPass.Init(m_game);
-	m_oldPass.Init(m_game);
 
 	AddRenderPass(Render::opaquePassName, &m_opaquePass);
 	AddRenderPass(Render::lightingPassName, &m_lightingPass);
 
 	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
 	m_screenQuad.deffuseSRV = m_mainResource.get();
-	//m_screenQuad.deffuseSRV = m_opaquePass.target0Res.get();
 
 	m_game->CreateActor("Render Pass UI")->AddComponent<RenderPassUI>();
 }
@@ -93,16 +101,16 @@ void Render::Draw() {
 	if (once) {
 		once = false;
 
-		auto shadowMap = m_game->lighting()->directionLight()->depthResource();
-
 		m_opaquePass.SetDepthStencil(&m_mainDepthStencil);
 		m_opaquePass.SetRenderTargets({ 
 			&m_opaquePass.target0,
 			&m_opaquePass.target1, 
 			&m_opaquePass.target2, 
 			&m_opaquePass.target3, 
-			&m_opaquePass.target4 
+			&m_opaquePass.target4,
 		});
+
+		auto shadowMap = m_game->lighting()->directionLight()->depthResource();
 
 		m_lightingPass.SetRenderTargets({ &m_mainTarget });
 		m_lightingPass.SetPSShaderResources({ 
@@ -113,10 +121,6 @@ void Render::Draw() {
 			&m_opaquePass.target3Res,
 			&m_opaquePass.target4Res,
 		});
-
-		m_oldPass.SetDepthStencil(&m_mainDepthStencil);;
-		m_oldPass.SetPSShaderResources({ shadowMap });
-		m_oldPass.SetRenderTargets({ &m_opaquePass.target0 });
 	}
 
 	m_Clear();
@@ -124,16 +128,12 @@ void Render::Draw() {
 
 	m_shadowPass.Draw(m_shadowCasters);
 	
-	//for (auto* renderPass : m_renderPipeline)
-	//	renderPass->Draw();
-
-	m_OpaquePass();
-	//m_oldPass.Draw();
-	m_lightingPass.Draw();
+	for (auto* renderPass : m_renderPipeline)
+		renderPass->Draw();
 
 	// Quad 
 	m_device.BeginDraw();
-	context()->RSSetState(nullptr/*rastCullBack.Get()*/);
+	context()->RSSetState(GetRastState(CullMode::Back));
 
 	m_screenQuad.Draw();
 	
@@ -150,6 +150,14 @@ Pass::ShadowCaster Render::AddShadowCaster(Component* component) {
 
 void Render::RemoveShadowCaster(Pass::ShadowCaster shadowCaster) {
 	m_shadowCasters.erase(shadowCaster);
+}
+
+Pass::LightSource Render::AddLightSource(ILightSource* component) {
+	return m_lightSources.insert(m_lightSources.end(), component);
+}
+
+void Render::RemoveLightSource(Pass::LightSource lightSource) {
+	m_lightSources.erase(lightSource);
 }
 
 int Render::m_GetRenderPassIndex(const std::string& name) {
@@ -281,9 +289,7 @@ void Render::m_DrawUI() {
 }
 
 void Render::m_OpaquePass() {
-
-	auto shadowMap = m_game->lighting()->directionLight()->depthResource();
-
+	/*
 	/// RenderPass: PrepareTargets
 	ID3D11RenderTargetView* dxTargets[RTCount] = {
 		m_opaquePass.target0.get(),
@@ -297,8 +303,28 @@ void Render::m_OpaquePass() {
 	};
 
 	/// RenderPass: PrepareResources
-	ID3D11ShaderResourceView* dxResources[SRCount] = { nullptr };
-	ID3D11SamplerState* dxSamplers[SRCount] = { nullptr };
+	auto shadowMap = m_game->lighting()->directionLight()->depthResource();
+
+	ID3D11ShaderResourceView* dxResources[SRCount] = {
+			shadowMap->get(),
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+	};
+	ID3D11SamplerState* dxSamplers[SRCount] = {
+			shadowMap->sampler(),
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+	};
 
 	/// RenderPass: ClearTargets
 	m_opaquePass.target0.Clear();
@@ -308,13 +334,14 @@ void Render::m_OpaquePass() {
 	m_opaquePass.target4.Clear();
 
 	/// RenderPass: SetCameraConstBuffer
-	context()->PSSetConstantBuffers(Buf_RenderPass_Camera_PS, 1, m_opaquePass.m_cameraBuffer.GetAddressOf());
+	auto& cameraBuffer = m_opaquePass.m_cameraBuffer;
+	context()->PSSetConstantBuffers(PASS_CB_CAMERA_PS, 1, cameraBuffer.GetAddressOf());
 
 	D3D11_MAPPED_SUBRESOURCE res = {};
-	context()->Map(m_opaquePass.m_cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+	context()->Map(cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 	auto* cbuf = (CameraCBuffer*)res.pData;
 	cbuf->position = camera()->worldPosition();
-	context()->Unmap(m_opaquePass.m_cameraBuffer.Get(), 0);
+	context()->Unmap(cameraBuffer.Get(), 0);
 
 	/// RenderPass: SetTargets
 	context()->OMSetRenderTargets(8, dxTargets, m_mainDepthStencil.get());
@@ -345,8 +372,8 @@ void Render::m_OpaquePass() {
 					for (int i = 0; i < material->resources.size(); ++i) {
 						auto& resource = material->resources[i];
 
-						context()->PSSetShaderResources(SRCount + i, 1, resource.getRef());
-						context()->PSSetSamplers(SRCount + i, 1, resource.samplerRef());
+						context()->PSSetShaderResources(PASS_R_MATERIAL_PS + i, 1, resource.getRef());
+						context()->PSSetSamplers(PASS_R_MATERIAL_PS + i, 1, resource.samplerRef());
 					}
 					/// Material: SetShader
 					auto* shader = material->shader;
@@ -355,17 +382,18 @@ void Render::m_OpaquePass() {
 					context()->PSSetShader(shader->pixel.Get(), nullptr, 0);
 
 					/// Material: SetMaterialConstBuffer
-					context()->PSSetConstantBuffers(Buf_OpaquePass_Material_PS, 1, material->materialConstBuffer.GetAddressOf());
+					auto& materialBuffer = material->materialConstBuffer;
+					context()->PSSetConstantBuffers(PASS_CB_MATERIAL_PS, 1, materialBuffer.GetAddressOf());
 
 					D3D11_MAPPED_SUBRESOURCE res = {};
-					context()->Map(material->materialConstBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+					context()->Map(materialBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 					memcpy(res.pData, &material->data, sizeof(Material::Data));
-					context()->Unmap(material->materialConstBuffer.Get(), 0);
+					context()->Unmap(materialBuffer.Get(), 0);
 
 					/// Material: SetRasterizerState
-					//context()->RSSetState(material->rastState.Get());
-					context()->RSSetState(rastCullBack.Get());
+					context()->RSSetState(GetRastState(material));
 				}
+				/// OpaquePass: DrawShape
 				meshComponent->OnDrawShape(index);
 			}
 		}
@@ -377,6 +405,131 @@ void Render::m_OpaquePass() {
 
 	ID3D11ShaderResourceView* resources[SRCount] = { nullptr };
 	context()->VSSetShaderResources(0, SRCount, resources);
-	context()->PSSetShaderResources(0, SRCount, resources);
+	context()->PSSetShaderResources(0, SRCount, resources);*/
 
+}
+
+void Render::m_SecondPass() {
+	
+	///// RenderPass: PrepareTargets
+	//ID3D11RenderTargetView* dxTargets[RTCount] = {
+	//	m_mainTarget.get(),
+	//	nullptr,
+	//	nullptr,
+	//	nullptr,
+	//	nullptr,
+	//	nullptr,
+	//	nullptr,
+	//	nullptr,
+	//};
+
+	///// RenderPass: PrepareResources
+	//auto shadowMap = m_game->lighting()->directionLight()->depthResource();
+
+	//ID3D11ShaderResourceView* dxResources[SRCount] = {
+	//		shadowMap->get(),
+	//		m_opaquePass.target0Res.get(),
+	//		m_opaquePass.target1Res.get(),
+	//		m_opaquePass.target2Res.get(),
+	//		m_opaquePass.target3Res.get(),
+	//		m_opaquePass.target4Res.get(),
+	//		nullptr,
+	//		nullptr,
+	//};
+
+	//ID3D11SamplerState* dxSamplers[SRCount] = {
+	//		shadowMap->sampler(),
+	//		m_opaquePass.target0Res.sampler(),
+	//		m_opaquePass.target1Res.sampler(),
+	//		m_opaquePass.target2Res.sampler(),
+	//		m_opaquePass.target3Res.sampler(),
+	//		m_opaquePass.target4Res.sampler(),
+	//		nullptr,
+	//		nullptr,
+	//};
+
+	///// RenderPass: ClearTargets
+	//m_mainTarget.Clear();
+
+	///// RenderPass: SetCameraConstBuffer
+	//context()->PSSetConstantBuffers(PASS_CB_CAMERA_PS, 1, m_opaquePass.m_cameraBuffer.GetAddressOf());
+
+	//D3D11_MAPPED_SUBRESOURCE res = {};
+	//context()->Map(m_opaquePass.m_cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+	//auto* cbuf = (CameraCBuffer*)res.pData;
+	//cbuf->position = camera()->worldPosition();
+	//context()->Unmap(m_opaquePass.m_cameraBuffer.Get(), 0);
+
+	///// RenderPass: SetTargets
+	//context()->OMSetRenderTargets(8, dxTargets, nullptr);
+
+	///// RenderPass: SetResources
+	//context()->VSSetShaderResources(0, SRCount, dxResources);
+	//context()->PSSetShaderResources(0, SRCount, dxResources);
+	//context()->VSSetSamplers(0, SRCount, dxSamplers);
+	//context()->PSSetSamplers(0, SRCount, dxSamplers);
+
+	///// SecondPass: SetLightConstBuffer
+	//context()->PSSetConstantBuffers(PASS_CB_LIGHT_PS, 1, m_lightingPass.m_lightCBuffer.GetAddressOf());
+
+	//D3D11_MAPPED_SUBRESOURCE res3 = {};
+	//context()->Map(m_lightingPass.m_lightCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res3);
+
+	//auto* cbuf2 = (DirectionLightCBuffer*)res3.pData;
+	//auto* dirLight = m_game->lighting()->directionLight();
+	//cbuf2->uvMatrix = dirLight->uvMatrix();
+	//cbuf2->direction = dirLight->forward();
+	//cbuf2->color = dirLight->color;
+	//cbuf2->intensity = dirLight->intensity;
+
+	//context()->Unmap(m_lightingPass.m_lightCBuffer.Get(), 0);
+
+	///// SecondPass: Draw
+	//auto *quad = &m_lightingPass.m_screenQuad;
+
+	///// Material: SetResources
+	//ID3D11ShaderResourceView* matResources[] = { quad->deffuseSRV };
+	//context()->PSSetShaderResources(PASS_R_MATERIAL_PS, 1, matResources);
+	//context()->PSSetSamplers(PASS_R_MATERIAL_PS, 1, quad->m_sampler.GetAddressOf());
+
+	///// Material: SetShader
+	//context()->IASetInputLayout(nullptr);
+	//context()->VSSetShader(quad->m_shader->vertex.Get(), nullptr, 0);
+	//context()->PSSetShader(quad->m_shader->pixel.Get(), nullptr, 0);
+
+	///// Material: SetMaterialConstBuffer
+	///// Material: SetRasterizerState
+	//context()->RSSetState(GetRastState(CullMode::Back));
+
+	///// SecondPass: DrawShape
+	//quad->Draw2();
+
+	///// RenderPass: EndDraw
+	//ID3D11RenderTargetView* targets[RTCount] = { nullptr };
+	//context()->OMSetRenderTargets(8, targets, nullptr);
+
+	//ID3D11ShaderResourceView* resources[SRCount] = { nullptr };
+	//context()->VSSetShaderResources(0, SRCount, resources);
+	//context()->PSSetShaderResources(0, SRCount, resources);
+}
+
+ID3D11RasterizerState* Render::GetRastState(const Material* material) {
+	return GetRastState(material->cullMode, material->fillMode);
+}
+
+ID3D11RasterizerState* Render::GetRastState(CullMode cullMode, FillMode fillMode) {
+
+	if (cullMode == CullMode::Back && fillMode == FillMode::Solid)
+		return m_ñullSolidBack.Get();
+
+	if (cullMode == CullMode::Front && fillMode == FillMode::Solid)
+		return m_ñullSolidFront.Get();
+
+	if (cullMode == CullMode::Back && fillMode == FillMode::Wireframe)
+		return m_ñullWireframeBack.Get();
+
+	if (cullMode == CullMode::Front && fillMode == FillMode::Wireframe)
+		return m_ñullWireframeFront.Get();
+
+	assert(false);
 }

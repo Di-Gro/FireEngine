@@ -26,11 +26,13 @@ class CameraComponent;
 class MeshComponent;
 class Component;
 class Material;
+class ILightSource;
 
 class Render {
 	friend class ShadowPass;
 	friend class OldPass;
 	friend class RenderPass;
+	friend class LightingPass;
 public:
 	static const std::string shadowPassName;
 	static const std::string opaquePassName;
@@ -51,6 +53,7 @@ private:
 	ScreenQuad m_screenQuad;
 
 	std::list<Component*> m_shadowCasters;
+	std::list<ILightSource*> m_lightSources;
 	std::list<Component*> m_uiDrawers;
 
 	std::unordered_map<std::string, int> m_renderPassIndex;
@@ -59,13 +62,15 @@ private:
 	ShadowPass m_shadowPass;
 	OpaquePass m_opaquePass;
 	LightingPass m_lightingPass;
-	OldPass m_oldPass;
 
 	CameraComponent* m_camera = nullptr;
 
-public:
-	comptr<ID3D11RasterizerState> rastCullBack;
-	comptr<ID3D11RasterizerState> rastCullFront;
+private:
+	comptr<ID3D11RasterizerState> m_ñullSolidBack;
+	comptr<ID3D11RasterizerState> m_ñullSolidFront;
+
+	comptr<ID3D11RasterizerState> m_ñullWireframeBack;
+	comptr<ID3D11RasterizerState> m_ñullWireframeFront;
 
 public:
 	inline CameraComponent* camera() { return m_camera; }
@@ -103,6 +108,12 @@ public:
 	Pass::ShadowCaster AddShadowCaster(Component* component);
 	void RemoveShadowCaster(Pass::ShadowCaster shadowCaster);
 
+	Pass::LightSource AddLightSource(ILightSource* component);
+	void RemoveLightSource(Pass::LightSource lightSource);
+
+	ID3D11RasterizerState* GetRastState(const Material* material);
+	ID3D11RasterizerState* GetRastState(CullMode cullMode, FillMode fillMode = FillMode::Solid);
+
 private:
 	void m_Clear();
 
@@ -110,6 +121,7 @@ private:
 	void m_DrawUI();
 
 	void m_OpaquePass();
+	void m_SecondPass();
 
 	size_t m_GetStringHash(const std::string& str) { return std::hash<std::string>()(str); }
 	int m_GetRenderPassIndex(const std::string& name);

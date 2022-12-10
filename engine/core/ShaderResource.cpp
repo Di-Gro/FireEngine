@@ -62,13 +62,13 @@ ShaderResource ShaderResource::Create(Texture* texture) {
 	return res;
 }
 
-ShaderResource ShaderResource::Create(Render* render, ID3D11Texture2D* texture) {
+ShaderResource ShaderResource::Create(Render* render, ID3D11Texture2D* texture, DXGI_FORMAT format) {
 	ShaderResource res;
 	res.m_render = render;
 	auto device = res.m_render->device();
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
-	depthSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	depthSRVDesc.Format = format; //DXGI_FORMAT_R32_FLOAT;
 	depthSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	depthSRVDesc.Texture2D.MipLevels = 1;
 	depthSRVDesc.Texture2D.MostDetailedMip = 0;

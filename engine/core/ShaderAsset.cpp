@@ -35,7 +35,8 @@ void ShaderAsset::CompileShader(const fs::path& path) {
 		std::exit(1);
 }
 
-void ShaderAsset::RecompileShaders() {
+
+void ShaderAsset::RecompileShaders() {//
 	for (auto& key_value : m_shaders) {
 		Shader next;
 		Shader& current = m_shaders.at(key_value.first);

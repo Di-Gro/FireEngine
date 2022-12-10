@@ -13,18 +13,19 @@
 #define RTCount 8
 #define SRCount 8
 
-#define Res_RenderPass_PS 0
-#define Res_Material_PS SRCount
+#define PASS_R_PASS_PS 0
+#define PASS_R_MATERIAL_PS SRCount
 
 /// CBuffers Pixel Shader
-#define Buf_RenderPass_Camera_PS 0
-#define Buf_LightingPass_Light_PS 1
+#define PASS_CB_CAMERA_PS 0
+#define PASS_CB_SHADOW_PS 1
+#define PASS_CB_LIGHT_PS 2
 
-#define Buf_OpaquePass_Material_PS 2
-#define Buf_OpaquePass_Mesh_PS 3
+#define PASS_CB_MATERIAL_PS 3
+#define PASS_CB_MESH_PS 4
 
 /// CBuffers Vertex Shader
-#define Buf_OpaquePass_Mesh_VS 3
+#define PASS_CB_MESH_VS 4
 
 
 class Game;

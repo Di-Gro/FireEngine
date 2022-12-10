@@ -22,10 +22,26 @@ static struct CameraCBuffer {
 #pragma pack(pop)
 
 #pragma pack(push, 4)
+static struct ShadowCBuffer {
+	Matrix uvMatrix;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 4)
 static struct MeshCBuffer {
 	Matrix wvpMatrix;
 	Matrix worldMatrix;
 	Vector3 cameraPosition;
+	float _1[1];
+};
+#pragma pack(pop)
+
+#pragma pack(push, 4)
+static struct DirectionLightCBuffer {
+	Matrix uvMatrix;
+	Vector3 direction;
+	float intensity;
+	Vector3 color;
 	float _1[1];
 };
 #pragma pack(pop)
@@ -139,7 +155,7 @@ public:
 	ID3D11ShaderResourceView* deffuseSRV = nullptr;
 	comptr<ID3D11RasterizerState> rastState;
 
-private:
+public:
 	Render* m_render;
 	const Shader* m_shader;
 	comptr<ID3D11SamplerState> m_sampler;
@@ -148,6 +164,7 @@ public:
 
 	void Init(Render* render, const Shader* shader);
 	void Draw() const;
+	void Draw2() const;
 };
 
 FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);

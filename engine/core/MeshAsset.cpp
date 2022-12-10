@@ -18,8 +18,8 @@
 #include "Attachable.h"
 #include "Forms.h"
 
-std::string MeshAsset::defaultMaterialName = "Defaulf";
-std::string MeshAsset::defaultShader =  "../../data/engine/shaders/opaque_default.hlsl";
+std::string MeshAsset::materialDefault = "Defaulf";
+
 std::string MeshAsset::formBox = "runtime:/form/Box";
 std::string MeshAsset::formBoxLined = "runtime:/form/BoxLined";
 std::string MeshAsset::formSphere = "runtime:/form/Sphere";
@@ -357,15 +357,15 @@ Mesh4::Vertex MeshAsset::m_ReadVertex(const tinyobj::attrib_t& attrib, const tin
 void MeshAsset::m_InitDefaultMaterials() {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
-	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(defaultShader));
+	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(Assets::ShaderDefault));
 
-	auto hash = std::hash<std::string>()(defaultMaterialName);
+	auto hash = std::hash<std::string>()(materialDefault);
 
 	if (m_materials.count(hash) == 0) {
 		auto* mat = m_NewMaterial();
 		m_materials.insert({ hash, mat });
 
-		mat->name(defaultMaterialName);
+		mat->name(materialDefault);
 		mat->shader = shader;
 
 		const auto* image = images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
@@ -389,7 +389,7 @@ void MeshAsset::m_InitDefaultStaticMeshes() {
 
 void MeshAsset::m_InitAssetFromForm(Forms4::Form& form, const fs::path& path) {
 	auto hash = CreateHash(path);
-	auto material = GetStaticMaterial(MeshAsset::defaultMaterialName);
+	auto material = GetStaticMaterial(MeshAsset::materialDefault);
 
 	auto* asset = new Asset(hash);
 	asset->path = path;
@@ -407,18 +407,18 @@ void MeshAsset::m_InitMaterials(
 {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
-	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(defaultShader));
+	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(Assets::ShaderDefault));
 
 	if (materials.empty()) {
-		/// TODO: заменить на GetStaticMaterial(defaultMaterialName)
+		/// TODO: заменить на GetStaticMaterial(materialDefault)
 
-		auto hash = std::hash<std::string>()(defaultMaterialName);
+		auto hash = std::hash<std::string>()(materialDefault);
 
 		if (m_materials.count(hash) == 0) {
 			auto* mat = m_NewMaterial();
 			m_materials.insert({ hash, mat });
 
-			mat->name(defaultMaterialName);
+			mat->name(materialDefault);
 			mat->shader = shader;
 
 			const auto* image = images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
@@ -460,7 +460,7 @@ Material* MeshAsset::m_LoadMaterial(
 {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
-	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(L"../../data/engine/shaders/opaque_default.hlsl"));
+	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(Assets::ShaderDefault));
 
 	auto material = m_NewMaterial();
 	m_materials.insert({ hash, material });

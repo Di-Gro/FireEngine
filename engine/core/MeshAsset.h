@@ -10,6 +10,7 @@
 #include "Refs.h"
 #include "CSBridge.h"
 #include "Forms.h"
+#include "Assets.h"
 
 class Game;
 class Actor;
@@ -24,8 +25,8 @@ namespace tinyobj {
 
 class MeshAsset {
 public:
-	static std::string defaultMaterialName;
-	static std::string defaultShader;
+	static std::string materialDefault;
+
 	static std::string formBox;
 	static std::string formBoxLined;
 	static std::string formSphere;
@@ -92,10 +93,10 @@ public:
 	const Material* GetStaticMaterial(const std::string& name);
 	const Material* GetStaticMaterial(const tinyobj::material_t& tinyMat, const std::string& directory);
 
-	//Material* CreateMaterial(const std::string& name, const fs::path& shaderPath = MeshAsset::defaultShader);
+	//Material* CreateMaterial(const std::string& name, const fs::path& shaderPath = MeshAsset::shaderDefault);
 
 	Material* CreateDynamicMaterial(const Material*);
-	Material* CreateDynamicMaterial(const std::string& name, const fs::path& shaderPath = MeshAsset::defaultShader);
+	Material* CreateDynamicMaterial(const std::string& name, const fs::path& shaderPath = Assets::ShaderDefault);
 	void DeleteDynamicMaterial(Material*);
 
 

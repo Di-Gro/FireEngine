@@ -6,7 +6,6 @@
 class Render;
 
 class ShaderAsset {
-
 private:
 	Render* m_render;
 
@@ -26,6 +25,8 @@ public:
 
 private:
 	bool m_CompileShader(const fs::path& path, Shader* shader);
+
+	bool m_BuildShaders();
 
 };
 

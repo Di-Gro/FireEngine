@@ -4,7 +4,9 @@
 #include "MeshAsset.h"
 
 
-Texture Texture::Create(Render* render, int width, int height) {
+Texture Texture::Create(Render* render, int width, int height, DXGI_FORMAT format) {
+	/// format: DXGI_FORMAT_R8G8B8A8_UNORM
+
 	Texture res;
 	res.render = render;
 	res.m_desc = {};
@@ -15,7 +17,7 @@ Texture Texture::Create(Render* render, int width, int height) {
 	res.m_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	res.m_desc.Usage = D3D11_USAGE_DEFAULT;
 	res.m_desc.CPUAccessFlags = 0;
-	res.m_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	res.m_desc.Format = format;
 	res.m_desc.MipLevels = 1;
 	res.m_desc.MiscFlags = 0;
 	res.m_desc.SampleDesc.Count = 1;

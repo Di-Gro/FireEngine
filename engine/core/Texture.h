@@ -42,7 +42,8 @@ public:
 		return *this;
 	}
 
-	static Texture Create(Render* render, int width, int height);
+	static Texture Create(Render* render, int width, int height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
+
 	static Texture CreateDepthTexture(Render* render, int width, int height);
 	static Texture CreateFromImage(Render* render, const Image* image);
 };

@@ -10,66 +10,67 @@
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 #include "DepthStencil.h"
+#include "Material.h"
 
-
-#pragma pack(push, 4)
-static struct DirectionLightCBuffer {
-	Matrix uvMatrix;
-	Vector3 direction;
-	float intensity;
-	Vector3 color;
-	float _1[1];
-};
-#pragma pack(pop)
+#include "ILightSource.h"
 
 
 void LightingPass::Init(Game* game) {
 	RenderPass::Init(game);
 
-	//blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	//blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 
-	//UpdateBlendState();
+	UpdateBlendState();
 
-	D3D11_BUFFER_DESC dirLightCBufferDesc = {};
-	dirLightCBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	dirLightCBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	dirLightCBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-	dirLightCBufferDesc.MiscFlags = 0;
-	dirLightCBufferDesc.StructureByteStride = 0;
-	dirLightCBufferDesc.ByteWidth = sizeof(DirectionLightCBuffer);
+	D3D11_BUFFER_DESC cbufferDesc = {};
+	cbufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cbufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	cbufferDesc.MiscFlags = 0;
+	cbufferDesc.StructureByteStride = 0;
 
-	m_render->device()->CreateBuffer(&dirLightCBufferDesc, nullptr, m_directionLightCBuffer.GetAddressOf());
+	cbufferDesc.ByteWidth = sizeof(LightCBuffer);
+	m_render->device()->CreateBuffer(&cbufferDesc, nullptr, m_lightCBuffer.GetAddressOf());
 
-	m_screenQuad.Init(m_render, m_game->shaderAsset()->GetShader("../../data/engine/shaders/screen.hlsl"));
+	cbufferDesc.ByteWidth = sizeof(ShadowCBuffer);
+	m_render->device()->CreateBuffer(&cbufferDesc, nullptr, m_shadowCBuffer.GetAddressOf());
 }
 
 void LightingPass::Draw() {
-	auto* context = m_render->context();
-
 	BeginDraw();
-	m_SetLightConstBuffer();
-	context->RSSetState(m_render->rastCullBack.Get());
-
-	m_screenQuad.Draw();
-
+	m_SetShadowCBuffer();
+	
+	for (auto* lightSource : m_render->m_lightSources) {
+		m_SetLightCBuffer(lightSource);
+		lightSource->OnDrawLight();
+	}
 	EndDraw();
 }
 
-void LightingPass::m_SetLightConstBuffer() {
+void LightingPass::m_SetShadowCBuffer() {
 	auto* context = m_render->context();
 	auto* dirLight = m_game->lighting()->directionLight();
 
-	context->PSSetConstantBuffers(Buf_LightingPass_Light_PS, 1, m_directionLightCBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(PASS_CB_SHADOW_PS, 1, m_shadowCBuffer.GetAddressOf());
+
+	D3D11_MAPPED_SUBRESOURCE res = {};
+	context->Map(m_shadowCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+
+	auto* cbuf = (ShadowCBuffer*)res.pData;
+	cbuf->uvMatrix = dirLight->uvMatrix();
+
+	context->Unmap(m_shadowCBuffer.Get(), 0);
+}
+
+void LightingPass::m_SetLightCBuffer(ILightSource* lightSource) {
+	auto* context = m_render->context();
+	auto lightCBuffer = lightSource->GetCBuffer();
+
+	context->PSSetConstantBuffers(PASS_CB_LIGHT_PS, 1, m_lightCBuffer.GetAddressOf());
 
 	D3D11_MAPPED_SUBRESOURCE res3 = {};
-	context->Map(m_directionLightCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res3);
-
-	auto* cbuf2 = (DirectionLightCBuffer*)res3.pData;
-	cbuf2->uvMatrix = dirLight->uvMatrix();
-	cbuf2->direction = dirLight->forward();
-	cbuf2->color = dirLight->color;
-	cbuf2->intensity = dirLight->intensity;
-
-	context->Unmap(m_directionLightCBuffer.Get(), 0);
+	context->Map(m_lightCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res3);
+	memcpy(res3.pData, &lightCBuffer, sizeof(LightCBuffer));
+	context->Unmap(m_lightCBuffer.Get(), 0);
 }

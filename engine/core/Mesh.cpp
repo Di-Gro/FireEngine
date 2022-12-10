@@ -7,17 +7,6 @@
 /// и упаковываются в прошлые 16 байт, если вмещаются.
 
 
-#pragma pack(push, 4)
-	static struct DirectionLightCBuffer {
-		Matrix uvMatrix;
-		Vector3 direction; 
-		float intensity;
-		Vector3 color;
-		float _1[1];
-	};
-#pragma pack(pop)
-
-
 Mesh4::Mesh4(const Mesh4& other) {
 	if (&other == nullptr || &other == this)
 		return;
@@ -159,7 +148,7 @@ void Mesh4::m_InitShape(Mesh4::Shape& shape) {
 	dirLightCBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
 	dirLightCBufferDesc.MiscFlags = 0;
 	dirLightCBufferDesc.StructureByteStride = 0;
-	dirLightCBufferDesc.ByteWidth = sizeof(DirectionLightCBuffer);
+	dirLightCBufferDesc.ByteWidth = sizeof(LightCBuffer);
 
 	D3D11_SAMPLER_DESC sampleDesc = {};
 	sampleDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -218,11 +207,11 @@ void Mesh4::Draw(const DynamicData& data) const {
 		if (callPixelShader)
 			context->PSSetShader(shader->pixel.Get(), nullptr, 0);
 
-		context->PSSetConstantBuffers(Buf_LightingPass_Light_PS, 1, shape.directionLightCBuffer.GetAddressOf());
-		context->PSSetConstantBuffers(Buf_OpaquePass_Material_PS, 1, shape.materialConstBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(PASS_CB_LIGHT_PS, 1, shape.directionLightCBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(PASS_CB_MATERIAL_PS, 1, shape.materialConstBuffer.GetAddressOf());
 
-		context->VSSetConstantBuffers(Buf_OpaquePass_Mesh_VS, 1, shape.meshCBuffer.GetAddressOf());
-		context->PSSetConstantBuffers(Buf_OpaquePass_Mesh_PS, 1, shape.meshCBuffer.GetAddressOf());
+		context->VSSetConstantBuffers(PASS_CB_MESH_VS, 1, shape.meshCBuffer.GetAddressOf());
+		context->PSSetConstantBuffers(PASS_CB_MESH_PS, 1, shape.meshCBuffer.GetAddressOf());
 		
 		/// Mesh ->
 		D3D11_MAPPED_SUBRESOURCE res = {};
@@ -260,13 +249,13 @@ void Mesh4::Draw(const DynamicData& data) const {
 		/// Render Pass Resources
 		if (camera->setShaderMap) {
 			auto shadowMapSrv = data.directionLight->depthResource()->getRef();
-			context->PSSetShaderResources(Res_RenderPass_PS, 1, shadowMapSrv);
-			context->PSSetSamplers(Res_RenderPass_PS, 1, shape.compSampler.GetAddressOf());
+			context->PSSetShaderResources(PASS_R_PASS_PS, 1, shadowMapSrv);
+			context->PSSetSamplers(PASS_R_PASS_PS, 1, shape.compSampler.GetAddressOf());
 		}
 		
 		/// Material Resources
-		context->PSSetShaderResources(Res_Material_PS, 1, mat->resources[0].getRef());
-		context->PSSetSamplers(Res_Material_PS, 1, shape.sampler.GetAddressOf());
+		context->PSSetShaderResources(PASS_R_MATERIAL_PS, 1, mat->resources[0].getRef());
+		context->PSSetSamplers(PASS_R_MATERIAL_PS, 1, shape.sampler.GetAddressOf());
 
 		/// <-
 		context->DrawIndexed(shape.indecesSize, 0, 0);
@@ -278,14 +267,17 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	auto* context = data.render->context();
 	auto& shape = m_shapes[index];
 
+	/// Mesh: SetTopology
 	context->IASetPrimitiveTopology(topology);
+
+	/// Mesh: SetInput
 	context->IASetIndexBuffer(shape.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	context->IASetVertexBuffers(0, 1, shape.vertexBuffer.GetAddressOf(), m_strides, m_offsets);
 
-	context->VSSetConstantBuffers(Buf_OpaquePass_Mesh_VS, 1, shape.meshCBuffer.GetAddressOf());
-	context->PSSetConstantBuffers(Buf_OpaquePass_Mesh_PS, 1, shape.meshCBuffer.GetAddressOf());
+	/// Mesh: SetConstBuffers
+	context->VSSetConstantBuffers(PASS_CB_MESH_VS, 1, shape.meshCBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(PASS_CB_MESH_PS, 1, shape.meshCBuffer.GetAddressOf());
 	
-	/// meshCBuffer ->
 	D3D11_MAPPED_SUBRESOURCE res = {};
 	context->Map(shape.meshCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 
@@ -295,8 +287,8 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	cbuf->cameraPosition = *data.cameraPosition;
 
 	context->Unmap(shape.meshCBuffer.Get(), 0);
-	/// <-
 
+	/// Mesh: Draw
 	context->DrawIndexed(shape.indecesSize, 0, 0);
 }
 
@@ -329,18 +321,41 @@ void ScreenQuad::Draw() const {
 	auto* context = m_render->context();
 	auto* camera = m_render->camera();
 
+	/// Material: SetResources
+	ID3D11ShaderResourceView* resources[] = { deffuseSRV };
+	context->PSSetShaderResources(PASS_R_MATERIAL_PS, 1, resources);
+	context->PSSetSamplers(PASS_R_MATERIAL_PS, 1, m_sampler.GetAddressOf());
+
+	/// Material: SetShader
 	context->IASetInputLayout(nullptr);
-	context->IASetPrimitiveTopology(topology);
-
-	context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
-
 	context->VSSetShader(m_shader->vertex.Get(), nullptr, 0);
 	context->PSSetShader(m_shader->pixel.Get(), nullptr, 0);
 
-	ID3D11ShaderResourceView* resources[] = { deffuseSRV };
-	context->PSSetShaderResources(Res_Material_PS, 1, resources);
-	context->PSSetSamplers(Res_Material_PS, 1, m_sampler.GetAddressOf());
+	/// Material: SetMaterialConstBuffer 
+	/// Material: SetRasterizerState
+	/// Mesh: SetTopology
+	context->IASetPrimitiveTopology(topology);
 
+	/// Mesh: SetInput
+	context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+
+	/// Mesh: SetConstBuffers
+	/// Mesh: Draw
+	context->Draw(4, 0);
+}
+
+void ScreenQuad::Draw2() const {
+	auto* context = m_render->context();
+	auto* camera = m_render->camera();
+
+	/// Mesh: SetTopology
+	context->IASetPrimitiveTopology(topology);
+
+	/// Mesh: SetInput
+	context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+
+	/// Mesh: SetConstBuffers
+	/// Mesh: Draw
 	context->Draw(4, 0);
 }
 

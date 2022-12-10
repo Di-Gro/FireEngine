@@ -3,12 +3,14 @@
 #include "Game.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
+#include "MaterialAlias.h"
+#include "ILightSource.h"
 
 class MeshComponent;
 class LineComponent;
 class CameraComponent;
 
-class DirectionLight : public Component {
+class DirectionLight : public Component, public ILightSource {
 	PURE_COMPONENT(DirectionLight);
 public:
 	Vector3 color = Vector3::One;
@@ -31,6 +33,10 @@ private:
 
 	bool m_needDrawDebug = true;
 
+	ScreenQuad m_screenQuad;
+
+	Pass::LightSource m_lightSource;
+
 public:
 	RenderTarget* RT() { { return &m_renderTarget; } };
 	DepthStencil* DS() { { return &m_depthStencil; } };
@@ -48,6 +54,10 @@ public:
 	Matrix uvMatrix() { return m_uvMatrix; }
 
 	void OnInit() override;
+	void OnDestroy() override;
+
+	void OnDrawLight() override;
+	LightCBuffer GetCBuffer() override;
 
 	void RecieveGameMessage(const std::string& msg);
 };

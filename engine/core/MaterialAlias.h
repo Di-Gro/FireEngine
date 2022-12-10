@@ -6,6 +6,7 @@
 class Material;
 class MeshComponent;
 class Component;
+class ILightSource;
 
 namespace Pass {
 	
@@ -18,7 +19,7 @@ namespace Pass {
 	using ShapeIter = ShapeList::iterator;
 
 	using ShadowCaster = std::list<Component*>::iterator;
-	//using RenderPassId = size_t;
+	using LightSource = std::list<ILightSource*>::iterator;
 
 	struct MatShapes {
 		MaterialRef material;

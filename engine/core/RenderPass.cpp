@@ -99,7 +99,7 @@ void RenderPass::PrepareMaterial(const Material* material) {
 	m_SetShader(material);
 	m_SetMaterialConstBuffer(material);
 
-	m_render->context()->RSSetState(material->rastState.Get());
+	m_render->context()->RSSetState(m_render->GetRastState(material));
 }
 
 void RenderPass::m_PrepareMaterialResources(const Material* material) {
@@ -129,7 +129,7 @@ void RenderPass::m_SetShader(const Material* material) {
 void RenderPass::m_SetMaterialConstBuffer(const Material* material) {
 	auto* context = m_render->context();
 
-	context->PSSetConstantBuffers(Buf_OpaquePass_Material_PS, 1, material->materialConstBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(PASS_CB_MATERIAL_PS, 1, material->materialConstBuffer.GetAddressOf());
 
 	D3D11_MAPPED_SUBRESOURCE res = {};
 	context->Map(material->materialConstBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
@@ -140,7 +140,7 @@ void RenderPass::m_SetMaterialConstBuffer(const Material* material) {
 void RenderPass::m_SetCameraConstBuffer() {
 	auto* context = m_render->context();
 
-	context->PSSetConstantBuffers(Buf_RenderPass_Camera_PS, 1, m_cameraBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(PASS_CB_CAMERA_PS, 1, m_cameraBuffer.GetAddressOf());
 
 	D3D11_MAPPED_SUBRESOURCE res = {};
 	context->Map(m_cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);

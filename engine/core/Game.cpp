@@ -18,6 +18,7 @@
 #include "MeshComponent.h"
 #include "Player.h"
 #include "PlayerCamera.h"
+#include "AmbientLight.h"
 
 #include "MonoInst.h"
 #include "ClassInfo.h"
@@ -27,13 +28,15 @@
 
 
 std::vector<std::string> game_shaderPaths = {
-	  "../../data/engine/shaders/opaque_vertex_color.hlsl",
-	 "../../data/engine/shaders/opaque_defuse_color.hlsl",
-	  "../../data/engine/shaders/opaque_default.hlsl",
-	 "../../data/engine/shaders/rp_image.hlsl",
-	 "../../data/engine/shaders/shadow_map.hlsl",
-	 "../../data/engine/shaders/rp_screen_quad.hlsl",
-	 "../../data/engine/shaders/screen.hlsl",
+	Assets::ShaderVertexColor,
+	Assets::ShaderDiffuseColor,
+	Assets::ShaderDefault,
+	Assets::ShaderDirectionLight,
+	Assets::ShaderAmbientLight,
+	"../../data/engine/shaders/rp_image.hlsl",
+	"../../data/engine/shaders/shadow_map.hlsl",
+	"../../data/engine/shaders/rp_screen_quad.hlsl",
+	"../../data/engine/shaders/screen.hlsl",
 };
 
 
@@ -100,11 +103,10 @@ void Game::Run() {
 	m_lighting.f_directionLight->localRotation({ rad(-45), rad(45 + 180), 0 });
 	m_lighting.f_directionLight->drawDebug(true);
 
+	//auto ambientLight = m_defaultCamera->AddComponent<AmbientLight>();
+
 	CreateActor("GameController")->AddComponent<GameController>();
 
-	//auto tree = CreateActor()->AddComponent<MeshComponent>();
-	//tree->mesh(meshAsset()->GetMesh("../../data/assets/models/tree/tree.obj"));
-	//tree->localScale({ 100,100,100 });
 	
 	MSG msg = {};
 	bool isExitRequested = false;

@@ -19,11 +19,11 @@ void OpaquePass::Init(Game* game) {
 	auto width = m_game->window()->GetWidth();
 	auto height = m_game->window()->GetHeight();
 
-	target0Tex = Texture::Create(m_game->render(), width, height);
-	target1Tex = Texture::Create(m_game->render(), width, height);
-	target2Tex = Texture::Create(m_game->render(), width, height);
-	target3Tex = Texture::Create(m_game->render(), width, height);
-	target4Tex = Texture::Create(m_game->render(), width, height);
+	target0Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	target1Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	target2Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	target3Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	target4Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 	target0 = RenderTarget::Create(&target0Tex);
 	target1 = RenderTarget::Create(&target1Tex);

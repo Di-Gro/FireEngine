@@ -61,11 +61,6 @@ float GetMatShininess(float2 screenPos){ return gbuf_matParams.Load(float3(scree
 
 //////ShaderPass///////ShaderPass///////ShaderPass/////ShaderPass///////ShaderPass
 
-
-// Res_Material_PS
-Texture2D DiffuseMap : register(t8);
-SamplerState Sampler : register(s8);
-
 struct PS_IN {
     float4 pos : SV_POSITION;
     float4 uv : TEXCOORD;
