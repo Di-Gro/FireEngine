@@ -65,14 +65,12 @@ float GetMatShininess(float2 screenPos){ return gbuf_matParams.Load(float3(scree
 
 //////ShaderPass///////ShaderPass///////ShaderPass/////ShaderPass///////ShaderPass
 
-
-// Res_Material_PS
-Texture2D DiffuseMap : register(t8);
-SamplerState Sampler : register(s8);
-
 struct PS_IN {
     float4 pos : SV_POSITION;
-    float4 uv : TEXCOORD;
+    float4 worldPos : TEXCOORD0;
+    float4 color : COLOR;
+    float4 normal : NORMAL;
+    float4 uv : TEXCOORD1;
 };
 
 PS_IN VSMain(uint id: SV_VertexID) {
@@ -87,42 +85,34 @@ PS_IN VSMain(uint id: SV_VertexID) {
 
 float4 PSMain(PS_IN input): SV_Target {
 
+	float intens = cb_light.param1;
+	float radius = cb_light.param2;
+
+
     float2 screenPos = input.pos.xy;
     // GBuffer
     float3 gbuf_diffuse = GetDiffuse(screenPos);
-    float3 gbuf_vertexColor = GetVertexColor(screenPos);
     float3 gbuf_normal = GetNormal(screenPos);
     float3 gbuf_worldPos = GetWorldPos(screenPos);
 
-    float gbuf_matDiffuse = GetMatDiffuse(screenPos);
     float gbuf_matSpecular = GetMatSpecular(screenPos);
-    float gbuf_matAmbient = GetMatAmbient(screenPos);
     float gbuf_matShininess = GetMatShininess(screenPos);
 
-    // Shadow
-    float3 smuv = mul(float4(gbuf_worldPos.xyz, 1), cb_shadow.uvMatrix);
-    smuv.y = 1 - smuv.y;
+    float3 lightVec = cb_light.position - gbuf_worldPos;
+    float lightDist = length(lightVec);
 
-    float bias = 0.0008;
-    float x = smuv.z - bias;
-    float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
+    float3 viewDir = normalize(cb_camera.position - gbuf_worldPos);
+    float3 lightDir = normalize(lightVec);
+    float3 refVec = normalize(reflect(lightDir, gbuf_normal));
 
-    // Directional Light
-    float3 kd = gbuf_matDiffuse * gbuf_diffuse * gbuf_vertexColor;
-    float3 normal = gbuf_normal;
+    float3 diffuse = max(0, dot(lightDir, gbuf_normal)) * gbuf_diffuse;
+    float3 spec = pow(max(0, dot(viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
 
-    float3 viewDir = normalize(cb_camera.position.xyz - gbuf_worldPos.xyz);
-    float3 lightDir = cb_light.direction.xyz;
-    float3 refVec = normalize(reflect(-lightDir, normal));
+    float atten = max(1.0f - lightDist / radius, 0);
+    atten *= atten;
 
-    float3 diffuse = max(0, dot(-lightDir, normal)) * kd;
-    float3 ambient = kd * gbuf_matAmbient;
-    float3 spec = pow(max(0, dot(-viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
+    float3 color = cb_light.color * (diffuse + spec) * atten * intens;
 
-    float3 das = ambient + (diffuse + spec) * shadow;
-    float3 color = cb_light.color * cb_light.param1.xxx * das;
-
-	float v = shadow;
-	float3 vec = float3(v,v,v);
-    return float4(das.xyz, 1);
+    return float4(color.xyz, 1);
 }
+

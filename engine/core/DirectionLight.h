@@ -56,7 +56,7 @@ public:
 	void OnInit() override;
 	void OnDestroy() override;
 
-	void OnDrawLight() override;
+	void OnDrawLight(RenderPass* renderPass) override;
 	LightCBuffer GetCBuffer() override;
 
 	void RecieveGameMessage(const std::string& msg);

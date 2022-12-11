@@ -41,7 +41,7 @@ cbuffer PS_LightData : register(b2) { LightData cb_light; }
 // cbuffer PS_MaterialData : register(b3) { MaterialData cb_material; }
 
 // PASS_CB_MESH_PS 4
-// cbuffer VS_PS_MeshData : register(b4) { MeshData cb_mesh; }
+cbuffer VS_PS_MeshData : register(b4) { MeshData cb_mesh; }
 
 // PASS_R_PASS_PS 0
 Texture2D ShadowMap : register(t0);
@@ -65,64 +65,79 @@ float GetMatShininess(float2 screenPos){ return gbuf_matParams.Load(float3(scree
 
 //////ShaderPass///////ShaderPass///////ShaderPass/////ShaderPass///////ShaderPass
 
-
-// Res_Material_PS
-Texture2D DiffuseMap : register(t8);
-SamplerState Sampler : register(s8);
-
-struct PS_IN {
-    float4 pos : SV_POSITION;
+struct VS_IN {
+    float4 pos : POSITION;
+    float4 color : COLOR;
+    float4 normal : NORMAL;
     float4 uv : TEXCOORD;
 };
 
-PS_IN VSMain(uint id: SV_VertexID) {
+struct PS_IN {
+    float4 pos : SV_POSITION;
+    float4 worldPos : TEXCOORD0;
+    float4 color : COLOR;
+    float4 normal : NORMAL;
+    float4 uv : TEXCOORD1;
+};
+
+PS_IN VSMain(VS_IN input) {
     PS_IN output = (PS_IN)0;
 
-    float2 uv = float2(id % 2, (id % 4) >> 1);
-    output.uv = float4(uv.x, uv.y, 0, 0);
-    output.pos = float4((output.uv.x -0.5f) * 2, -(output.uv.y - 0.5f) * 2, 0, 1);
+    input.pos.w = 1.0f;
+    input.normal.w = 0.0f;
+
+    output.worldPos = mul(input.pos, cb_mesh.world);
+    output.pos = mul(input.pos, cb_mesh.wvp);
+    output.color = input.color;
+    output.normal = normalize(mul(input.normal, cb_mesh.world));
+    output.normal.a = 1;
+    output.uv = float4(input.uv.xy, 1, 1);
 
     return output;
 }
 
 float4 PSMain(PS_IN input): SV_Target {
 
+	float intens = cb_light.param1;
+    float spotLength = cb_light.param2;
+	float theta = cb_light.param3;
+    float phi = cb_light.param4;
+    float blendPower = cb_light.param5;
+    float power = cb_light.param6;
+
     float2 screenPos = input.pos.xy;
     // GBuffer
     float3 gbuf_diffuse = GetDiffuse(screenPos);
-    float3 gbuf_vertexColor = GetVertexColor(screenPos);
     float3 gbuf_normal = GetNormal(screenPos);
     float3 gbuf_worldPos = GetWorldPos(screenPos);
 
-    float gbuf_matDiffuse = GetMatDiffuse(screenPos);
     float gbuf_matSpecular = GetMatSpecular(screenPos);
-    float gbuf_matAmbient = GetMatAmbient(screenPos);
     float gbuf_matShininess = GetMatShininess(screenPos);
 
-    // Shadow
-    float3 smuv = mul(float4(gbuf_worldPos.xyz, 1), cb_shadow.uvMatrix);
-    smuv.y = 1 - smuv.y;
+    float3 vecToLight = cb_light.position - gbuf_worldPos;
+    float distToLight = length(vecToLight);
+    float3 dirTolight = normalize(vecToLight);
 
-    float bias = 0.0008;
-    float x = smuv.z - bias;
-    float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
+    float3 viewDir = normalize(cb_camera.position - gbuf_worldPos);
+    float3 refVec = normalize(reflect(dirTolight, gbuf_normal));
 
-    // Directional Light
-    float3 kd = gbuf_matDiffuse * gbuf_diffuse * gbuf_vertexColor;
-    float3 normal = gbuf_normal;
+    float3 diffuse = max(0, dot(dirTolight, gbuf_normal)) * gbuf_diffuse;
+    float3 spec = pow(max(0, dot(viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
 
-    float3 viewDir = normalize(cb_camera.position.xyz - gbuf_worldPos.xyz);
-    float3 lightDir = cb_light.direction.xyz;
-    float3 refVec = normalize(reflect(-lightDir, normal));
+    float rho = dot(-cb_light.direction, dirTolight);
+    float cosTheta = cos(theta);
+    float cosPhi = cos(phi);
 
-    float3 diffuse = max(0, dot(-lightDir, normal)) * kd;
-    float3 ambient = kd * gbuf_matAmbient;
-    float3 spec = pow(max(0, dot(-viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
+    float angleAtten = 0.0f;
+    if(rho > cosTheta)  angleAtten = 1.0f;
+    else if(rho <= cosPhi) angleAtten = 0.0f;
+    else {
+        float angleDelta = cosTheta != cosPhi ? cosTheta - cosPhi : 0.00001f;
+		angleAtten = pow((rho - cosPhi) / angleDelta, blendPower);
+    }
+	float distAtten = pow(max(1.0f - distToLight / spotLength, 0), power);
 
-    float3 das = ambient + (diffuse + spec) * shadow;
-    float3 color = cb_light.color * cb_light.param1.xxx * das;
+    float3 color = cb_light.color * (diffuse + spec) * angleAtten * distAtten * intens;
 
-	float v = shadow;
-	float3 vec = float3(v,v,v);
-    return float4(das.xyz, 1);
+    return float4(color.xyz, 1);
 }

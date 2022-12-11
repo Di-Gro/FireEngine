@@ -27,6 +27,7 @@ class MeshComponent;
 class Component;
 class Material;
 class ILightSource;
+class IShadowCaster;
 
 class Render {
 	friend class ShadowPass;
@@ -52,7 +53,7 @@ private:
 
 	ScreenQuad m_screenQuad;
 
-	std::list<Component*> m_shadowCasters;
+	std::list<IShadowCaster*> m_shadowCasters;
 	std::list<ILightSource*> m_lightSources;
 	std::list<Component*> m_uiDrawers;
 
@@ -105,7 +106,7 @@ public:
 	void UnRegisterShape(const Material* material, Pass::ShapeIter& iterator);
 	void UnRegisterMaterial(const Material* material);
 
-	Pass::ShadowCaster AddShadowCaster(Component* component);
+	Pass::ShadowCaster AddShadowCaster(IShadowCaster* component);
 	void RemoveShadowCaster(Pass::ShadowCaster shadowCaster);
 
 	Pass::LightSource AddLightSource(ILightSource* component);
@@ -117,8 +118,8 @@ public:
 private:
 	void m_Clear();
 
-	void m_Draw();
-	void m_DrawUI();
+	//void m_Draw();
+	//void m_DrawUI();
 
 	void m_OpaquePass();
 	void m_SecondPass();

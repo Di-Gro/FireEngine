@@ -37,7 +37,6 @@ void OpaquePass::Init(Game* game) {
 	target3Res = ShaderResource::Create(&target3Tex);
 	target4Res = ShaderResource::Create(&target4Tex);
 
-	//SetRenderTargets({ &target0, &target1, &target2, &target3, &target4 });
 }
 
 void OpaquePass::Draw() {

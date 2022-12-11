@@ -27,6 +27,7 @@
 #include "Mesh.h"
 
 #include "ILightSource.h"
+#include "IShadowCaster.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -72,6 +73,7 @@ void Render::Start() {
 	m_opaquePass.Init(m_game);
 	m_lightingPass.Init(m_game);
 
+	AddRenderPass("Shadow Pass", &m_shadowPass);
 	AddRenderPass(Render::opaquePassName, &m_opaquePass);
 	AddRenderPass(Render::lightingPassName, &m_lightingPass);
 
@@ -125,9 +127,7 @@ void Render::Draw() {
 
 	m_Clear();
 	m_camera = m_game->mainCamera();
-
-	m_shadowPass.Draw(m_shadowCasters);
-	
+		
 	for (auto* renderPass : m_renderPipeline)
 		renderPass->Draw();
 
@@ -144,7 +144,7 @@ void Render::Draw() {
 
 }
 
-Pass::ShadowCaster Render::AddShadowCaster(Component* component) {
+Pass::ShadowCaster Render::AddShadowCaster(IShadowCaster* component) {
 	return m_shadowCasters.insert(m_shadowCasters.end(), component);
 }
 
@@ -276,17 +276,17 @@ void Render::UnRegisterMaterial(const Material* material) {
 	material->f_passIndex = -1;
 }
 
-void Render::m_Draw() {
-	for (auto it = m_game->BeginActor(); it != m_game->EndActor(); it++)
-		(*it)->f_Draw();
-}
-
-void Render::m_DrawUI() {
-	for (auto* component : m_uiDrawers) {
-		if (!component->IsDestroyed())
-			component->OnDraw();
-	}
-}
+//void Render::m_Draw() {
+//	for (auto it = m_game->BeginActor(); it != m_game->EndActor(); it++)
+//		(*it)->f_Draw();
+//}
+//
+//void Render::m_DrawUI() {
+//	for (auto* component : m_uiDrawers) {
+//		if (!component->IsDestroyed())
+//			component->OnDraw();
+//	}
+//}
 
 void Render::m_OpaquePass() {
 	/*

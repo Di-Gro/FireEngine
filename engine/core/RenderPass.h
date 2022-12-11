@@ -27,6 +27,22 @@
 /// CBuffers Vertex Shader
 #define PASS_CB_MESH_VS 4
 
+/// RenderPass: PrepareTargets
+/// RenderPass: PrepareResources
+/// RenderPass: ClearTargets
+/// RenderPass: SetCameraConstBuffer
+/// RenderPass: SetTargets
+/// RenderPass: SetResources
+/// RenderPass: SetBlendState
+/// Material: SetResources
+/// Material: SetShader
+/// Material: SetMaterialConstBuffer
+/// Material: SetRasterizerState
+/// Mesh: SetTopology
+/// Mesh: SetInput
+/// Mesh: SetConstBuffers
+/// Mesh: Draw
+/// RenderPass: EndDraw
 
 class Game;
 class Render;
@@ -87,11 +103,11 @@ public:
 	virtual void Init(Game* game);
 	virtual void Draw();
 
+	void PrepareMaterial(const Material* material);
+
 protected:
 	inline void BeginDraw();
 	inline void EndDraw();
-
-	void PrepareMaterial(const Material* material);
 
 	void UpdateBlendState();
 

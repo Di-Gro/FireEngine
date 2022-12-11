@@ -117,7 +117,7 @@ void DirectionLight::RecieveGameMessage(const std::string& msg) {
 }
 
 
-void DirectionLight::OnDrawLight() {
+void DirectionLight::OnDrawLight(RenderPass* renderPass) {
 	auto* render = game()->render();
 
 	render->context()->RSSetState(render->GetRastState(CullMode::Back));

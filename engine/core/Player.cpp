@@ -20,7 +20,7 @@ void Player::OnInit() {
 
 	auto meshAsset = game()->meshAsset();
 
-	m_boxMeshMaterial = meshAsset->CreateDynamicMaterial("boxMeshMaterial", Assets::ShaderDefault);
+	m_boxMeshMaterial = meshAsset->CreateDynamicMaterial("boxMeshMaterial", Assets::ShaderDiffuseColor);
 	m_boxMeshMaterial->data.diffuseColor = { 0.8, 0.6, 0.2, 1.0 };
 	
 	m_boundSphereMaterial = meshAsset->CreateDynamicMaterial("boundSphereMaterial", Assets::ShaderDiffuseColor);

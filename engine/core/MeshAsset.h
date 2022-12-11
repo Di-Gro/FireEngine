@@ -31,6 +31,7 @@ public:
 	static std::string formBoxLined;
 	static std::string formSphere;
 	static std::string formSphereLined;
+	static std::string formCone;
 
 private:
 	class Asset {

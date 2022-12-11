@@ -15,7 +15,7 @@ void AmbientLight::OnDestroy() {
 	game()->render()->RemoveLightSource(m_lightSource);
 }
 
-void AmbientLight::OnDrawLight() {
+void AmbientLight::OnDrawLight(RenderPass* renderPass) {
 	auto* render = game()->render();
 
 	render->context()->RSSetState(render->GetRastState(CullMode::Back));

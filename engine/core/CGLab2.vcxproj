@@ -67,7 +67,6 @@
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MonoInst.cpp" />
     <ClCompile Include="MoveController.cpp" />
-    <ClCompile Include="OldPass.cpp" />
     <ClCompile Include="OpaquePass.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
@@ -85,6 +84,8 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowPass.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="SpotLight.cpp" />
+    <ClCompile Include="TestLightComponent.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tmp.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -119,10 +120,13 @@
     <ClInclude Include="DepthStencil.h" />
     <ClInclude Include="ILightSource.h" />
     <ClInclude Include="imgui\TextEditor\TextEditor.h" />
+    <ClInclude Include="IShadowCaster.h" />
     <ClInclude Include="LightingPass.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
     <ClInclude Include="ShaderResource.h" />
+    <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="TestLightComponent.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tmp.h" />
     <ClInclude Include="HotKeys.h" />
@@ -154,7 +158,6 @@
     <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="MonoInst.h" />
     <ClInclude Include="MoveController.h" />
-    <ClInclude Include="OldPass.h" />
     <ClInclude Include="OpaquePass.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerCamera.h" />

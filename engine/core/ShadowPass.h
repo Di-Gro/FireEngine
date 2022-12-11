@@ -9,7 +9,7 @@ private:
 
 public:
 	void Init(Game* game) override;
-	void Draw(const std::list<Component*>& shadowCasters);
+	void Draw() override;
 
 	void ResetRastState(
 		int depthBias,

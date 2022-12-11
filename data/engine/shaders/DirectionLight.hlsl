@@ -10,6 +10,10 @@ struct LightData {
     float3 position;   float param1;
     float3 direction;  float param2;
     float3 color;      float param3;
+    float param4;
+    float param5;
+    float param6;
+    float param7;
 };
 
 struct MaterialData {
@@ -111,9 +115,11 @@ float4 PSMain(PS_IN input): SV_Target {
     float3 spec = pow(max(0, dot(-viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
 
     float3 das = ambient + (diffuse + spec) * shadow;
-    float3 color = cb_light.color * cb_light.param1.xxx * das;
 
-	float v = shadow;
-	float3 vec = float3(v,v,v);
-    return float4(das.xyz, 1);
+	float v = cb_light.param1;
+ 	float3 intencity = float3(v,v,v); //cb_light.param1;
+    float3 color = cb_light.color * intencity * das;
+
+    return float4(color.xyz, 1);
 }
+

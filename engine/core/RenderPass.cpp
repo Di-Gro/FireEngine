@@ -67,21 +67,32 @@ void RenderPass::SetPSShaderResources(std::initializer_list<ShaderResource*> res
 inline void RenderPass::BeginDraw() {
 	auto* context = m_render->context();
 
-	m_PrepareResources();
+	/// RenderPass: PrepareTargets
 	m_PrepareTargets();
+
+	/// RenderPass: PrepareResources
+	m_PrepareResources();
+
+	/// RenderPass: ClearTargets
 	m_ClearTargets();
+
+	/// RenderPass: SetCameraConstBuffer
 	m_SetCameraConstBuffer();
 
+	/// RenderPass: SetTargets
 	auto depthStencil = m_depthStencil != nullptr ? m_depthStencil->get() : nullptr;
 	context->OMSetRenderTargets(8, m_dxTargets, depthStencil);
 
+	/// RenderPass: SetResources
 	context->VSSetShaderResources(0, SRCount, m_dxVSResources);
 	context->PSSetShaderResources(0, SRCount, m_dxPSResources);
 
 	context->VSSetSamplers(0, SRCount, m_dxVSSamplers);
 	context->PSSetSamplers(0, SRCount, m_dxPSSamplers);
-}
 
+	/// RenderPass: SetBlendState
+	context->OMSetBlendState(m_blendState.Get(), nullptr, 0xFFFFFFFF);
+}
 
 inline void RenderPass::EndDraw() {
 	auto* context = m_render->context();

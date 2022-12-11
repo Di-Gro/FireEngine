@@ -208,7 +208,7 @@ inline type_names_t get_name(bool& found)
 	if(it == types.end())
 	{
 		found |= false;
-		return {"unknown", "Unknown"};
+		return {"blendPower", "Unknown"};
 	}
 	found |= true;
 	return it->second;

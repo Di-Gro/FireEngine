@@ -8,6 +8,10 @@
 class CameraComponent;
 class Player;
 class ShadowPass;
+class DirectionLight;
+class AmbientLight;
+class PointLight;
+class SpotLight;
 
 class RenderPassUI : public Component {
 	PURE_COMPONENT(RenderPassUI)
@@ -35,3 +39,6 @@ private:
 	void m_DrawTextEditorMenu();
 
 };
+
+
+

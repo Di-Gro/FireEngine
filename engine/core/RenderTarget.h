@@ -9,7 +9,7 @@ class Texture;
 
 class RenderTarget {
 public:
-	Vector4 clearColor = { 48 / 255.0f, 37 / 255.0f, 60 / 255.0f, 1.0f };
+	Vector4 clearColor = {0,0,0,1}; // { 48 / 255.0f, 37 / 255.0f, 60 / 255.0f, 1.0f };
 
 private:
 	Render* m_render = nullptr;

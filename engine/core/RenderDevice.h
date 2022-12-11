@@ -13,7 +13,7 @@ class CameraComponent;
 
 class RenderDevice {
 public:
-	float clearColor[4] = { 48 / 255.0f, 37 / 255.0f, 60 / 255.0f, 1.0f }; // { 0.1f, 0.1f, 0.1f, 1.0f };
+	float clearColor[4] = {0,0,0,1};//{ 48 / 255.0f, 37 / 255.0f, 60 / 255.0f, 1.0f }; // { 0.1f, 0.1f, 0.1f, 1.0f };
 
 	CameraComponent* camera = nullptr;
 	

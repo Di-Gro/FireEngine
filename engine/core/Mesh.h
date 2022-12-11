@@ -36,17 +36,6 @@ static struct MeshCBuffer {
 };
 #pragma pack(pop)
 
-#pragma pack(push, 4)
-static struct DirectionLightCBuffer {
-	Matrix uvMatrix;
-	Vector3 direction;
-	float intensity;
-	Vector3 color;
-	float _1[1];
-};
-#pragma pack(pop)
-
-
 class DirectionLight;
 class Render;
 class MeshAsset;
@@ -66,17 +55,6 @@ public:
 	};
 
 public:
-	struct DynamicData {
-		Render* render;
-		const std::vector<const Material*>* materials;
-
-		const Matrix* worldMatrix;
-		const Matrix* transfMatrix;
-		const Vector3* cameraPosition;
-
-		DirectionLight* directionLight;
-	};
-
 	struct DynamicShapeData {
 		Render* render;
 		const Matrix* worldMatrix;
@@ -96,11 +74,6 @@ private:
 		comptr<ID3D11Buffer> vertexBuffer;
 		comptr<ID3D11Buffer> indexBuffer;
 		comptr<ID3D11Buffer> meshCBuffer;
-		comptr<ID3D11Buffer> materialConstBuffer; /// TODO: Удалить
-		comptr<ID3D11Buffer> directionLightCBuffer; /// TODO: Удалить
-
-		comptr<ID3D11SamplerState> sampler;
-		comptr<ID3D11SamplerState> compSampler;
 	};
 
 public:
@@ -137,7 +110,7 @@ public:
 	void m_InitShape(Mesh4::Shape& shape);
 
 
-	void Draw(const DynamicData& data) const;
+	void Draw(const DynamicShapeData& data) const;
 	void DrawShape(const DynamicShapeData& data, int index) const;
 
 	int shapeCount() const { return m_shapes.size(); }

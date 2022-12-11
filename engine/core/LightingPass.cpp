@@ -43,7 +43,7 @@ void LightingPass::Draw() {
 	
 	for (auto* lightSource : m_render->m_lightSources) {
 		m_SetLightCBuffer(lightSource);
-		lightSource->OnDrawLight();
+		lightSource->OnDrawLight(this);
 	}
 	EndDraw();
 }

@@ -222,9 +222,6 @@
     <ClCompile Include="ShadowPass.cpp">
       <Filter>Render\Render Passes</Filter>
     </ClCompile>
-    <ClCompile Include="OldPass.cpp">
-      <Filter>Render\Render Passes</Filter>
-    </ClCompile>
     <ClCompile Include="OpaquePass.cpp">
       <Filter>Render\Render Passes</Filter>
     </ClCompile>
@@ -262,6 +259,12 @@
       <Filter>Render\Lighting</Filter>
     </ClCompile>
     <ClCompile Include="AmbientLight.cpp">
+      <Filter>Render\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Render\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLightComponent.cpp">
       <Filter>Render\Lighting</Filter>
     </ClCompile>
   </ItemGroup>
@@ -476,9 +479,6 @@
     <ClInclude Include="ShadowPass.h">
       <Filter>Render\Render Passes</Filter>
     </ClInclude>
-    <ClInclude Include="OldPass.h">
-      <Filter>Render\Render Passes</Filter>
-    </ClInclude>
     <ClInclude Include="OpaquePass.h">
       <Filter>Render\Render Passes</Filter>
     </ClInclude>
@@ -522,6 +522,15 @@
       <Filter>Render\Lighting</Filter>
     </ClInclude>
     <ClInclude Include="ILightSource.h">
+      <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="IShadowCaster.h">
+      <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLightComponent.h">
       <Filter>Render\Lighting</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,4 +7,5 @@ std::string Assets::ShaderVertexColor = "../../data/engine/shaders/opaque_vertex
 std::string Assets::ShaderAmbientLight = "../../data/engine/shaders/AmbientLight.hlsl";
 std::string Assets::ShaderDirectionLight = "../../data/engine/shaders/DirectionLight.hlsl";
 std::string Assets::ShaderPointLight = "../../data/engine/shaders/PointLight.hlsl";
+std::string Assets::ShaderPointLightMesh = "../../data/engine/shaders/PointLightMesh.hlsl";
 std::string Assets::ShaderSpotLight = "../../data/engine/shaders/SpotLight.hlsl";

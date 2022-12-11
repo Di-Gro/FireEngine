@@ -24,6 +24,7 @@ std::string MeshAsset::formBox = "runtime:/form/Box";
 std::string MeshAsset::formBoxLined = "runtime:/form/BoxLined";
 std::string MeshAsset::formSphere = "runtime:/form/Sphere";
 std::string MeshAsset::formSphereLined = "runtime:/form/SphereLined";
+std::string MeshAsset::formCone = "../../data/engine/models/cone.obj";
 
 
 
@@ -411,22 +412,23 @@ void MeshAsset::m_InitMaterials(
 
 	if (materials.empty()) {
 		/// TODO: заменить на GetStaticMaterial(materialDefault)
+		auto* mat = GetStaticMaterial(MeshAsset::materialDefault);
+		//auto hash = std::hash<std::string>()(materialDefault);
 
-		auto hash = std::hash<std::string>()(materialDefault);
+		//if (m_materials.count(hash) == 0) {
+		//	auto* mat = m_NewMaterial();
+		//	m_materials.insert({ hash, mat });
 
-		if (m_materials.count(hash) == 0) {
-			auto* mat = m_NewMaterial();
-			m_materials.insert({ hash, mat });
+		//	mat->name(materialDefault);
+		//	mat->shader = shader;
 
-			mat->name(materialDefault);
-			mat->shader = shader;
+		//	const auto* image = images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
 
-			const auto* image = images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
-
-			auto& deffuseTex = mat->textures.emplace_back(Texture::CreateFromImage(render, image));
-			mat->resources.emplace_back(ShaderResource::Create(&deffuseTex));
-		}
-		asset->staticMaterials.push_back(m_materials.at(hash));
+		//	auto& deffuseTex = mat->textures.emplace_back(Texture::CreateFromImage(render, image));
+		//	mat->resources.emplace_back(ShaderResource::Create(&deffuseTex));
+		//}
+		asset->staticMaterials.push_back(mat);
+		//asset->staticMaterials.push_back(m_materials.at(hash));
 	}
 	for (auto& tinyMat : materials) {
 		auto mat = GetStaticMaterial(tinyMat, directory);

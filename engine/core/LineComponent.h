@@ -8,6 +8,7 @@ public:
 
 	void OnInit() override { 
 		MeshComponent::OnInit();
+		castShadow(false);
 	}
 
 	void SetPoint(Vector3 worldPos, Vector4 color) {

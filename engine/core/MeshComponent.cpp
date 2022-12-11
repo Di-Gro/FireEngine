@@ -246,7 +246,17 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
 	auto* material = m_materials[materialIndex];
 
-	for (int shapeIndex = 0; shapeIndex < m_mesh->m_shapes.size(); shapeIndex++) {
+	bool isNewDynamic = 
+		m_mesh->shapeCount() == 0 &&
+		m_materials.size() == 1 && 
+		materialIndex == 0;
+
+	if (isNewDynamic) {
+		m_shapeIters[0] = m_render->RegisterShape(material, this, 0);
+		return;
+	}
+
+	for (int shapeIndex = 0; shapeIndex < m_mesh->shapeCount(); shapeIndex++) {
 		const auto* shape = &m_mesh->m_shapes[shapeIndex];
 
 		if (shape->materialIndex == materialIndex)
@@ -275,6 +285,11 @@ void MeshComponent::castShadow(bool value) {
 	m_castShadow = value;
 }
 
+void MeshComponent::OnDrawShadow(RenderPass* renderPass) {
+	if (!isDebug)
+		m_Draw(renderPass);
+}
+
 void MeshComponent::OnDraw() {
 	if (!isDebug)
 		m_Draw();
@@ -285,7 +300,7 @@ void MeshComponent::OnDrawDebug() {
 		m_Draw();
 }
 
-void MeshComponent::m_Draw() {
+void MeshComponent::m_Draw(RenderPass* renderPass) {
 	if (!visible || m_mesh == nullptr)
 		return;
 
@@ -294,16 +309,18 @@ void MeshComponent::m_Draw() {
 	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
-	Mesh4::DynamicData data;
+	Mesh4::DynamicShapeData data;
 	data.render = m_render;
-	data.materials = &m_materials;
 	data.worldMatrix = &worldMatrix;
 	data.transfMatrix = &transMatrix;
-	data.directionLight = game()->lighting()->directionLight();
 	data.cameraPosition = &cameraPosition;
 
-	for (int i = 0; i < m_mesh->shapeCount(); i++) {
-		m_mesh->Draw(data);
+	for (int i = 0; i < m_mesh->shapeCount(); i++){
+		if (renderPass != nullptr) {
+			auto material = m_materials[m_mesh->m_shapes[i].materialIndex];
+			renderPass->PrepareMaterial(material);
+		}
+		m_mesh->DrawShape(data, i);
 	}
 }
 

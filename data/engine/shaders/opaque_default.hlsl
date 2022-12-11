@@ -13,6 +13,10 @@ struct LightData {
     float3 position;   float param1;
     float3 direction;  float param2;
     float3 color;      float param3;
+    float param4;
+    float param5;
+    float param6;
+    float param7;
 };
 
 struct MaterialData {

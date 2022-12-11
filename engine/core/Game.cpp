@@ -25,6 +25,10 @@
 #include "Refs.h"
 #include "CppClass.h"
 #include "CSComponent.h"
+#include "RenderPassUI.h"
+#include "PointLight.h"
+#include "SpotLight.h"
+#include "TestLightComponent.h"
 
 
 std::vector<std::string> game_shaderPaths = {
@@ -33,6 +37,9 @@ std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderDefault,
 	Assets::ShaderDirectionLight,
 	Assets::ShaderAmbientLight,
+	Assets::ShaderPointLight,
+	Assets::ShaderPointLightMesh,
+	Assets::ShaderSpotLight,
 	"../../data/engine/shaders/rp_image.hlsl",
 	"../../data/engine/shaders/shadow_map.hlsl",
 	"../../data/engine/shaders/rp_screen_quad.hlsl",
@@ -84,12 +91,11 @@ void Game::Run() {
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
-	//csLink.Link(cppObj, "EngineMono", "CSClass");	
+	csLink.Link(cppObj, "EngineMono", "CSClass");	
 
 	//auto actor = CreateActor();
 	//actor->AddComponent<MeshComponent>();
 	//actor->AddComponent<CsComponent>("Engine.OhMyMesh");
-
 
 	///
 
@@ -103,10 +109,8 @@ void Game::Run() {
 	m_lighting.f_directionLight->localRotation({ rad(-45), rad(45 + 180), 0 });
 	m_lighting.f_directionLight->drawDebug(true);
 
-	//auto ambientLight = m_defaultCamera->AddComponent<AmbientLight>();
-
 	CreateActor("GameController")->AddComponent<GameController>();
-
+	CreateActor()->AddComponent<TestLightComponent>();
 	
 	MSG msg = {};
 	bool isExitRequested = false;

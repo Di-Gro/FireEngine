@@ -11,12 +11,14 @@
 #include "Mesh.h"
 #include "Game.h"
 #include "MaterialAlias.h"
+#include "IShadowCaster.h"
 
 using namespace DirectX::SimpleMath;
 
 class Render;
+class RenderPass;
 
-class MeshComponent : public Component {
+class MeshComponent : public Component, public IShadowCaster {
 	COMPONENT(MeshComponent)
 
 public:
@@ -85,11 +87,14 @@ public:
 	void OnDrawDebug() override;
 	void OnDestroy() override;
 
+	void OnDrawShadow(RenderPass* renderPass) override;
+	Component* GetComponent() override { return this; }
+
 private:
 	void m_SetMaterialsFromMesh();
 	void m_InitMono();
 	void m_InitDynamic();
-	void m_Draw();
+	void m_Draw(RenderPass* renderPass = nullptr);
 	void m_DeleteResources();
 	void m_DeleteMaterials();
 	void m_DeleteLocalDynamicMaterial(int index);

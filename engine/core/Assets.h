@@ -10,5 +10,6 @@ public:
 	static std::string ShaderAmbientLight;
 	static std::string ShaderDirectionLight;
 	static std::string ShaderPointLight;
+	static std::string ShaderPointLightMesh;
 	static std::string ShaderSpotLight;
 };

@@ -65,11 +65,6 @@ float GetMatShininess(float2 screenPos){ return gbuf_matParams.Load(float3(scree
 
 //////ShaderPass///////ShaderPass///////ShaderPass/////ShaderPass///////ShaderPass
 
-
-// Res_Material_PS
-Texture2D DiffuseMap : register(t8);
-SamplerState Sampler : register(s8);
-
 struct PS_IN {
     float4 pos : SV_POSITION;
     float4 uv : TEXCOORD;
@@ -108,21 +103,26 @@ float4 PSMain(PS_IN input): SV_Target {
     float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
 
     // Directional Light
-    float3 kd = gbuf_matDiffuse * gbuf_diffuse * gbuf_vertexColor;
-    float3 normal = gbuf_normal;
+    //float3 kd = gbuf_matDiffuse * gbuf_diffuse * gbuf_vertexColor;
+ 	//float3 kd = gbuf_diffuse;
+	float3 normal = gbuf_normal;
 
     float3 viewDir = normalize(cb_camera.position.xyz - gbuf_worldPos.xyz);
-    float3 lightDir = cb_light.direction.xyz;
-    float3 refVec = normalize(reflect(-lightDir, normal));
+    float3 lightDir = -cb_light.direction.xyz;
+    float3 refVec = normalize(-reflect(lightDir, normal));
 
-    float3 diffuse = max(0, dot(-lightDir, normal)) * kd;
-    float3 ambient = kd * gbuf_matAmbient;
-    float3 spec = pow(max(0, dot(-viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
+    float3 diffuse = max(0, dot(lightDir, normal)) * gbuf_diffuse;
+    //float3 ambient = kd * gbuf_matAmbient;
+	float3 ambient = gbuf_matAmbient;
+    float3 spec = pow(max(0, dot(viewDir, refVec)), gbuf_matShininess) * gbuf_matSpecular;
 
-    float3 das = ambient + (diffuse + spec) * shadow;
-    float3 color = cb_light.color * cb_light.param1.xxx * das;
+    //float3 das = ambient + (diffuse + spec) * shadow;
+	//float3 das = (diffuse + spec) * shadow;
 
-	float v = shadow;
-	float3 vec = float3(v,v,v);
-    return float4(das.xyz, 1);
+ 	float3 intencity = cb_light.param1.xxx;
+    //float3 color = cb_light.color * intencity * das;
+	//float3 color = cb_light.color * (diffuse + spec) * intencity;
+	float3 color = cb_light.color * (diffuse + spec) * intencity;
+
+    return float4(color.xyz, 1);
 }

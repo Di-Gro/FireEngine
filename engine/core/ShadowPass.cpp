@@ -1,6 +1,7 @@
 #include "ShadowPass.h"
 #include "Render.h"
 #include "DirectionLight.h"
+#include "IShadowCaster.h"
 
 
 void ShadowPass::Init(Game* game) {
@@ -20,7 +21,7 @@ void ShadowPass::Init(Game* game) {
 	assert(SUCCEEDED(hres));
 }
 
-void ShadowPass::Draw(const std::list<Component*>& shadowCasters) {
+void ShadowPass::Draw() {
 	auto* prevCamera = m_render->m_camera;
 	ID3D11RasterizerState* prevRastState[] = { nullptr };
 	m_render->context()->RSGetState(prevRastState);
@@ -40,9 +41,10 @@ void ShadowPass::Draw(const std::list<Component*>& shadowCasters) {
 	// Draw
 	m_render->m_camera = light->camera();
 
-	for (auto* component : shadowCasters) {
-		if (!component->IsDestroyed())
-			component->OnDraw();
+	for (auto* shadowCaster : m_render->m_shadowCasters) {
+		if (!shadowCaster->GetComponent()->IsDestroyed()) {
+			shadowCaster->OnDrawShadow(this);
+		}
 	}
 
 	// End Draw

@@ -2415,7 +2415,7 @@ namespace nlohmann
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
-#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#pragma clang diagnostic ignored "-Wdocumentation-blendPower-command"
 #endif
 
 // allow disabling exceptions
@@ -6705,7 +6705,7 @@ namespace nlohmann
                     return "'[', '{', or a literal";
                     // LCOV_EXCL_START
                 default: // catch non-enum values
-                    return "unknown token";
+                    return "blendPower token";
                     // LCOV_EXCL_STOP
                 }
             }
@@ -17748,7 +17748,7 @@ namespace nlohmann
 #elif defined __unix__
             result["platform"] = "unix";
 #else
-            result["platform"] = "unknown";
+            result["platform"] = "blendPower";
 #endif
 
 #if defined(__ICC) || defined(__INTEL_COMPILER)
@@ -17773,7 +17773,7 @@ namespace nlohmann
 #elif defined(__SUNPRO_CC)
             result["compiler"] = { {"family", "sunpro"}, {"version", __SUNPRO_CC} };
 #else
-            result["compiler"] = { {"family", "unknown"}, {"version", "unknown"} };
+            result["compiler"] = { {"family", "blendPower"}, {"version", "blendPower"} };
 #endif
 
 
@@ -17782,7 +17782,7 @@ namespace nlohmann
 #elif defined(__cplusplus)
             result["compiler"]["c++"] = std::to_string(__cplusplus);
 #else
-            result["compiler"]["c++"] = "unknown";
+            result["compiler"]["c++"] = "blendPower";
 #endif
             return result;
         }

@@ -11,6 +11,10 @@ struct LightData {
     float3 position;   float param1;
     float3 direction;  float param2;
     float3 color;      float param3;
+    float param4;
+    float param5;
+    float param6;
+    float param7;
 };
 
 struct MaterialData {
@@ -82,5 +86,7 @@ float4 PSMain(PS_IN input): SV_Target {
     float2 screenPos = input.pos.xy;
     float3 gbuf_diffuse = GetDiffuse(screenPos);
 
-    return float4(gbuf_diffuse.rgb * cb_light.param1 * cb_light.color.rgb, 1);
+ 	float v = cb_light.param1;
+ 	float3 intencity = float3(v,v,v); //cb_light.param1;
+    return float4(cb_light.color.rgb * gbuf_diffuse.rgb * intencity.rgb, 1);
 }

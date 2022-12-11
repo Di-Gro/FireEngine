@@ -9,7 +9,7 @@ class AmbientLight : public Component, public ILightSource {
 
 public:
 	Vector3 color = Vector3::One;
-	float intensity = 1.0f;
+	float intensity = 0.2f;
 
 private:
 	ScreenQuad m_screenQuad;
@@ -20,6 +20,6 @@ public:
 	void OnInit() override;
 	void OnDestroy() override;
 
-	void OnDrawLight() override;
+	void OnDrawLight(RenderPass* renderPass) override;
 	LightCBuffer GetCBuffer() override;
 };
