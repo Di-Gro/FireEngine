@@ -84,7 +84,9 @@ void Game::m_InitMono(MonoInst* imono) {
 
 void Game::Run() {
 	m_render.Start();
-	m_meshAsset.Start();
+	m_meshAsset.Start(); 
+
+	CullMode::Back;
 
 	///
 
