@@ -13,6 +13,9 @@ using namespace DirectX::SimpleMath;
 
 
 class Window : public IWindow {
+public:
+    bool sizeChanged = false;
+
 private:
     int m_height = 800;
     int m_width = 800;

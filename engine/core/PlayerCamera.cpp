@@ -15,7 +15,7 @@ void PlayerCamera::OnInit() {
 	//farPlane *= 100;
 
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &PlayerCamera::m_OnMouseMove);
-	UpdateProjectionMatrix(/*game()->window()*/);
+	UpdateProjectionMatrix();
 	Attach();
 }
 
@@ -49,7 +49,7 @@ void PlayerCamera::OnUpdate() {
 	auto wpos = worldPosition();// *100;
 	auto newMatrix = Matrix::CreateLookAt(wpos, wpos + rotator.Forward(), rotator.Up());
 	viewMatrix(newMatrix);
-	UpdateProjectionMatrix(/*game()->window()*/);
+	UpdateProjectionMatrix();
 
 }
 

@@ -44,13 +44,7 @@ void Render::Init(Game* game, Window* window) {
 
 	m_device.Create(window->GetHWindow(), window->GetWidth(), window->GetHeight());
 
-	m_mainTexure = Texture::Create(this, window->GetWidth(), window->GetHeight());
-	m_mainTarget = RenderTarget::Create(&m_mainTexure);
-	m_mainResource = ShaderResource::Create(&m_mainTexure);
-
-	m_mainDepthTexure = Texture::CreateDepthTexture(this, window->GetWidth(), window->GetHeight());
-	m_mainDepthStencil = DepthStencil::Create(&m_mainDepthTexure);
-	m_mainDepthResource = ShaderResource::Create(&m_mainDepthTexure);
+	m_ResizeMainResouces(window->GetWidth(), window->GetHeight());
 	
 	CD3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.CullMode = D3D11_CULL_BACK;
@@ -68,6 +62,16 @@ void Render::Init(Game* game, Window* window) {
 	device()->CreateRasterizerState(&rastDesc, m_ñullWireframeFront.GetAddressOf());
 }
 
+void Render::m_ResizeMainResouces(float width, float height) {
+	m_mainTexure = Texture::Create(this, width, height);
+	m_mainTarget = RenderTarget::Create(&m_mainTexure);
+	m_mainResource = ShaderResource::Create(&m_mainTexure);
+
+	m_mainDepthTexure = Texture::CreateDepthTexture(this, width, height);
+	m_mainDepthStencil = DepthStencil::Create(&m_mainDepthTexure);
+	m_mainDepthResource = ShaderResource::Create(&m_mainDepthTexure);
+}
+
 void Render::Start() {
 	m_shadowPass.Init(m_game);
 	m_opaquePass.Init(m_game);
@@ -78,7 +82,7 @@ void Render::Start() {
 	AddRenderPass(Render::lightingPassName, &m_lightingPass);
 
 	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
-	m_screenQuad.deffuseSRV = m_mainResource.get();
+	m_screenQuad.deffuse = &m_mainResource;
 
 	m_game->CreateActor("Render Pass UI")->AddComponent<RenderPassUI>();
 }
@@ -93,7 +97,7 @@ void Render::Destroy() {
 
 void Render::m_Clear() {
 	context()->ClearState();
-	context()->RSSetViewports(1, m_device.viewport());
+	rdevice()->SetViewport();
 	context()->ClearDepthStencilView(m_mainDepthStencil.get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 bool once = true;
@@ -125,23 +129,29 @@ void Render::Draw() {
 		});
 	}
 
+	/// Begin Render
 	m_Clear();
 	m_camera = m_game->mainCamera();
 		
+	/// Render Passes
 	for (auto* renderPass : m_renderPipeline)
 		renderPass->Draw();
 
-	// Quad 
+	/// Begin Draw
 	m_device.BeginDraw();
-	context()->RSSetState(GetRastState(CullMode::Back));
 
-	m_screenQuad.Draw();
+	///// Draw Quad 
+	//context()->RSSetState(GetRastState(CullMode::Back));
+	//m_screenQuad.Draw();
 	
-	// ImGui
+	/// Draw ImGui
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
+	/// End Draw
 	m_device.EndDraw();
-
+	
+	/// Post Draw
+	m_UpdateSize();
 }
 
 Pass::ShadowCaster Render::AddShadowCaster(IShadowCaster* component) {
@@ -276,17 +286,41 @@ void Render::UnRegisterMaterial(const Material* material) {
 	material->f_passIndex = -1;
 }
 
-//void Render::m_Draw() {
-//	for (auto it = m_game->BeginActor(); it != m_game->EndActor(); it++)
-//		(*it)->f_Draw();
-//}
-//
-//void Render::m_DrawUI() {
-//	for (auto* component : m_uiDrawers) {
-//		if (!component->IsDestroyed())
-//			component->OnDraw();
-//	}
-//}
+void Render::m_UpdateSize() {
+	auto window = m_game->window();
+	if (window->sizeChanged) {
+		m_game->window()->sizeChanged = false;
+
+		float width = window->GetWidth();
+		float height = window->GetHeight();
+
+		m_device.Resize(width, height);
+		//ResizeViewport(width, height);
+	}
+	if (m_viewportChanged) {
+		m_viewportChanged = false;
+
+		float width = m_newViewportSize.x;
+		float height = m_newViewportSize.y;
+
+		m_device.ResizeViewport(width, height);
+
+		m_ResizeMainResouces(width, height);
+
+		for (auto* renderPass : m_renderPipeline)
+			renderPass->Resize(width, height);
+	}
+}
+
+void Render::ResizeViewport(float width, float height) {
+	if (m_newViewportSize != Vector2(width, height)) {
+		if (width < 2) width = 2;
+		if (height < 2) height = 2;
+
+		m_viewportChanged = true;
+		m_newViewportSize = { width, height };
+	}
+}
 
 void Render::m_OpaquePass() {
 	/*
@@ -488,7 +522,7 @@ void Render::m_SecondPass() {
 	//auto *quad = &m_lightingPass.m_screenQuad;
 
 	///// Material: SetResources
-	//ID3D11ShaderResourceView* matResources[] = { quad->deffuseSRV };
+	//ID3D11ShaderResourceView* matResources[] = { quad->deffuse };
 	//context()->PSSetShaderResources(PASS_R_MATERIAL_PS, 1, matResources);
 	//context()->PSSetSamplers(PASS_R_MATERIAL_PS, 1, quad->m_sampler.GetAddressOf());
 

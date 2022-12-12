@@ -19,6 +19,10 @@ void OpaquePass::Init(Game* game) {
 	auto width = m_game->window()->GetWidth();
 	auto height = m_game->window()->GetHeight();
 
+	Resize(width, height);
+}
+
+void OpaquePass::Resize(float width, float height) {
 	target0Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 	target1Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
 	target2Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
@@ -36,7 +40,6 @@ void OpaquePass::Init(Game* game) {
 	target2Res = ShaderResource::Create(&target2Tex);
 	target3Res = ShaderResource::Create(&target3Tex);
 	target4Res = ShaderResource::Create(&target4Tex);
-
 }
 
 void OpaquePass::Draw() {

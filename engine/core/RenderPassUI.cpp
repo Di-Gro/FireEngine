@@ -18,25 +18,29 @@ void RenderPassUI::OnStart() {
 
 void RenderPassUI::OnUpdate() {		
 	auto opaquePass = game()->render()->opaquePass();
+	auto window = game()->window();
+
+	auto w = (float)window->GetWidth();
+	auto h = (float)window->GetHeight();
 
 	ImGui::Begin("target0Tex: diffuse, spec");
-	ImGui::Image(opaquePass->target0Res.get(), { 1920 / 6, 1061 / 6 });
+	ImGui::Image(opaquePass->target0Res.get(), { w / 6, h / 6 });
 	ImGui::End();
 		
 	ImGui::Begin("target1Tex: normals");
-	ImGui::Image(opaquePass->target1Res.get(), { 1920 / 6, 1061 / 6 });
+	ImGui::Image(opaquePass->target1Res.get(), { w / 6, h / 6 });
 	ImGui::End();
 
 	ImGui::Begin("target2Tex: vertex color");
-	ImGui::Image(opaquePass->target2Res.get(), { 1920 / 6, 1061 / 6 });
+	ImGui::Image(opaquePass->target2Res.get(), { w / 6, h / 6 });
 	ImGui::End();
 
 	ImGui::Begin("target3Tex: world pos");
-	ImGui::Image(opaquePass->target3Res.get(), { 1920 / 6, 1061 / 6 });
+	ImGui::Image(opaquePass->target3Res.get(), { w / 6, h / 6 });
 	ImGui::End();
 
 	ImGui::Begin("targetDs: Depth");
-	ImGui::Image(game()->render()->depthRes()->get(), { 1920 / 6, 1061 / 6 });
+	ImGui::Image(game()->render()->depthRes()->get(), { w / 6, h / 6 });
 	ImGui::End();
 
 	auto input = game()->hotkeys();

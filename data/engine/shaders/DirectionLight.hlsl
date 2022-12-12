@@ -5,6 +5,7 @@ struct CameraData {
 
 struct ShadowData {
     float4x4 uvMatrix;
+    float mapScale;
 };
 struct LightData {
     float3 position;   float param1;
@@ -97,6 +98,7 @@ float4 PSMain(PS_IN input): SV_Target {
     // Shadow
     float3 smuv = mul(float4(gbuf_worldPos.xyz, 1), cb_shadow.uvMatrix);
     smuv.y = 1 - smuv.y;
+	smuv.xy /= cb_shadow.mapScale;
 
     float bias = 0.0008;
     float x = smuv.z - bias;
@@ -122,4 +124,3 @@ float4 PSMain(PS_IN input): SV_Target {
 
     return float4(color.xyz, 1);
 }
-

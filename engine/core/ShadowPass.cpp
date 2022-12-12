@@ -21,6 +21,12 @@ void ShadowPass::Init(Game* game) {
 	assert(SUCCEEDED(hres));
 }
 
+void ShadowPass::Resize(float width, float height) {
+	auto* light = m_render->m_game->lighting()->directionLight();
+
+	light->Resize(width, height);
+}
+
 void ShadowPass::Draw() {
 	auto* prevCamera = m_render->m_camera;
 	ID3D11RasterizerState* prevRastState[] = { nullptr };
@@ -34,6 +40,8 @@ void ShadowPass::Draw() {
 	rt->Clear();
 	light->DS()->Clear();
 
+	Vector3 shadowMapScale = { light->mapScale(), light->mapScale(), light->mapScale() };
+
 	ID3D11RenderTargetView* targets[] = { rt->get() };
 	m_render->context()->OMSetRenderTargets(1, targets, light->depthStencil());
 	m_render->context()->RSSetState(m_rastState.Get());
@@ -43,7 +51,7 @@ void ShadowPass::Draw() {
 
 	for (auto* shadowCaster : m_render->m_shadowCasters) {
 		if (!shadowCaster->GetComponent()->IsDestroyed()) {
-			shadowCaster->OnDrawShadow(this);
+			shadowCaster->OnDrawShadow(this, shadowMapScale);
 		}
 	}
 

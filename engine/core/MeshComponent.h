@@ -87,14 +87,14 @@ public:
 	void OnDrawDebug() override;
 	void OnDestroy() override;
 
-	void OnDrawShadow(RenderPass* renderPass) override;
+	void OnDrawShadow(RenderPass* renderPass, const Vector3& scale) override;
 	Component* GetComponent() override { return this; }
 
 private:
 	void m_SetMaterialsFromMesh();
 	void m_InitMono();
 	void m_InitDynamic();
-	void m_Draw(RenderPass* renderPass = nullptr);
+	void m_Draw(RenderPass* renderPass = nullptr, const Vector3& scale = Vector3::One);
 	void m_DeleteResources();
 	void m_DeleteMaterials();
 	void m_DeleteLocalDynamicMaterial(int index);

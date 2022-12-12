@@ -203,7 +203,7 @@ void ScreenQuad::Draw() const {
 	auto* camera = m_render->camera();
 
 	/// Material: SetResources
-	ID3D11ShaderResourceView* resources[] = { deffuseSRV };
+	ID3D11ShaderResourceView* resources[] = { deffuse != nullptr ? deffuse->get() : nullptr };
 	context->PSSetShaderResources(PASS_R_MATERIAL_PS, 1, resources);
 	context->PSSetSamplers(PASS_R_MATERIAL_PS, 1, m_sampler.GetAddressOf());
 

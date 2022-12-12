@@ -11,6 +11,8 @@ public:
 	void Init(Game* game) override;
 	void Draw() override;
 
+	void Resize(float width, float height) override;
+
 	void ResetRastState(
 		int depthBias,
 		float depthBiasClamp,

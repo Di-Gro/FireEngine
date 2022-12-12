@@ -285,9 +285,9 @@ void MeshComponent::castShadow(bool value) {
 	m_castShadow = value;
 }
 
-void MeshComponent::OnDrawShadow(RenderPass* renderPass) {
+void MeshComponent::OnDrawShadow(RenderPass* renderPass, const Vector3& scale) {
 	if (!isDebug)
-		m_Draw(renderPass);
+		m_Draw(renderPass, scale);
 }
 
 void MeshComponent::OnDraw() {
@@ -300,13 +300,13 @@ void MeshComponent::OnDrawDebug() {
 		m_Draw();
 }
 
-void MeshComponent::m_Draw(RenderPass* renderPass) {
+void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 	if (!visible || m_mesh == nullptr)
 		return;
 
 	auto camera = m_render->camera();
 	auto cameraPosition = camera->worldPosition();
-	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();
+	auto worldMatrix = Matrix::CreateScale(meshScale * scale) * GetWorldMatrix();
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
 	Mesh4::DynamicShapeData data;

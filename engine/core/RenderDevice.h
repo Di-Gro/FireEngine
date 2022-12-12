@@ -18,6 +18,9 @@ public:
 	CameraComponent* camera = nullptr;
 	
 private:
+	DXGI_SWAP_CHAIN_DESC m_swapDesc;
+	D3D11_TEXTURE2D_DESC m_depthTexDesc;
+
 	comptr<ID3D11Device> m_device;
 	comptr<ID3D11DeviceContext> m_context;
 	comptr<IDXGISwapChain> m_swapChain;
@@ -44,9 +47,23 @@ public:
 
 	void Create(HWND hwnd, int width, int height);
 
+	void SetViewport();
+
 	//void Clear();
 	void BeginDraw();
 	void EndDraw();
+
+	void Resize(float width, float height);
+	void ResizeViewport(float width, float height);
+
+private:
+	void m_CreateDevice(HWND hwnd, int width, int height);
+	void m_CreateRastState();
+	void m_CreateRenderTarget();
+	void m_CreateDepthStencil(float width, float height);
+
+	void m_RemoveRenderTarget();
+	void m_RemoveDepthStencil();
 
 };
 

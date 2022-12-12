@@ -102,6 +102,7 @@ public:
 
 	std::list<Actor*>::iterator BeginActor() { return m_actors.begin(); }
 	std::list<Actor*>::iterator EndActor() { return m_actors.end(); }
+	std::list<Actor*>::iterator GetNextRootActor(const std::list<Actor*>::iterator& iter);
 	
 private:
 	void m_InitMono(MonoInst* imono);

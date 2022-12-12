@@ -8,18 +8,18 @@ bool CameraComponent::IsAttached() {
 	return game()->mainCamera() == this; 
 }
 
-void CameraComponent::UpdateProjectionMatrix(/*Window* window*/) {
-	auto window = game()->window();
+void CameraComponent::UpdateProjectionMatrix() {
+	auto size = game()->render()->viewportSize();
 
-	if (!m_useOrthographic) {
-		m_projMatrix = Matrix::CreatePerspectiveFieldOfView(
-			3.14f * 0.35f,
-			window->GetWidth() / (float)window->GetHeight(),
-			nearPlane,
-			farPlane);
+	if (m_useOrthographic) {
+		m_projMatrix = Matrix::CreateOrthographic(orthoWidth, orthoHeight, orthoNearPlane, orthoFarPlane);
 	}
 	else {
-		m_projMatrix = Matrix::CreateOrthographic(orthoWidth, orthoHeight, orthoNearPlane, orthoFarPlane);
+		m_projMatrix = Matrix::CreatePerspectiveFieldOfView(
+			3.14f * 0.35f,
+			size.x / size.y,
+			nearPlane,
+			farPlane);
 	}
 }
 

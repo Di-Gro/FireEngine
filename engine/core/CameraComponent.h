@@ -46,7 +46,7 @@ public:
 	void Attach();
 	bool IsAttached();
 
-	void UpdateProjectionMatrix(/*Window* window*/);
+	void UpdateProjectionMatrix();
 
 };
 DEC_COMPONENT(CameraComponent);

@@ -102,6 +102,7 @@ public:
 
 	virtual void Init(Game* game);
 	virtual void Draw();
+	virtual void Resize(float width, float height) { };
 
 	void PrepareMaterial(const Material* material);
 

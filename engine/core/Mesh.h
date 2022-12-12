@@ -12,6 +12,8 @@
 #include "CsLink.h"
 #include "CSBridge.h"
 
+#include "ShaderResource.h"
+
 using namespace DirectX::SimpleMath;
 
 #pragma pack(push, 4)
@@ -24,6 +26,8 @@ static struct CameraCBuffer {
 #pragma pack(push, 4)
 static struct ShadowCBuffer {
 	Matrix uvMatrix;
+	float mapScale;
+	float _f[3];
 };
 #pragma pack(pop)
 
@@ -125,7 +129,7 @@ class ScreenQuad {
 public:
 	mutable D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 
-	ID3D11ShaderResourceView* deffuseSRV = nullptr;
+	ShaderResource* deffuse = nullptr;
 	comptr<ID3D11RasterizerState> rastState;
 
 public:

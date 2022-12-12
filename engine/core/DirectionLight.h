@@ -29,6 +29,7 @@ private:
 	MeshComponent* m_debugMesh = nullptr;
 	LineComponent* m_debugLine = nullptr;
 
+	float m_mapScale = 1;
 	Matrix m_uvMatrix;
 
 	bool m_needDrawDebug = true;
@@ -38,6 +39,9 @@ private:
 	Pass::LightSource m_lightSource;
 
 public:
+
+	inline float mapScale() { return m_mapScale; }
+
 	RenderTarget* RT() { { return &m_renderTarget; } };
 	DepthStencil* DS() { { return &m_depthStencil; } };
 
@@ -58,6 +62,8 @@ public:
 
 	void OnDrawLight(RenderPass* renderPass) override;
 	LightCBuffer GetCBuffer() override;
+
+	void Resize(float width, float height);
 
 	void RecieveGameMessage(const std::string& msg);
 };

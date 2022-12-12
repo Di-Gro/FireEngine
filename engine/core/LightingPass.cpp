@@ -59,6 +59,7 @@ void LightingPass::m_SetShadowCBuffer() {
 
 	auto* cbuf = (ShadowCBuffer*)res.pData;
 	cbuf->uvMatrix = dirLight->uvMatrix();
+	cbuf->mapScale = dirLight->mapScale();
 
 	context->Unmap(m_shadowCBuffer.Get(), 0);
 }

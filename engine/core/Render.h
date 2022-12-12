@@ -66,6 +66,9 @@ private:
 
 	CameraComponent* m_camera = nullptr;
 
+	Vector2 m_newViewportSize;
+	bool m_viewportChanged = false;
+
 private:
 	comptr<ID3D11RasterizerState> m_ñullSolidBack;
 	comptr<ID3D11RasterizerState> m_ñullSolidFront;
@@ -76,8 +79,10 @@ private:
 public:
 	inline CameraComponent* camera() { return m_camera; }
 
-	inline RenderDevice* rdevice() { return &m_device; };
+	inline Vector2 viewportSize() { return m_newViewportSize; }
+
 	inline ID3D11Device* device() { return m_device.GetDevice(); };
+	inline RenderDevice* rdevice() { return &m_device; };
 	inline ID3D11DeviceContext* context() { return m_device.GetContext(); }
 	inline IDXGISwapChain* swapChain() { return m_device.GetSwapChain(); }
 	inline comptr<ID3D11RenderTargetView> rtv() { return m_device.GetRTV(); }
@@ -89,6 +94,8 @@ public:
 
 	inline ShadowPass* shadowPass() { return &m_shadowPass; }
 	inline OpaquePass* opaquePass() { return &m_opaquePass; }
+
+	//inline void SetViewSize(size_t width, size_t height);
 
 
 	void Init(Game* game, Window* window);
@@ -115,17 +122,19 @@ public:
 	ID3D11RasterizerState* GetRastState(const Material* material);
 	ID3D11RasterizerState* GetRastState(CullMode cullMode, FillMode fillMode = FillMode::Solid);
 
+	void ResizeViewport(float width, float height);
+
 private:
 	void m_Clear();
-
-	//void m_Draw();
-	//void m_DrawUI();
+	void m_UpdateSize();
 
 	void m_OpaquePass();
 	void m_SecondPass();
 
 	size_t m_GetStringHash(const std::string& str) { return std::hash<std::string>()(str); }
 	int m_GetRenderPassIndex(const std::string& name);
+
+	void m_ResizeMainResouces(float width, float height);
 
 };
 

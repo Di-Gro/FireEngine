@@ -41,7 +41,7 @@ void Window::Create() {
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
     AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-    auto dwStyle = WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_THICKFRAME;
+    auto dwStyle = WS_SYSMENU | WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
     auto posX = (GetSystemMetrics(SM_CXSCREEN) - m_width) / 2;
     auto posY = (GetSystemMetrics(SM_CYSCREEN) - m_height) / 2;
@@ -88,6 +88,7 @@ LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM l
     case WM_SIZE: {
         m_width = LOWORD(lparam);
         m_height = HIWORD(lparam);
+        sizeChanged = true;
         return 0;
     }
     case WM_INPUT: {

@@ -55,7 +55,7 @@ void FlyingCamera::OnUpdate() {
 	//auto m = GetWorldMatrix();
 	auto newMatrix = Matrix::CreateLookAt(worldPosition(), worldPosition() + rotator.Forward(), rotator.Up());
 	viewMatrix(newMatrix);
-	UpdateProjectionMatrix(/*game()->window()*/);
+	UpdateProjectionMatrix();
 
 	if (printTransform)
 		game()->SendGameMessage(std::to_string(actor()->Id()) + " tr");

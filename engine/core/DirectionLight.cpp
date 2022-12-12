@@ -10,7 +10,6 @@
 DEF_PURE_COMPONENT(DirectionLight);
 
 void DirectionLight::OnInit() {
-	auto render = game()->render();
 	auto window = game()->window();
 
 	m_camera = AddComponent<CameraComponent>();
@@ -25,21 +24,23 @@ void DirectionLight::OnInit() {
 	m_camera->orthoNearPlane = -3000;
 	m_camera->orthoFarPlane = 3000;
 
-	int mul = 1;
-
-	//m_renderTarget.Init(game(), window->GetWidth() * mul, window->GetHeight() * mul, true);
-	m_renderTexture = Texture::Create(render, window->GetWidth() * mul, window->GetHeight() * mul);
-	m_renderTarget = RenderTarget::Create(&m_renderTexture);
-
-	//m_depthStencil.Init(game(), window->GetWidth() * mul, window->GetHeight() * mul, true);
-	m_depthTexture = Texture::CreateDepthTexture(render, window->GetWidth() * mul, window->GetHeight() * mul);
-	m_depthStencil = DepthStencil::Create(&m_depthTexture);
-	m_depthResource = ShaderResource::Create(&m_depthTexture);
+	Resize(window->GetWidth(), window->GetHeight());
 
 	m_screenQuad.Init(game()->render(), game()->shaderAsset()->GetShader(Assets::ShaderDirectionLight));
 
 	m_lightSource = game()->render()->AddLightSource(this);
 	
+}
+
+void DirectionLight::Resize(float width, float height) {
+	auto render = game()->render();
+
+	m_renderTexture = Texture::Create(render, width * m_mapScale, height * m_mapScale);
+	m_renderTarget = RenderTarget::Create(&m_renderTexture);
+
+	m_depthTexture = Texture::CreateDepthTexture(render, width * m_mapScale, height * m_mapScale);
+	m_depthStencil = DepthStencil::Create(&m_depthTexture);
+	m_depthResource = ShaderResource::Create(&m_depthTexture);
 }
 
 void DirectionLight::OnDestroy() {
@@ -77,7 +78,7 @@ CameraComponent* DirectionLight::camera() {
 
 	auto newMatrix = Matrix::CreateLookAt(worldPosition(), worldPosition() + rotator.Forward(), rotator.Up());
 	m_camera->viewMatrix(newMatrix);
-	m_camera->UpdateProjectionMatrix(/*game()->window()*/);
+	m_camera->UpdateProjectionMatrix();
 
 	m_uvMatrix = m_camera->cameraMatrix() * Matrix::CreateTranslation(Vector3(1, 1, 0)) * Matrix::CreateScale({ 0.5, 0.5, 1 });
 

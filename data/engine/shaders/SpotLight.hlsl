@@ -5,6 +5,7 @@ struct CameraData {
 
 struct ShadowData {
     float4x4 uvMatrix;
+    float mapScale;
 };
 struct LightData {
     float3 position;   float param1;

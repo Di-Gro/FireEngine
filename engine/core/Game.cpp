@@ -177,13 +177,21 @@ void Game::m_Update() {
 	if (m_hotkeys.GetButtonDown(Keys::Tilda))
 		inFocus = !inFocus;
 	
+	ImGui::Begin("Main Render Target");
+
+	auto size = ImGui::GetWindowSize();
+
+	render()->ResizeViewport(size.x, size.y - 35);
+
+	ImGui::Image(render()->screenSRV(), { size.x, size.y - 35 });
+	ImGui::End();
+
 	if (!inFocus) {
-		ImGui::Begin("Main Render Target");
-		ImGui::Image(render()->screenSRV(), { 1920 / 6, 1061 / 6 });
-		ImGui::End();
+		auto w = (float)window()->GetWidth();
+		auto h = (float)window()->GetHeight();
 
 		ImGui::Begin("Direction Light Shadow Map");
-		ImGui::Image(lighting()->directionLight()->depthResource()->get(), { 1920 / 6, 1061 / 6 });
+		ImGui::Image(lighting()->directionLight()->depthResource()->get(), { w / 6, h / 6 });
 		ImGui::End();
 	}
 
@@ -409,6 +417,14 @@ void Game::WriteRootActorsRefs(CsRef* refs) {
 			ptr++;
 		}
 	}
+}
+
+std::list<Actor*>::iterator Game::GetNextRootActor(const std::list<Actor*>::iterator& iter) {
+	for (auto it = iter; it != m_actors.end(); it++) {
+		if ((*it)->HasParent())
+			return it;
+	}
+	return m_actors.end();
 }
 
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, CppRef parentRef) {

@@ -5,6 +5,6 @@ class Component;
 
 class IShadowCaster {
 public:
-	virtual void OnDrawShadow(RenderPass* renderPass) = 0;
+	virtual void OnDrawShadow(RenderPass* renderPass, const Vector3& scale) = 0;
 	virtual Component* GetComponent() = 0;
 };
