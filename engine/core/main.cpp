@@ -16,7 +16,7 @@
 #include "Bridge.h"
 #include "smono/SMono.h"
 
-#define ASSEMBLY_PATH "C:/GitHub/FireEngine/x64/Debug/netstandard2.1/Mono.dll"
+#define ASSEMBLY_PATH "../../engine/mono/bin/Debug/netstandard2.1/Mono.dll"
 
 
 static void RunGame(MonoInst* imono) {

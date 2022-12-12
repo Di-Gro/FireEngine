@@ -4,6 +4,6 @@ using System.Text;
 
 namespace Engine {
     public class Paths {
-        public const string Exe = "../Core.exe";
+        public const string Exe = "../../../../../x64/Debug/Core.exe";
     }
 }

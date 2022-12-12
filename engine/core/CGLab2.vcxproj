@@ -263,13 +263,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Dmitry\Desktop\DirectXTK-main\DirectXTK-main\Inc;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Dmitry\Desktop\DirectXTK-main\DirectXTK-main\Bin\Desktop_2019_Win10\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\engine\DirectXTK\Inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\engine\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Dmitry\Desktop\DirectXTK-main\DirectXTK-main\Inc;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Dmitry\Desktop\DirectXTK-main\DirectXTK-main\Bin\Desktop_2019_Win10\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\engine\DirectXTK\Inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\engine\DirectXTK\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

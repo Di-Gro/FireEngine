@@ -95,9 +95,6 @@ public:
 	inline ShadowPass* shadowPass() { return &m_shadowPass; }
 	inline OpaquePass* opaquePass() { return &m_opaquePass; }
 
-	//inline void SetViewSize(size_t width, size_t height);
-
-
 	void Init(Game* game, Window* window);
 	void Start();
 	void Destroy();
