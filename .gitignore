@@ -399,3 +399,8 @@ FodyWeavers.xsd
 
 # ImGUI config
 engine/core/imgui.ini
+
+# Не исключаем
+!engine/DirectXTK/lib/DirectXTK.lib
+!engine/DirectXTK/lib/DirectXTK.pch
+!engine/DirectXTK/lib/DirectXTK.pdb

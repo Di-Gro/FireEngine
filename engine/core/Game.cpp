@@ -83,6 +83,8 @@ void Game::m_InitMono(MonoInst* imono) {
 }
 
 void Game::Run() {
+	bool isExitRequested = false;
+
 	m_render.Start();
 	m_meshAsset.Start(); 
 
@@ -93,12 +95,12 @@ void Game::Run() {
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
-	csLink.Link(cppObj, "EngineMono", "CSClass");	
+	//csLink.Link(cppObj, "EngineMono", "CSClass");	
 
-	//auto actor = CreateActor();
-	//actor->AddComponent<MeshComponent>();
-	//actor->AddComponent<CsComponent>("Engine.OhMyMesh");
+	//auto actor = CreateActor()->AddComponent<CsComponent>("Engine.TestYaml");
 
+
+	//isExitRequested = true; // return;
 	///
 
 	m_defaultCamera = CreateActor("default camera")->AddComponent<FlyingCamera>();
@@ -115,7 +117,7 @@ void Game::Run() {
 	CreateActor()->AddComponent<TestLightComponent>();
 	
 	MSG msg = {};
-	bool isExitRequested = false;
+	
 	while (!isExitRequested) {
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
