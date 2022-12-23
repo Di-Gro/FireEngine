@@ -19,6 +19,7 @@
 #include "Math.h"
 #include "CSBridge.h"
 #include "Assets.h"
+#include "UI/UserInterface.h"
 
 #include "Actor.h"
 
@@ -49,6 +50,8 @@ private:
 	ShaderAsset m_shaderAsset;
 	MeshAsset m_meshAsset;
 	ImageAsset m_imageAsset;
+
+	UserInterface ui;
 
 	CameraComponent* m_defaultCamera = nullptr;
 	CameraComponent* m_mainCamera = nullptr;
@@ -100,9 +103,10 @@ public:
 
 	void Stat();
 
+	std::list<Actor*>::iterator GetNextRootActors(const std::list<Actor*>::iterator& iter);
 	std::list<Actor*>::iterator BeginActor() { return m_actors.begin(); }
 	std::list<Actor*>::iterator EndActor() { return m_actors.end(); }
-	std::list<Actor*>::iterator GetNextRootActor(const std::list<Actor*>::iterator& iter);
+	//std::list<Actor*>::iterator GetNextRootActor(const std::list<Actor*>::iterator& iter);
 	
 private:
 	void m_InitMono(MonoInst* imono);

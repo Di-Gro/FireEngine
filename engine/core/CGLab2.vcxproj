@@ -90,6 +90,15 @@
     <ClCompile Include="Tmp.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformTest.cpp" />
+    <ClCompile Include="UI\UI_BarMenu.cpp" />
+    <ClCompile Include="UI\UI_Console.cpp" />
+    <ClCompile Include="UI\UI_ContentBrowser.cpp" />
+    <ClCompile Include="UI\UI_Editor.cpp" />
+    <ClCompile Include="UI\UI_Hierarchy.cpp" />
+    <ClCompile Include="UI\UI_Inspector.cpp" />
+    <ClCompile Include="UI\UI_PlayGame.cpp" />
+    <ClCompile Include="UI\UI_UpperMenu.cpp" />
+    <ClCompile Include="UI\UserInterface.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +188,15 @@
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformTest.h" />
+    <ClInclude Include="UI\UI_BarMenu.h" />
+    <ClInclude Include="UI\UI_Console.h" />
+    <ClInclude Include="UI\UI_ContentBrowser.h" />
+    <ClInclude Include="UI\UI_Editor.h" />
+    <ClInclude Include="UI\UI_Hierarchy.h" />
+    <ClInclude Include="UI\UI_Inspector.h" />
+    <ClInclude Include="UI\UI_PlayGame.h" />
+    <ClInclude Include="UI\UI_UpperMenu.h" />
+    <ClInclude Include="UI\UserInterface.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="wrl.h_d3d11_alias.h" />
   </ItemGroup>
@@ -210,13 +228,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -229,7 +247,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

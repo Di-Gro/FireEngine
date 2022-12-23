@@ -168,6 +168,7 @@ void Actor::m_DeleteFromParent() {
 }
 
 void Actor::SetName(const std::string& value) {
+	name = value;
 	mono_SetName(csRef(), (size_t)value.c_str(), value.size());
 }
 

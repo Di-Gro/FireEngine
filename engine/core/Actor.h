@@ -12,7 +12,6 @@
 #include "ActorConcepts.h"
 #include "ActorBase.h"
 
-
 FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
 FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
@@ -29,7 +28,7 @@ class Actor : public ActorBase {
 	FRIEND_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
 public:
-	//std::string name = "";
+	std::string name = "";
 
 private:
 	Game* f_game = nullptr;
@@ -52,6 +51,7 @@ public:
 	int Id() { return f_actorID; }
 
 	void SetName(const std::string& value);
+	const std::string& GetName() { return name; }
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* inner_CreateComponent(CsRef csRef = CsRef::Void);
@@ -74,6 +74,10 @@ public:
 	Actor* GetChild(int index);
 
 	void WriteComponentsRefs(size_t *csRefsList);
+
+	const std::list<Component*>* GetComponentList() {
+		return &m_components;
+	};
 
 	void RecieveGameMessage(const std::string& msg) override;
 
