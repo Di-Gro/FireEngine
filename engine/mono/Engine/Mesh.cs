@@ -9,16 +9,25 @@ using EngineDll;
 
 namespace Engine {
 
-    class Mesh {
+    class Mesh : FireYaml.IAsset {
+
+        /// FireYaml.IAsset
+        public string assetId { get => "0000000000"; set { } }
+        /// <-
+
         public CppRef meshRef { get; protected set; }
 
         public int ShapeCount => Dll.Mesh4.ShapeCount(meshRef);
         public int MaxMaterialIndex => Dll.Mesh4.MaterialMaxIndex(meshRef);
 
+        
 
         public Mesh() { }
         public Mesh(CppRef cppRef) => meshRef = cppRef;
 
+        public void LoadAsset() {
+            throw new NotImplementedException();
+        }
     }
 
     class StaticMesh : Mesh {

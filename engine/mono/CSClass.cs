@@ -2,15 +2,24 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.IO;
 
 using Engine;
 
 
 namespace Engine {
-    class OhMyMesh : CSComponent {
+    class TestMesh : CSComponent {
 
         private MeshComponent m_meshComp;
         private DynamicMaterial m_material;
+
+        public float floatField = 4.56f;
+        [Close] public float floatField2 = 5.56f;
+
+        private float m_floatField3 = 6.56f;
+        [Open] private float m_floatField4 = 7.56f;
+
+        public Vector3 vector = new Vector3(4,3,2);
 
 
         private string[] m_meshNames = new string[] {
@@ -79,14 +88,24 @@ namespace Engine {
 namespace EngineMono {
 
 	class CSClass : CppLinked {
+        static string pathOut = @"C:\Users\Dmitry\Desktop\Пример\out.yml";
 
-		/// Связывание с C++ объектом
-		public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
+        /// Связывание с C++ объектом
+        public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			CsRef csRef = base.Link(classInfoRef, objRef);
 
-			var gameObject = new Actor();
-			gameObject.AddComponent<OhMyMesh>();
+            var assetStore = new FireYaml.AssetStore();
+            FireYaml.AssetStore.Instance = assetStore;
+
+            var gameObject = new Actor();
+			gameObject.AddComponent<TestMesh>();
             gameObject.AddComponent<UI.TestImGui>();
+
+            //var actor = new Actor();
+            //var serializer = new FireYaml.Serializer(ignoreExistingIds: false, writeNewIds: true, startId: 1);
+            //serializer.Serialize(gameObject);
+
+            //File.WriteAllText(pathOut, serializer.Values.ToSortedText());
 
             /// Передача vector2, vector3 и quaternion ->
             //var gameObject2 = new GameObject();

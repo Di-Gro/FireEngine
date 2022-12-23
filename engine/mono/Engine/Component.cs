@@ -67,7 +67,14 @@ namespace Engine {
     /// <summary>
     /// Базовый класс для C# компонента.
     /// </summary>
-    abstract class CSComponent : Component {
+    abstract class CSComponent : Component, FireYaml.IFile {
+        /// FireYaml.IFile ->
+        public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
+
+        public int fileId { get; set; } = -1;
+
+        public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
+        /// <- 
 
         public override CppObjectInfo CreateFromCS(Actor target) {
             return Dll.CsComponent.Create(target.cppRef, csRef);
@@ -78,8 +85,14 @@ namespace Engine {
     /// <summary>
     /// Базовый класс для C# тени C++ компонента.
     /// </summary>
-    abstract class CppComponent : Component {
+    abstract class CppComponent : Component, FireYaml.IFile {
+        /// FireYaml.IFile ->
+        public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
 
+        public int fileId { get; set; } = -1;
+
+        public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
+        /// <- 
     }
 
 }

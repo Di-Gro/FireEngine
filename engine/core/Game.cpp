@@ -96,7 +96,7 @@ void Game::Run() {
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
-	//csLink.Link(cppObj, "EngineMono", "CSClass");	
+	csLink.Link(cppObj, "EngineMono", "CSClass");	
 
 	//auto actor = CreateActor()->AddComponent<CsComponent>("Engine.TestYaml");
 
@@ -187,9 +187,9 @@ void Game::m_Update() {
 		auto w = (float)window()->GetWidth();
 		auto h = (float)window()->GetHeight();
 
-		ImGui::Begin("Direction Light Shadow Map");
+		/*ImGui::Begin("Direction Light Shadow Map");
 		ImGui::Image(lighting()->directionLight()->depthResource()->get(), { w / 6, h / 6 });
-		ImGui::End();
+		ImGui::End();*/
 	}
 
 	m_EndUpdateImGui();

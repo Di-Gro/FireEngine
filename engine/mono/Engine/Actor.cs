@@ -9,7 +9,16 @@ using EngineDll;
 
 namespace Engine {
 
-    sealed class Actor : CppLinked {
+    sealed class Actor : CppLinked, FireYaml.IFile {
+
+        /// FireYaml.IFile ->
+        [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
+
+        [Close] public int fileId { get; set; } = -1;
+
+        [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
+        /// <- 
+
         public string Name { get; set; }
 
         public Vector3 localPosition {
@@ -17,6 +26,7 @@ namespace Engine {
             set => Dll.Actor.localPosition_set(cppRef, value);
         }
 
+        [Close]
         public Vector3 localRotation {
             get => Dll.Actor.localRotation_get(cppRef);
             set => Dll.Actor.localRotation_set(cppRef, value);
@@ -40,7 +50,7 @@ namespace Engine {
         public Vector3 up => Dll.Actor.up_get(cppRef);
         public Vector3 right => Dll.Actor.right_get(cppRef);
 
-        public Actor parent {
+        [Close] public Actor parent {
             get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
             set => Dll.Actor.parent_set(cppRef, value.cppRef);
         }
@@ -52,7 +62,8 @@ namespace Engine {
 
         #region Public
 
-        public Actor(string name = "Actor") : this(name, null) { }
+        public Actor() : this("Actor", null) { }
+        public Actor(string name) : this(name, null) { }
         public Actor(Actor targetParent) : this("Actor", targetParent) { }
         
         public Actor(string name, Actor targetParent) {
@@ -151,6 +162,31 @@ namespace Engine {
 
             var childRef = Dll.Actor.GetChild(cppRef, index);
             return GetObjectByRef(childRef) as Actor;
+        }
+
+        public List<Actor> GetChildren() {
+            var count = GetChildrenCount();
+            var list = new List<Actor>();
+
+            for (int i = 0; i < count; i++) {
+                var childRef = Dll.Actor.GetChild(cppRef, i);
+                list.Add(GetObjectByRef(childRef) as Actor);
+            }
+            return list;
+        }
+
+        public List<object> GetComponentsList() {
+            var refs = m_GetComponentRefs();
+            var list = new List<object>();
+
+            foreach (var compRef in refs) {
+                if (compRef.value != 0) {
+                    var obj = GetObjectByRef(compRef);
+                    if (obj.GetType() != typeof(CSComponent))
+                        list.Add(obj);
+                }
+            }
+            return list;
         }
 
         #endregion

@@ -13,7 +13,7 @@
 #include "d3d11.h"
 #include "../monopp/mono_build_config.h"
 
-#define ASSEMBLY_PATH "C:/GitHub/FireEngine/x64/Debug/netstandard2.0/Mono.dll"
+#define ASSEMBLY_PATH "C:\\GitHub\\FireEngine\\engine\\mono\\bin\\Debug\\netstandard2.1\\Mono.dll"
 
 
 
