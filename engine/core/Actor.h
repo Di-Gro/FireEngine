@@ -29,6 +29,7 @@ class Actor : public ActorBase {
 
 public:
 	std::string name = "";
+	/// TODO: bool isStatic = true;
 
 private:
 	Game* f_game = nullptr;

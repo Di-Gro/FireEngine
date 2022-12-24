@@ -322,6 +322,10 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 		}
 		m_mesh->DrawShape(data, i);
 	}
+
+	///TODO: 
+	/// boundMesh.verteces * transMatrix 
+	/// и передать в navmesh 
 }
 
 void MeshComponent::OnDrawShape(int index) {
@@ -340,6 +344,11 @@ void MeshComponent::OnDrawShape(int index) {
 	data.cameraPosition = &cameraPosition;
 
 	m_mesh->DrawShape(data, index);
+
+	///TODO: 
+	/// если первый раз за update
+	/// boundMesh.verteces * transMatrix 
+	/// и передать в navmesh 
 }
 
 
