@@ -8,7 +8,7 @@ Texture2D Selection : register(t0);
 SamplerState Sampler1 : register(s0);
 
 Texture2D SelectionBlur : register(t1);
-SamplerState Sampler2 : register(s2);
+SamplerState Sampler2 : register(s1);
 
 PS_IN VSMain(uint id: SV_VertexID) {
     PS_IN output = (PS_IN)0;
