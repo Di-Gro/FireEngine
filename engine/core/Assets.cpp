@@ -9,3 +9,7 @@ std::string Assets::ShaderDirectionLight = "../../data/engine/shaders/DirectionL
 std::string Assets::ShaderPointLight = "../../data/engine/shaders/PointLight.hlsl";
 std::string Assets::ShaderPointLightMesh = "../../data/engine/shaders/PointLightMesh.hlsl";
 std::string Assets::ShaderSpotLight = "../../data/engine/shaders/SpotLight.hlsl";
+
+std::string Assets::ShaderEditorHihglight = "../../data/engine/shaders/EditorHihglight.hlsl";
+std::string Assets::ShaderEditorOutline = "../../data/engine/shaders/EditorOutline.hlsl";
+std::string Assets::ShaderBlur = "../../data/engine/shaders/Blur.hlsl";

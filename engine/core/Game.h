@@ -51,7 +51,7 @@ private:
 	MeshAsset m_meshAsset;
 	ImageAsset m_imageAsset;
 
-	UserInterface ui;
+	UserInterface m_ui;
 
 	CameraComponent* m_defaultCamera = nullptr;
 	CameraComponent* m_mainCamera = nullptr;
@@ -59,7 +59,7 @@ private:
 	std::list<Actor*> m_actors;
 
 	bool m_onExit = false;
-	int m_objectCount = 0;
+	unsigned int m_objectCount = 0;
 
 	mono::mono_method_invoker<CppRef()> mono_create;
 	mono::mono_method_invoker<void(GameUpdateData)> mono_setUpdateData;
@@ -79,6 +79,7 @@ public:
 	inline Lighting* lighting() { return &m_lighting; }
 	inline InputDevice* input() { return &m_input; }
 	inline HotKeys* hotkeys() { return &m_hotkeys; }
+	inline UserInterface* ui() { return &m_ui; }
 
 	inline ShaderAsset* shaderAsset() { return &m_shaderAsset; }
 	inline MeshAsset* meshAsset() { return &m_meshAsset; }

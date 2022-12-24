@@ -56,10 +56,10 @@ void UserInterface::Draw()
 	uiUpperMenu.Draw_UI_UpperMenu();
 	// Hierarchy
 	uiHierarchy.Draw_UI_Hierarchy();
-	// Editor
-	uiEditor.Draw_UI_Editor();
 	//// Play Game
 	uiPlayGame.Draw_UI_PlayGame();
+	// Editor
+	uiEditor.Draw_UI_Editor();
 	//// Inspector
 	uiInspector.Draw_UI_Inspector();
 	//// Content Browser

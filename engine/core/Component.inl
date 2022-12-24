@@ -20,7 +20,7 @@ public:
 	virtual ComponentMeta GetMeta() = 0;
 
 private:
-	ComponentCallbacks m_callbacks;
+	ComponentCallbacks m_callbacks = {};
 
 };
 

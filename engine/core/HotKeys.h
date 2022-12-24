@@ -17,7 +17,7 @@ private:
 	};
 
 	std::unordered_map<Keys, MapItem> m_states;
-	Game* m_game;
+	Game* m_game = nullptr;
 	DelegateHandle m_mouseMoveHandle;
 	int m_mouseWheelDelta = 0;
 

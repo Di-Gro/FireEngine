@@ -8,10 +8,10 @@ class Texture;
 
 class ShaderResource {
 public:
-	D3D11_SAMPLER_DESC samplerDesc;
+	D3D11_SAMPLER_DESC samplerDesc = {};
 
 private:
-	Render* m_render;
+	Render* m_render = nullptr;
 
 	comptr<ID3D11ShaderResourceView> m_view;
 	comptr<ID3D11SamplerState> m_sampler;

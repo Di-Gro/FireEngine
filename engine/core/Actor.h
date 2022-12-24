@@ -32,7 +32,7 @@ public:
 
 private:
 	Game* f_game = nullptr;
-	int f_actorID;
+	unsigned int f_actorID;
 
 	Actor* f_parent = nullptr;
 
@@ -48,7 +48,7 @@ private:
 
 public:
 
-	int Id() { return f_actorID; }
+	unsigned int Id() { return f_actorID; }
 
 	void SetName(const std::string& value);
 	const std::string& GetName() { return name; }

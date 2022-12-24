@@ -175,7 +175,7 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 
 void ScreenQuad::Init(Render* render, const Shader* shader) {
 	m_render = render;
-	m_shader = shader;
+	this->shader = shader;
 
 	D3D11_SAMPLER_DESC sampleDesc = {};
 	sampleDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -209,8 +209,8 @@ void ScreenQuad::Draw() const {
 
 	/// Material: SetShader
 	context->IASetInputLayout(nullptr);
-	context->VSSetShader(m_shader->vertex.Get(), nullptr, 0);
-	context->PSSetShader(m_shader->pixel.Get(), nullptr, 0);
+	context->VSSetShader(shader->vertex.Get(), nullptr, 0);
+	context->PSSetShader(shader->pixel.Get(), nullptr, 0);
 
 	/// Material: SetMaterialConstBuffer 
 	/// Material: SetRasterizerState

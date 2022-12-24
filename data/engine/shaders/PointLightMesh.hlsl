@@ -54,6 +54,7 @@ Texture2D gbuf_normal : register(t2);
 Texture2D gbuf_vertexColor : register(t3);
 Texture2D gbuf_worldPos : register(t4);
 Texture2D gbuf_matParams : register(t5);
+// Texture2D gbuf_actor : register(t6);
 
 float3 GetDiffuse(float2 screenPos){ return gbuf_diffuseRGB.Load(float3(screenPos.xy, 0)).rgb; }
 float3 GetNormal(float2 screenPos){ return gbuf_normal.Load(float3(screenPos.xy, 0)).rgb; }

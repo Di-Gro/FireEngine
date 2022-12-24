@@ -16,6 +16,19 @@
 void OpaquePass::Init(Game* game) {
 	RenderPass::Init(game);
 
+	auto blendState = blendStateDesc.RenderTarget[0];
+
+	blendStateDesc = D3D11_BLEND_DESC{ false, true };
+	blendStateDesc.RenderTarget[0] = blendState;
+	blendStateDesc.RenderTarget[1] = blendState;
+	blendStateDesc.RenderTarget[2] = blendState;
+	blendStateDesc.RenderTarget[3] = blendState;
+	blendStateDesc.RenderTarget[4] = blendState;
+	blendStateDesc.RenderTarget[5] = blendState;
+	blendStateDesc.RenderTarget[5].BlendEnable = false;
+
+	UpdateBlendState();
+
 	auto width = m_game->window()->GetWidth();
 	auto height = m_game->window()->GetHeight();
 
@@ -28,18 +41,21 @@ void OpaquePass::Resize(float width, float height) {
 	target2Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 	target3Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
 	target4Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	target5Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32_UINT);
 
 	target0 = RenderTarget::Create(&target0Tex);
 	target1 = RenderTarget::Create(&target1Tex);
 	target2 = RenderTarget::Create(&target2Tex);
 	target3 = RenderTarget::Create(&target3Tex);
 	target4 = RenderTarget::Create(&target4Tex);
+	target5 = RenderTarget::Create(&target5Tex);
 
 	target0Res = ShaderResource::Create(&target0Tex);
 	target1Res = ShaderResource::Create(&target1Tex);
 	target2Res = ShaderResource::Create(&target2Tex);
 	target3Res = ShaderResource::Create(&target3Tex);
 	target4Res = ShaderResource::Create(&target4Tex);
+	target5Res = ShaderResource::Create(&target5Tex);
 }
 
 void OpaquePass::Draw() {
@@ -62,6 +78,7 @@ void OpaquePass::Draw() {
 					once = false;
 					PrepareMaterial(material);
 				}
+				SetActorConstBuffer(meshComponent->actor());
 				meshComponent->OnDrawShape(index);
 			}
 		}

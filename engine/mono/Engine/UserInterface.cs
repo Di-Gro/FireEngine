@@ -33,7 +33,7 @@ namespace Engine
         //public static void OnDrawComponent(ulong csref)
         public void OnDrawComponent(CsRef csRef)
         {
-            Console.WriteLine($"OnDrawComponent(): {csRef}");
+            //Console.WriteLine($"OnDrawComponent(): {csRef}");
             //ImGui.Begin("Hello World!");
             //var _object = CppLinked.GetObjectByRef(csref);
 

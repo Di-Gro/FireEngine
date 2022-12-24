@@ -297,6 +297,15 @@
     <ClCompile Include="UI\UserInterface.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="SelectionPass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="OutlinePass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurPass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -589,6 +598,21 @@
     </ClInclude>
     <ClInclude Include="UI\UserInterface.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorCBuffer.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionPass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCBuffer.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="OutlinePass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="BlurPass.h">
+      <Filter>Render\Render Passes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

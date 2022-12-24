@@ -10,11 +10,13 @@
 #include "UI_Console.h"
 #include "../imgui/imgui.h"
 #include "../Actor.h"
+#include "../SimpleMath.h"
 
 class Game;
 
-class UserInterface
-{
+class UserInterface {
+	friend class UI_Editor;
+
 public:
 	struct Callbacks
 	{
@@ -32,10 +34,15 @@ public:
 	bool HasActor();
 	bool isActive();
 
+	Vector2 mouseViewportPosition() { return f_mouseViewportPosition; };
+
 	void SetCallbacks(const Callbacks&);
 	Callbacks _callbacks;
-private:
 
+private: /// For class friends
+	Vector2 f_mouseViewportPosition;
+
+private:
 	void InitMono();
 	void InitDockSpace();
 

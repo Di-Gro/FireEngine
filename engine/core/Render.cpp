@@ -37,6 +37,9 @@
 const std::string Render::shadowPassName = "Shadow Pass";
 const std::string Render::opaquePassName = "Opaque Pass";
 const std::string Render::lightingPassName = "Lighting Pass";
+const std::string Render::screenSpacePassName = "ScreenSpace Pass";
+
+
 
 
 void Render::Init(Game* game, Window* window) {
@@ -47,19 +50,28 @@ void Render::Init(Game* game, Window* window) {
 	m_ResizeMainResouces(window->GetWidth(), window->GetHeight());
 	
 	CD3D11_RASTERIZER_DESC rastDesc = {};
-	rastDesc.CullMode = D3D11_CULL_BACK;
+
 	rastDesc.FillMode = D3D11_FILL_SOLID;
+	rastDesc.CullMode = D3D11_CULL_BACK;
 	device()->CreateRasterizerState(&rastDesc, m_ñullSolidBack.GetAddressOf());
 
 	rastDesc.CullMode = D3D11_CULL_FRONT;
 	device()->CreateRasterizerState(&rastDesc, m_ñullSolidFront.GetAddressOf());
 
-	rastDesc.CullMode = D3D11_CULL_BACK;
+	rastDesc.CullMode = D3D11_CULL_NONE;
+	device()->CreateRasterizerState(&rastDesc, m_ñullSolidNone.GetAddressOf());
+
 	rastDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rastDesc.CullMode = D3D11_CULL_BACK;
 	device()->CreateRasterizerState(&rastDesc, m_ñullWireframeBack.GetAddressOf());
 
 	rastDesc.CullMode = D3D11_CULL_FRONT;
 	device()->CreateRasterizerState(&rastDesc, m_ñullWireframeFront.GetAddressOf());
+
+	rastDesc.CullMode = D3D11_CULL_NONE;
+	device()->CreateRasterizerState(&rastDesc, m_ñullWireframeNone.GetAddressOf());
+
+	onePixelStagingTex = Texture::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32_UINT);
 }
 
 void Render::m_ResizeMainResouces(float width, float height) {
@@ -76,10 +88,16 @@ void Render::Start() {
 	m_shadowPass.Init(m_game);
 	m_opaquePass.Init(m_game);
 	m_lightingPass.Init(m_game);
+	m_highlightPass.Init(m_game);
+	m_blurPass.Init(m_game);
+	m_outlinePass.Init(m_game);
 
 	AddRenderPass("Shadow Pass", &m_shadowPass);
 	AddRenderPass(Render::opaquePassName, &m_opaquePass);
 	AddRenderPass(Render::lightingPassName, &m_lightingPass);
+	AddRenderPass("Editor Highlight Pass", &m_highlightPass);
+	AddRenderPass("Editor Blur Pass", &m_blurPass);
+	AddRenderPass("Editor Outline Pass", &m_outlinePass);
 
 	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
 	m_screenQuad.deffuse = &m_mainResource;
@@ -114,6 +132,7 @@ void Render::Draw() {
 			&m_opaquePass.target2, 
 			&m_opaquePass.target3, 
 			&m_opaquePass.target4,
+			&m_opaquePass.target5,
 		});
 
 		auto shadowMap = m_game->lighting()->directionLight()->depthResource();
@@ -127,6 +146,12 @@ void Render::Draw() {
 			&m_opaquePass.target3Res,
 			&m_opaquePass.target4Res,
 		});
+
+		m_blurPass.SetPSShaderResources({ &m_highlightPass.target0Res });
+
+		m_outlinePass.SetRenderTargets({ &m_mainTarget });
+		m_outlinePass.SetPSShaderResources({ &m_highlightPass.target0Res, &m_blurPass.target0Res });
+		m_outlinePass.clearTargets = false;
 	}
 
 	/// Begin Render
@@ -140,10 +165,6 @@ void Render::Draw() {
 	/// Begin Draw
 	m_device.BeginDraw();
 
-	///// Draw Quad 
-	//context()->RSSetState(GetRastState(CullMode::Back));
-	//m_screenQuad.Draw();
-	
 	/// Draw ImGui
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -310,6 +331,10 @@ void Render::m_UpdateSize() {
 		for (auto* renderPass : m_renderPipeline)
 			renderPass->Resize(width, height);
 	}
+}
+
+void Render::ResizeViewport(const Vector2& size) {
+	ResizeViewport(size.x, size.y);
 }
 
 void Render::ResizeViewport(float width, float height) {
@@ -528,8 +553,8 @@ void Render::m_SecondPass() {
 
 	///// Material: SetShader
 	//context()->IASetInputLayout(nullptr);
-	//context()->VSSetShader(quad->m_shader->vertex.Get(), nullptr, 0);
-	//context()->PSSetShader(quad->m_shader->pixel.Get(), nullptr, 0);
+	//context()->VSSetShader(quad->shader->vertex.Get(), nullptr, 0);
+	//context()->PSSetShader(quad->shader->pixel.Get(), nullptr, 0);
 
 	///// Material: SetMaterialConstBuffer
 	///// Material: SetRasterizerState
@@ -559,11 +584,45 @@ ID3D11RasterizerState* Render::GetRastState(CullMode cullMode, FillMode fillMode
 	if (cullMode == CullMode::Front && fillMode == FillMode::Solid)
 		return m_ñullSolidFront.Get();
 
+	if (cullMode == CullMode::None && fillMode == FillMode::Solid)
+		return m_ñullSolidNone.Get();
+
 	if (cullMode == CullMode::Back && fillMode == FillMode::Wireframe)
 		return m_ñullWireframeBack.Get();
 
 	if (cullMode == CullMode::Front && fillMode == FillMode::Wireframe)
 		return m_ñullWireframeFront.Get();
 
+	if (cullMode == CullMode::None && fillMode == FillMode::Wireframe)
+		return m_ñullWireframeNone.Get();
+
 	assert(false);
+}
+
+UINT Render::GetActorIdInViewport(const Vector2& vpos)
+{
+	if (vpos.x < 0 || vpos.x > 1 || vpos.y < 0 || vpos.y > 1)
+		return 0;
+
+	auto pixel = vpos * viewportSize();
+
+	D3D11_BOX srcBox;
+	srcBox.left = pixel.x;
+	srcBox.right = pixel.x + 1;
+	srcBox.bottom = pixel.y + 1;
+	srcBox.top = pixel.y;
+	srcBox.front = 0;
+	srcBox.back = 1;
+
+	context()->CopySubresourceRegion(onePixelStagingTex.get(), 0, 0, 0, 0, m_opaquePass.target5Tex.get(), 0, &srcBox);
+
+	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
+	auto hres = context()->Map(onePixelStagingTex.get(), 0, D3D11_MAP_READ, 0, &MappedSubresource);
+	assert(SUCCEEDED(hres));
+
+	auto pPixels = (uint32_t*)MappedSubresource.pData;
+
+	context()->Unmap(onePixelStagingTex.get(), 0);
+
+	return (UINT)*pPixels;
 }

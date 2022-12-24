@@ -12,4 +12,8 @@ public:
 	static std::string ShaderPointLight;
 	static std::string ShaderPointLightMesh;
 	static std::string ShaderSpotLight;
+
+	static std::string ShaderEditorHihglight;
+	static std::string ShaderEditorOutline;
+	static std::string ShaderBlur;
 };

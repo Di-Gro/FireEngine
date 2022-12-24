@@ -17,15 +17,39 @@ bool UI_Editor::ButtonCenteredOnLine(const char* label, float alignment)
 
 void UI_Editor::Draw_UI_Editor()
 {
+	bool hasClickInViewport = false;
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	if (ImGui::Begin("Scene"))
 	{
+		auto viewportSize = (Vector2&)ImGui::GetWindowSize() - Vector2(0, 19.0f);
+		auto mousePos = (Vector2&)ImGui::GetMousePos();
+		mousePos -= (Vector2&)ImGui::GetWindowPos() + Vector2(0, 19.0f);
+		mousePos = mousePos / viewportSize;
+
+		_game->ui()->f_mouseViewportPosition = mousePos;
+		
 		Draw_Tools();
-		auto size = ImGui::GetWindowSize();
-		_game->render()->ResizeViewport(size.x, size.y - 20.0f);
-		ImGui::Image(_game->render()->screenSRV(), { size.x, size.y - 20.0f });
-	}ImGui::End();
+		_game->render()->ResizeViewport(viewportSize);
+		ImGui::Image(_game->render()->screenSRV(), (ImVec2&)viewportSize);
+
+		auto hasClick = ImGui::IsMouseClicked(ImGuiMouseButton_::ImGuiMouseButton_Left);
+		hasClickInViewport = hasClick && ImGui::IsWindowHovered();
+	}
+	ImGui::End();
 	ImGui::PopStyleVar();
+
+	if (hasClickInViewport) {
+		auto vpos = _game->ui()->mouseViewportPosition();
+		auto actorRef = _game->render()->GetActorIdInViewport(vpos);
+		if (actorRef != 0) {
+			auto actor = CppRefs::ThrowPointer<Actor>(RefCpp(actorRef));
+			_game->ui()->SelectedActor(actor);
+		}
+		else {
+			_game->ui()->SelectedActor(nullptr);
+		}
+	}
 }
 
 void UI_Editor::Draw_Tools()

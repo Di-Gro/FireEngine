@@ -14,7 +14,7 @@
 class Shader;
 class Render;
 
-enum class CullMode { Front, Back };
+enum class CullMode { Front, Back, None };
 enum class FillMode { Solid, Wireframe };
 
 class Material : public CsLink {

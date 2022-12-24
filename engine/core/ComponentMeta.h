@@ -9,6 +9,6 @@ class ComponentMeta {
 public:
 	bool isPure;
 	const char* name;
-	ClassInfo* classInfo;
+	ClassInfo* classInfo = nullptr;
 	CppRef classInfoRef;
 };

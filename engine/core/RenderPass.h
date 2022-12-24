@@ -20,9 +20,10 @@
 #define PASS_CB_CAMERA_PS 0
 #define PASS_CB_SHADOW_PS 1
 #define PASS_CB_LIGHT_PS 2
-
 #define PASS_CB_MATERIAL_PS 3
 #define PASS_CB_MESH_PS 4
+#define PASS_CB_ACTOR_PS 5
+#define PASS_CB_EDITOR_PS 6
 
 /// CBuffers Vertex Shader
 #define PASS_CB_MESH_VS 4
@@ -45,6 +46,7 @@
 /// RenderPass: EndDraw
 
 class Game;
+class Actor;
 class Render;
 class RenderTarget;
 class ShaderResource;
@@ -59,6 +61,7 @@ protected: /// For class friends
 
 public:
 	bool callPixelShader = true;
+	bool clearTargets = true;
 
 	D3D11_BLEND_DESC blendStateDesc;
 
@@ -66,7 +69,7 @@ protected:
 	Game* m_game;
 	Render* m_render;
 
-private:
+protected:
 	std::string m_name;
 
 	RenderTarget* m_targets[RTCount] = { nullptr };
@@ -86,6 +89,8 @@ private:
 
 public:
 	comptr<ID3D11Buffer> m_cameraBuffer;
+	comptr<ID3D11Buffer> m_actorBuffer;
+	comptr<ID3D11Buffer> m_editorBuffer;
 		
 public:
 	virtual ~RenderPass();
@@ -105,20 +110,22 @@ public:
 	virtual void Resize(float width, float height) { };
 
 	void PrepareMaterial(const Material* material);
+	void SetActorConstBuffer(Actor* actor);
+	void SetEditorConstBuffer();
 
 protected:
 	inline void BeginDraw();
 	inline void EndDraw();
 
 	void UpdateBlendState();
-
+	
 private:
 	inline void m_PrepareResources();
 	inline void m_PrepareTargets();
 	inline void m_ClearTargets();
 
 	inline void m_SetCameraConstBuffer();
-
+	
 	inline void m_PrepareMaterialResources(const Material* material);
 	inline void m_SetShader(const Material* material);
 	inline void m_SetMaterialConstBuffer(const Material* material);

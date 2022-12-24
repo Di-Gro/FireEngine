@@ -1,6 +1,10 @@
 //
 // include
 //
+struct ActorData {
+    uint actorId;
+};
+
 struct CameraData {
     float3 position;
 };
@@ -44,6 +48,8 @@ struct MeshData {
 cbuffer PS_MaterialData : register(b3) { MaterialData cb_material; }
 // PASS_CB_MESH_PS 4
 cbuffer VS_PS_MeshData : register(b4) { MeshData cb_mesh; }
+// PASS_CB_ACTOR_PS 5
+cbuffer PS_ActorData : register(b5) { ActorData cb_actor; }
 //
 // include
 //
@@ -89,6 +95,7 @@ struct PSOpaque {
     float4 vertexColor : SV_Target2;
     float4 worldPos : SV_Target3;
     float4 matParams : SV_Target4;
+    uint actorId : SV_Target5;
 };
 
 PSOpaque PSMain(PS_IN input) {
@@ -107,6 +114,8 @@ PSOpaque PSMain(PS_IN input) {
 	output.normal = input.normal;
     output.vertexColor = input.color;
     output.worldPos = input.worldPos;
+
+    output.actorId = cb_actor.actorId;
 
     return output;
 }

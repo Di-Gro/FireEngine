@@ -1,5 +1,11 @@
 #include "SimpleMath.h"
 
+std::string ToString(const Vector2& vec) {
+	return "("
+		+ std::to_string(vec.x) + ", "
+		+ std::to_string(vec.y) + ")";
+}
+
 std::string ToString(const Vector3& vec) {
 	return "("
 		+ std::to_string(vec.x) + ", "

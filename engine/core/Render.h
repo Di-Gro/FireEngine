@@ -7,13 +7,17 @@
 #include <unordered_map>
 
 #include "RenderDevice.h"
+#include "DepthStencil.h"
+#include "MaterialAlias.h"
+
 #include "RenderPass.h"
 #include "ShadowPass.h"
 #include "LightingPass.h"
 #include "OldPass.h"
 #include "OpaquePass.h"
-#include "DepthStencil.h"
-#include "MaterialAlias.h"
+#include "SelectionPass.h"
+#include "OutlinePass.h"
+#include "BlurPass.h"
 
 #include "Texture.h"
 #include "ShaderResource.h"
@@ -28,19 +32,23 @@ class Component;
 class Material;
 class ILightSource;
 class IShadowCaster;
+class Material;
 
 class Render {
 	friend class ShadowPass;
 	friend class OldPass;
 	friend class RenderPass;
 	friend class LightingPass;
+	friend class RenderPassUI;
+
 public:
 	static const std::string shadowPassName;
 	static const std::string opaquePassName;
 	static const std::string lightingPassName;
+	static const std::string screenSpacePassName;
 	
 private:
-	Game* m_game;
+	Game* m_game = nullptr;
 	RenderDevice m_device;
 
 	Texture m_mainTexure;
@@ -53,6 +61,8 @@ private:
 
 	ScreenQuad m_screenQuad;
 
+	Texture onePixelStagingTex;
+
 	std::list<IShadowCaster*> m_shadowCasters;
 	std::list<ILightSource*> m_lightSources;
 	std::list<Component*> m_uiDrawers;
@@ -62,7 +72,10 @@ private:
 
 	ShadowPass m_shadowPass;
 	OpaquePass m_opaquePass;
+	SelectionPass m_highlightPass;
 	LightingPass m_lightingPass;
+	OutlinePass m_outlinePass;
+	BlurPass m_blurPass;
 
 	CameraComponent* m_camera = nullptr;
 
@@ -72,9 +85,11 @@ private:
 private:
 	comptr<ID3D11RasterizerState> m_ñullSolidBack;
 	comptr<ID3D11RasterizerState> m_ñullSolidFront;
+	comptr<ID3D11RasterizerState> m_ñullSolidNone;
 
 	comptr<ID3D11RasterizerState> m_ñullWireframeBack;
 	comptr<ID3D11RasterizerState> m_ñullWireframeFront;
+	comptr<ID3D11RasterizerState> m_ñullWireframeNone;
 
 public:
 	inline CameraComponent* camera() { return m_camera; }
@@ -119,7 +134,10 @@ public:
 	ID3D11RasterizerState* GetRastState(const Material* material);
 	ID3D11RasterizerState* GetRastState(CullMode cullMode, FillMode fillMode = FillMode::Solid);
 
+	void ResizeViewport(const Vector2& size);
 	void ResizeViewport(float width, float height);
+
+	UINT GetActorIdInViewport(const Vector2& viewportPosition);
 
 private:
 	void m_Clear();
@@ -133,5 +151,6 @@ private:
 
 	void m_ResizeMainResouces(float width, float height);
 
+	
 };
 

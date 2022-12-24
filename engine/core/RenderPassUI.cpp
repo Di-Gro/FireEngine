@@ -23,6 +23,14 @@ void RenderPassUI::OnUpdate() {
 	auto w = (float)window->GetWidth();
 	auto h = (float)window->GetHeight();
 
+	//ImGui::Begin("m_highlightPass");
+	//ImGui::Image(game()->render()->m_highlightPass.target0Res.get(), (ImVec2&)(game()->render()->viewportSize() / 1.5));
+	//ImGui::End();
+
+	//ImGui::Begin("m_blurPass");
+	//ImGui::Image(game()->render()->m_blurPass.target0Res.get(), (ImVec2&)(game()->render()->viewportSize() / 1.5));
+	//ImGui::End();
+
 	//ImGui::Begin("target0Tex: diffuse, spec");
 	//ImGui::Image(opaquePass->target0Res.get(), { w / 6, h / 6 });
 	//ImGui::End();

@@ -7,7 +7,7 @@ class Render;
 
 class ShaderAsset {
 private:
-	Render* m_render;
+	Render* m_render = nullptr;
 
 	std::map<size_t, Shader> m_shaders;
 

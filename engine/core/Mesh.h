@@ -17,14 +17,14 @@
 using namespace DirectX::SimpleMath;
 
 #pragma pack(push, 4)
-static struct CameraCBuffer {
+struct CameraCBuffer {
 	Vector3 position;
 	float _1[1];
 };
 #pragma pack(pop)
 
 #pragma pack(push, 4)
-static struct ShadowCBuffer {
+struct ShadowCBuffer {
 	Matrix uvMatrix;
 	float mapScale;
 	float _f[3];
@@ -32,7 +32,7 @@ static struct ShadowCBuffer {
 #pragma pack(pop)
 
 #pragma pack(push, 4)
-static struct MeshCBuffer {
+struct MeshCBuffer {
 	Matrix wvpMatrix;
 	Matrix worldMatrix;
 	Vector3 cameraPosition;
@@ -117,7 +117,7 @@ public:
 	void Draw(const DynamicShapeData& data) const;
 	void DrawShape(const DynamicShapeData& data, int index) const;
 
-	int shapeCount() const { return m_shapes.size(); }
+	int shapeCount() const { return (int)m_shapes.size(); }
 
 	int maxMaterialIndex() const;
 
@@ -134,7 +134,7 @@ public:
 
 public:
 	Render* m_render;
-	const Shader* m_shader;
+	const Shader* shader;
 	comptr<ID3D11SamplerState> m_sampler;
 	
 public:

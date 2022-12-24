@@ -24,6 +24,7 @@
     <ClCompile Include="Attachable.cpp" />
     <ClCompile Include="AxisDrawer.cpp" />
     <ClCompile Include="AxisDrawer.h" />
+    <ClCompile Include="BlurPass.cpp" />
     <ClCompile Include="Bridge.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="CS.cpp" />
@@ -68,6 +69,7 @@
     <ClCompile Include="MonoInst.cpp" />
     <ClCompile Include="MoveController.cpp" />
     <ClCompile Include="OpaquePass.cpp" />
+    <ClCompile Include="OutlinePass.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="PlayerController.cpp" />
@@ -78,6 +80,7 @@
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPassUI.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="SelectionPass.cpp" />
     <ClCompile Include="ShaderAsset.cpp" />
     <ClCompile Include="ShaderResource.cpp" />
     <ClCompile Include="ShadowMapRender.cpp" />
@@ -102,9 +105,11 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActorCBuffer.h" />
     <ClInclude Include="AmbientLight.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="Attachable.h" />
+    <ClInclude Include="BlurPass.h" />
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ClassInfo.h" />
@@ -120,6 +125,7 @@
     <ClInclude Include="Delegates.h" />
     <ClInclude Include="DirectionLight.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="EditorCBuffer.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="FlyingCamera.h" />
     <ClInclude Include="Forms.h" />
@@ -131,8 +137,10 @@
     <ClInclude Include="imgui\TextEditor\TextEditor.h" />
     <ClInclude Include="IShadowCaster.h" />
     <ClInclude Include="LightingPass.h" />
+    <ClInclude Include="OutlinePass.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
+    <ClInclude Include="SelectionPass.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TestLightComponent.h" />

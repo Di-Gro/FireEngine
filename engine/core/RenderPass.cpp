@@ -6,6 +6,9 @@
 #include "ShaderResource.h"
 #include "DepthStencil.h"
 #include "CameraComponent.h"
+#include "ActorCBuffer.h"
+#include "EditorCBuffer.h"
+//#include "UI\UserInterface.h"
 
 
 void RenderPass::Init(Game* game) {
@@ -24,15 +27,22 @@ void RenderPass::Init(Game* game) {
 
 	UpdateBlendState();
 
-	D3D11_BUFFER_DESC cameraBufferDesc = {};
-	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cameraBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-	cameraBufferDesc.MiscFlags = 0;
-	cameraBufferDesc.StructureByteStride = 0;
-	cameraBufferDesc.ByteWidth = sizeof(CameraCBuffer);
+	D3D11_BUFFER_DESC anyBufferDesc = {};
+	anyBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	anyBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	anyBufferDesc.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
+	anyBufferDesc.MiscFlags = 0;
+	anyBufferDesc.StructureByteStride = 0;
 
-	m_render->device()->CreateBuffer(&cameraBufferDesc, nullptr, m_cameraBuffer.GetAddressOf());
+	anyBufferDesc.ByteWidth = sizeof(CameraCBuffer);
+	m_render->device()->CreateBuffer(&anyBufferDesc, nullptr, m_cameraBuffer.GetAddressOf());
+
+	anyBufferDesc.ByteWidth = sizeof(ActorCBuffer);
+	m_render->device()->CreateBuffer(&anyBufferDesc, nullptr, m_actorBuffer.GetAddressOf());
+
+	anyBufferDesc.ByteWidth = sizeof(EditorCBuffer);
+	m_render->device()->CreateBuffer(&anyBufferDesc, nullptr, m_editorBuffer.GetAddressOf());
+	
 }
 
 RenderPass::~RenderPass() { }
@@ -103,6 +113,10 @@ inline void RenderPass::EndDraw() {
 	ID3D11ShaderResourceView* resources[SRCount] = { nullptr };
 	context->VSSetShaderResources(0, SRCount, resources);
 	context->PSSetShaderResources(0, SRCount, resources);
+
+	ID3D11SamplerState* samplers[SRCount] = { nullptr };
+	context->VSSetSamplers(0, SRCount, samplers);
+	context->PSSetSamplers(0, SRCount, samplers);
 }
 
 void RenderPass::PrepareMaterial(const Material* material) {
@@ -162,6 +176,38 @@ void RenderPass::m_SetCameraConstBuffer() {
 	context->Unmap(m_cameraBuffer.Get(), 0);
 }
 
+void RenderPass::SetActorConstBuffer(Actor* actor) {
+	auto* context = m_render->context();
+
+	context->PSSetConstantBuffers(PASS_CB_ACTOR_PS, 1, m_actorBuffer.GetAddressOf());
+
+	D3D11_MAPPED_SUBRESOURCE res = {};
+	context->Map(m_actorBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+
+	auto* cbuf = (ActorCBuffer*)res.pData;
+	cbuf->actorId = (UINT)actor->cppRef().value;
+
+	context->Unmap(m_actorBuffer.Get(), 0);
+}
+
+void RenderPass::SetEditorConstBuffer() {
+	auto* context = m_render->context();
+
+	context->PSSetConstantBuffers(PASS_CB_EDITOR_PS, 1, m_editorBuffer.GetAddressOf());
+
+	D3D11_MAPPED_SUBRESOURCE res = {};
+	context->Map(m_editorBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
+
+	auto* cbuf = (EditorCBuffer*)res.pData;
+
+	if (m_game->ui()->HasActor())
+		cbuf->selectedActorId = (UINT)m_game->ui()->GetActor()->cppRef().value;
+	else
+		cbuf->selectedActorId = 0;
+
+	context->Unmap(m_editorBuffer.Get(), 0);
+}
+
 void RenderPass::m_PrepareResources() {
 	for (int i = 0; i < SRCount; i++) {
 		m_dxVSResources[i] = m_VSResources[i] != nullptr ? m_VSResources[i]->get() : nullptr;
@@ -179,6 +225,9 @@ void RenderPass::m_PrepareTargets() {
 }
 
 void RenderPass::m_ClearTargets() {
+	if (!clearTargets)
+		return;
+
 	for (int i = 0; i < 8; i++) {
 		if (m_targets[i] != nullptr)
 			m_targets[i]->Clear();

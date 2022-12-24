@@ -26,17 +26,11 @@ namespace Engine {
             "../../data/assets/levels/farm/meshes/House_Red.obj",
             "../../data/assets/levels/farm/meshes/House_Purple.obj",
             "../../data/assets/levels/farm/meshes/House_Blue.obj",
-			//"runtime:/form/Box",
-			//"runtime:/form/BoxLined",
-			//"runtime:/form/Sphere",
-			//"runtime:/form/SphereLined",
 		};
 
         private int m_index = 0;
 
         public override void OnInit() {
-			//transform.localScale = new Vector3(100, 100, 100);
-
 			m_meshComp = actor.AddComponent<MeshComponent>();
             m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
             m_material = new DynamicMaterial(m_meshComp.GetMaterial(0));
@@ -52,8 +46,6 @@ namespace Engine {
         public override void OnUpdate() {
 
 			actor.localRotationQ = actor.localRotationQ * Quaternion.CreateXRotation(Game.DeltaTime * 1f);
-
-			//Console.WriteLine($"# DeltaTime: color={m_material.DiffuseColor}");
 
 			if (Input.GetButtonDown(Key.Enter)) {
                 m_meshComp.mesh = new StaticMesh(m_meshNames[m_index]);
@@ -71,14 +63,6 @@ namespace Engine {
 
                 Console.WriteLine($"# OhMyMesh: color={m_material.DiffuseColor}");
             }
-
-            //if (Input.GetButtonDown(Key.Tab)) {
-            //    var actors = Game.GetRootActors();
-
-            //    foreach(var actor in actors) {
-            //        Console.WriteLine($"# root-> {actor.Name}");
-            //    }
-            //}
 
         }
 
@@ -106,32 +90,6 @@ namespace EngineMono {
             //serializer.Serialize(gameObject);
 
             //File.WriteAllText(pathOut, serializer.Values.ToSortedText());
-
-            /// Передача vector2, vector3 и quaternion ->
-            //var gameObject2 = new GameObject();
-
-            //Console.WriteLine($"# pos:{gameObject2.transform.localScale}");
-
-            //var pos = gameObject2.transform.localScale;
-            ////pos = pos.SetX(48);
-            //pos.X = 48;
-            //gameObject2.transform.localScale = pos;
-
-            //Console.WriteLine($"# pos:{gameObject2.transform.localScale}");
-
-            //Console.WriteLine($"# quat:{gameObject2.transform.localRotationQ}");
-
-            //var quat = gameObject2.transform.localRotationQ;
-            ////quat = quat.SetX(48);
-            //quat.X = 48;
-            //gameObject2.transform.localRotationQ = quat;
-
-            //Console.WriteLine($"# quat:{gameObject2.transform.localRotationQ}");
-
-            //var mpos = Input.MousePosition;
-            //Console.WriteLine($"# mpos:{mpos}");
-            /// <-
-
 
             return csRef;
 		}

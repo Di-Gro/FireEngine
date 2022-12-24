@@ -31,6 +31,7 @@
 #include "TestLightComponent.h"
 
 
+
 std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderVertexColor,
 	Assets::ShaderDiffuseColor,
@@ -40,6 +41,9 @@ std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderPointLight,
 	Assets::ShaderPointLightMesh,
 	Assets::ShaderSpotLight,
+	Assets::ShaderEditorHihglight,
+	Assets::ShaderEditorOutline,
+	Assets::ShaderBlur,
 	"../../data/engine/shaders/rp_image.hlsl",
 	"../../data/engine/shaders/shadow_map.hlsl",
 	"../../data/engine/shaders/rp_screen_quad.hlsl",
@@ -66,7 +70,7 @@ void Game::Init(MonoInst* imono) {
 	m_lighting.Init(this);
 
 	m_InitImGui();
-	ui.Init(this);
+	m_ui.Init(this);
 }
 
 void Game::m_InitMono(MonoInst* imono) {
@@ -89,16 +93,12 @@ void Game::Run() {
 	m_render.Start();
 	m_meshAsset.Start(); 
 
-	CullMode::Back;
-
 	///
 
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
 	csLink.Link(cppObj, "EngineMono", "CSClass");	
-
-	//auto actor = CreateActor()->AddComponent<CsComponent>("Engine.TestYaml");
 
 
 	//isExitRequested = true; // return;
@@ -176,7 +176,7 @@ void Game::m_Update() {
 		it++;
 	}
 
-	ui.Draw();
+	m_ui.Draw();
 	/// Post Update
 	m_hotkeys.LateUpdate();
 
@@ -308,7 +308,7 @@ void Game::SendGameMessage(const std::string& msg) {
 		return;
 	}
 
-	int objId;
+	unsigned int objId;
 	std::stringstream ss(msg);
 	ss >> objId;
 
