@@ -10,13 +10,6 @@
             "request": "attach",
             "address": "localhost",
             "port": 55555
-        },
-        {
-            "name": "Launch",
-            "type": "mono",
-            "request": "launch",
-            "program": "${workspaceRoot}/program.exe",
-            "cwd": "${workspaceRoot}"
-        }        
+        }
     ]
 }

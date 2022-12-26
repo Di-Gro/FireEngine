@@ -50,6 +50,7 @@ private:
 	ShaderAsset m_shaderAsset;
 	MeshAsset m_meshAsset;
 	ImageAsset m_imageAsset;
+	Assets m_assets;
 
 	UserInterface m_ui;
 
@@ -80,6 +81,7 @@ public:
 	inline InputDevice* input() { return &m_input; }
 	inline HotKeys* hotkeys() { return &m_hotkeys; }
 	inline UserInterface* ui() { return &m_ui; }
+	inline Assets* assets() { return &m_assets; }
 
 	inline ShaderAsset* shaderAsset() { return &m_shaderAsset; }
 	inline MeshAsset* meshAsset() { return &m_meshAsset; }

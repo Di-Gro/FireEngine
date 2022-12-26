@@ -45,7 +45,7 @@ namespace Engine
         public Vector3 XYZ => new Vector3(X, Y, Z);
         public Vector2 XY => new Vector2(X, Y);
     }
-
+    
     public partial struct Vector3 : ITransformable3D<Vector3>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

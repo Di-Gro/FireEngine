@@ -1,6 +1,16 @@
 #include "Material.h"
 #include "Render.h"
+#include "Game.h"
+#include "Material.h"
 
+
+void Material::Release() {
+	if (materialConstBuffer.Get() != nullptr)
+		materialConstBuffer.ReleaseAndGetAddressOf();
+
+	if (depthStencilState.Get() != nullptr)
+		depthStencilState.ReleaseAndGetAddressOf();
+}
 
 void Material::Init(Render* render) {
 
@@ -34,53 +44,21 @@ void Material::UpdateDepthStencilState() {
 	m_render->device()->CreateDepthStencilState(&depthStencilDesc, depthStencilState.GetAddressOf());
 }
 
+DEF_PROP_GETSET_F(Material, int, pathHash, pathHash);
 
-DEF_FUNC(Material, diffuseColor_get, Vector3)(CppRef matRef) {
-	return CppRefs::ThrowPointer<Material>(matRef)->data.diffuseColor;
-}
-
-DEF_FUNC(Material, diffuse_get, float)(CppRef matRef) {
-	return CppRefs::ThrowPointer<Material>(matRef)->data.diffuse;
-}
-
-DEF_FUNC(Material, ambient_get, float)(CppRef matRef) {
-	return CppRefs::ThrowPointer<Material>(matRef)->data.ambient;
-}
-
-DEF_FUNC(Material, specular_get, float)(CppRef matRef) {
-	return CppRefs::ThrowPointer<Material>(matRef)->data.specular;
-}
-
-DEF_FUNC(Material, shininess_get, float)(CppRef matRef) {
-	return CppRefs::ThrowPointer<Material>(matRef)->data.shininess;
-}
-
-
-DEF_FUNC(Material, diffuseColor_set, void)(CppRef matRef, Vector3 value) {
-	CppRefs::ThrowPointer<Material>(matRef)->data.diffuseColor = value;
-}
-
-DEF_FUNC(Material, diffuse_set, void)(CppRef matRef, float value) {
-	CppRefs::ThrowPointer<Material>(matRef)->data.diffuse = value;
-}
-
-DEF_FUNC(Material, ambient_set, void)(CppRef matRef, float value) {
-	CppRefs::ThrowPointer<Material>(matRef)->data.ambient = value;
-}
-
-DEF_FUNC(Material, specular_set, void)(CppRef matRef, float value) {
-	CppRefs::ThrowPointer<Material>(matRef)->data.specular = value;
-}
-
-DEF_FUNC(Material, shininess_set, void)(CppRef matRef, float value) {
-	CppRefs::ThrowPointer<Material>(matRef)->data.shininess = value;
-}
-
-//DEF_FUNC(Material, name_get, const char*)(CppRef matRef) {
-//	return CppRefs::ThrowPointer<Material>(matRef)->name_cstr();
-//}
+DEF_PROP_GETSET_F(Material, Vector3, diffuseColor, data.diffuseColor)
+DEF_PROP_GETSET_F(Material, float, diffuse, data.diffuse)
+DEF_PROP_GETSET_F(Material, float, ambient, data.ambient)
+DEF_PROP_GETSET_F(Material, float, specular, data.specular)
+DEF_PROP_GETSET_F(Material, float, shininess, data.shininess)
+DEF_PROP_GETSET_F(Material, CullMode, cullMode, cullMode)
+DEF_PROP_GETSET_F(Material, FillMode, fillMode, fillMode)
+DEF_PROP_GETSET_F(Material, size_t, priority, priority)
 
 DEF_FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth) {
+	if (matRef == 0)
+		return 0;
+
 	auto material = CppRefs::ThrowPointer<Material>(matRef);
 
 	auto dynamicPrefix = material->isDynamic ? "[D] " : "";
@@ -93,7 +71,23 @@ DEF_FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth) {
 
 	return writeIndex;
 }
-//
-//char* _cdecl Material_name_get(CppRef matRef) {
-//	return (char*)CppRefs::ThrowPointer<Material>(matRef)->name_cstr();
-//}
+
+DEF_FUNC(Material, isDynamic_get, bool)(CppRef matRef) {
+	if (matRef == 0)
+		return false;
+
+	auto material = CppRefs::ThrowPointer<Material>(matRef);
+	return material->isDynamic;
+}
+
+DEF_FUNC(Material, Create, CppRef)(CppRef gameRef, size_t assetHash) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	auto* material = (Material*)game->assets()->Get(assetHash);
+	if (material == nullptr) {
+		material = new Material();
+		material->Init(game->render());
+		game->assets()->Push(assetHash, material);
+	}
+	return CppRefs::GetRef(material);
+}

@@ -9,6 +9,7 @@ using System.Globalization;
 using System;
 using System.Diagnostics;
 using FireYaml;
+using EngineDll;
 
 namespace Engine {
     public class CloseAttribute : Attribute { }
@@ -66,6 +67,19 @@ namespace Engine {
 
     public class ActorSerializer : SerializerBase {
 
+        private static LinkedList<WaitedComponent> m_waitedComponents = new LinkedList<WaitedComponent>();
+
+        class WaitedComponent {
+            public Actor actor;
+            public Component component;
+            public LinkedListNode<WaitedComponent> node;
+
+            public void OnEndLoad() {
+                Dll.Actor.InitComponent(actor.cppRef, component.cppRef);
+                m_waitedComponents.Remove(node);
+            }
+        }
+
         public override void OnSerialize(FireYaml.Serializer serializer, string selfPath, Type type, object instance) {
             base.OnSerialize(serializer, selfPath, type, instance);
 
@@ -78,8 +92,6 @@ namespace Engine {
 
             var components = actor.GetComponentsList();
             var children = actor.GetChildren();
-
-            Console.WriteLine($"#: ActorSerializer.OnSerialize()");
 
             serializer.AddField($"{selfPath}.m_components", components.GetType(), components);
             serializer.AddField($"{selfPath}.m_children", children.GetType(), children);
@@ -138,35 +150,87 @@ namespace Engine {
                 if (!deserializer.HasFile(fullPath))
                     throw new Exception("Missing component");
 
-                var component = m_CreateComponent(deserializer, fullPath, actor);
-                deserializer.LoadDocument(fullPath, ref component);
+                var componentType = deserializer.GetTypeOf(fullPath);
+
+                /// Create
+                var componentObj = Activator.CreateInstance(componentType);
+                var component = componentObj as Component;
+                var info = component.CppConstructor();
+
+                /// Bind
+                component.CsBindComponent(actor.csRef, info);
+                Dll.Actor.BindComponent(actor.cppRef, component.cppRef);
+
+                /// PostBind
+                deserializer.LoadDocument(fullPath, ref componentObj);
+
+                /// Init (Delayed Init - wait for the end of load all documents)
+                var waited = new WaitedComponent();
+                waited.actor = actor;
+                waited.component = component;
+                waited.node = m_waitedComponents.AddLast(waited);
+
+                deserializer.EndLoadEvent += waited.OnEndLoad;
             }
         }
 
-        private object m_CreateComponent(FireYaml.Deserializer deserializer, string fullPath, Engine.Actor actor) {
-
-            var componentType = deserializer.GetTypeOf(fullPath);
-
-            var addComponent = actor.GetType().GetMethod(nameof(Engine.Actor.AddComponent));
-            if (addComponent == null)
-                throw new Exception("Actor.AddComponent method not found");
-
-            addComponent = addComponent.MakeGenericMethod(new Type[] { componentType });
-
-            var component = addComponent.Invoke(actor, null);
-            if (component == null)
-                throw new Exception("Can not create component");
-
-            return component;
-        }
     }
 
-    public class CSComponentSerializer : SerializerBase {
+    public class ComponentSerializer : SerializerBase {
 
         public override bool NeedIncludeBase(Type type) {
-            return type.BaseType != typeof(Engine.CSComponent);
+            bool isCsBased = type.BaseType == typeof(Engine.CSComponent);
+            bool isCppBased = type.BaseType == typeof(Engine.CppComponent);
+
+            return !isCsBased && !isCppBased;
         }
 
+    }
+
+    public class MeshComponentSerializer : ComponentSerializer {
+
+        public override void OnSerialize(FireYaml.Serializer serializer, string selfPath, Type type, object instance) {
+            base.OnSerialize(serializer, selfPath, type, instance);
+
+            var meshComponent = instance as Engine.MeshComponent;
+            if (meshComponent == null)
+                return;
+
+            var mesh = meshComponent.mesh;
+            var materials = m_GetMaterialsList(meshComponent);
+            var staticMeshType = typeof(Engine.StaticMesh);
+            var needSave = mesh != null && mesh.GetType() == staticMeshType;
+
+            serializer.AddField($"{selfPath}.m_mesh", staticMeshType, needSave ? mesh : null);
+            serializer.AddField($"{selfPath}.m_materials", materials.GetType(), materials);
+        }
+
+        public override void OnDeserialize(FireYaml.Deserializer deserializer, string selfPath, Type type, ref object instance) {
+            base.OnDeserialize(deserializer, selfPath, type, ref instance);
+
+            var meshComponent = instance as Engine.MeshComponent;
+            if (meshComponent == null)
+                return;
+
+            var meshPath = $"{selfPath}.m_mesh";
+            var materialsPath = $"{selfPath}.m_materials";
+
+            // TODO: OnDeserialize MeshComponent
+            // Получить assetId для mesh-а и материалов
+            // Создать экземпляры меша и материалов
+            // Вызвать deserializer.LoadAsset()
+
+        }
+
+        private List<StaticMaterial> m_GetMaterialsList(MeshComponent meshComponent) {
+            var list = new List<StaticMaterial>();
+
+            for (int index = 0; index < meshComponent.MaterialCount; index++) {
+                var material = meshComponent.GetMaterial((ulong)index);
+                list.Add(material.IsDynamic ? null : material);
+            }
+            return list;
+        }
     }
 
 }

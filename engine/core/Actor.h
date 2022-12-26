@@ -12,6 +12,7 @@
 #include "ActorConcepts.h"
 #include "ActorBase.h"
 
+FUNC(Actor, BindComponent, void)(CppRef objRef, CppRef compRef);
 FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
 FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
@@ -24,6 +25,7 @@ class Actor : public ActorBase {
 	friend class ActorBase;
 	friend class Render;
 
+	FRIEND_FUNC(Actor, BindComponent, void)(CppRef objRef, CppRef compRef);
 	FRIEND_FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
 	FRIEND_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
@@ -55,7 +57,7 @@ public:
 	const std::string& GetName() { return name; }
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* inner_CreateComponent(CsRef csRef = CsRef::Void);
+	static TComponent* inner_CreateComponent(CsRef csRef = CsRef::Void);
 
 	template<IsCppAddableComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* AddComponent();
@@ -108,8 +110,10 @@ private:
 	void m_CreateTransform();
 	//void m_RemoveTransform();
 
+	void m_BindComponent(Component* component);
 	void m_InitComponent(Component* component);
-	void m_SetComponentCallbacks(Component* component, ComponentCallbacks callbacks);
+
+	static void m_SetComponentCallbacks(Component* component, ComponentCallbacks callbacks);
 
 	inline void m_OnInitComponent(Component* component);
 	inline void m_OnStartComponent(Component* component);

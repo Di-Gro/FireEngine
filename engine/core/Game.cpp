@@ -63,6 +63,7 @@ void Game::Init(MonoInst* imono) {
 	m_imageAsset.Init();
 	m_input.Init(this);
 	m_hotkeys.Init(this);
+	m_assets.Init(this);
 
 	for (auto& path : game_shaderPaths)
 		m_shaderAsset.CompileShader(path);

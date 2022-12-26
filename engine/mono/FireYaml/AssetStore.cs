@@ -11,57 +11,100 @@ namespace FireYaml {
 
         public static AssetStore Instance { get; set; }
 
-        private Dictionary<string, string> tmp_keyValue = new Dictionary<string, string>();
-        private Dictionary<string, string> tmp_valueKey = new Dictionary<string, string>();
+        private Dictionary<int, string> m_typeId_typeName = new Dictionary<int, string>();
+        private Dictionary<string, string> m_typeName_typeId = new Dictionary<string, string>();
+        private Dictionary<string, int> m_typeName_typeId_int = new Dictionary<string, int>();
 
 
         private Dictionary<string, YamlValues> tmp_assetValues = new Dictionary<string, YamlValues>();
-        private Dictionary<string, string> tmp_assetPaths = new Dictionary<string, string>();
 
-        private string m_assetsPath = @"C:\Users\Dmitry\Desktop\Пример\";
+        private Dictionary<int, string> m_assetIds = new Dictionary<int, string>();
+        private Dictionary<int, string> m_assetPaths = new Dictionary<int, string>();
 
-
-        public AssetStore(bool addDefaultPrefabs = true) {
-            AddAsset("00000010000", typeof(Engine.Actor).FullName);
-            AddAsset("00000010003", typeof(Engine.MeshComponent).FullName);
-            AddAsset("00000010004", typeof(Engine.CameraComponent).FullName);
-            AddAsset("00000010005", typeof(Engine.TestMesh).FullName);
-            AddAsset("00000010006", typeof(UI.TestImGui).FullName);
-            AddAsset("00000010007", typeof(Engine.CSComponent).FullName);
+        private string m_assetsPath = @"C:\Users\Dmitry\Desktop\Example\FireProject\";
 
 
-            if (addDefaultPrefabs) {
-                AddAssetPath("P0000000000", $"{m_assetsPath}\\prefab_0.yml");
-                AddAssetPath("P0000000001", $"{m_assetsPath}\\prefab_1.yml");
-                AddAssetPath("P0000000002", $"{m_assetsPath}\\prefab_2.yml");
-                AddAssetPath("P0000000003", $"{m_assetsPath}\\prefab_3.yml");
-                AddAssetPath("P0000000004", $"{m_assetsPath}\\prefab_4.yml");
-                AddAssetPath("P0000000005", $"{m_assetsPath}\\prefab_5.yml");
+        public AssetStore(bool addDefaultAssets = true) {
+            AddTypeId("00000010000", typeof(Engine.Actor).FullName);
+            AddTypeId("00000010003", typeof(Engine.MeshComponent).FullName);
+            AddTypeId("00000010004", typeof(Engine.CameraComponent).FullName);
+            AddTypeId("00000010005", typeof(Engine.TestMesh).FullName);
+            AddTypeId("00000010006", typeof(UI.TestImGui).FullName);
+            AddTypeId("00000010007", typeof(Engine.CSComponent).FullName);
+            AddTypeId("00000010008", typeof(Engine.TestMeshBase).FullName);
+            AddTypeId("00000010009", typeof(Engine.TestPrefab).FullName);
+            AddTypeId("00000010010", typeof(Engine.Texture).FullName);
+            AddTypeId("00000010011", typeof(Engine.Image).FullName);
+            AddTypeId("00000010012", typeof(Engine.StaticMaterial).FullName);
+
+            if (addDefaultAssets) {
+                AddAssetId("TestPrefab", $"{m_assetsPath}TestPrefab.yml");
+                AddAssetId("TestMesh", $"{m_assetsPath}TestMesh.yml");
+
+                AddAssetId("MESH000001", "../../data/assets/levels/farm/meshes/House_Red.obj");
+                AddAssetId("MESH000002", "../../data/assets/levels/farm/meshes/House_Purple.obj");
+                AddAssetId("MESH000003", "../../data/assets/levels/farm/meshes/House_Blue.obj");
+                AddAssetId("TestTexture1", $"{m_assetsPath}TestTexture1.yml");
+                AddAssetId("TestImage1", $"{m_assetsPath}TestImage1.yml");
+                AddAssetId("TestMaterial1", $"{m_assetsPath}TestMaterial1.yml");
             }
         }
 
-        public string GetTypeByAssetId(string assetId) => tmp_keyValue[assetId];
+        public string GetTypeName(string typeId) => m_typeId_typeName[typeId.GetHashCode()];
+        public string GetTypeName(int typeId) => m_typeId_typeName[typeId];
+        
+        public void AddTypeId(string assetId, string value) {
+            var typeId = assetId.GetHashCode();
 
-        public void AddAsset(string assetId, string value) {
-            tmp_keyValue[assetId] = value;
-            tmp_valueKey[value] = assetId;
+            m_typeId_typeName[typeId] = value;
+            m_typeName_typeId[value] = assetId;
+            m_typeName_typeId_int[value] = typeId;
         }
 
-        public void AddAssetPath(string assetId, string value) {
-            tmp_assetPaths[assetId] = value;
+        public void AddAssetId(string assetId, string path) {
+            var assetIdInt = assetId.GetHashCode();
+            m_assetIds[assetIdInt] = assetId;
+            m_assetPaths[assetIdInt] = path;
+        }
+
+        public string GetAssetId(int assetId) {
+            return m_assetIds[assetId];
+        }
+
+        public bool HasAssetPath(string assetId) {
+            return GetAssetPath(assetId) != "";
         }
 
         public bool TryGetAssetIdByType(string typeName, out string assetId) {
             assetId = "";
-            if (tmp_valueKey.ContainsKey(typeName)) {
-                assetId = tmp_valueKey[typeName];
+            if (m_typeName_typeId.ContainsKey(typeName)) {
+                assetId = m_typeName_typeId[typeName];
                 return true;
             }
             return false;
         }
 
-        public bool HasAsset(string assetId) {
-            return GetAssetPath(assetId) != "";
+        public bool TryGetAssetIdByType(string typeName, out int assetId) {
+            assetId = 0;
+            if (m_typeName_typeId.ContainsKey(typeName)) {
+                assetId = m_typeName_typeId_int[typeName];
+                return true;
+            }
+            return false;
+        }
+
+        public string GetTypeIdFromAsset(int assetId) {
+            var assetIdStr = GetAssetId(assetId);
+            var values = GetAssetValues(assetIdStr);
+
+            var scriptIdPath = ".file1!scriptId";
+            var hasScriptId = values.HasValue(scriptIdPath);
+            if (!hasScriptId )
+                throw new Exception("Asset not contains .file1!scriptId");
+
+            var typeId = values.GetValue(scriptIdPath).value;
+            
+            return typeId;
         }
 
         public YamlValues? GetAssetValues(string assetId) {
@@ -94,9 +137,10 @@ namespace FireYaml {
             tmp_assetValues[prefabId] = new YamlValues().LoadFromText(text);
         }
 
-        public string GetAssetPath(string prefabId) {
-            if (tmp_assetPaths.ContainsKey(prefabId))
-                return tmp_assetPaths[prefabId];
+        public string GetAssetPath(string assetId) {
+            var assetIdInt = assetId.GetHashCode();
+            if (m_assetPaths.ContainsKey(assetIdInt))
+                return m_assetPaths[assetIdInt];
             
             return "";
         }
@@ -120,7 +164,7 @@ namespace FireYaml {
             return info;
         }
 
-        public void CreateAsset(string name, object data, string tmp_id) {
+        public void CreateAsset(string path, object data, string tmp_id) {
             var serializer = new Serializer(ignoreExistingIds: true, startId: 1);
             serializer.Serialize(data);
 
@@ -128,15 +172,19 @@ namespace FireYaml {
                 throw new Exception($"Can not create asset: Serialization failed.");
 
             var values = serializer.Values;
+            var assetPath = $"{m_assetsPath}\\{path}";
 
             values.AddValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, tmp_id));
-            values.AddValue(".file0.files", new YamlValue(YamlValue.Type.Scalar, "0"));
+            values.AddValue(".file0.files", new YamlValue(YamlValue.Type.Var, $"{serializer.FilesCount}"));
 
-            File.WriteAllText($"{m_assetsPath}\\{name}", values.ToSortedText());
+
+            File.WriteAllText(assetPath, values.ToSortedText());
+
+            AddAssetId(tmp_id, assetPath);
         }
 
         public void UpdateAsset(string assetId, object data) {
-            if (!HasAsset(assetId))
+            if (!HasAssetPath(assetId))
                 throw new Exception($"Asset with assetId:{assetId} not exist");
 
             var assetInfo = GetAssetInfo(assetId);
@@ -151,7 +199,7 @@ namespace FireYaml {
             var values = serializer.Values;
 
             values.AddValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, assetInfo.assetId));
-            values.AddValue(".file0.files", new YamlValue(YamlValue.Type.Scalar, $"{serializer.FilesCount}"));
+            values.AddValue(".file0.files", new YamlValue(YamlValue.Type.Var, $"{serializer.FilesCount}"));
 
             File.WriteAllText(assetPath, values.ToSortedText());
 
@@ -160,7 +208,7 @@ namespace FireYaml {
         }
 
         public void UpdateAssetValues(string assetId) {
-            if (!HasAsset(assetId))
+            if (!HasAssetPath(assetId))
                 throw new Exception($"Asset with assetId:{assetId} not exist");
 
             var assetPath = GetAssetPath(assetId);

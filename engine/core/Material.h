@@ -10,6 +10,7 @@
 #include "CSBridge.h"
 #include "MaterialAlias.h"
 #include "ShaderResource.h"
+#include "IAsset.h"
 
 class Shader;
 class Render;
@@ -17,7 +18,7 @@ class Render;
 enum class CullMode { Front, Back, None };
 enum class FillMode { Solid, Wireframe };
 
-class Material : public CsLink {
+class Material : public CsLink, public IAsset {
 	friend class Render;
 
 	#pragma pack(push, 4)
@@ -68,24 +69,23 @@ public:
 	}
 
 	void Init(Render* render);
+	void Release() override;
 
 	void UpdateDepthStencilState();
 };
 
-FUNC(Material, diffuseColor_get, Vector3)(CppRef matRef);
-FUNC(Material, diffuse_get, float)(CppRef matRef);
-FUNC(Material, ambient_get, float)(CppRef matRef);
-FUNC(Material, specular_get, float)(CppRef matRef);
-FUNC(Material, shininess_get, float)(CppRef matRef);
+PROP_GETSET(Material, int, pathHash);
 
-FUNC(Material, diffuseColor_set, void)(CppRef matRef, Vector3 value);
-FUNC(Material, diffuse_set, void)(CppRef matRef, float value);
-FUNC(Material, ambient_set, void)(CppRef matRef, float value);
-FUNC(Material, specular_set, void)(CppRef matRef, float value);
-FUNC(Material, shininess_set, void)(CppRef matRef, float value);
+PROP_GETSET(Material, Vector3, diffuseColor)
+PROP_GETSET(Material, float, diffuse)
+PROP_GETSET(Material, float, ambient)
+PROP_GETSET(Material, float, specular)
+PROP_GETSET(Material, float, shininess)
+PROP_GETSET(Material, CullMode, cullMode)
+PROP_GETSET(Material, FillMode, fillMode)
+PROP_GETSET(Material, size_t, priority)
 
 FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth);
+FUNC(Material, isDynamic_get, bool)(CppRef matRef);
 
-//extern "C" __declspec(dllexport) char* _cdecl Material_name_get(CppRef matRef);
-
-//class DynamicMaterial
+FUNC(Material, Create, CppRef)(CppRef gameRef, size_t assetHash);

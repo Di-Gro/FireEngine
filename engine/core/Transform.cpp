@@ -102,13 +102,13 @@ void Transform::localScale(const Vector3& value) {
 
 const Vector3 Transform::localScale() { return m_localScale; }
 
-const Vector3 Transform::localForward() { return m_localMatrix.Forward(); }
-const Vector3 Transform::localUp()		{ return m_localMatrix.Up(); }
-const Vector3 Transform::localRight()	{ return m_localMatrix.Right(); }
+const Vector3 Transform::localForward() { return m_localMatrix.Forward().Normalized(); }
+const Vector3 Transform::localUp()		{ return m_localMatrix.Up().Normalized(); }
+const Vector3 Transform::localRight()	{ return m_localMatrix.Right().Normalized(); }
 
-const Vector3 Transform::forward()	{ return GetWorldMatrix().Forward(); }
-const Vector3 Transform::up()		{ return GetWorldMatrix().Right(); }
-const Vector3 Transform::right()	{ return GetWorldMatrix().Right(); }
+const Vector3 Transform::forward()	{ return GetWorldMatrix().Forward().Normalized(); }
+const Vector3 Transform::up()		{ return GetWorldMatrix().Up().Normalized(); }
+const Vector3 Transform::right()	{ return GetWorldMatrix().Right().Normalized(); }
 
 Matrix Transform::GetWorldMatrix() {
 	auto matrix = GetLocalMatrix();

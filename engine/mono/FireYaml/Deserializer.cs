@@ -14,6 +14,7 @@ using System.Linq;
 namespace FireYaml {
 
     public class Deserializer {
+        public event Action EndLoadEvent;
 
         private class InnerLink {
             // Ссылка на документ
@@ -70,23 +71,39 @@ namespace FireYaml {
             return target;
         }
 
-        public List<T> InstanciateAll<T>() where T: new() {
-            var objects = new List<T>();
-            var type = typeof(T);
+        public void InstanciateIAssetAsFile(IAsset target) {
+            var yamlRef = new YamlRef(1);
 
-            var files = m_values.GetFiles();
-            foreach (var file in files) {
-                if (file != "file0" && type == GetTypeOf($".{file}"))
-                    objects.Add((T)LoadDocument(file));
-            }
+            var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
+            if (!hasFile)
+                throw new Exception("Prefab must contains root file 'file1'");
+
+            var selfPath = GetFullPath(yamlRef.Name);
+            object self = target;
+            LoadDocument(selfPath, ref self, true, isIAssetAsFile: true);
+
             m_EndInstanciate();
-            return objects;
         }
+
+        // public List<T> InstanciateAll<T>() where T: new() {
+        //     var objects = new List<T>();
+        //     var type = typeof(T);
+
+        //     var files = m_values.GetFiles();
+        //     foreach (var file in files) {
+        //         if (file != "file0" && type == GetTypeOf($".{file}"))
+        //             objects.Add((T)LoadDocument(file));
+        //     }
+        //     m_EndInstanciate();
+        //     return objects;
+        // }
 
         private void m_EndInstanciate() {
             m_ResolveLinks();
             foreach (var asset in m_assets)
                 asset.LoadAsset();
+
+            EndLoadEvent?.Invoke();
         }
 
         public object? LoadDocument(string fullPath, bool isEntryPoint = false) {
@@ -94,14 +111,14 @@ namespace FireYaml {
                 return null;
                         
             var type = GetTypeOf(fullPath);
-            var target = m_CreateInstance(type);
+            var target = CreateInstance(type);
 
             LoadDocument(fullPath, ref target, isEntryPoint);
             
             return target;
         }
 
-        public void LoadDocument(string fullPath, ref object target, bool isEntryPoint = false) {
+        public void LoadDocument(string fullPath, ref object target, bool isEntryPoint = false, bool isIAssetAsFile = false) {
             if (!HasFile(fullPath))
                 return;
 
@@ -122,6 +139,14 @@ namespace FireYaml {
 
             IFile.SetAssetInstance(m_assetInst, ref target);
             IFile.SetFileId(fileId, ref target);
+
+            if(!isIAssetAsFile) {
+                if(isEntryPoint &&  Serializer.IsAsset(type)) {
+                    m_LoadAsset(fullPath, m_assetId, target);
+                    return;
+                }
+            }
+
             IFile.SetPrefabId(prefabId, ref target);  
 
             if (prefabId != IFile.NotPrefab)
@@ -131,6 +156,26 @@ namespace FireYaml {
 
             if (isEntryPoint && m_assetId != "")
                 IFile.SetPrefabId(m_assetId, ref target);
+        }
+
+        public void LoadAsset<TAsset>(string fieldPath, TAsset asset) where TAsset: IAsset {
+            if (!m_values.HasValue(fieldPath))
+                return;
+
+            var yamlValue = m_values.GetValue(fieldPath);
+
+            m_LoadAsset(fieldPath, yamlValue.value, asset);
+        }
+
+        private void m_LoadAsset(string path, string assetId, object asset) {
+            var fieldName = nameof(IAsset.assetId);
+            var serializer = new Engine.SerializerBase();
+            var field = Serializer.GetField(fieldName, asset.GetType(), asset, serializer);
+
+            var value = m_Convert(field.type, assetId);
+
+            m_assets.Add((IAsset)field.Instance);
+            field.SetValue(value);
         }
 
         private void m_SetAssignedObject(string fullPath, ref object obj) {
@@ -158,7 +203,7 @@ namespace FireYaml {
             if (scriptId == "")
                 throw new Exception("Yaml document not contains scriptId");
 
-            var typeName = AssetStore.Instance.GetTypeByAssetId(scriptId);
+            var typeName = AssetStore.Instance.GetTypeName(scriptId);
             if (typeName == null)
                 throw new Exception("Component script asset not found");
 
@@ -214,10 +259,10 @@ namespace FireYaml {
         }
 
         private void m_LoadField(string fieldPath, Field field) {
-            m_LoadFieldsFromValues(m_values, fieldPath, field);
+            m_LoadFieldFromValues(m_values, fieldPath, field);
         }
 
-        private bool m_LoadFieldsFromValues(YamlValues? values, string fieldPath, Field field) {
+        private bool m_LoadFieldFromValues(YamlValues? values, string fieldPath, Field field) {
             if (values == null)
                 return false;
 
@@ -229,10 +274,10 @@ namespace FireYaml {
                 var yamlValue = values.GetValue(fieldPath);
                 object? value = null;
 
-                if (yamlValue.type == YamlValue.Type.Scalar)
+                if (yamlValue.type == YamlValue.Type.Var)
                     value = m_Convert(field.type, yamlValue.value);
 
-                if (yamlValue.type == YamlValue.Type.Link) {
+                if (yamlValue.type == YamlValue.Type.Ref) {
                     var link = new InnerLink();
 
                     link.fileName = yamlValue.value; // $"{m_rootPath}.{yamlValue.value}";
@@ -260,7 +305,7 @@ namespace FireYaml {
                 /// Объект, для которого есть поля, значит можно инстанцировать.
                 else {
                     if (field.Value == null)
-                        field.SetValue(m_CreateInstance(field.type));
+                        field.SetValue(CreateInstance(field.type));
 
                     var fieldValue = field.Value;
                     m_LoadObject(fieldPath, field.type, ref fieldValue);
@@ -293,7 +338,7 @@ namespace FireYaml {
                         continue;
                     }
                 }
-                list.Add(m_CreateInstance(itemType));
+                list.Add(CreateInstance(itemType));
                 m_LoadField(itemPath, new Field(list, itemType, i));
             }
         }
@@ -305,7 +350,7 @@ namespace FireYaml {
                 list = field.Value as IList;
             }
             else {
-                list = m_CreateInstance(field.type) as IList;
+                list = CreateInstance(field.type) as IList;
                 field.SetValue(list);
             }
 
@@ -325,10 +370,11 @@ namespace FireYaml {
             m_LoadObject(basePath, baseType, ref target);
         }
 
-        private object m_CreateInstance(Type type) {
-            var instance = Activator.CreateInstance(type);
+        public static object CreateInstance(Type type) {
+            var instance = Activator.CreateInstance(type, true);
             if (instance == null)
                 throw new Exception("Parameterless constructor needed to load object.");
+
             return instance;
         }
 

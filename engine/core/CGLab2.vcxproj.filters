@@ -614,6 +614,9 @@
     <ClInclude Include="BlurPass.h">
       <Filter>Render\Render Passes</Filter>
     </ClInclude>
+    <ClInclude Include="IAsset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Delegates.natvis">

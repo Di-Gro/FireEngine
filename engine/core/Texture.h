@@ -3,12 +3,13 @@
 #include <string>
 
 #include "wrl.h_d3d11_alias.h"
-
+#include "CSBridge.h"
+#include "IAsset.h"
 
 class Render;
 class Image;
 
-class Texture {
+class Texture : public IAsset {
 private:
 	D3D11_TEXTURE2D_DESC m_desc;
 	comptr<ID3D11Texture2D> m_texture;
@@ -42,6 +43,8 @@ public:
 		return *this;
 	}
 
+	void Release() override;
+
 	static Texture Create(Render* render, int width, int height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
 	//static Texture CreateActorIdTexture(Render* render, int width, int height);
 	static Texture CreateStagingTexture(Render* render, int width, int height, DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
@@ -49,3 +52,9 @@ public:
 	static Texture CreateDepthTexture(Render* render, int width, int height);
 	static Texture CreateFromImage(Render* render, const Image* image);
 };
+
+PROP_GETSET(Texture, int, pathHash);
+
+FUNC(Texture, PushAsset, CppRef)(CppRef gameRef, int assetId);
+FUNC(Texture, Init, void)(CppRef gameRef, CppRef texRef, UINT width, UINT height);
+FUNC(Texture, InitFromImage, void)(CppRef gameRef, CppRef texRef, CppRef imageRef);

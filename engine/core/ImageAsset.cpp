@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "Game.h"
+
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_1111 = "runtime:/generated/image/2x2/rgba/1111";
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_0001 = "runtime:/generated/image/2x2/rgba/0001"; 
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_1001 = "runtime:/generated/image/2x2/rgba/1001";
@@ -20,7 +22,7 @@ void Image::Release() {
 		delete[] data;
 }
 
-size_t ImageAsset::GetHash(fs::path path) {
+size_t ImageAsset::GetHash(const fs::path& path) {
 	return std::hash<std::string>()(path.string());
 }
 
@@ -42,26 +44,30 @@ ImageAsset::~ImageAsset() {
 	}
 }
 
-void ImageAsset::Load(fs::path path) {
+void ImageAsset::Load(const fs::path& path) {
 	m_Load(GetHash(path), path);
 }
 
-void ImageAsset::m_Load(size_t hash, fs::path path) {
+void ImageAsset::m_Load(size_t hash, const fs::path& path) {
 	if (m_images.count(hash) > 0)
 		return;
 
+	if (!fs::exists(path)) {
+		auto text = "ImageAsset: Image file not exist (path:" + path.string() + ")";
+		throw std::exception(text.c_str());
+	}
 	auto* image = m_CreateImage(path);
 	m_images.insert({ hash, image });
 }
 
-const Image* ImageAsset::Get(fs::path path) {
+const Image* ImageAsset::Get(const fs::path& path) {
 	auto hash = GetHash(path);
 
 	m_Load(hash, path);
 	return m_images.at(hash);
 }
 
-Image* ImageAsset::m_CreateImage(fs::path path) {
+Image* ImageAsset::m_CreateImage(const fs::path& path) {
 	comptr<IWICBitmapDecoder> decoder;
 	comptr<IWICBitmapFrameDecode> frame;
 	comptr<IWICFormatConverter> converter;
@@ -129,4 +135,17 @@ void ImageAsset::m_GenerateRuntimeImages() {
 	m_images.insert({ hash, image });
 }
 
+DEF_FUNC(ImageAsset, Load, CppRef)(CppRef gameRef, const char* path, int& width, int& height) {
+	auto *game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	auto* image = game->imageAsset()->Get(path);
+	auto assetRef = CppRefs::GetRef((void*)image);
+	if (assetRef == 0)
+		assetRef = CppRefs::Create((void*)image).cppRef();
+
+	width = image->width;
+	height = image->height;
+
+	return assetRef;
+}
 

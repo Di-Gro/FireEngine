@@ -19,7 +19,7 @@ namespace Engine {
         public bool IsDynamic => Dll.MeshComponent.IsDynamic_get(cppRef);
         public int MaterialCount => Dll.MeshComponent.MaterialCount_get(cppRef);
 
-        public Mesh mesh {
+        [Close] public Mesh mesh {
             get => m_mesh;
             set {
                 m_mesh = value;
@@ -59,18 +59,25 @@ namespace Engine {
             Dll.MeshComponent.ClearMesh(cppRef);
         }
 
-        public override CppObjectInfo CreateFromCS(Actor target) {
-            return Dll.MeshComponent.Create(target.cppRef, csRef);
+        public override CppObjectInfo CppConstructor(/*Actor target*/) {
+            return Dll.MeshComponent.Create(/*target.cppRef,*/ csRef);
         }
 
 
         private static void cpp_SetFromCpp(CsRef compRef, CppRef meshRef) {
             var component = GetObjectByRef(compRef) as MeshComponent;
 
-            if (meshRef.value == 0)
+            if (meshRef.value == 0) {
                 component.m_mesh = null;
-            else
+                return;
+            }
+            if (component.IsStatic) {
+                var assetHash = Dll.Mesh4.assetHash_get(meshRef);
+                component.m_mesh = new StaticMesh(assetHash);
+            }
+            else {
                 component.m_mesh = new Mesh(meshRef);
+            }
         }
     }
 }

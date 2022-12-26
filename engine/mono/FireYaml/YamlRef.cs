@@ -23,5 +23,9 @@ namespace FireYaml {
         public string Name => lref == "" ? "" : $"file{lref}";
         public int Index => lref == "" ? -1 : int.Parse(lref);
 
+        public override string ToString() {
+            return $"{Index}: {Name}";
+        }
+
     }
 }

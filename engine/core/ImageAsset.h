@@ -5,6 +5,7 @@
 
 #include "wrl.h_d3d11_alias.h"
 #include "FileSystem.h"
+#include "CSBridge.h"
 
 class Image {
 public:
@@ -35,16 +36,17 @@ public:
 	~ImageAsset();
 
 	void Init();
-	void Load(fs::path path);
+	void Load(const fs::path& path);
 	
-	const Image* Get(fs::path path);
+	const Image* Get(const fs::path& path);
 
-	static size_t GetHash(fs::path path);
+	static size_t GetHash(const fs::path& path);
 
 private:
-	void m_Load(size_t hash, fs::path path);
-	Image* m_CreateImage(fs::path path);
+	void m_Load(size_t hash, const fs::path& path);
+	Image* m_CreateImage(const fs::path& path);
 	void m_GenerateRuntimeImages();
 
 };
 
+FUNC(ImageAsset, Load, CppRef)(CppRef gameRef, const char* path, int& width, int& height);

@@ -72,6 +72,10 @@ namespace FireYaml {
                 return m_list[m_index];
             return null;
         }
+
+        public override string ToString() {
+            return $"{name}";
+        }
     }
 
     public class Serializer {
@@ -154,7 +158,7 @@ namespace FireYaml {
                 IFile.SetPrefabId(basePrefabId, ref obj);
             }
 
-            CreateDocument(type, obj);
+            CreateDocument(type, obj, notSaveAsAsset: true);
 
             if (prefabId != IFile.NotPrefab)
                 IFile.SetPrefabId(prefabId, ref obj);
@@ -166,8 +170,9 @@ namespace FireYaml {
             Result = true;
         }
 
-        public string CreateDocument(Type type, object instance) {
-            var existName = m_GetAssignedDoc(m_rootPath, type, instance);
+        public string CreateDocument(Type type, object instance, bool notSaveAsAsset = false) {
+            //var existName = m_GetAssignedDoc(m_rootPath, type, instance);
+            var existName = m_GetAssignedDoc(instance);
             if (existName != "")
                 return existName;
 
@@ -177,20 +182,23 @@ namespace FireYaml {
             //var docPath = $".{docName}";
             var fullPath = GetFullPath(docName);
             var scriptPath = $"{fullPath}!scriptId";
-            var scriptValue = new YamlValue(YamlValue.Type.AssetId, scriptId);
+            var scriptIdValue = new YamlValue(YamlValue.Type.AssetId, scriptId);
+            var scriptValue = new YamlValue(YamlValue.Type.Var, type.Name);
             
             if (showLog) Console.WriteLine($"CreateDocument {fullPath}");
 
-            m_values.AddValue(scriptPath, scriptValue);
+            m_values.AddValue($"{fullPath}!script", scriptValue);
+            m_values.AddValue(scriptPath, scriptIdValue);
 
-            m_SetAssignedDoc(fullPath, m_rootPath, type, instance);
+            // m_SetAssignedDoc(fullPath, m_rootPath, type, instance);
+            m_SetAssignedDoc(fullPath, instance);
 
             var prefabId = IFile.GetPrefabId(ref instance);
             if (prefabId != IFile.NotPrefab) {
                 m_CreatePrefab(fullPath, type, ref instance, prefabId);
             }
             else {
-                m_CreateObject(fullPath, type, instance, false);
+                m_CreateObject(fullPath, type, instance, canSaveAsLink: false, notSaveAsAsset: notSaveAsAsset);
             }
 
             IFile.SetAssetInstance(m_assetInst, ref instance);
@@ -234,7 +242,7 @@ namespace FireYaml {
 
         }
 
-        private void m_CreateObject(string selfPath, Type type, object obj, bool canSaveAsLink = true) {
+        private void m_CreateObject(string selfPath, Type type, object obj, bool canSaveAsLink = true, bool notSaveAsAsset = false) {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
 
@@ -245,11 +253,13 @@ namespace FireYaml {
                 link.fieldPath = selfPath;
                 link.rootPath = m_rootPath;
                 m_links.Add(link);
-
-                if (showLog) Console.WriteLine($"Link {selfPath}: ");
                 return;
             }
-
+            bool isAsset = IsAsset(type);
+            if(!notSaveAsAsset && isAsset) {
+                m_CreateAsset(selfPath, ref obj);
+                return;
+            }
             var serializer = GetSerializer(type);
             var fields = GetFields(type, obj, serializer);
 
@@ -257,22 +267,17 @@ namespace FireYaml {
                 m_AddScalar(selfPath, obj);
                 return;
             }
-
-            if (showLog) Console.WriteLine($"Object {selfPath}: ");
-
             foreach (var field in fields) {
                 var fieldPath = $"{selfPath}.{field.name}";
-
-                if (m_TryAddAssetId(fieldPath, field, type, obj))
+                if(isAsset && field.name == nameof(IAsset.assetId))
                     continue;
-
+                    
                 AddField(fieldPath, field.type, field.Value);
             }
             serializer.OnSerialize(this, selfPath, type, obj);
 
-            if (serializer.NeedIncludeBase(type) && type.BaseType != null) {
+            if (serializer.NeedIncludeBase(type) && type.BaseType != null) 
                 m_CreateBaseObject(selfPath, type.BaseType, ref obj);
-            }
         }
 
         private void m_CreateBaseObject(string selfPath, Type baseType, ref object obj) {
@@ -286,23 +291,21 @@ namespace FireYaml {
             m_CreateObject(basePath, baseType, obj, false);
         }
 
-        private bool m_TryAddAssetId(string fieldPath, Field field, Type type, object? obj) {
+        private void m_CreateAsset(string selfPath, ref object obj) {
+            var asset = (IAsset)obj;
 
-            var iasset = type.GetInterface(nameof(IAsset));
-            
-            if(iasset != null && field.name == nameof(IAsset.assetId)) {
-                var asset = (IAsset)obj;
+            var assetId = new YamlValue();
+            assetId.type = YamlValue.Type.AssetId;
+            assetId.value = ToYamlString(asset.assetId);
 
-                var assetId = new YamlValue();
-                assetId.type = YamlValue.Type.AssetId;
-                assetId.value = ToYamlString(asset.assetId);
+            if (showLog) Console.WriteLine($"Add {selfPath}: {assetId}");
 
-                if (showLog) Console.WriteLine($"Add {fieldPath}: {assetId}");
+            var assetIdPath = $"{selfPath}.assetId";
+            m_values.AddValue(assetIdPath, assetId);
+        }
 
-                m_values.AddValue(fieldPath, assetId);
-                return true;
-            }
-            return false;
+        public static bool IsAsset(Type type){
+            return type.GetInterface(nameof(IAsset)) != null;
         }
 
         private YamlRef m_GetFileRef(ref object instance) {
@@ -351,7 +354,7 @@ namespace FireYaml {
 
         private void m_AddScalar(string selfPath, object? obj) {
             var selfValue = new YamlValue();
-            selfValue.type = YamlValue.Type.Scalar;
+            selfValue.type = YamlValue.Type.Var;
             selfValue.value = obj != null ? ToYamlString(obj) : "";
 
             if (showLog) Console.WriteLine($"Add {selfPath}: {selfValue}");
@@ -359,7 +362,7 @@ namespace FireYaml {
             m_values.AddValue(selfPath, selfValue);
         }
 
-        public void AddField(string fullFieldPath, Type type, object value) {
+        public void AddField(string fullFieldPath, Type type, object? value) {
             if (showLog) Console.WriteLine($"# AddField: {fullFieldPath}, type:{type.Name}");
 
             bool isList = IsList(type);
@@ -367,9 +370,6 @@ namespace FireYaml {
 
             if (value == null) {
                 var selfValue = new YamlValue(YamlValue.Type.Null);
-
-                if (showLog) Console.WriteLine($"{(isList ? "List" : "Object")} {fullFieldPath}: {selfValue}");
-
                 m_values.AddValue(fullFieldPath, selfValue);
                 return;
             }
@@ -427,35 +427,56 @@ namespace FireYaml {
             return false;
         }
 
-        private void m_SetAssignedDoc(string docName, string rootPath, Type type, object obj) {
-            if (type == null || obj == null)
+        private void m_SetAssignedDoc(string docName, object obj) {
+            if (obj == null)
                 throw new ArgumentNullException("obj");
 
-            //var str = $"{type.FullName.GetHashCode()}_{obj.GetHashCode()}";
-            var str = $"{rootPath}_{type.FullName}_{obj.GetHashCode()}";
-            var hash = str.GetHashCode();
+            var hash = obj.GetHashCode();
 
             m_writedDocs[hash] = docName;
         }
 
-        private string m_GetAssignedDoc(string rootPath, Type type, object obj) {
-            if (type == null || obj == null)
+        // private void m_SetAssignedDoc(string docName, string rootPath, Type type, object obj) {
+        //     if (type == null || obj == null)
+        //         throw new ArgumentNullException("obj");
+
+        //     //var str = $"{type.FullName.GetHashCode()}_{obj.GetHashCode()}";
+        //     var str = $"{rootPath}_{type.FullName}_{obj.GetHashCode()}";
+        //     var hash = str.GetHashCode();
+
+        //     m_writedDocs[hash] = docName;
+        // }
+
+        private string m_GetAssignedDoc(object obj) {
+            if (obj == null)
                 throw new ArgumentNullException();
 
-            var str = $"{rootPath}_{type.FullName}_{obj.GetHashCode()}";
-            var hash = str.GetHashCode();
+            var hash = obj.GetHashCode();
 
             if (m_writedDocs.ContainsKey(hash))
                 return m_writedDocs[hash];
             return "";
         }
 
+        // private string m_GetAssignedDoc(string rootPath, Type type, object obj) {
+        //     if (type == null || obj == null)
+        //         throw new ArgumentNullException();
+
+        //     var str = $"{rootPath}_{type.FullName}_{obj.GetHashCode()}";
+        //     var hash = str.GetHashCode();
+
+        //     if (m_writedDocs.ContainsKey(hash))
+        //         return m_writedDocs[hash];
+        //     return "";
+        // }
+
         private void m_ResolveLinks() {
             foreach (var link in m_links) {
                 var value = new YamlValue();
-                var docName = m_GetAssignedDoc(link.rootPath, link.type, link.instance);
+                // var docName = m_GetAssignedDoc(link.rootPath, link.type, link.instance);
+                var docName = m_GetAssignedDoc(link.instance);
                 if (docName != "") {
-                    value.type = YamlValue.Type.Link;
+                    value.type = YamlValue.Type.Ref;
                     value.value = docName.Substring(1);
                 }
                 m_values.AddValue(link.fieldPath, value);
@@ -481,16 +502,10 @@ namespace FireYaml {
             return (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(List<>)));
         }
 
-        public bool IsPureCppComponent(Type type) {
-            if (type == typeof(Engine.CSComponent))
-                return true;
-            return false;
-        }
-
         public static bool CanSerialize(Type type) {
 
-            if (type == typeof(Engine.CSComponent))
-                return false;
+            if (typeof(Engine.Component).IsAssignableFrom(type))
+                return true;
 
             if (type == typeof(object))
                 return false;
@@ -498,6 +513,7 @@ namespace FireYaml {
             if (type == typeof(string) ||
                 type == typeof(Engine.Vector2) ||
                 type == typeof(Engine.Vector3) ||
+                type == typeof(Engine.Vector4) ||
                 type == typeof(Engine.Quaternion)) {
                 return true;
             }
@@ -515,21 +531,44 @@ namespace FireYaml {
 
             var isClass = type.IsClass;
             var isValueType = type.IsValueType;
-            var hasConstr = type.GetConstructor(Type.EmptyTypes) != null;
-            if (isClass || isValueType)
-                return hasConstr;
+            if (isClass || isValueType) {
+                var serializableAttr = HasSerializableAttr(type);
+                var hasEmptyConstructor = HasEmptyConstructor(type);
+                return serializableAttr && hasEmptyConstructor;
+            }
 
             return false;
         }
 
+        public static bool HasSerializableAttr(Type? type) {
+            if(type == null || type == typeof(object))
+                return false;
+
+            var serializableAttr = type.GetCustomAttribute<System.SerializableAttribute>();
+            if(serializableAttr != null)
+                return true;  
+            
+            return HasSerializableAttr(type.BaseType);
+        }
+
+        public static bool HasEmptyConstructor(Type type) {
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+
+            var constructor = type.GetConstructor(flags, null, Type.EmptyTypes, null);
+
+            return constructor != null;
+        }
+
         public static Engine.SerializerBase GetSerializer(Type type) {
             var serializerType = Type.GetType($"{type.FullName}Serializer");
+            var isSerializer = typeof(Engine.SerializerBase).IsAssignableFrom(serializerType);
 
-            if (serializerType == null ||
-                serializerType.BaseType == null ||
-                serializerType.BaseType != typeof(Engine.SerializerBase)) {
-                if (typeof(Engine.CSComponent).IsAssignableFrom(type))
-                    return new Engine.CSComponentSerializer();
+            if (serializerType == null || !isSerializer) {
+                bool isCsComponent = typeof(Engine.CSComponent).IsAssignableFrom(type);
+                bool isCppComponent = typeof(Engine.CppComponent).IsAssignableFrom(type);
+
+                if (isCsComponent || isCppComponent)
+                    return new Engine.ComponentSerializer();
 
                 return new Engine.SerializerBase();
             }
@@ -538,11 +577,33 @@ namespace FireYaml {
             return serializer as Engine.SerializerBase;
         }
 
+        // public static Engine.SerializerBase GetSerializer(Type type) {
+        //     var serializerType = Type.GetType($"{type.FullName}Serializer");
+
+        //     var isSerializer = typeof(Engine.SerializerBase).IsAssignableFrom(serializerType);
+
+        //     if (serializerType == null ||
+        //         serializerType.BaseType == null ||
+        //         serializerType.BaseType != typeof(Engine.SerializerBase)) 
+        //     {
+        //         bool isCsComponent = typeof(Engine.CSComponent).IsAssignableFrom(type);
+        //         bool isCppComponent = typeof(Engine.CppComponent).IsAssignableFrom(type);
+
+        //         if (isCsComponent || isCppComponent)
+        //             return new Engine.ComponentSerializer();
+
+        //         return new Engine.SerializerBase();
+        //     }
+        //     var serializer = Activator.CreateInstance(serializerType);
+
+        //     return serializer as Engine.SerializerBase;
+        // }
+
         public static List<Field> GetFields(Type type, object obj, Engine.SerializerBase serializer) {
             var fields = new List<Field>();
 
             if (type.IsEnum)
-                return fields;
+                return fields; 
 
             var allFields = type.GetFields(s_flags);
             var allProps = type.GetProperties(s_flags);
@@ -566,6 +627,29 @@ namespace FireYaml {
             return fields;
         }
 
+        public static Field GetField(string name, Type containedType, object containedObj, Engine.SerializerBase serializer) {
+            if (containedType.IsEnum)
+                return null;
+
+            var field = containedType.GetField(name, s_flags);
+            var prop = containedType.GetProperty(name, s_flags);
+
+            if(field != null) {
+                if (field.DeclaringType != containedType || !CanSerialize(field.FieldType))
+                    return null;
+
+                if (serializer.NeedSerialize(field)) 
+                    return new Field(field, containedObj);
+            }
+            if (prop != null) {
+                if (prop.DeclaringType != containedType || !CanSerialize(prop.PropertyType))
+                    return null;
+
+                if (serializer.NeedSerialize(prop))
+                    return new Field(prop, containedObj);
+            }
+            return null;
+        }
 
     }
 }

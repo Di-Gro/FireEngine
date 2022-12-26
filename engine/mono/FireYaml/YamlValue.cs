@@ -5,7 +5,7 @@ using System.Text;
 namespace FireYaml {
     public class YamlValue {
 
-        public enum Type { Scalar, Link, AssetId, Null }
+        public enum Type { Var, Ref, AssetId, Null }
 
         public string value;
         public Type type;

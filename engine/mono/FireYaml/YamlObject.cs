@@ -52,7 +52,7 @@ namespace FireYaml {
             if (docRef != null) {
                 var yamlValue = new YamlValue() {
                     value = $"{docRef.Tag}",
-                    type = YamlValue.Type.Link
+                    type = YamlValue.Type.Ref
                 };
                 yamlValues.AddValue($"{parentPath}", yamlValue);
             }
@@ -72,7 +72,7 @@ namespace FireYaml {
                 var path = isItem ? $"{parentPath}" : $"{parentPath}.{nameStr}";
                 var yamlValue = new YamlValue() {
                     value = $"{value}",
-                    type = YamlValue.Type.Scalar
+                    type = YamlValue.Type.Var
                 };
                 yamlValues.AddValue(path, yamlValue);
             }

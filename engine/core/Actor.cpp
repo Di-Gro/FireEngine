@@ -86,6 +86,7 @@ void Actor::f_Update() {
 		if (component->friend_isStarted) {
 			m_OnUpdateComponent(component); 
 		} else {
+			//m_OnInitComponent(component);
 			m_OnStartComponent(component);
 			component->friend_isStarted = true;
 		}
@@ -118,14 +119,16 @@ std::list<Component*>::iterator Actor::m_EraseComponent(std::list<Component*>::i
 	return next;
 }
 
-void Actor::m_InitComponent(Component* component) {
+void Actor::m_BindComponent(Component* component) {
 	auto it = m_components.insert(m_components.end(), component);
 
 	component->ActorBase::friend_gameObject = this;
 	component->ActorBase::friend_component = component;
 	component->ActorBase::transform = transform;
+}
 
-	m_OnInitComponent(component); 
+void Actor::m_InitComponent(Component* component) {
+	m_OnInitComponent(component);
 }
 
 void Actor::f_DestroyComponent(Component* component) {
@@ -136,7 +139,6 @@ void Actor::f_DestroyComponent(Component* component) {
 
 		if (CppRefs::IsValid(component->f_ref)) {
 			CppRefs::Remove(component->f_ref);
-			//std::cout << "+: CppRefs.Remove(): " << component->cppRef() << std::endl;
 		}
 		component->ActorBase::friend_gameObject = nullptr;
 		component->ActorBase::friend_component = nullptr;
@@ -201,7 +203,6 @@ Actor* Actor::GetChild(int index) {
 }
 
 
-
 static inline Vector3 deg(Vector3 vec) {
 	return Vector3(deg(vec.x), deg(vec.y), deg(vec.z));
 }
@@ -218,32 +219,7 @@ static std::string ToString(Transform& transform) {
 	return str;
 }
 
-void Actor::RecieveGameMessage(const std::string& msg) {
-
-	//if (msg == "tr") {
-	//	std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
-	//	std::cout << "transform:" << std::endl;
-	//	std::cout << ToString(*transform) << std::endl;
-	//	std::cout << std::endl;
-	//}
-	//else if (msg == "tr.lpos") {
-	//	std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
-	//	std::cout << "local position: ";
-	//	std::cout << ToString(localPosition()) << std::endl;
-	//	std::cout << std::endl;
-	//} 
-	//else if (msg == "tr.lrot") {
-	//	std::cout << "Object: " << name << " (" << f_actorID << ")" << std::endl;
-	//	std::cout << "local rotation: ";
-	//	std::cout << ToString(deg(localRotation())) << std::endl;
-	//	std::cout << std::endl;
-	//}
-
-	//for (auto component : m_components) {
-	//	if (!component->IsDestroyed())
-	//		component->RecieveGameMessage(msg);
-	//}
-}
+void Actor::RecieveGameMessage(const std::string& msg) { }
 
 void Actor::m_OnInitComponent(Component* component) {
 	component->OnInit();
@@ -289,6 +265,12 @@ DEF_FUNC(Actor, parent_set, void)(CppRef objRef, CppRef newObjRef) {
 	auto object = CppRefs::ThrowPointer<Actor>(objRef);
 	auto parent = CppRefs::ThrowPointer<Actor>(newObjRef);
 	object->parent(parent);
+}
+
+void Actor_BindComponent(CppRef objRef, CppRef compRef) {
+	auto* actor = CppRefs::ThrowPointer<Actor>(objRef);
+	auto* component = CppRefs::ThrowPointer<Component>(compRef);
+	actor->m_BindComponent(component);
 }
 
 void Actor_InitComponent(CppRef objRef, CppRef compRef) {
@@ -341,5 +323,5 @@ DEF_PROP_GET(Actor, Vector3, right)
 
 DEF_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks) {
 	auto component = CppRefs::ThrowPointer<Component>(componentRef);
-	component->actor()->m_SetComponentCallbacks(component, callbacks);
+	Actor::m_SetComponentCallbacks(component, callbacks);
 }

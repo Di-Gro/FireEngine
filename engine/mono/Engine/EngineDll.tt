@@ -37,6 +37,7 @@ namespace EngineDll {
 		public static class Actor {
 		
 <#
+			FUNC("Actor", "BindComponent", "void" , "CppRef objRef, CppRef compRef");
 			FUNC("Actor", "InitComponent", "void" , "CppRef objRef, CppRef compRef");
 
 			FUNC("Actor", "gameObject_get", "CsRef", "CppRef objBaseRef");
@@ -86,7 +87,8 @@ namespace EngineDll {
 		public static class CsComponent {
 
 <# 
-			FUNC("CsComponent", "Create", "CppObjectInfo" , "CppRef cppObjRef, CsRef csCompRef");
+			//FUNC("CsComponent", "Create", "CppObjectInfo" , "CppRef cppObjRef, CsRef csCompRef");
+			FUNC("CsComponent", "Create", "CppObjectInfo" , "CsRef csCompRef");
 #>
 
 		}
@@ -110,19 +112,59 @@ namespace EngineDll {
 		public static class Material {
 
 <#
-			FUNC("Material", "diffuseColor_get",	"Vector3",	"CppRef matRef");
-			FUNC("Material", "diffuse_get",			"float",	"CppRef matRef");
-			FUNC("Material", "ambient_get",			"float",	"CppRef matRef");
-			FUNC("Material", "specular_get",		"float",	"CppRef matRef");
-			FUNC("Material", "shininess_get",		"float",	"CppRef matRef");
+			// FUNC("Material", "diffuseColor_get",	"Vector3",	"CppRef matRef");
+			// FUNC("Material", "diffuse_get",			"float",	"CppRef matRef");
+			// FUNC("Material", "ambient_get",			"float",	"CppRef matRef");
+			// FUNC("Material", "specular_get",		"float",	"CppRef matRef");
+			// FUNC("Material", "shininess_get",		"float",	"CppRef matRef");
 
-			FUNC("Material", "diffuseColor_set",	"void",		"CppRef matRef, Vector3 value");
-			FUNC("Material", "diffuse_set",			"void",		"CppRef matRef, float value");
-			FUNC("Material", "ambient_set",			"void",		"CppRef matRef, float value");
-			FUNC("Material", "specular_set",		"void",		"CppRef matRef, float value");
-			FUNC("Material", "shininess_set",		"void",		"CppRef matRef, float value");
+			// FUNC("Material", "diffuseColor_set",	"void",		"CppRef matRef, Vector3 value");
+			// FUNC("Material", "diffuse_set",			"void",		"CppRef matRef, float value");
+			// FUNC("Material", "ambient_set",			"void",		"CppRef matRef, float value");
+			// FUNC("Material", "specular_set",		"void",		"CppRef matRef, float value");
+			// FUNC("Material", "shininess_set",		"void",		"CppRef matRef, float value");
+
+			PROP_GETSET("Material", "Vector3", "diffuseColor");
+			PROP_GETSET("Material", "float", "diffuse");
+			PROP_GETSET("Material", "float", "ambient");
+			PROP_GETSET("Material", "float", "specular");
+			PROP_GETSET("Material", "float", "shininess");
+
+			PROP_GETSET("Material", "int", "cullMode");
+			PROP_GETSET("Material", "int", "fillMode");
+			PROP_GETSET("Material", "size_t", "priority");
 
 			FUNC("Material", "name_get",			"int",		"CppRef matRef, byte[] buf, int bufLehgth");
+
+			FUNC("Material", "isDynamic_get",		"bool",		"CppRef matRef");
+
+			FUNC("Material", "Create", "CppRef", "CppRef gameRef, size_t assetHash");
+#>
+		}
+
+		public static class Assets {
+		
+<#
+			//ANSI_FUNC("Assets", "GetHash", "ulong", "CppRef gameRef, string path");
+			FUNC("Assets", "Reload", "void", "CppRef gameRef, int assetId");
+			FUNC("Assets", "Get", "CppRef", "CppRef gameRef, int assetId");
+#>
+		}
+
+		public static class ImageAsset {
+		
+<#
+			ANSI_FUNC("ImageAsset", "Load", "CppRef", "CppRef gameRef, string path, ref int width, ref int height");
+#>
+		}
+
+		public static class Texture {
+		
+<#
+			PROP_GETSET("Texture", "int", "assetId");
+			FUNC("Texture", "PushAsset", "CppRef", "CppRef gameRef, int assetId");
+			FUNC("Texture", "Init", "void", "CppRef gameRef, CppRef texRef, uint width, uint height");
+			FUNC("Texture", "InitFromImage", "void", "CppRef gameRef, CppRef texRef, CppRef imageRef");
 #>
 		}
 
@@ -144,6 +186,7 @@ namespace EngineDll {
 <#
 			FUNC("Mesh4", "ShapeCount",			"int", "CppRef mesh4Ref");
 			FUNC("Mesh4", "MaterialMaxIndex",	"int", "CppRef mesh4Ref");
+			PROP_GET("Mesh4", "size_t", "assetHash");
 #>
 		}
 

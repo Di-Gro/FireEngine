@@ -47,9 +47,34 @@ namespace CSBridge {
 \
 	}\
 
+#define DEF_PROP_GET_F(ClassName, propType, propName, field)\
+	propType ClassName##_##propName##_get(CppRef objRef) {\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
+		if (a != nullptr)\
+			return a->field;\
+		else\
+			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
+\
+		return propType();\
+	}\
+
+#define DEF_PROP_SET_F(ClassName, propType, propName, field)\
+	void ClassName##_##propName##_set(CppRef objRef, propType value) {\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
+		if (a != nullptr)\
+			a->field = value;\
+		else\
+			std::cout << "+: prop_set::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
+\
+	}\
+
 #define DEF_PROP_GETSET(ClassName, propType, propName)\
 	DEF_PROP_GET(ClassName, propType, propName)\
 	DEF_PROP_SET(ClassName, propType, propName)\
+
+#define DEF_PROP_GETSET_F(ClassName, propType, propName, field)\
+	DEF_PROP_GET_F(ClassName, propType, propName, field)\
+	DEF_PROP_SET_F(ClassName, propType, propName, field)\
 
 #define FUNC(ClassName, funcName, retType) extern "C" __declspec(dllexport) retType ClassName##_##funcName
 
@@ -121,13 +146,12 @@ offsets[index] = offsetof(ClassName, fieldName)\
 
 
 #define DEC_COMPONENT_CREATE(ClassName)\
-FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \
+FUNC(ClassName, Create, CppObjectInfo)(CsRef csCompRef) \
 
 #define DEF_COMPONENT_CREATE(ClassName)\
-DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
-	auto* actor = CppRefs::ThrowPointer<Actor>(cppObjRef);\
+DEF_FUNC(ClassName, Create, CppObjectInfo)(CsRef csCompRef) {\
 \
-	Component* component = actor->inner_CreateComponent<ClassName>(csCompRef);\
+	Component* component = Actor::inner_CreateComponent<ClassName>(csCompRef);\
 	auto meta = component->GetMeta();\
 \
 	CppObjectInfo strct;\
@@ -136,6 +160,23 @@ DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
 \
 	return strct;\
 }\
+
+//#define DEC_COMPONENT_CREATE(ClassName)\
+//FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \
+
+//#define DEF_COMPONENT_CREATE(ClassName)\
+//DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
+//	auto* actor = CppRefs::ThrowPointer<Actor>(cppObjRef);\
+//\
+//	Component* component = actor->inner_CreateComponent<ClassName>(csCompRef);\
+//	auto meta = component->GetMeta();\
+//\
+//	CppObjectInfo strct;\
+//	strct.cppRef = component->cppRef();\
+//	strct.classRef = meta.classInfoRef;\
+//\
+//	return strct;\
+//}\
 
 #define DEF_COMPONENT_WRITE_OFFSETS_METHOD(ClassName)\
 void ClassName##::meta_WriteOffsets(int* offsets)\

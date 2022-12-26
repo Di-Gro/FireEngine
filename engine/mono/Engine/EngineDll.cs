@@ -18,7 +18,7 @@ namespace EngineDll {
 		public static class CameraComponent {
 
             [DllImport(Paths.Exe, EntryPoint = "CameraComponent_Create")]
-		    public static extern CppObjectInfo Create(CppRef cppObjRef, CsRef csCompRef);
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
             [DllImport(Paths.Exe, EntryPoint = "CameraComponent_IsAttached_get")]
 		    public static extern bool IsAttached_get(CppRef objRef);
@@ -39,6 +39,9 @@ namespace EngineDll {
 
 		public static class Actor {
 		
+            [DllImport(Paths.Exe, EntryPoint = "Actor_BindComponent")]
+		    public static extern void BindComponent(CppRef objRef, CppRef compRef);
+
             [DllImport(Paths.Exe, EntryPoint = "Actor_InitComponent")]
 		    public static extern void InitComponent(CppRef objRef, CppRef compRef);
 
@@ -149,7 +152,7 @@ namespace EngineDll {
 		public static class CsComponent {
 
             [DllImport(Paths.Exe, EntryPoint = "CsComponent_Create")]
-		    public static extern CppObjectInfo Create(CppRef cppObjRef, CsRef csCompRef);
+		    public static extern CppObjectInfo Create(CsRef csCompRef);
 
 
 		}
@@ -182,37 +185,97 @@ namespace EngineDll {
 		public static class Material {
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_get")]
-		    public static extern Vector3 diffuseColor_get(CppRef matRef);
-
-            [DllImport(Paths.Exe, EntryPoint = "Material_diffuse_get")]
-		    public static extern float diffuse_get(CppRef matRef);
-
-            [DllImport(Paths.Exe, EntryPoint = "Material_ambient_get")]
-		    public static extern float ambient_get(CppRef matRef);
-
-            [DllImport(Paths.Exe, EntryPoint = "Material_specular_get")]
-		    public static extern float specular_get(CppRef matRef);
-
-            [DllImport(Paths.Exe, EntryPoint = "Material_shininess_get")]
-		    public static extern float shininess_get(CppRef matRef);
+		    public static extern Vector3 diffuseColor_get(CppRef objRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_set")]
-		    public static extern void diffuseColor_set(CppRef matRef, Vector3 value);
+		    public static extern void diffuseColor_set(CppRef objRef, Vector3 value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_diffuse_get")]
+		    public static extern float diffuse_get(CppRef objRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuse_set")]
-		    public static extern void diffuse_set(CppRef matRef, float value);
+		    public static extern void diffuse_set(CppRef objRef, float value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_ambient_get")]
+		    public static extern float ambient_get(CppRef objRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_ambient_set")]
-		    public static extern void ambient_set(CppRef matRef, float value);
+		    public static extern void ambient_set(CppRef objRef, float value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_specular_get")]
+		    public static extern float specular_get(CppRef objRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_specular_set")]
-		    public static extern void specular_set(CppRef matRef, float value);
+		    public static extern void specular_set(CppRef objRef, float value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_shininess_get")]
+		    public static extern float shininess_get(CppRef objRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_shininess_set")]
-		    public static extern void shininess_set(CppRef matRef, float value);
+		    public static extern void shininess_set(CppRef objRef, float value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_cullMode_get")]
+		    public static extern int cullMode_get(CppRef objRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_cullMode_set")]
+		    public static extern void cullMode_set(CppRef objRef, int value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_fillMode_get")]
+		    public static extern int fillMode_get(CppRef objRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_fillMode_set")]
+		    public static extern void fillMode_set(CppRef objRef, int value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_priority_get")]
+		    public static extern size_t priority_get(CppRef objRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_priority_set")]
+		    public static extern void priority_set(CppRef objRef, size_t value);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_name_get")]
 		    public static extern int name_get(CppRef matRef, byte[] buf, int bufLehgth);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_isDynamic_get")]
+		    public static extern bool isDynamic_get(CppRef matRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_Create")]
+		    public static extern CppRef Create(CppRef gameRef, size_t assetHash);
+
+		}
+
+		public static class Assets {
+		
+            [DllImport(Paths.Exe, EntryPoint = "Assets_Reload")]
+		    public static extern void Reload(CppRef gameRef, int assetId);
+
+            [DllImport(Paths.Exe, EntryPoint = "Assets_Get")]
+		    public static extern CppRef Get(CppRef gameRef, int assetId);
+
+		}
+
+		public static class ImageAsset {
+		
+            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_Load", CharSet = CharSet.Ansi)]
+		    public static extern CppRef Load(CppRef gameRef, string path, ref int width, ref int height);
+
+		}
+
+		public static class Texture {
+		
+            [DllImport(Paths.Exe, EntryPoint = "Texture_assetId_get")]
+		    public static extern int assetId_get(CppRef objRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Texture_assetId_set")]
+		    public static extern void assetId_set(CppRef objRef, int value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Texture_PushAsset")]
+		    public static extern CppRef PushAsset(CppRef gameRef, int assetId);
+
+            [DllImport(Paths.Exe, EntryPoint = "Texture_Init")]
+		    public static extern void Init(CppRef gameRef, CppRef texRef, uint width, uint height);
+
+            [DllImport(Paths.Exe, EntryPoint = "Texture_InitFromImage")]
+		    public static extern void InitFromImage(CppRef gameRef, CppRef texRef, CppRef imageRef);
 
 		}
 
@@ -243,12 +306,15 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "Mesh4_MaterialMaxIndex")]
 		    public static extern int MaterialMaxIndex(CppRef mesh4Ref);
 
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetHash_get")]
+		    public static extern size_t assetHash_get(CppRef objRef);
+
 		}
 
 		public static class MeshComponent {
 
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_Create")]
-		    public static extern CppObjectInfo Create(CppRef cppObjRef, CsRef csCompRef);
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_IsDynamic_get")]
 		    public static extern bool IsDynamic_get(CppRef objRef);

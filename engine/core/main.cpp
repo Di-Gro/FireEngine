@@ -23,7 +23,14 @@ static void RunGame(MonoInst* imono) {
 	try {
 		Game game;
 		game.Init(imono);
-		game.Run();
+
+		try {
+			game.Run();
+		}
+		catch (std::exception ex) {
+			std::cout << "+: Game Exception: \n" << ex.what() << "'\n";
+		}
+
 	}
 	catch (mono::mono_thunk_exception ex) {
 		std::cout << "+: mono_exception: \n" << ex.what() << "'\n";
@@ -47,9 +54,8 @@ static void InsideMono() {
 
 
 
-int main() {
-		
-	if (!mono::init("mono", true))
+int main() {		
+	if (!mono::init("mono", false))
 		return 1;
 
 	InsideMono();

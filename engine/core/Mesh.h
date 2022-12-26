@@ -118,6 +118,7 @@ public:
 	void DrawShape(const DynamicShapeData& data, int index) const;
 
 	int shapeCount() const { return (int)m_shapes.size(); }
+	size_t assetHash() { return f_assetHash; }
 
 	int maxMaterialIndex() const;
 
@@ -146,3 +147,4 @@ public:
 
 FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);
 FUNC(Mesh4, MaterialMaxIndex, int)(CppRef mesh4Ref);
+PROP_GET(Mesh4, size_t, assetHash);

@@ -255,9 +255,17 @@ int Mesh4::maxMaterialIndex() const {
 
 
 DEF_FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref) {
+	if (mesh4Ref == 0)
+		return Mesh4().shapeCount();
+
 	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->shapeCount();
 }
 
 DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
+	if (mesh4Ref == 0)
+		return Mesh4().maxMaterialIndex();
+
 	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
 }
+
+DEF_PROP_GET(Mesh4, size_t, assetHash);

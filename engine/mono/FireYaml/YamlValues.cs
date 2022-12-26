@@ -226,7 +226,7 @@ namespace FireYaml {
         }
 
         private static bool IsEqualLinks(string path, YamlValue left, YamlValue right) {
-            if (left.type == right.type && left.type == YamlValue.Type.Link) {
+            if (left.type == right.type && left.type == YamlValue.Type.Ref) {
                 var unpackedLeft = UnpackLink(path, left.value);
                 return unpackedLeft == right.value;
             }
@@ -240,7 +240,7 @@ namespace FireYaml {
                 var path = pair.Key;
                 var value = pair.Value;
 
-                if (packLinks && value.type == YamlValue.Type.Link)
+                if (packLinks && value.type == YamlValue.Type.Ref)
                     value.value = $"{rootPath.Substring(1)}.{value.value}";
 
                 merged.m_values.Add($"{rootPath}{path}", value);
@@ -293,7 +293,7 @@ namespace FireYaml {
                 var path = pair.Key;
                 var value = pair.Value;
 
-                if (value.type == YamlValue.Type.Link)
+                if (value.type == YamlValue.Type.Ref)
                     value.value = $"{rootPath.Substring(1)}.{value.value}";
 
                 packed.AddValue(path, value);

@@ -39,8 +39,8 @@ namespace Engine {
         public void UpdateProjMatrix() => Dll.CameraComponent.UpdateProjMatrix(cppRef);
 
 
-        public override CppObjectInfo CreateFromCS(Actor target) {
-            return Dll.CameraComponent.Create(target.cppRef, csRef);
+        public override CppObjectInfo CppConstructor(/*Actor target*/) {
+            return Dll.CameraComponent.Create(/*target.cppRef, */csRef);
         }
 
     }

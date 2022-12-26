@@ -32,6 +32,7 @@ TComponent* Actor::AddComponent() {
 		auto csCompRef = mono_AddComponent(this->csRef(), (size_t)meta.name, std::strlen(meta.name), info);
 		component->f_csRef = csCompRef;
 	}
+	m_BindComponent(component);
 	m_InitComponent(component);
 
 	//std::cout << "+: -> " << component->csRef() << ", " << component->cppRef() << std::endl;

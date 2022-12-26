@@ -40,8 +40,9 @@ void MeshComponent::m_InitDynamic() {
 	newMesh->f_ref = CppRefs::Create(newMesh);
 	newMesh->f_cppRef = newMesh->f_ref.cppRef();
 		
-	mesh(newMesh);
-	m_dynamicMesh = newMesh;
+	//mesh(newMesh);
+	//m_dynamicMesh = newMesh;
+	m_SetMesh(newMesh, true);
 }
 
 void MeshComponent::OnDestroy() {
@@ -197,10 +198,13 @@ void MeshComponent::m_FillByDefaultMaterial(int targetSize) {
 	}
 }
 
-void MeshComponent::mesh(const Mesh4* mesh) {
+void MeshComponent::m_SetMesh(const Mesh4* mesh, bool isDynamic) {
 	m_DeleteResources();
 	m_mesh = mesh;
 	m_SetMaterialsFromMesh();
+
+	if(isDynamic)
+		m_dynamicMesh = (Mesh4*)mesh;
 
 	if (csRef() > 0) {
 		auto newRef = m_mesh != nullptr ? m_mesh->f_cppRef : RefCpp(0);

@@ -60,6 +60,8 @@ public:
 	template<typename T>
 	static T* GetPointer(CppRef refId);
 
+	static CppRef GetRef(void* ptr);
+
 	template<typename T>
 	static T* ThrowPointer(CppRef refId);
 

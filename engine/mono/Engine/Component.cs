@@ -30,7 +30,7 @@ namespace Engine {
 
         //public Transform transform => GetObjectByRef(m_transformRef) as Transform;
 
-        public abstract CppObjectInfo CreateFromCS(Actor target);
+        public abstract CppObjectInfo CppConstructor();
 
         public virtual void OnInit() { }
         public virtual void OnStart() { }
@@ -40,20 +40,19 @@ namespace Engine {
 
         public void Destroy() => Dll.Actor.Destroy(cppRef);
 
-        public void LinkGameObject(CsRef objectRef) {
-            //Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).LinkGameObject({objectRef})");
-
+        public void CsBindComponent(CsRef objectRef, CppObjectInfo componentInfo) {
             m_objectRef = objectRef;
+            Link(componentInfo.classRef, componentInfo.objectRef);
+        }
+
+        public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
+            var res = base.Link(classInfoRef, objRef);
 
             m_callbacks = new ComponentCallbacks();
             m_callbacks.onInit = new ComponentCallbacks.ComponentCallback(OnInit);
             m_callbacks.onStart = new ComponentCallbacks.ComponentCallback(OnStart);
             m_callbacks.onUpdate = new ComponentCallbacks.ComponentCallback(OnUpdate);
             m_callbacks.onDestroy = new ComponentCallbacks.ComponentCallback(OnDestroy);
-        }
-
-        public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
-            var res = base.Link(classInfoRef, objRef);
 
             dll_SetComponentCallbacks(cppRef, m_callbacks);
 
@@ -67,6 +66,7 @@ namespace Engine {
     /// <summary>
     /// Базовый класс для C# компонента.
     /// </summary>
+    [Serializable]
     abstract class CSComponent : Component, FireYaml.IFile {
         /// FireYaml.IFile ->
         public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
@@ -76,8 +76,8 @@ namespace Engine {
         public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
         /// <- 
 
-        public override CppObjectInfo CreateFromCS(Actor target) {
-            return Dll.CsComponent.Create(target.cppRef, csRef);
+        public override CppObjectInfo CppConstructor(/*Actor target*/) {
+            return Dll.CsComponent.Create(/*target.cppRef, */csRef);
         }
 
     }
@@ -85,6 +85,7 @@ namespace Engine {
     /// <summary>
     /// Базовый класс для C# тени C++ компонента.
     /// </summary>
+    [Serializable]
     abstract class CppComponent : Component, FireYaml.IFile {
         /// FireYaml.IFile ->
         public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();

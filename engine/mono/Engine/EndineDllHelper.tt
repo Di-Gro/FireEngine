@@ -71,7 +71,7 @@
         var fullName = className + "_" + "Create";
 #>
             [DllImport(Paths.Exe, EntryPoint = "<#= fullName #>")]
-		    public static extern CppObjectInfo Create(CppRef cppObjRef, CsRef csCompRef);
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
 <#+
     }

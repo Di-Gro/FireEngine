@@ -133,6 +133,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="DepthStencil.h" />
+    <ClInclude Include="IAsset.h" />
     <ClInclude Include="ILightSource.h" />
     <ClInclude Include="imgui\TextEditor\TextEditor.h" />
     <ClInclude Include="IShadowCaster.h" />

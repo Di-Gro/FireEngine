@@ -2,7 +2,12 @@
 
 #include "Render.h"
 #include "MeshAsset.h"
+#include "Game.h"
 
+void Texture::Release() {
+	if (m_texture.Get() != nullptr)
+		m_texture.ReleaseAndGetAddressOf();
+}
 
 Texture Texture::Create(Render* render, int width, int height, DXGI_FORMAT format) {
 	/// format: DXGI_FORMAT_R8G8B8A8_UNORM
@@ -134,4 +139,32 @@ Texture Texture::CreateFromImage(Render* render, const Image* image) {
 	assert(SUCCEEDED(hres));
 
 	return res;
+}
+
+DEF_PROP_GETSET_F(Texture, int, pathHash, pathHash);
+
+DEF_FUNC(Texture, PushAsset, CppRef)(CppRef gameRef, int assetId) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	auto* texture = (Texture*)game->assets()->Get(assetId);
+	if (texture == nullptr) {
+		texture = new Texture();
+		game->assets()->Push(assetId, texture);
+	}
+	return CppRefs::GetRef(texture);
+}
+
+DEF_FUNC(Texture, Init, void)(CppRef gameRef, CppRef texRef, UINT width, UINT height) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto texture = CppRefs::ThrowPointer<Texture>(texRef);
+
+	*texture = Texture::Create(game->render(), width, height);
+}
+
+FUNC(Texture, InitFromImage, void)(CppRef gameRef, CppRef texRef, CppRef imageRef) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto texture = CppRefs::ThrowPointer<Texture>(texRef);
+	auto image = CppRefs::ThrowPointer<Image>(imageRef);
+
+	*texture = Texture::CreateFromImage(game->render(), image);
 }

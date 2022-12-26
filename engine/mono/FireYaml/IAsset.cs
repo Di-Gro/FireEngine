@@ -7,8 +7,10 @@ namespace FireYaml {
     public interface IAsset {
 
         string assetId { get; }
+        int assetIdHash { get; }
 
         void LoadAsset();
+        void ReloadAsset();
 
     }
 }

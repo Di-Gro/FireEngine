@@ -44,10 +44,6 @@ private:
 	static mono::mono_method_invoker<void(CsRef, CppRef)> mono_SetFromCpp;
 
 public:
-	const Mesh4* mesh() {
-		return m_mesh;
-	}
-
 	bool IsDynamic() { return m_dynamicMesh != nullptr; }
 	bool IsStatic() { return m_dynamicMesh == nullptr; }
 	bool IsDrawable() { return visible && m_mesh != nullptr; }
@@ -56,7 +52,8 @@ public:
 	bool castShadow() { return m_castShadow; }
 	void castShadow(bool value);
 
-	void mesh(const Mesh4* mesh);
+	const Mesh4* mesh() { return m_mesh; }
+	void mesh(const Mesh4* mesh) { m_SetMesh(mesh, false); };
 
 	void SetMeshFromCs(const Mesh4* mesh);
 
@@ -102,6 +99,8 @@ private:
 
 	void m_RegisterShapesWithMaterial(int materialIndex);
 	void m_UnRegisterShapesWithMaterial(int materialIndex);
+
+	void m_SetMesh(const Mesh4* mesh, bool isDynamic);
 
 };
 DEC_COMPONENT(MeshComponent);

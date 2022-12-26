@@ -9,6 +9,7 @@ using EngineDll;
 
 namespace Engine {
 
+    [Serializable]
     sealed class Actor : CppLinked, FireYaml.IFile {
 
         /// FireYaml.IFile ->
@@ -91,26 +92,26 @@ namespace Engine {
         }
 
         public TComponent AddComponent<TComponent>() where TComponent : Component, new() {
+            /// Create
             var component = new TComponent();
-            component.LinkGameObject(csRef/*, transform.csRef*/);
-
-            //Console.WriteLine($"#: GameObject({csRef}, {cppRef}).AddComponent<{typeof(TComponent).Name}>(): {component.csRef}");
-
-            var info = component.CreateFromCS(this);
-            component.Link(info.classRef, info.objectRef);
+            var info = component.CppConstructor();
+            /// Bind
+            component.CsBindComponent(csRef, info);
+            Dll.Actor.BindComponent(cppRef, component.cppRef);
+            /// PostBind
+            /// Init
             Dll.Actor.InitComponent(cppRef, component.cppRef);
 
             return component;
         }
 
         private CsRef m_AddComponentFromCpp<TComponent>(CppObjectInfo info) where TComponent : Component, new() {
+            /// Create
             var component = new TComponent();
-            component.LinkGameObject(csRef/*, transform.csRef*/);
-
-            //Console.WriteLine($"#: GameObject({csRef}, {cppRef}).m_AddComponentFromCpp<{typeof(TComponent).Name}>({component.csRef}, {info.objectRef})");
-
-            component.Link(info.classRef, info.objectRef);
-
+            /// Bind
+            component.CsBindComponent(csRef, info);
+            /// PostBind
+            /// Init
             return component.csRef;
         }
 
