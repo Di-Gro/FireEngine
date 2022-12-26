@@ -2,6 +2,12 @@
 
 #include <fstream>
 
+#include "Game.h"
+#include "Render.h"
+#include "Window.h"
+#include "HotKeys.h"
+#include "OpaquePass.h"
+
 #include "imgui\imgui.h"
 #include "DirectionLight.h"
 #include "AmbientLight.h"

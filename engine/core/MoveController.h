@@ -3,7 +3,9 @@
 #include <d3d11.h>
 #include <SimpleMath.h>
 
-#include "Game.h"
+#include "InputDevice.h"
+
+#include "Actor.h"
 
 using namespace DirectX::SimpleMath;
 

@@ -1,5 +1,10 @@
 #include "SpotLight.h"
 
+#include "Game.h"
+#include "Render.h"
+#include "Assets.h"
+#include "MeshAsset.h"
+
 #include "CameraComponent.h"
 #include "SimpleMath.h"
 

@@ -12,6 +12,12 @@
 #include "json.hpp"
 
 #include "Game.h"
+#include "Render.h"
+#include "ShaderAsset.h"
+#include "ImageAsset.h"
+#include "Actor.h"
+
+#include "Texture.h"
 #include "Material.h"
 
 #include "MeshComponent.h"

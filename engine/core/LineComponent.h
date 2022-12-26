@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Game.h"
 #include "MeshComponent.h"
 
 class LineComponent : public MeshComponent {

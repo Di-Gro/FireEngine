@@ -1,15 +1,20 @@
 #include "BlurPass.h"
 
+#include "Game.h"
 #include "Render.h"
 #include "CameraComponent.h"
 #include "MaterialAlias.h"
 #include "Mesh.h"
 #include "MeshComponent.h"
 #include "DirectionLight.h"
+#include "UI/UserInterface.h"
+#include "Assets.h"
+#include "ShaderAsset.h"
 
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 #include "DepthStencil.h"
+
 
 
 void BlurPass::Init(Game* game) {

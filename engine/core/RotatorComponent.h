@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include <SimpleMath.h>
 
-#include "Game.h"
+#include "Actor.h"
 
 #include "Random.h"
 #include "Math.h"
@@ -64,8 +64,8 @@ public:
 			localRotation(localRotation() + angles * game()->deltaTime());
 		}
 
-		if(printTransform)
-			game()->SendGameMessage(std::to_string(actor()->Id()) + " tr");
+		//if(printTransform)
+		//	game()->SendGameMessage(std::to_string(actor()->Id()) + " tr");
 	}
 
 	void RecieveGameMessage(const std::string& msg) override {

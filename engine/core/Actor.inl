@@ -2,7 +2,6 @@
 #include "CSBridge.h"
 #include "ComponentMeta.h"
 
-
 template<typename TComponent, typename>
 TComponent* Actor::inner_CreateComponent(CsRef csRef) {
 	Component* component = new TComponent();

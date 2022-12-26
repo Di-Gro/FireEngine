@@ -1,7 +1,9 @@
 #include "transform.h"
 
 #include "Game.h"
+#include "Actor.h"
 #include "Math.h"
+#include "SimpleMath.h"
 
 #include "Refs.h"
 

@@ -1,6 +1,7 @@
 #include "FlyingCamera.h"
 
 #include "Game.h"
+#include "HotKeys.h"
 
 
 void FlyingCamera::OnInit() {

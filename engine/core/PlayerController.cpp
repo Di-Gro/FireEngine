@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include "Game.h"
+#include "HotKeys.h"
+
 #include "Player.h"
 #include "PlayerCamera.h"
 

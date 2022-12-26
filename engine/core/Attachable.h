@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
 
 class Player;
 class MeshComponent;
+class Material;
 
 class Attachable : public Component {
 	PURE_COMPONENT(Attachable)

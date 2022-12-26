@@ -1,5 +1,11 @@
 #include "AmbientLight.h"
 
+#include "Game.h"
+#include "Render.h"
+#include "Assets.h"
+#include "ShaderAsset.h"
+#include "Actor.h"
+
 DEF_PURE_COMPONENT(AmbientLight);
 
 

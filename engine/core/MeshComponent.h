@@ -9,14 +9,18 @@
 
 #include "Forms.h"
 #include "Mesh.h"
-#include "Game.h"
+#include "Actor.h"
 #include "MaterialAlias.h"
 #include "IShadowCaster.h"
+#include "Refs.h"
+
 
 using namespace DirectX::SimpleMath;
 
 class Render;
 class RenderPass;
+class MeshAsset;
+class Material;
 
 class MeshComponent : public Component, public IShadowCaster {
 	COMPONENT(MeshComponent)

@@ -9,6 +9,10 @@
 #include <sstream>
 
 #include "Game.h"
+#include "Render.h"
+#include "Attachable.h"
+#include "HotKeys.h"
+#include "MeshAsset.h"
 #include "LinedPlain.h"
 #include "Forms.h"
 #include "RotatorComponent.h"

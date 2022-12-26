@@ -1,10 +1,12 @@
 #include "LightingPass.h"
 
+#include "Game.h"
 #include "Render.h"
 #include "CameraComponent.h"
 #include "MaterialAlias.h"
 #include "Mesh.h"
 #include "MeshComponent.h"
+#include "Lighting.h"
 #include "DirectionLight.h"
 
 #include "RenderTarget.h"

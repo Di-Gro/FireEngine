@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "Math.h"
 #include "CameraComponent.h"
+#include "Render.h"
 
 /// 
 /// В Update компоненты МОГУТ обновлять позиции Actor-а. 

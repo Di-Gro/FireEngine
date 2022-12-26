@@ -1,7 +1,9 @@
 #include "OpaquePass.h"
 
-#include "OldPass.h"
+#include "Game.h"
 #include "Render.h"
+
+#include "OldPass.h"
 #include "CameraComponent.h"
 #include "MaterialAlias.h"
 #include "Mesh.h"

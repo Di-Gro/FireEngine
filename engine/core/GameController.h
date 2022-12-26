@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
+#include "InputDevice.h"
 
 class CameraComponent;
 class Player;

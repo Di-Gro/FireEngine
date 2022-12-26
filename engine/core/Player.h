@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Game.h"
-#include "MeshComponent.h"
-#include "Attachable.h"
+#include "Actor.h"
 
 class PlayerCamera;
 class BoxCollider;
 class Mesh4;
 class Material;
+class MeshComponent;
 
 class Player : public Component {
 	PURE_COMPONENT(Player)

@@ -1,5 +1,9 @@
 #include "ShadowPass.h"
+
+#include "Game.h"
 #include "Render.h"
+#include "Lighting.h"
+
 #include "DirectionLight.h"
 #include "IShadowCaster.h"
 

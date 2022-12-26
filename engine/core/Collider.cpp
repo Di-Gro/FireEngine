@@ -1,5 +1,7 @@
 #include "Collider.h"
 
+#include "Game.h"
+
 #include "SimpleMath.h"
 #include "Player.h"
 #include "MeshComponent.h"

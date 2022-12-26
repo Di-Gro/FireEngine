@@ -4,7 +4,7 @@
 #include <SimpleMath.h>
 
 #include "CameraComponent.h"
-#include "Game.h"
+#include "InputDevice.h"
 
 using namespace DirectX::SimpleMath;
 

@@ -6,7 +6,7 @@
 #include <d3d11.h>
 #include <SimpleMath.h>
 
-#include "Game.h"
+#include "Actor.h"
 
 #include "Math.h"
 

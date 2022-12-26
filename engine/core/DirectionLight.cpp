@@ -3,6 +3,13 @@
 #include <iostream>
 #include <sstream>
 
+#include "Game.h"
+#include "Window.h"
+#include "Render.h"
+#include "Assets.h"
+#include "ShaderAsset.h"
+#include "Actor.h"
+
 #include "CameraComponent.h"
 #include "MeshComponent.h"
 #include "LineComponent.h"

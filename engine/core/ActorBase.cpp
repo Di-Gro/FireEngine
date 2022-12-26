@@ -1,6 +1,7 @@
 #include "ActorBase.h"
 
 #include "Game.h"
+#include "Actor.h"
 
 
 Game* ActorBase::game() {

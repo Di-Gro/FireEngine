@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include "ActorConcepts.h"
 
+class Component;
 
 class ActorBase : public CsLink, public ActorTransform {
 	friend class Game;

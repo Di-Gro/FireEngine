@@ -1,5 +1,9 @@
 #include "PointLight.h"
 
+#include "Game.h"
+#include "Render.h"
+#include "MeshAsset.h"
+
 #include "CameraComponent.h"
 #include "SimpleMath.h"
 

@@ -1,4 +1,6 @@
 #include "CameraComponent.h"
+#include "Game.h"
+#include "Render.h"
 
 void CameraComponent::Attach() { 
 	game()->mainCamera(this); 

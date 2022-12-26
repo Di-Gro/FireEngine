@@ -1,10 +1,13 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
+#include "Texture.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
 #include "MaterialAlias.h"
 #include "ILightSource.h"
+
+#include "Mesh.h"
 
 class MeshComponent;
 class LineComponent;

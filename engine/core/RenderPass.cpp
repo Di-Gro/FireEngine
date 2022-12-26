@@ -3,6 +3,8 @@
 #include "Game.h"
 #include "Render.h"
 #include "RenderTarget.h"
+#include "UI/UserInterface.h"
+#include "Actor.h"
 #include "ShaderResource.h"
 #include "DepthStencil.h"
 #include "CameraComponent.h"

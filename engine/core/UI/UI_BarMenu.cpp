@@ -1,5 +1,6 @@
 #include "UI_BarMenu.h"
 #include "../Game.h"
+#include "../imgui/imgui.h"
 
 void UI_BarMenu::Draw_UI_BarMenu()
 {

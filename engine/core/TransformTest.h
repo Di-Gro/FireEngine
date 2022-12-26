@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
 
 class TransformTest : public Component {
 public:

@@ -1,8 +1,14 @@
 #pragma once
-#include "Game.h"
+
 #include "RenderTarget.h"
 #include "DepthStencil.h"
 #include "ILightSource.h"
+#include "MaterialAlias.h"
+
+#include "Actor.h"
+#include "Mesh.h"
+
+class RenderPass;
 
 class AmbientLight : public Component, public ILightSource {
 	PURE_COMPONENT(AmbientLight);

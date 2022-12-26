@@ -14,6 +14,9 @@
 #include "imgui\imgui_impl_dx11.h"
 
 #include "Game.h"
+#include "ShaderAsset.h"
+#include "Lighting.h"
+#include "Actor.h"
 #include "RenderTarget.h"
 #include "DirectionLight.h"
 #include "CameraComponent.h"

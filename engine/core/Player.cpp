@@ -1,9 +1,14 @@
 #include "Player.h"
+
+#include "Game.h"
+#include "MeshAsset.h"
+
 #include "PlayerCamera.h"
 #include "MeshComponent.h"
 #include "LineComponent.h"
 #include "Forms.h"
 #include "Collider.h"
+#include "Attachable.h"
 
 DEF_PURE_COMPONENT(Player);
 

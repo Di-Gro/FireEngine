@@ -1,5 +1,8 @@
 #include "UI_Editor.h"
 #include "../Game.h"
+#include "../Render.h"
+#include "UserInterface.h"
+
 
 bool UI_Editor::ButtonCenteredOnLine(const char* label, float alignment)
 {

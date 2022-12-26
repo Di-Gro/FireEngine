@@ -6,30 +6,28 @@
 #include <cassert>
 #include <string>
 
-#include "Window.h"
-#include "RenderDevice.h"
-#include "Render.h"
-#include "Lighting.h"
 #include "FPSCounter.h"
-#include "InputDevice.h"
-#include "HotKeys.h"
-#include "MeshAsset.h"
-#include "ImageAsset.h"
-#include "ShaderAsset.h"
 #include "Math.h"
 #include "CSBridge.h"
-#include "Assets.h"
-#include "UI/UserInterface.h"
+#include "CSLinked.h"
 
-#include "Actor.h"
-
-extern std::vector<std::string> game_shaderPaths;
-
+class Actor;
 class CameraComponent;
-//class ShadowMapRender;
 class MonoInst;
+class Window;
+class Render;
+class Lighting;
+class InputDevice;
+class HotKeys;
+class ShaderAsset;
+class MeshAsset;
+class ImageAsset;
+class Assets;
+class UserInterface;
 
 extern "C" __declspec(dllexport) GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
+
+extern std::vector<std::string> game_shaderPaths;
 
 class Game {
 	friend GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
@@ -40,19 +38,19 @@ public:
 private:
 	MonoInst* m_mono;
 
-	Window m_window;
-	Render m_render;
-	Lighting m_lighting;
-	InputDevice m_input;
+	Window* m_window;
+	Render* m_render;
+	Lighting* m_lighting;
+	InputDevice* m_input;
 	FPSCounter m_fpsCounter;
-	HotKeys m_hotkeys;
+	HotKeys* m_hotkeys;
 
-	ShaderAsset m_shaderAsset;
-	MeshAsset m_meshAsset;
-	ImageAsset m_imageAsset;
-	Assets m_assets;
+	ShaderAsset* m_shaderAsset;
+	MeshAsset* m_meshAsset;
+	ImageAsset* m_imageAsset;
+	Assets* m_assets;
 
-	UserInterface m_ui;
+	UserInterface* m_ui;
 
 	CameraComponent* m_defaultCamera = nullptr;
 	CameraComponent* m_mainCamera = nullptr;
@@ -67,7 +65,8 @@ private:
 
 public:
 
-	Game() {}
+	Game();
+	~Game();
 
 	void Init(MonoInst* imono);
 	void Run();
@@ -75,17 +74,17 @@ public:
 	
 	inline MonoInst* mono() { return m_mono; }
 
-	inline Window* window() { return &m_window; }
-	inline Render* render() { return &m_render; }
-	inline Lighting* lighting() { return &m_lighting; }
-	inline InputDevice* input() { return &m_input; }
-	inline HotKeys* hotkeys() { return &m_hotkeys; }
-	inline UserInterface* ui() { return &m_ui; }
-	inline Assets* assets() { return &m_assets; }
+	inline Window* window() { return m_window; }
+	inline Render* render() { return m_render; }
+	inline Lighting* lighting() { return m_lighting; }
+	inline InputDevice* input() { return m_input; }
+	inline HotKeys* hotkeys() { return m_hotkeys; }
+	inline UserInterface* ui() { return m_ui; }
+	inline Assets* assets() { return m_assets; }
 
-	inline ShaderAsset* shaderAsset() { return &m_shaderAsset; }
-	inline MeshAsset* meshAsset() { return &m_meshAsset; }
-	ImageAsset* imageAsset() { return &m_imageAsset; }
+	inline ShaderAsset* shaderAsset() { return m_shaderAsset; }
+	inline MeshAsset* meshAsset() { return m_meshAsset; }
+	ImageAsset* imageAsset() { return m_imageAsset; }
 
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera) { m_mainCamera = camera; }

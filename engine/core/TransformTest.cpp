@@ -2,7 +2,10 @@
 
 #include <string>
 
+#include "Game.h"
+
 #include "Math.h"
+#include "SimpleMath.h"
 
 inline Vector3 deg(Vector3 vec) {
 	return Vector3(deg(vec.x), deg(vec.y), deg(vec.z));

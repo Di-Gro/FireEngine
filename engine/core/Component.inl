@@ -1,3 +1,8 @@
+#include <mono_game_types.h>
+
+#include "ActorBase.h"
+#include "ComponentMeta.h"
+
 
 class Component : public ActorBase {
 	friend class Actor;

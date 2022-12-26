@@ -2,6 +2,10 @@
 
 #include "imgui\imgui.h"
 
+#include "Game.h"
+#include "Lighting.h"
+#include "HotKeys.h"
+
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "FlyingCamera.h"

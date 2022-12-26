@@ -9,6 +9,18 @@
 #include "imgui\imgui_impl_win32.h"
 
 #include "Window.h"
+#include "Render.h"
+#include "RenderDevice.h"
+#include "Lighting.h"
+#include "InputDevice.h"
+#include "HotKeys.h"
+#include "Assets.h"
+#include "ShaderAsset.h"
+#include "MeshAsset.h"
+#include "ImageAsset.h"
+#include "UI/UserInterface.h"
+#include "Actor.h"
+
 #include "RenderTarget.h"
 #include "FPSCounter.h"
 #include "GameController.h"
@@ -31,7 +43,6 @@
 #include "TestLightComponent.h"
 
 
-
 std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderVertexColor,
 	Assets::ShaderDiffuseColor,
@@ -50,28 +61,53 @@ std::vector<std::string> game_shaderPaths = {
 	"../../data/engine/shaders/screen.hlsl",
 };
 
+Game::Game() {
+	m_window = new Window();
+	m_render = new Render();
+	m_lighting = new Lighting();
+	m_input = new InputDevice();
+	m_hotkeys = new HotKeys();
+	m_shaderAsset = new ShaderAsset();
+	m_meshAsset = new MeshAsset();
+	m_imageAsset = new ImageAsset();
+	m_assets = new Assets();
+	m_ui = new UserInterface();
+}
+
+Game::~Game() {
+	delete m_window;
+	delete m_render;
+	delete m_lighting;
+	delete m_input;
+	delete m_hotkeys;
+	delete m_shaderAsset;
+	delete m_meshAsset;
+	delete m_imageAsset;
+	delete m_assets;
+	delete m_ui;
+}
 
 void Game::Init(MonoInst* imono) {
 	m_InitMono(imono);
 		
-	m_window.Init(L"CGLab6 - Shadow Map", 1920, 1080);
-	m_window.Create();
+	m_window->Init(L"CGLab6 - Shadow Map", 1920, 1080);
+	m_window->Create();
 
-	m_render.Init(this, &m_window);
-	m_shaderAsset.Init(&m_render);
-	m_meshAsset.Init(this);
-	m_imageAsset.Init();
-	m_input.Init(this);
-	m_hotkeys.Init(this);
-	m_assets.Init(this);
+	m_render->Init(this, m_window);
+	m_shaderAsset->Init(m_render);
+	m_meshAsset->Init(this);
+	m_imageAsset->Init();
+	m_input->Init(this);
+	m_hotkeys->Init(this);
+	m_assets->Init(this);
 
 	for (auto& path : game_shaderPaths)
-		m_shaderAsset.CompileShader(path);
+		m_shaderAsset->CompileShader(path);
 
-	m_lighting.Init(this);
+	m_lighting->Init(this);
 
 	m_InitImGui();
-	m_ui.Init(this);
+	m_ui->Init(this);
 }
 
 void Game::m_InitMono(MonoInst* imono) {
@@ -91,8 +127,8 @@ void Game::m_InitMono(MonoInst* imono) {
 void Game::Run() {
 	bool isExitRequested = false;
 
-	m_render.Start();
-	m_meshAsset.Start(); 
+	m_render->Start();
+	m_meshAsset->Start(); 
 
 	///
 
@@ -111,9 +147,9 @@ void Game::Run() {
 	m_defaultCamera->Attach();
 	m_defaultCamera->drawDebug = false;
 
-	m_lighting.f_directionLight = m_defaultCamera->AddComponent<DirectionLight>();
-	m_lighting.f_directionLight->localRotation({ rad(-45), rad(45 + 180), 0 });
-	m_lighting.f_directionLight->drawDebug(true);
+	m_lighting->f_directionLight = m_defaultCamera->AddComponent<DirectionLight>();
+	m_lighting->f_directionLight->localRotation({ rad(-45), rad(45 + 180), 0 });
+	m_lighting->f_directionLight->drawDebug(true);
 
 	CreateActor("GameController")->AddComponent<GameController>();
 	CreateActor()->AddComponent<TestLightComponent>();
@@ -132,13 +168,13 @@ void Game::Run() {
 		}
 
 		m_Update();
-		m_render.Draw();
+		m_render->Draw();
 		
 		m_fpsCounter.Update();
 		if (m_fpsCounter.HasChanges()) {
 			WCHAR text[256];
 			swprintf_s(text, TEXT("FPS: %d"), m_fpsCounter.FPS());
-			SetWindowText(m_window.GetHWindow(), text);
+			SetWindowText(m_window->GetHWindow(), text);
 		}
 	}
 
@@ -148,7 +184,7 @@ void Game::Run() {
 void Game::Exit(int code) {
 	if (!m_onExit) {
 		m_onExit = true;
-		m_window.Exit(code);
+		m_window->Exit(code);
 	}
 }
 
@@ -157,7 +193,7 @@ void Game::m_Update() {
 	GameUpdateData updateData;
 	updateData.deltaTime = deltaTime();
 	mono_setUpdateData(updateData);
-	m_hotkeys.Update(input());
+	m_hotkeys->Update(input());
 
 	/// ImGui Update
 	m_BeginUpdateImGui();
@@ -177,11 +213,11 @@ void Game::m_Update() {
 		it++;
 	}
 
-	m_ui.Draw();
+	m_ui->Draw();
 	/// Post Update
-	m_hotkeys.LateUpdate();
+	m_hotkeys->LateUpdate();
 
-	if (m_hotkeys.GetButtonDown(Keys::Tilda))
+	if (m_hotkeys->GetButtonDown(Keys::Tilda))
 		inFocus = !inFocus;
 
 	if (!inFocus) {
@@ -205,10 +241,10 @@ void Game::m_Destroy() {
 	}
 
 	m_DestroyImGui();
-	m_hotkeys.Destroy();
-	m_meshAsset.Destroy();
-	m_render.Destroy();
-	m_window.Destroy();
+	m_hotkeys->Destroy();
+	m_meshAsset->Destroy();
+	m_render->Destroy();
+	m_window->Destroy();
 }
 
 Actor* Game::CreateActor(Actor* parent, std::string name) {
@@ -303,7 +339,7 @@ void Game::SendGameMessage(const std::string& msg) {
 	}
 
 	if (msg == "recompile") {
-		m_shaderAsset.RecompileShaders();
+		m_shaderAsset->RecompileShaders();
 		meshAsset()->ReloadMaterials();
 		std::cout << std::endl;
 		return;

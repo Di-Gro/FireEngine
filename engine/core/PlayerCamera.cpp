@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Game.h"
+
 
 DEF_PURE_COMPONENT(PlayerCamera);
 

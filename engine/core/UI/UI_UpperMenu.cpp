@@ -1,5 +1,6 @@
 #include "UI_UpperMenu.h"
 #include "../Game.h"
+#include "../imgui/imgui.h"
 
 bool UI_UpperMenu::ButtonCenteredOnLine(const char* label, float alignment)
 {

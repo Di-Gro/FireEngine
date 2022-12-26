@@ -1,6 +1,11 @@
 #include "SelectionPass.h"
 
 #include "Game.h"
+#include "Window.h"
+#include "Assets.h"
+#include "MeshAsset.h"
+#include "UI/UserInterface.h"
+#include "Actor.h"
 #include "MeshComponent.h"
 
 void SelectionPass::Init(Game* game) {

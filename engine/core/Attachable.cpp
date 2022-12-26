@@ -1,6 +1,12 @@
 #include "Attachable.h"
 
+#include "Game.h"
 #include "Player.h"
+#include "MeshAsset.h"
+#include "HotKeys.h"
+
+#include "MeshComponent.h"
+
 
 Material* Attachable::s_meshMaterial = nullptr;
 Material* Attachable::s_boundMaterial = nullptr;

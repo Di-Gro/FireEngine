@@ -6,9 +6,10 @@
 #include <d3d11.h>
 #include <SimpleMath.h>
 
+#include "Actor.h"
+
 #include "Forms.h"
 #include "Mesh.h"
-#include "Game.h"
 #include "MaterialAlias.h"
 #include "IShadowCaster.h"
 

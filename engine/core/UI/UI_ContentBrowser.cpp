@@ -1,5 +1,6 @@
 #include "UI_ContentBrowser.h"
 #include "../Game.h"
+#include "../imgui/imgui.h"
 
 void UI_ContentBrowser::Draw_UI_ContentBrowser()
 {

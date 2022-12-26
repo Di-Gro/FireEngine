@@ -1,7 +1,12 @@
 #include "OutlinePass.h"
 
 #include "Game.h"
+#include "Window.h"
+#include "Assets.h"
+#include "ShaderAsset.h"
+#include "UI/UserInterface.h"
 #include "MeshComponent.h"
+
 
 void OutlinePass::Init(Game* game) {
 	RenderPass::Init(game);

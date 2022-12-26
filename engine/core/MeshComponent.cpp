@@ -4,6 +4,10 @@
 #include <SimpleMath.h>
 
 #include "Game.h"
+#include "Render.h"
+#include "MeshAsset.h"
+#include "Actor.h"
+
 #include "CameraComponent.h"
 #include "LineComponent.h"
 

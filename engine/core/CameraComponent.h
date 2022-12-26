@@ -5,7 +5,7 @@
 #include "Window.h"
 #include "Math.h"
 
-#include "Game.h"
+#include "Actor.h"
 
 class Shader;
 
