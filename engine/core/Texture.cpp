@@ -141,18 +141,9 @@ Texture Texture::CreateFromImage(Render* render, const Image* image) {
 	return res;
 }
 
-DEF_PROP_GETSET_F(Texture, int, pathHash, pathHash);
+DEF_PROP_GETSET_F(Texture, int, assetId, assetId);
 
-DEF_FUNC(Texture, PushAsset, CppRef)(CppRef gameRef, int assetId) {
-	auto game = CppRefs::ThrowPointer<Game>(gameRef);
-
-	auto* texture = (Texture*)game->assets()->Get(assetId);
-	if (texture == nullptr) {
-		texture = new Texture();
-		game->assets()->Push(assetId, texture);
-	}
-	return CppRefs::GetRef(texture);
-}
+DEF_PUSH_ASSET(Texture);
 
 DEF_FUNC(Texture, Init, void)(CppRef gameRef, CppRef texRef, UINT width, UINT height) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);

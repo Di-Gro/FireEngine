@@ -15,6 +15,7 @@
 class Game;
 class Actor;
 class Material;
+class Texture;
 
 namespace tinyobj {
 	struct shape_t;
@@ -120,9 +121,10 @@ private:
 
 	Material* m_LoadMaterial(size_t hash, const tinyobj::material_t& tinyMat, const std::string& dir);
 
-	Material* m_NewMaterial();
-	void m_DeleteMaterial(Material* mat);
+	Material* m_NewMaterialAsset(/*const std::string& assetId*/);
+	void m_DeleteMaterialAsset(Material* mat);
 
+	Texture* m_NewTextureAsset(const std::string& assetId);
 };
 
 FUNC(MeshAsset, CreateHash, size_t)(CppRef meshAssetRef, const char* fileName);

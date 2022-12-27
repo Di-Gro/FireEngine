@@ -266,7 +266,7 @@ namespace FireYaml {
             if (values == null)
                 return false;
 
-            //var fullPath = m_GetFullPath(fieldPath);
+            var isList = Serializer.IsList(field.type);
 
             /// Поле записано.
             /// Либо простой тип, либо объект равный нулю, либо ссылка.
@@ -290,6 +290,12 @@ namespace FireYaml {
 
                     m_assets.Add((IAsset)field.Instance);
                 }
+                if (yamlValue.type == YamlValue.Type.Null) {
+                    if(isList) {
+                        m_InitListInField(field);
+                        return true;
+                    }
+                }
                 field.SetValue(value);
                 return true;
             }
@@ -299,7 +305,7 @@ namespace FireYaml {
             var hasChildren = values.HasChildren(fieldPath);
             if (hasChildren) {
                 /// Список
-                if (Serializer.IsList(field.type))
+                if (isList)
                     m_LoadList(fieldPath, field);
 
                 /// Объект, для которого есть поля, значит можно инстанцировать.

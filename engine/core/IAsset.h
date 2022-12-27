@@ -3,7 +3,7 @@
 
 class IAsset {
 public:
-	int pathHash = 0;
+	int assetId = 0;
 
 	virtual void Release() = 0;
 

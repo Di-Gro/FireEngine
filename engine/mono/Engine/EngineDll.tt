@@ -112,17 +112,7 @@ namespace EngineDll {
 		public static class Material {
 
 <#
-			// FUNC("Material", "diffuseColor_get",	"Vector3",	"CppRef matRef");
-			// FUNC("Material", "diffuse_get",			"float",	"CppRef matRef");
-			// FUNC("Material", "ambient_get",			"float",	"CppRef matRef");
-			// FUNC("Material", "specular_get",		"float",	"CppRef matRef");
-			// FUNC("Material", "shininess_get",		"float",	"CppRef matRef");
-
-			// FUNC("Material", "diffuseColor_set",	"void",		"CppRef matRef, Vector3 value");
-			// FUNC("Material", "diffuse_set",			"void",		"CppRef matRef, float value");
-			// FUNC("Material", "ambient_set",			"void",		"CppRef matRef, float value");
-			// FUNC("Material", "specular_set",		"void",		"CppRef matRef, float value");
-			// FUNC("Material", "shininess_set",		"void",		"CppRef matRef, float value");
+			PUSH_ASSET("Material");
 
 			PROP_GETSET("Material", "Vector3", "diffuseColor");
 			PROP_GETSET("Material", "float", "diffuse");
@@ -134,11 +124,18 @@ namespace EngineDll {
 			PROP_GETSET("Material", "int", "fillMode");
 			PROP_GETSET("Material", "size_t", "priority");
 
-			FUNC("Material", "name_get",			"int",		"CppRef matRef, byte[] buf, int bufLehgth");
+			ANSI_FUNC("Material", "name_set", "void", "CppRef matRef, string name");
+			FUNC("Material", "name_length", "size_t", "CppRef matRef");
+			FUNC("Material", "name_get", "void", "CppRef matRef, byte[] buf");
+
+			ANSI_FUNC("Material", "shader_set", "void", "CppRef gameRef, CppRef matRef, string name");
+			FUNC("Material", "shader_length", "size_t", "CppRef matRef");
+			FUNC("Material", "shader_get", "void", "CppRef matRef, byte[] buf");
 
 			FUNC("Material", "isDynamic_get",		"bool",		"CppRef matRef");
 
-			FUNC("Material", "Create", "CppRef", "CppRef gameRef, size_t assetHash");
+			FUNC("Material", "Init", "void", "CppRef gameRef, CppRef matRef");
+			FUNC("Material", "textures_set", "void", "CppRef matRef, size_t[] cppRefs, int count");
 #>
 		}
 
@@ -151,10 +148,11 @@ namespace EngineDll {
 #>
 		}
 
-		public static class ImageAsset {
+		public static class Image {
 		
 <#
-			ANSI_FUNC("ImageAsset", "Load", "CppRef", "CppRef gameRef, string path, ref int width, ref int height");
+			PUSH_ASSET("Image");
+			ANSI_FUNC("Image", "Init", "void", "CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height");
 #>
 		}
 
@@ -162,7 +160,7 @@ namespace EngineDll {
 		
 <#
 			PROP_GETSET("Texture", "int", "assetId");
-			FUNC("Texture", "PushAsset", "CppRef", "CppRef gameRef, int assetId");
+			PUSH_ASSET("Texture");
 			FUNC("Texture", "Init", "void", "CppRef gameRef, CppRef texRef, uint width, uint height");
 			FUNC("Texture", "InitFromImage", "void", "CppRef gameRef, CppRef texRef, CppRef imageRef");
 #>

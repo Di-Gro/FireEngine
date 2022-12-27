@@ -82,6 +82,22 @@ namespace CSBridge {
 
 #define DEF_FUNC(ClassName, funcName, retType) retType ClassName##_##funcName 
 
+#define PUSH_ASSET(ClassName)\
+FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, int assetId)\
+
+#define DEF_PUSH_ASSET(ClassName)\
+DEF_FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, int assetId) {\
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);\
+\
+	auto* asset = (ClassName*)game->assets()->Get(assetId);\
+	if (asset == nullptr) {\
+		asset = new ClassName();\
+		asset->assetId = assetId;\
+		game->assets()->Push(assetId, asset);\
+	}\
+	return CppRefs::GetRef(asset);\
+}\
+
 //#define DEC_COMPONENT_CREATE(ClassName)\
 //FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \
 //

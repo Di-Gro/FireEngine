@@ -35,7 +35,7 @@ namespace Engine {
         }
 
         public void SetMaterial(ulong index, IMaterial material) {
-            Dll.MeshComponent.SetMaterial(cppRef, index, material.matRef);
+            Dll.MeshComponent.SetMaterial(cppRef, index, material.cppRef);
         }
 
         public StaticMaterial GetMaterial(ulong index) {

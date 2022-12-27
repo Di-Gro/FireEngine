@@ -11,6 +11,7 @@
 #include "Material.h"
 #include "CsLink.h"
 #include "CSBridge.h"
+#include "IAsset.h"
 
 #include "ShaderResource.h"
 
@@ -45,7 +46,7 @@ class Render;
 class MeshAsset;
 class MeshComponent;
 
-class Mesh4 : public CsLink {
+class Mesh4 : public CsLink, public IAsset {
 	friend class MeshAsset;
 	friend class MeshComponent;
 
@@ -124,6 +125,8 @@ public:
 
 	Shape* GetShape(int index);
 
+	void Release();
+
 };
 
 class ScreenQuad {
@@ -148,3 +151,5 @@ public:
 FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);
 FUNC(Mesh4, MaterialMaxIndex, int)(CppRef mesh4Ref);
 PROP_GET(Mesh4, size_t, assetHash);
+
+PUSH_ASSET(Mesh4);

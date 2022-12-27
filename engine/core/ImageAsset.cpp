@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Game.h"
+#include "Assets.h"
 
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_1111 = "runtime:/generated/image/2x2/rgba/1111";
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_0001 = "runtime:/generated/image/2x2/rgba/0001"; 
@@ -56,7 +57,8 @@ void ImageAsset::m_Load(size_t hash, const fs::path& path) {
 		auto text = "ImageAsset: Image file not exist (path:" + path.string() + ")";
 		throw std::exception(text.c_str());
 	}
-	auto* image = m_CreateImage(path);
+	auto* image = new Image();
+	InitImage(image, path);
 	m_images.insert({ hash, image });
 }
 
@@ -67,7 +69,36 @@ const Image* ImageAsset::Get(const fs::path& path) {
 	return m_images.at(hash);
 }
 
-Image* ImageAsset::m_CreateImage(const fs::path& path) {
+//Image* ImageAsset::m_CreateImage(const fs::path& path) {
+//	comptr<IWICBitmapDecoder> decoder;
+//	comptr<IWICBitmapFrameDecode> frame;
+//	comptr<IWICFormatConverter> converter;
+//
+//	auto hres = m_imageFactory->CreateDecoderFromFilename(path.wstring().c_str(), 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, decoder.GetAddressOf());
+//	assert(SUCCEEDED(hres));
+//
+//	hres = decoder->GetFrame(0, frame.GetAddressOf());
+//	assert(SUCCEEDED(hres));
+//
+//	hres = m_imageFactory->CreateFormatConverter(converter.GetAddressOf());
+//	assert(SUCCEEDED(hres));
+//
+//	hres = converter->Initialize(frame.Get(), GUID_WICPixelFormat32bppPRGBA, WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeCustom);
+//	assert(SUCCEEDED(hres));
+//
+//	UINT w, h;
+//	converter->GetSize(&w, &h);
+//
+//	auto* image = new Image();
+//	image->Init(w, h);
+//
+//	hres = converter->CopyPixels(nullptr, image->lineSize, image->dataSize, image->data);
+//	assert(SUCCEEDED(hres));
+//
+//	return image;
+//}
+
+void ImageAsset::InitImage(Image* image, const fs::path& path) {
 	comptr<IWICBitmapDecoder> decoder;
 	comptr<IWICBitmapFrameDecode> frame;
 	comptr<IWICFormatConverter> converter;
@@ -87,13 +118,10 @@ Image* ImageAsset::m_CreateImage(const fs::path& path) {
 	UINT w, h;
 	converter->GetSize(&w, &h);
 
-	auto* image = new Image();
 	image->Init(w, h);
 
 	hres = converter->CopyPixels(nullptr, image->lineSize, image->dataSize, image->data);
 	assert(SUCCEEDED(hres));
-
-	return image;
 }
 
 void ImageAsset::m_GenerateRuntimeImages() {
@@ -135,17 +163,15 @@ void ImageAsset::m_GenerateRuntimeImages() {
 	m_images.insert({ hash, image });
 }
 
-DEF_FUNC(ImageAsset, Load, CppRef)(CppRef gameRef, const char* path, int& width, int& height) {
-	auto *game = CppRefs::ThrowPointer<Game>(gameRef);
+DEF_PUSH_ASSET(Image);
 
-	auto* image = game->imageAsset()->Get(path);
-	auto assetRef = CppRefs::GetRef((void*)image);
-	if (assetRef == 0)
-		assetRef = CppRefs::Create((void*)image).cppRef();
+DEF_FUNC(Image, Init, void)(CppRef gameRef, CppRef imgRef, const char* path, int& width, int& height) {
+	auto *game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto *image = CppRefs::ThrowPointer<Image>(imgRef);
+
+	game->imageAsset()->InitImage(image, path);
 
 	width = image->width;
 	height = image->height;
-
-	return assetRef;
 }
 

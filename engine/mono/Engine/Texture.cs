@@ -28,7 +28,7 @@ namespace Engine {
 
         public Texture() { 
             Assets.AfterReloadEvent += OnAfterReload;
-        } /// For FireYaml.IAsset
+        }
 
         public void LoadAsset() {
             assetIdHash = assetId.GetHashCode();

@@ -158,13 +158,12 @@ namespace EngineMono {
             // texture.width = 128;
             // texture.height = 128;
             // assetStore.CreateAsset("TestTexture1.yml", texture, "TestTexture1");
-            var texture = new FireYaml.Deserializer("TestTexture1").Instanciate();
+            // var texture = new FireYaml.Deserializer("TestTexture1").Instanciate();
 
             // var image = new Image();
             // image.ext = "png";
             // assetStore.CreateAsset("TestImage1.yml", image, "TestImage1");
             // var image = new FireYaml.Deserializer("TestImage1").Instanciate();
-
 
             // var meshComp = new Actor().AddComponent<MeshComponent>();
             // meshComp.mesh = new StaticMesh("../../data/assets/levels/farm/meshes/House_Red.obj");
@@ -172,8 +171,12 @@ namespace EngineMono {
             // assetStore.CreateAsset("TestMaterial1.yml", material, "TestMaterial1");
             // var material = new FireYaml.Deserializer("TestMaterial1").Instanciate();
 
-            var tex = texture as Texture;
-            EngineDll.Dll.Assets.Reload(Game.gameRef, tex.assetIdHash);
+            // var meshComp = new Actor().AddComponent<MeshComponent>();
+            // meshComp.mesh = new StaticMesh("../../data/assets/levels/farm/meshes/House_Red.obj");
+
+
+            // var asset = material as FireYaml.IAsset;
+            // EngineDll.Dll.Assets.Reload(Game.gameRef, asset.assetIdHash);
 
             
             return csRef;

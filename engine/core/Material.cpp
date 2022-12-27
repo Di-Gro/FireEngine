@@ -2,6 +2,7 @@
 #include "Render.h"
 #include "Game.h"
 #include "Assets.h"
+#include "ShaderAsset.h"
 #include "Material.h"
 
 
@@ -45,7 +46,9 @@ void Material::UpdateDepthStencilState() {
 	m_render->device()->CreateDepthStencilState(&depthStencilDesc, depthStencilState.GetAddressOf());
 }
 
-DEF_PROP_GETSET_F(Material, int, pathHash, pathHash);
+DEF_PUSH_ASSET(Material);
+
+DEF_PROP_GETSET_F(Material, int, assetId, assetId);
 
 DEF_PROP_GETSET_F(Material, Vector3, diffuseColor, data.diffuseColor)
 DEF_PROP_GETSET_F(Material, float, diffuse, data.diffuse)
@@ -56,21 +59,50 @@ DEF_PROP_GETSET_F(Material, CullMode, cullMode, cullMode)
 DEF_PROP_GETSET_F(Material, FillMode, fillMode, fillMode)
 DEF_PROP_GETSET_F(Material, size_t, priority, priority)
 
-DEF_FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth) {
-	if (matRef == 0)
-		return 0;
-
+DEF_FUNC(Material, name_set, void)(CppRef matRef, const char* name) {
 	auto material = CppRefs::ThrowPointer<Material>(matRef);
+	material->name(name);
+}
 
-	auto dynamicPrefix = material->isDynamic ? "[D] " : "";
-	auto name = dynamicPrefix + material->name();
+DEF_FUNC(Material, name_length, size_t)(CppRef matRef) {
+	auto material = CppRefs::ThrowPointer<Material>(matRef);
+	return material->name().size();
+}
 
-	int writeIndex = 0;
-	for (; writeIndex < bufLehgth - 1 && writeIndex < name.size(); writeIndex++)
-		buf[writeIndex] = name[writeIndex];
-	buf[writeIndex] = '\0';
+DEF_FUNC(Material, name_get, void)(CppRef matRef, char* buf) {
+	auto material = CppRefs::ThrowPointer<Material>(matRef);
+	auto name = material->name();
 
-	return writeIndex;
+	for (int i = 0; i < name.size(); i++)
+		buf[i] = name[i];
+}
+
+DEF_FUNC(Material, shader_set, void)(CppRef gameRef, CppRef matRef, const char* name) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto material = CppRefs::ThrowPointer<Material>(matRef);
+	auto hash = game->shaderAsset()->GetShaderHash(name);
+
+	bool hasShader = game->shaderAsset()->HasShader(hash);
+	if (!hasShader)
+		hasShader = game->shaderAsset()->TryCompileShader(name);
+
+	if (hasShader)
+		material->shader = game->shaderAsset()->GetShader(hash);
+}
+
+DEF_FUNC(Material, shader_length, size_t)(CppRef matRef) {
+	auto material = CppRefs::ThrowPointer<Material>(matRef);
+	if (material->shader == nullptr)
+		return 0;
+	return material->shader->path.string().size();
+}
+
+DEF_FUNC(Material, shader_get, void)(CppRef matRef, char* buf) {
+	auto material = CppRefs::ThrowPointer<Material>(matRef);
+	auto name = material->shader->path.string();
+
+	for (int i = 0; i < name.size(); i++)
+		buf[i] = name[i];
 }
 
 DEF_FUNC(Material, isDynamic_get, bool)(CppRef matRef) {
@@ -81,14 +113,26 @@ DEF_FUNC(Material, isDynamic_get, bool)(CppRef matRef) {
 	return material->isDynamic;
 }
 
-DEF_FUNC(Material, Create, CppRef)(CppRef gameRef, size_t assetHash) {
-	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+DEF_FUNC(Material, Init, void)(CppRef gameRef, CppRef matRef) {
+	auto *game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto *material = CppRefs::ThrowPointer<Material>(matRef);
 
-	auto* material = (Material*)game->assets()->Get(assetHash);
-	if (material == nullptr) {
-		material = new Material();
-		material->Init(game->render());
-		game->assets()->Push(assetHash, material);
+	material->Init(game->render());
+}
+
+DEF_FUNC(Material, textures_set, void)(CppRef matRef, size_t* cppRefs, int count) {
+	auto* material = CppRefs::ThrowPointer<Material>(matRef);
+	
+	//TODO: Удалить старые текстуры
+	material->textures.clear(); 
+	material->resources.clear();
+
+	auto ptr = cppRefs;
+	for (int i = 0; i < count; i++, ptr++) {
+		auto cppRef = RefCpp(*ptr);
+		auto* texture = CppRefs::ThrowPointer<Texture>(cppRef);
+		
+		material->textures.push_back(texture);
+		material->resources.emplace_back(ShaderResource::Create(texture));
 	}
-	return CppRefs::GetRef(material);
 }

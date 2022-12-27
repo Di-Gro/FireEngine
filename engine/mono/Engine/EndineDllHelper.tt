@@ -1,5 +1,11 @@
 ﻿<#@ import namespace="System.Runtime.InteropServices" #>
 <#+
+    private void PUSH_ASSET(string className)
+    {
+        FUNC(className, "PushAsset", "CppRef", "CppRef gameRef, int assetId");
+    }
+#>
+<#+
     private void PROP_GETSET(string className, string propType, string propName)
     {
         PROP_GET(className, propType, propName);

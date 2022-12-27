@@ -58,7 +58,7 @@ namespace Engine {
             field.SetValue(assetId);
         }
 
-        private static string ReadCString(ulong ptr, ulong length) {
+        public static string ReadCString(ulong ptr, ulong length) {
             string str = "";
             unsafe {
                 byte[] bytes = new byte[length];
@@ -67,6 +67,22 @@ namespace Engine {
                     bytes[i] = *bptr;
                 }
                 str = Encoding.UTF8.GetString(bytes);
+            }
+            return str;
+        }
+
+        public static string ReadCString(ulong ptr) {
+            string str = "";
+            unsafe {
+                var bytes = new List<byte>();
+                byte* byte_ptr = (byte*)ptr;
+                for (ulong i = 0; i < 1024; i++, byte_ptr++) {
+                    byte m_byte = *byte_ptr;
+                    if(m_byte == 0)
+                        break;
+                    bytes.Add(m_byte);
+                }
+                str = Encoding.UTF8.GetString(bytes.ToArray());
             }
             return str;
         }

@@ -2,6 +2,7 @@
 #include <map>
 
 #include "Shader.h"
+#include "CSBridge.h"
 
 class Render;
 
@@ -15,6 +16,7 @@ public:
 	void Init(Render* render);
 
 	void CompileShader(const fs::path& path);
+	bool TryCompileShader(const fs::path& path);
 	void RecompileShaders();
 
 	bool HasShader(size_t hashCode) { return m_shaders.count(hashCode) > 0; }

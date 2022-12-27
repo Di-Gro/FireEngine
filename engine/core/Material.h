@@ -38,7 +38,7 @@ public:
 	const Shader* shader;
 	bool isDynamic = false;
 
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 	std::vector<ShaderResource> resources;
 
 	Data data;
@@ -69,12 +69,16 @@ public:
 	}
 
 	void Init(Render* render);
+	void Init2(Render* render);
 	void Release() override;
 
 	void UpdateDepthStencilState();
 };
 
-PROP_GETSET(Material, int, pathHash);
+PUSH_ASSET(Material);
+FUNC(Material, Init, void)(CppRef gameRef, CppRef matRef);
+
+PROP_GETSET(Material, int, assetId);
 
 PROP_GETSET(Material, Vector3, diffuseColor)
 PROP_GETSET(Material, float, diffuse)
@@ -85,7 +89,14 @@ PROP_GETSET(Material, CullMode, cullMode)
 PROP_GETSET(Material, FillMode, fillMode)
 PROP_GETSET(Material, size_t, priority)
 
-FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth);
-FUNC(Material, isDynamic_get, bool)(CppRef matRef);
+FUNC(Material, name_set, void)(CppRef matRef, const char* name);
+FUNC(Material, name_length, size_t)(CppRef matRef);
+FUNC(Material, name_get, void)(CppRef matRef, char* buf);
 
-FUNC(Material, Create, CppRef)(CppRef gameRef, size_t assetHash);
+FUNC(Material, shader_set, void)(CppRef gameRef, CppRef matRef, const char* name);
+FUNC(Material, shader_length, size_t)(CppRef matRef);
+FUNC(Material, shader_get, void)(CppRef matRef, char* buf);
+
+FUNC(Material, isDynamic_get, bool)(CppRef matRef);
+FUNC(Material, textures_set, void)(CppRef matRef, size_t* cppRefs, int count);
+

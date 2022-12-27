@@ -1,5 +1,9 @@
 #include "Mesh.h"
+
+#include "Game.h"
+#include "Assets.h"
 #include "Render.h"
+
 #include "DirectionLight.h"
 #include "CameraComponent.h"
 
@@ -29,6 +33,10 @@ Mesh4::Mesh4(const Mesh4& other) {
 }
 
 Mesh4::~Mesh4() {
+	Release();
+}
+
+void Mesh4::Release() {
 	for (auto& shape : m_shapes) {
 		if (shape.verteces != nullptr)
 			delete[] shape.verteces;
@@ -36,6 +44,7 @@ Mesh4::~Mesh4() {
 		if (shape.indeces != nullptr)
 			delete[] shape.indeces;
 	}
+	m_shapes.clear();
 }
 
 void Mesh4::AddShape(
@@ -269,3 +278,5 @@ DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
 }
 
 DEF_PROP_GET(Mesh4, size_t, assetHash);
+
+DEF_PUSH_ASSET(Mesh4);

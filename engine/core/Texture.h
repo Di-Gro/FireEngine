@@ -52,9 +52,7 @@ public:
 	static Texture CreateDepthTexture(Render* render, int width, int height);
 	static Texture CreateFromImage(Render* render, const Image* image);
 };
+PUSH_ASSET(Texture);
 
-PROP_GETSET(Texture, int, pathHash);
-
-FUNC(Texture, PushAsset, CppRef)(CppRef gameRef, int assetId);
 FUNC(Texture, Init, void)(CppRef gameRef, CppRef texRef, UINT width, UINT height);
 FUNC(Texture, InitFromImage, void)(CppRef gameRef, CppRef texRef, CppRef imageRef);

@@ -184,6 +184,9 @@ namespace EngineDll {
 
 		public static class Material {
 
+            [DllImport(Paths.Exe, EntryPoint = "Material_PushAsset")]
+		    public static extern CppRef PushAsset(CppRef gameRef, int assetId);
+
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_get")]
 		    public static extern Vector3 diffuseColor_get(CppRef objRef);
 
@@ -232,14 +235,32 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "Material_priority_set")]
 		    public static extern void priority_set(CppRef objRef, size_t value);
 
+            [DllImport(Paths.Exe, EntryPoint = "Material_name_set", CharSet = CharSet.Ansi)]
+		    public static extern void name_set(CppRef matRef, string name);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_name_length")]
+		    public static extern size_t name_length(CppRef matRef);
+
             [DllImport(Paths.Exe, EntryPoint = "Material_name_get")]
-		    public static extern int name_get(CppRef matRef, byte[] buf, int bufLehgth);
+		    public static extern void name_get(CppRef matRef, byte[] buf);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_shader_set", CharSet = CharSet.Ansi)]
+		    public static extern void shader_set(CppRef gameRef, CppRef matRef, string name);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_shader_length")]
+		    public static extern size_t shader_length(CppRef matRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_shader_get")]
+		    public static extern void shader_get(CppRef matRef, byte[] buf);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_isDynamic_get")]
 		    public static extern bool isDynamic_get(CppRef matRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_Create")]
-		    public static extern CppRef Create(CppRef gameRef, size_t assetHash);
+            [DllImport(Paths.Exe, EntryPoint = "Material_Init")]
+		    public static extern void Init(CppRef gameRef, CppRef matRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_textures_set")]
+		    public static extern void textures_set(CppRef matRef, size_t[] cppRefs, int count);
 
 		}
 
@@ -253,10 +274,13 @@ namespace EngineDll {
 
 		}
 
-		public static class ImageAsset {
+		public static class Image {
 		
-            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_Load", CharSet = CharSet.Ansi)]
-		    public static extern CppRef Load(CppRef gameRef, string path, ref int width, ref int height);
+            [DllImport(Paths.Exe, EntryPoint = "Image_PushAsset")]
+		    public static extern CppRef PushAsset(CppRef gameRef, int assetId);
+
+            [DllImport(Paths.Exe, EntryPoint = "Image_Init", CharSet = CharSet.Ansi)]
+		    public static extern void Init(CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height);
 
 		}
 
