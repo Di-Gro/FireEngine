@@ -7,6 +7,7 @@
 #include "Render.h"
 #include "MeshAsset.h"
 #include "Actor.h"
+#include "Random.h"
 
 #include "CameraComponent.h"
 #include "LineComponent.h"
@@ -40,12 +41,13 @@ void MeshComponent::m_InitDynamic() {
 	if (IsDynamic())
 		return;
 
-	auto* newMesh = new Mesh4(*m_mesh);
-	newMesh->f_ref = CppRefs::Create(newMesh);
-	newMesh->f_cppRef = newMesh->f_ref.cppRef();
-		
-	//mesh(newMesh);
-	//m_dynamicMesh = newMesh;
+	auto assetId = "DynamicMesh_" + std::to_string(Random().Int());
+	auto assetIdHash = game()->assets()->GetCsHash(assetId);
+	auto meshCppRef = Mesh4_PushAsset(CppRefs::GetRef(game()), assetIdHash);
+	auto newMesh = CppRefs::ThrowPointer<Mesh4>(meshCppRef);
+
+	*newMesh = *m_mesh;
+			
 	m_SetMesh(newMesh, true);
 }
 
@@ -87,7 +89,7 @@ void MeshComponent::ClearMesh() {
 void MeshComponent::m_DeleteResources() {
 	m_DeleteMaterials();
 	if (IsDynamic()) {
-		CppRefs::Remove(m_dynamicMesh->f_ref);
+		game()->assets()->Pop(m_dynamicMesh->assetIdHash);
 		delete m_dynamicMesh;
 		m_dynamicMesh = nullptr;
 		m_mesh = nullptr;
@@ -211,7 +213,7 @@ void MeshComponent::m_SetMesh(const Mesh4* mesh, bool isDynamic) {
 		m_dynamicMesh = (Mesh4*)mesh;
 
 	if (csRef() > 0) {
-		auto newRef = m_mesh != nullptr ? m_mesh->f_cppRef : RefCpp(0);
+		auto newRef = m_mesh != nullptr ? CppRefs::GetRef((void*)m_mesh) : RefCpp(0);
 		mono_SetFromCpp(csRef(), newRef);
 	}
 }

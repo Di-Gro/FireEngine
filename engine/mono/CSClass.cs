@@ -140,8 +140,7 @@ namespace EngineMono {
         public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			CsRef csRef = base.Link(classInfoRef, objRef);
 
-            var assetStore = new FireYaml.AssetStore();
-            FireYaml.AssetStore.Instance = assetStore;
+            var assetStore = FireYaml.AssetStore.Instance;
 
             // var actor = new Actor();
             // actor.AddComponent<TestMesh>();
@@ -178,7 +177,6 @@ namespace EngineMono {
             // var asset = material as FireYaml.IAsset;
             // EngineDll.Dll.Assets.Reload(Game.gameRef, asset.assetIdHash);
 
-            
             return csRef;
 		}
 

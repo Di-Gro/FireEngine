@@ -9,7 +9,7 @@ namespace FireYaml {
 
     public class AssetStore {
 
-        public static AssetStore Instance { get; set; }
+        public static AssetStore Instance { get; set; } = new AssetStore();
 
         private Dictionary<int, string> m_typeId_typeName = new Dictionary<int, string>();
         private Dictionary<string, string> m_typeName_typeId = new Dictionary<string, string>();
@@ -22,7 +22,7 @@ namespace FireYaml {
         private Dictionary<int, string> m_assetPaths = new Dictionary<int, string>();
 
         private string m_assetsPath = @"C:\Users\Dmitry\Desktop\Example\FireProject\";
-
+        private uint m_nextAssetId = 13;
 
         public AssetStore(bool addDefaultAssets = true) {
             AddTypeId("00000010000", typeof(Engine.Actor).FullName);
@@ -218,6 +218,19 @@ namespace FireYaml {
 
             tmp_assetValues.Remove(assetId);
             LoadAsset(assetId);
+        }
+
+        public static string CreateAssetId() {
+            var id = AssetStore.Instance.m_nextAssetId++;
+            var idStr = id.ToString();
+            var nullCount = 10 - idStr.Length;
+            var assetId = new string('0', nullCount) + idStr;
+            return assetId;
+        }
+
+        public static uint CreateAssetIdInt() {
+            var id = AssetStore.Instance.m_nextAssetId++;
+            return id;
         }
 
     }

@@ -78,7 +78,7 @@ public:
 PUSH_ASSET(Material);
 FUNC(Material, Init, void)(CppRef gameRef, CppRef matRef);
 
-PROP_GETSET(Material, int, assetId);
+PROP_GETSET(Material, int, assetIdHash);
 
 PROP_GETSET(Material, Vector3, diffuseColor)
 PROP_GETSET(Material, float, diffuse)

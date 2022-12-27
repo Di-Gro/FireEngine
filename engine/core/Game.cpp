@@ -137,7 +137,7 @@ void Game::Run() {
 
 	csLink.Link(cppObj, "EngineMono", "CSClass");	
 
-
+	m_assets->CreateAssetId();
 	//isExitRequested = true; // return;
 	///
 

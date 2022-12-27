@@ -48,7 +48,7 @@ void Material::UpdateDepthStencilState() {
 
 DEF_PUSH_ASSET(Material);
 
-DEF_PROP_GETSET_F(Material, int, assetId, assetId);
+DEF_PROP_GETSET_F(Material, int, assetIdHash, assetIdHash);
 
 DEF_PROP_GETSET_F(Material, Vector3, diffuseColor, data.diffuseColor)
 DEF_PROP_GETSET_F(Material, float, diffuse, data.diffuse)

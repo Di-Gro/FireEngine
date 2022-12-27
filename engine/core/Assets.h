@@ -36,6 +36,7 @@ private:
 	mono::mono_method_invoker<void(int)> m_method_Load;
 	mono::mono_method_invoker<void(int)> m_method_Reload;
 	mono::mono_method_invoker<int(size_t, size_t)> m_method_GetStringHash;
+	mono::mono_method_invoker<unsigned int(void)> m_method_CreateAssetId;
 
 public:
 	~Assets();
@@ -43,26 +44,25 @@ public:
 	void Init(Game* game);
 
 	bool Contains(const std::string& assetId);
-	bool Contains(int assetId);
+	bool Contains(int assetIdHash);
 	
 	void Push(const std::string& assetId, IAsset* ptr);
-	void Push(int assetId, IAsset* ptr);
+	void Push(int assetIdHash, IAsset* ptr);
 
 	IAsset* Pop(const std::string& assetId);
-	IAsset* Pop(int assetId);
+	IAsset* Pop(int assetIdHash);
 
 	IAsset* Get(const std::string& assetId);
-	IAsset* Get(int assetId);
+	IAsset* Get(int assetIdHash);
 
 	void ReloadAll();
-	void Reload(int assetId);
+	void Reload(int assetIdHash);
 
 	int GetCsHash(const std::string& str);
+	std::string CreateAssetId();
 
-	//static size_t GetHash(const fs::path& path);
 		
 };
 
-//FUNC(Assets, GetHash, size_t)(CppRef gameRef, const char* path);
-FUNC(Assets, Reload, void)(CppRef gameRef, int pathHash);
-FUNC(Assets, Get, CppRef)(CppRef gameRef, int pathHash);
+FUNC(Assets, Reload, void)(CppRef gameRef, int assetIdHash);
+FUNC(Assets, Get, CppRef)(CppRef gameRef, int assetIdHash);

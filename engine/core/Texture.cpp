@@ -141,7 +141,7 @@ Texture Texture::CreateFromImage(Render* render, const Image* image) {
 	return res;
 }
 
-DEF_PROP_GETSET_F(Texture, int, assetId, assetId);
+DEF_PROP_GETSET_F(Texture, int, assetIdHash, assetIdHash);
 
 DEF_PUSH_ASSET(Texture);
 

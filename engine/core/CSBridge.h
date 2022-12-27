@@ -86,14 +86,14 @@ namespace CSBridge {
 FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, int assetId)\
 
 #define DEF_PUSH_ASSET(ClassName)\
-DEF_FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, int assetId) {\
+DEF_FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, int assetIdHash) {\
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);\
 \
-	auto* asset = (ClassName*)game->assets()->Get(assetId);\
+	auto* asset = (ClassName*)game->assets()->Get(assetIdHash);\
 	if (asset == nullptr) {\
 		asset = new ClassName();\
-		asset->assetId = assetId;\
-		game->assets()->Push(assetId, asset);\
+		asset->assetIdHash = assetIdHash;\
+		game->assets()->Push(assetIdHash, asset);\
 	}\
 	return CppRefs::GetRef(asset);\
 }\

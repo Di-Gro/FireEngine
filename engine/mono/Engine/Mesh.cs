@@ -24,31 +24,31 @@ namespace Engine {
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
 
-        private ulong m_assetHash;
+        private int m_assetIdHash;
 
         public StaticMesh() { } /// For IAsset //TODO: make public
 
         public StaticMesh(string file) {
-            m_assetHash = Dll.MeshAsset.CreateHash(Game.meshAssetRef, file);
-            Dll.MeshAsset.Load(Game.meshAssetRef, m_assetHash);
+            m_assetIdHash = file.GetHashCode();
+            Dll.MeshAsset.Load(Game.meshAssetRef, m_assetIdHash);
 
-            meshRef = Dll.MeshAsset.GetMesh(Game.meshAssetRef, m_assetHash);
+            meshRef = Dll.MeshAsset.GetMesh(Game.meshAssetRef, m_assetIdHash);
         }
 
-        public StaticMesh(ulong assetHash) {
-            m_assetHash = assetHash;
-            Dll.MeshAsset.Load(Game.meshAssetRef, m_assetHash);
+        public StaticMesh(int assetIdHash) {
+            m_assetIdHash = assetIdHash;
+            Dll.MeshAsset.Load(Game.meshAssetRef, m_assetIdHash);
 
-            meshRef = Dll.MeshAsset.GetMesh(Game.meshAssetRef, m_assetHash);
+            meshRef = Dll.MeshAsset.GetMesh(Game.meshAssetRef, m_assetIdHash);
         }
 
         public void LoadAsset() {
             var path = FireYaml.AssetStore.Instance.GetAssetPath(assetId);
 
-            m_assetHash = Dll.MeshAsset.CreateHash(Game.meshAssetRef, path);
-            Dll.MeshAsset.Load(Game.meshAssetRef, m_assetHash);
+            m_assetIdHash = path.GetHashCode();
+            Dll.MeshAsset.Load(Game.meshAssetRef, m_assetIdHash);
 
-            meshRef = Dll.MeshAsset.GetMesh(Game.meshAssetRef, m_assetHash);
+            meshRef = Dll.MeshAsset.GetMesh(Game.meshAssetRef, m_assetIdHash);
         }
 
         public void ReloadAsset() {

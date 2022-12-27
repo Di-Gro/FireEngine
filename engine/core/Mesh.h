@@ -46,7 +46,7 @@ class Render;
 class MeshAsset;
 class MeshComponent;
 
-class Mesh4 : public CsLink, public IAsset {
+class Mesh4 : /*public CsLink,*/ public IAsset {
 	friend class MeshAsset;
 	friend class MeshComponent;
 
@@ -85,7 +85,8 @@ public:
 	mutable D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 private:
-	size_t f_assetHash = 0;
+	std::vector<const Material*> f_staticMaterials;
+	//size_t f_assetHash = 0;
 	std::vector<Shape> m_shapes;
 	Render* m_render;
 
@@ -95,6 +96,7 @@ private:
 public:
 	Mesh4() {};
 	Mesh4(const Mesh4& other);
+	Mesh4& operator=(const Mesh4& other);
 	~Mesh4();
 
 
@@ -119,9 +121,11 @@ public:
 	void DrawShape(const DynamicShapeData& data, int index) const;
 
 	int shapeCount() const { return (int)m_shapes.size(); }
-	size_t assetHash() { return f_assetHash; }
+	//size_t assetHash() { return f_assetHash; }
 
 	int maxMaterialIndex() const;
+
+	const std::vector<const Material*>* GetMaterials() { return &f_staticMaterials; }
 
 	Shape* GetShape(int index);
 
@@ -150,6 +154,6 @@ public:
 
 FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);
 FUNC(Mesh4, MaterialMaxIndex, int)(CppRef mesh4Ref);
-PROP_GET(Mesh4, size_t, assetHash);
+PROP_GET(Mesh4, int, assetIdHash);
 
 PUSH_ASSET(Mesh4);

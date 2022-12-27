@@ -36,10 +36,11 @@ std::string MeshAsset::formCone = "../../data/engine/models/cone.obj";
 
 
 
-size_t MeshAsset::CreateHash(const fs::path& path) {
-	auto hash = std::hash<std::string>()(path.string());
+int MeshAsset::CreateHash(const fs::path& path) {
+	auto pathStr = path.string();
+	auto hash = m_game->assets()->GetCsHash(pathStr);
 
-	m_assetPaths[hash] = path.string();
+	m_assetPaths[hash] = pathStr;
 
 	return hash;
 }
@@ -63,8 +64,8 @@ void MeshAsset::InitMono() {
 }
 
 void MeshAsset::Destroy() {
-	for (auto& hash_asset : m_assets)
-		delete hash_asset.second;
+	//for (auto& hash_asset : m_assets)
+	//	delete hash_asset.second;
 
 	for (auto it = m_materials.begin(); it != m_materials.end(); it++) {
 		auto* material = it->second;
@@ -77,23 +78,18 @@ void MeshAsset::Destroy() {
 	}
 }
 
-Material* MeshAsset::m_NewMaterialAsset(/*const std::string& assetId*/) {
-	//auto assetIdHash = m_game->assets()->GetCsHash(assetId);
-	//auto cppRef = Material_PushAsset(CppRefs::GetRef(m_game), assetIdHash);
+Material* MeshAsset::m_NewMaterialAsset(const std::string& assetId) {
+	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
+	auto cppRef = Material_PushAsset(CppRefs::GetRef(m_game), assetIdHash);
+	auto material = CppRefs::ThrowPointer<Material>(cppRef);
 
-	//auto material = CppRefs::ThrowPointer<Material>(cppRef);
-	//material->Init(m_game->render());
-
-	//return material;
-	auto* material = new Material();
-	material->f_ref = CppRefs::Create(material);
-	material->f_cppRef = material->f_ref.cppRef();
 	material->Init(m_game->render());
+
 	return material;
 }
 
 void MeshAsset::m_DeleteMaterialAsset(Material* material) {
-	CppRefs::Remove(material->f_ref);
+	m_game->assets()->Pop(material->assetIdHash);
 	delete material;
 }
 
@@ -104,67 +100,68 @@ Texture* MeshAsset::m_NewTextureAsset(const std::string& assetId) {
 	return CppRefs::ThrowPointer<Texture>(texCppRef);
 }
 
+Mesh4* MeshAsset::m_NewMeshAsset(const std::string& assetId) {
+	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
+	auto cppRef = Mesh4_PushAsset(CppRefs::GetRef(m_game), assetIdHash);
+
+	return CppRefs::ThrowPointer<Mesh4>(cppRef);
+}
+
 void MeshAsset::Load(fs::path path) {
 	m_Load(CreateHash(path), path);
 }
 
-void MeshAsset::Load(size_t hash) {
+void MeshAsset::Load(int hash) {
 	auto path = m_assetPaths.at(hash);
 	m_Load(hash, path);
 }
 
-void MeshAsset::m_Load(size_t hash, fs::path path) {
-	if (m_assets.count(hash) > 0)
+void MeshAsset::m_Load(int hash, fs::path path) {
+	if (m_game->assets()->Contains(hash))
 		return;
 
-	//std::cout << "+: MeshAsset.m_Load(hash:" << hash << " path:" << path << ")" << std::endl;
-
-	auto* asset = m_CreateMeshAsset(hash, path);
-	m_assets.insert({ hash, asset });
+	m_CreateMeshAsset(hash, path);
 }
 
 const Mesh4* MeshAsset::GetMesh(fs::path path) {
 	auto hash = CreateHash(path);
 
 	m_Load(hash, path);
-	return m_assets.at(hash)->mesh;
+	return (Mesh4*)m_game->assets()->Get(hash);
 }
 
-const Mesh4* MeshAsset::GetMesh(size_t hash) {
+const Mesh4* MeshAsset::GetMesh(int hash) {
 	auto path = m_assetPaths.at(hash);
 
 	m_Load(hash, path);
-	return m_assets.at(hash)->mesh;
+	return (Mesh4*)m_game->assets()->Get(hash);
 }
 
 Mesh4* MeshAsset::m_GetMeshMutable(fs::path path) {
 	auto hash = CreateHash(path);
 
 	m_Load(hash, path);
-	return m_assets.at(hash)->mesh;
+	return(Mesh4*)m_game->assets()->Get(hash);
 }
 
 const std::vector<const Material*>* MeshAsset::GetMaterials(fs::path path) {
 	auto hash = CreateHash(path);
-
+	
 	m_Load(hash, path);
-	return &m_assets.at(hash)->staticMaterials;
+
+	auto mesh = (Mesh4*)m_game->assets()->Get(hash);
+	return &mesh->f_staticMaterials;
 }
 
 const std::vector<const Material*>* MeshAsset::GetMaterials(const Mesh4* mesh) {
-	if (mesh->f_assetHash == 0)
+	if (mesh->assetIdHash == 0)
 		return nullptr;
 
-	auto path = m_assetPaths.at(mesh->f_assetHash);
-
-	m_Load(mesh->f_assetHash, path);
-	return &m_assets.at(mesh->f_assetHash)->staticMaterials;
+	return &mesh->f_staticMaterials;
 }
 
-MeshAsset::Asset* MeshAsset::m_CreateMeshAsset(size_t hash, fs::path path) {
-	Asset* asset = nullptr;
-
-	auto dir = path.parent_path().string();
+Mesh4* MeshAsset::m_CreateMeshAsset(int hash, fs::path path) {
+	auto dir = path.parent_path().string();	
 
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
@@ -173,11 +170,11 @@ MeshAsset::Asset* MeshAsset::m_CreateMeshAsset(size_t hash, fs::path path) {
 	std::string warn, err;
 	assert(tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.string().c_str(), dir.c_str()));
 
-	asset = new Asset(hash);
-	asset->path = path;
+	auto assetId = path.string();
+	auto mesh = m_NewMeshAsset(assetId);
 
-	m_InitMesh(asset, attrib, shapes);
-	m_InitMaterials(asset, materials, dir);
+	m_InitMesh(mesh, attrib, shapes);
+	m_InitMaterials(mesh, materials, dir);
 
 	if (err != "")
 		std::cout << err << std::endl;
@@ -185,29 +182,30 @@ MeshAsset::Asset* MeshAsset::m_CreateMeshAsset(size_t hash, fs::path path) {
 	if (warn != "")
 		std::cout << warn << std::endl;
 
-	return asset;
+	return mesh;
 }
 
 void MeshAsset::ReloadMaterials() {
-	for (auto& hash_asset : m_assets) {
-		auto asset = hash_asset.second;
-		auto path = asset->path.string();
-		auto dir = asset->path.parent_path().string();
+	//TODO: Reload Materials
+	//for (auto& hash_asset : m_assets) {
+	//	auto asset = hash_asset.second;
+	//	auto path = asset->path.string();
+	//	auto dir = asset->path.parent_path().string();
 
-		tinyobj::attrib_t attrib;
-		std::vector<tinyobj::shape_t> shapes;
-		std::vector<tinyobj::material_t> materials;
+	//	tinyobj::attrib_t attrib;
+	//	std::vector<tinyobj::shape_t> shapes;
+	//	std::vector<tinyobj::material_t> materials;
 
-		std::string warn, err;
-		if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), dir.c_str())) {
-			std::cout << err << std::endl;
-			return;
-		}
+	//	std::string warn, err;
+	//	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str(), dir.c_str())) {
+	//		std::cout << err << std::endl;
+	//		return;
+	//	}
 
-		//asset->materials.clear();
-		asset->staticMaterials.clear();
-		m_InitMaterials(asset, materials, dir);
-	}
+	//	//asset->materials.clear();
+	//	asset->staticMaterials.clear();
+	//	m_InitMaterials(asset, materials, dir);
+	//}
 }
 
 Material* MeshAsset::CreateDynamicMaterial(const std::string& name, const fs::path& shaderPath) {
@@ -215,15 +213,17 @@ Material* MeshAsset::CreateDynamicMaterial(const std::string& name, const fs::pa
 	auto* images = m_game->imageAsset();
 	auto* shaderAsset = m_game->shaderAsset();
 
-	auto mat = m_NewMaterialAsset();
+	auto matAssetId = name + std::to_string(Random().Int());
+	auto mat = m_NewMaterialAsset(matAssetId);
+
 	mat->isDynamic = true;
 	mat->name(name);
 	mat->shader = shaderAsset->GetShader(shaderAsset->GetShaderHash(shaderPath));
 
 	const auto* image = m_game->imageAsset()->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
 
-	auto assetId = name + "deffuseTex" + std::to_string(Random().Int());
-	auto deffuseTex = m_NewTextureAsset(assetId);
+	auto texAssetId = name + "deffuseTex" + std::to_string(Random().Int());
+	auto deffuseTex = m_NewTextureAsset(texAssetId);
 
 	*deffuseTex = Texture::CreateFromImage(render, image);
 
@@ -238,7 +238,7 @@ Material* MeshAsset::CreateDynamicMaterial(const Material* other) {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
 
-	auto mat = m_NewMaterialAsset();
+	auto mat = m_NewMaterialAsset(m_game->assets()->CreateAssetId());
 	mat->priority = other->priority;
 	mat->isDynamic = true;
 	mat->name(other->name());
@@ -278,17 +278,17 @@ void MeshAsset::DeleteDynamicMaterial(Material* mat) {
 }
 
 void MeshAsset::m_InitMesh(
-	Asset* asset,
+	Mesh4* mesh,
 	const tinyobj::attrib_t& attrib,
 	const std::vector<tinyobj::shape_t>& shapes)
 {
 	for (auto& shape : shapes) {
-		m_InitShape(asset, attrib, shape);
+		m_InitShape(mesh, attrib, shape);
 	}
 }
 
 void MeshAsset::m_InitShape(
-	Asset* asset,
+	Mesh4* mesh,
 	const tinyobj::attrib_t& attrib,
 	const tinyobj::shape_t& shape)
 {
@@ -313,7 +313,7 @@ void MeshAsset::m_InitShape(
 	int matIndex = shape.mesh.material_ids[0];
 	matIndex = matIndex >= 0 ? matIndex : 0;
 
-	asset->mesh->AddShape(&verteces, &indeces, m_game->render(), matIndex);
+	mesh->AddShape(&verteces, &indeces, m_game->render(), matIndex);
 }
 
 Mesh4::Vertex MeshAsset::m_ReadVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index) {
@@ -341,50 +341,6 @@ Mesh4::Vertex MeshAsset::m_ReadVertex(const tinyobj::attrib_t& attrib, const tin
 	return vertex;
 }
 
-//void MeshAsset::m_InitShape(
-//	Asset* asset,
-//	const tinyobj::attrib_t& attrib,
-//	const tinyobj::shape_t& shape)
-//{
-//	auto& verts = attrib.vertices;
-//	auto& colors = attrib.colors;
-//	auto& normals = attrib.normals;
-//	auto& texcoords = attrib.texcoords; 
-//
-//	std::vector<Mesh4::Vertex> verteces;
-//	std::vector<int> indeces;
-//
-//	verteces.reserve(verts.size() / 3);
-//	indeces.reserve(shape.mesh.indices.size());
-//
-//	for (int i = 0; i < shape.mesh.indices.size(); ++i) {
-//		Mesh4::Vertex vertex;
-//
-//		auto& index = shape.mesh.indices[i];
-//		auto v = (size_t)index.vertex_index * 3;
-//		auto n = (size_t)index.normal_index * 3;
-//		auto t = (size_t)index.texcoord_index * 2;
-//
-//		if (index.vertex_index >= 0) {
-//			vertex.position = { verts[v], verts[v + 1], verts[v + 2], 0.0f };
-//			vertex.color = { colors[v], colors[v + 1], colors[v + 2], 1.0f };
-//		}
-//		if (index.normal_index >= 0)
-//			vertex.normal = { normals[n], normals[n + 1], normals[n + 2], 1.0f };
-//
-//		if (index.texcoord_index >= 0)
-//			vertex.uv = { texcoords[t], texcoords[t + 1] };
-//
-//		verteces.push_back(vertex);
-//		indeces.push_back(i);
-//	}
-//
-//	int matIndex = shape.mesh.material_ids[0];
-//	matIndex = matIndex >= 0 ? matIndex : 0;
-//
-//	asset->mesh->AddShape(&verteces, &indeces, m_game->render(), matIndex);
-//}
-
 void MeshAsset::m_InitDefaultMaterials() {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
@@ -393,7 +349,7 @@ void MeshAsset::m_InitDefaultMaterials() {
 	auto hash = std::hash<std::string>()(materialDefault);
 
 	if (m_materials.count(hash) == 0) {
-		auto* mat = m_NewMaterialAsset();
+		auto* mat = m_NewMaterialAsset(m_game->assets()->CreateAssetId());
 		m_materials.insert({ hash, mat });
 
 		mat->name(materialDefault);
@@ -427,17 +383,16 @@ void MeshAsset::m_InitAssetFromForm(Forms4::Form& form, const fs::path& path) {
 	auto hash = CreateHash(path);
 	auto material = GetStaticMaterial(MeshAsset::materialDefault);
 
-	auto* asset = new Asset(hash);
-	asset->path = path;
-	asset->mesh->AddShape(&form.verteces, &form.indexes, m_game->render(), 0);
-	asset->mesh->topology = form.topology;
-	asset->staticMaterials.push_back(material);
+	auto assetId = path.string();
+	auto mesh = m_NewMeshAsset(assetId);
 
-	m_assets.insert({ hash, asset });
+	mesh->AddShape(&form.verteces, &form.indexes, m_game->render(), 0);
+	mesh->topology = form.topology;
+	mesh->f_staticMaterials.push_back(material);
 }
 
 void MeshAsset::m_InitMaterials(
-	Asset* asset,
+	Mesh4* mesh,
 	const std::vector<tinyobj::material_t>& materials,
 	const std::string& directory)
 {
@@ -446,28 +401,12 @@ void MeshAsset::m_InitMaterials(
 	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(Assets::ShaderDefault));
 
 	if (materials.empty()) {
-		/// TODO: заменить на GetStaticMaterial(materialDefault)
 		auto* mat = GetStaticMaterial(MeshAsset::materialDefault);
-		//auto hash = std::hash<std::string>()(materialDefault);
-
-		//if (m_materials.count(hash) == 0) {
-		//	auto* mat = m_NewMaterial();
-		//	m_materials.insert({ hash, mat });
-
-		//	mat->name(materialDefault);
-		//	mat->shader = shader;
-
-		//	const auto* image = images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
-
-		//	auto& deffuseTex = mat->textures.emplace_back(Texture::CreateFromImage(render, image));
-		//	mat->resources.emplace_back(ShaderResource::Create(&deffuseTex));
-		//}
-		asset->staticMaterials.push_back(mat);
-		//asset->staticMaterials.push_back(m_materials.at(hash));
+		mesh->f_staticMaterials.push_back(mat);
 	}
 	for (auto& tinyMat : materials) {
 		auto mat = GetStaticMaterial(tinyMat, directory);
-		asset->staticMaterials.push_back(mat);
+		mesh->f_staticMaterials.push_back(mat);
 	}
 }
 
@@ -491,7 +430,7 @@ const Material* MeshAsset::GetStaticMaterial(const tinyobj::material_t& tinyMat,
 }
 
 Material* MeshAsset::m_LoadMaterial(
-	size_t hash,
+	int hash,
 	const tinyobj::material_t& tinyMat,
 	const std::string& directory)
 {
@@ -499,7 +438,7 @@ Material* MeshAsset::m_LoadMaterial(
 	auto* images = m_game->imageAsset();
 	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(Assets::ShaderDefault));
 
-	auto material = m_NewMaterialAsset();
+	auto material = m_NewMaterialAsset(m_game->assets()->CreateAssetId());
 	m_materials.insert({ hash, material });
 
 	auto& mat = *material;
@@ -677,16 +616,17 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<Actor*>* objects) {
 }
 
 
-DEF_FUNC(MeshAsset, CreateHash, size_t)(CppRef meshAssetRef, const char* fileName) {
-	return CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->CreateHash(fileName);
-}
+//DEF_FUNC(MeshAsset, CreateHash, size_t)(CppRef meshAssetRef, const char* fileName) {
+//	return CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->CreateHash(fileName);
+//}
 
-FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, size_t assetHash) {
+FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, int assetHash) {
 	CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->Load(assetHash);
 }
 
-DEF_FUNC(MeshAsset, GetMesh, CppRef)(CppRef meshAssetRef, size_t assetHash) {
-	return CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->GetMesh(assetHash)->f_cppRef;
+DEF_FUNC(MeshAsset, GetMesh, CppRef)(CppRef meshAssetRef, int assetHash) {
+	auto mesh = CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->GetMesh(assetHash);
+	return CppRefs::GetRef((void*)mesh);
 }
 
 DEF_FUNC(MeshAsset, CreateDynamicMaterial, CppRef)(CppRef meshAssetRef, CppRef otherMaterialRef) {

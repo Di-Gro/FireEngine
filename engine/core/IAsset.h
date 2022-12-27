@@ -3,7 +3,7 @@
 
 class IAsset {
 public:
-	int assetId = 0;
+	int assetIdHash = 0;
 
 	virtual void Release() = 0;
 

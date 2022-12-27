@@ -12,8 +12,12 @@
 
 
 Mesh4::Mesh4(const Mesh4& other) {
+	this->operator=(other);
+}
+
+Mesh4& Mesh4::operator=(const Mesh4& other) {
 	if (&other == nullptr || &other == this)
-		return;
+		return *this;
 
 	for (auto& shape : other.m_shapes) {
 		std::vector<Vertex> verteces;
@@ -30,6 +34,7 @@ Mesh4::Mesh4(const Mesh4& other) {
 
 		this->AddShape(&verteces, &indeces, other.m_render, shape.materialIndex);
 	}
+	return *this;
 }
 
 Mesh4::~Mesh4() {
@@ -277,6 +282,6 @@ DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
 	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
 }
 
-DEF_PROP_GET(Mesh4, size_t, assetHash);
+DEF_PROP_GET_F(Mesh4, int, assetIdHash, assetIdHash);
 
 DEF_PUSH_ASSET(Mesh4);
