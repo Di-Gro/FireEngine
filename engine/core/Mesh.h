@@ -123,6 +123,7 @@ public:
 	int maxMaterialIndex() const;
 
 	Shape* GetShape(int index);
+	const Shape* GetConstShape(int index) const;
 
 };
 

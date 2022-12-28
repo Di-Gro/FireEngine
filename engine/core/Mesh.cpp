@@ -244,6 +244,11 @@ Mesh4::Shape* Mesh4::GetShape(int index) {
 	return &m_shapes[index];
 }
 
+const Mesh4::Shape*  Mesh4::GetConstShape(int index) const
+{
+	return &m_shapes[index];
+}
+
 int Mesh4::maxMaterialIndex() const {
 	int maxIndex = 0;
 	for (int i = 0; i < m_shapes.size(); i++) {
