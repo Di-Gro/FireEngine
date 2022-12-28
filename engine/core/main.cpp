@@ -55,7 +55,7 @@ static void InsideMono() {
 
 
 int main() {		
-	if (!mono::init("mono", true))
+	if (!mono::init("mono", false))
 		return 1;
 
 	InsideMono();
