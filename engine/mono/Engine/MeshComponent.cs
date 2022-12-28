@@ -23,7 +23,7 @@ namespace Engine {
             get => m_mesh;
             set {
                 m_mesh = value;
-                Dll.MeshComponent.SetFromCs(cppRef, mesh.meshRef);
+                Dll.MeshComponent.SetFromCs(cppRef, mesh.cppRef);
             }
         }
 

@@ -89,6 +89,7 @@ Texture Texture::CreateStagingTexture(Render* render, int width, int height, DXG
 Texture Texture::CreateDepthTexture(Render* render, int width, int height) {
 	Texture res;
 	res.render = render;
+	res.image = nullptr;
 	res.m_desc = {};
 
 	res.m_desc.Width = width;
@@ -114,6 +115,7 @@ Texture Texture::CreateDepthTexture(Render* render, int width, int height) {
 Texture Texture::CreateFromImage(Render* render, const Image* image) {
 	Texture res;
 	res.render = render;
+	res.image = image;
 	res.m_desc = {};
 
 	res.m_desc.Width = image->width;
@@ -140,8 +142,6 @@ Texture Texture::CreateFromImage(Render* render, const Image* image) {
 
 	return res;
 }
-
-DEF_PROP_GETSET_F(Texture, int, assetIdHash, assetIdHash);
 
 DEF_PUSH_ASSET(Texture);
 

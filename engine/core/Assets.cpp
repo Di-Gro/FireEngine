@@ -93,7 +93,7 @@ IAsset* Assets::Get(int assetIdHash) {
 void Assets::ReloadAll() {
 	for (auto& pair : m_assets) {
 		auto iasset = pair.second.ptr;
-		m_method_Reload(iasset->assetIdHash);
+		m_method_Reload(iasset->assetIdHash());
 	}
 }
 

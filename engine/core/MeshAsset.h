@@ -98,6 +98,7 @@ public:
 	Material* CreateDynamicMaterial(const std::string& name, const fs::path& shaderPath = Assets::ShaderDefault);
 	void DeleteDynamicMaterial(Material*);
 
+	void InitMesh(Mesh4* mesh, const fs::path& path);
 
 private:
 	Mesh4* m_CreateMeshAsset(int hash, fs::path path);
@@ -126,8 +127,8 @@ private:
 };
 
 //FUNC(MeshAsset, CreateHash, size_t)(CppRef meshAssetRef, const char* fileName);
-FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, int assetHash);
-FUNC(MeshAsset, GetMesh, CppRef)(CppRef meshAssetRef, int assetHash);
+//FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, int assetHash);
+//FUNC(MeshAsset, GetMesh, CppRef)(CppRef meshAssetRef, int assetHash);
 
 FUNC(MeshAsset, CreateDynamicMaterial, CppRef)(CppRef meshAssetRef, CppRef otherMaterialRef);
 FUNC(MeshAsset, DeleteDynamicMaterial, void)(CppRef meshAssetRef, CppRef otherMaterialRef);

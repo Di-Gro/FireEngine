@@ -18,7 +18,7 @@ class Render;
 enum class CullMode { Front, Back, None };
 enum class FillMode { Solid, Wireframe };
 
-class Material : public CsLink, public IAsset {
+class Material : /*public CsLink,*/ public IAsset {
 	friend class Render;
 
 	#pragma pack(push, 4)
@@ -77,8 +77,6 @@ public:
 
 PUSH_ASSET(Material);
 FUNC(Material, Init, void)(CppRef gameRef, CppRef matRef);
-
-PROP_GETSET(Material, int, assetIdHash);
 
 PROP_GETSET(Material, Vector3, diffuseColor)
 PROP_GETSET(Material, float, diffuse)

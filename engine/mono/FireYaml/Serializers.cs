@@ -214,11 +214,9 @@ namespace Engine {
 
             var meshPath = $"{selfPath}.m_mesh";
             var materialsPath = $"{selfPath}.m_materials";
-
-            // TODO: OnDeserialize MeshComponent
-            // Получить assetId для mesh-а и материалов
-            // Создать экземпляры меша и материалов
-            // Вызвать deserializer.LoadAsset()
+            
+            m_LoadMesh(deserializer, meshPath, meshComponent);
+            m_LoadMaterials(deserializer, materialsPath, meshComponent);
 
         }
 
@@ -230,6 +228,66 @@ namespace Engine {
                 list.Add(material.IsDynamic ? null : material);
             }
             return list;
+        }
+
+        private void m_LoadMesh(FireYaml.Deserializer deserializer, string meshPath, MeshComponent meshComponent) {
+            
+            var meshAssetPath = $"{meshPath}.assetId";
+            var meshField = deserializer.GetField(meshPath);
+        
+            /// Если есть сам меш, значит равен нулю
+            if(meshField.HasValue(meshPath))
+                return;
+                
+            /// Если нет, значит меш не установлен
+            if(!meshField.HasValue(meshAssetPath))
+                return;
+                
+            var yamlValue = meshField.GetValue(meshAssetPath);
+            var assetId = yamlValue.value;
+
+            if (!AssetStore.Instance.HasAssetPath(assetId))
+                    throw new Exception($"Missing AssetId: {assetId}");
+
+            if (yamlValue.type == YamlValue.Type.AssetId) {
+                var mesh = new StaticMesh().LoadFromAsset(assetId);
+                Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
+                return;
+            }
+        }
+
+        private void m_LoadMaterials(FireYaml.Deserializer deserializer, string materialsPath, MeshComponent meshComponent) {
+            var yamlObject = deserializer.GetField(materialsPath);
+
+            var count = yamlObject.GetItemsCount(materialsPath);
+            if (count == 0)
+                return;
+
+            var matRefs = new List<ulong>();
+            var defaultMaterial = new StaticMaterial().LoadFromAsset(AssetStore.M_Default);
+
+            for (int i = 0; i < count; i++) {
+                var valuePath = $"{materialsPath}.{i}";
+
+                /// Если есть, значит равен null
+                if(!yamlObject.HasValue(valuePath)) {
+                    var yamlValue = yamlObject.GetValue($"{valuePath}.assetId");
+                    
+                    if (yamlValue.type == YamlValue.Type.AssetId) {
+                        var assetId = yamlValue.value;
+
+                        if (!AssetStore.Instance.HasAssetPath(assetId))
+                            throw new Exception($"Missing AssetId: {assetId}");
+
+                        var material = new StaticMaterial().LoadFromAsset(assetId);
+                        matRefs.Add(material.cppRef.value);
+                        continue;
+                    }
+                }
+                /// Null и другое
+                matRefs.Add(defaultMaterial.cppRef.value);
+            }
+            Dll.MeshComponent.SetPreInitMaterials(meshComponent.cppRef, matRefs.ToArray(), matRefs.Count);
         }
     }
 

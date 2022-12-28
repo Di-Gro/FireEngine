@@ -17,6 +17,7 @@ private:
 public:
 	std::string name;
 	Render* render = nullptr;
+	const Image* image = nullptr;
 
 	bool IsEmpty() { return m_texture.Get() == nullptr; }
 	ID3D11Texture2D* get() { return m_texture.Get(); }
@@ -29,6 +30,7 @@ public:
 		m_texture = std::move(other.m_texture);
 		name = std::move(other.name);
 		render = other.render;
+		image = other.image;
 	}
 
 	Texture& operator=(Texture&& other) noexcept {
@@ -39,6 +41,7 @@ public:
 		m_texture = std::move(other.m_texture);
 		name = std::move(other.name);
 		render = other.render;
+		image = other.image;
 		
 		return *this;
 	}
@@ -52,6 +55,7 @@ public:
 	static Texture CreateDepthTexture(Render* render, int width, int height);
 	static Texture CreateFromImage(Render* render, const Image* image);
 };
+
 PUSH_ASSET(Texture);
 
 FUNC(Texture, Init, void)(CppRef gameRef, CppRef texRef, UINT width, UINT height);

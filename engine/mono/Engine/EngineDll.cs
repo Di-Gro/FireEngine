@@ -184,8 +184,20 @@ namespace EngineDll {
 
 		public static class Material {
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_PushAsset")]
-		    public static extern CppRef PushAsset(CppRef gameRef, int assetId);
+            [DllImport(Paths.Exe, EntryPoint = "Material_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_assetId_get")]
+		    public static extern size_t assetId_get(CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_assetId_set", CharSet = CharSet.Ansi)]
+		    public static extern void assetId_set(CppRef cppRef, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_assetIdHash_get")]
+		    public static extern int assetIdHash_get(CppRef objRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Material_assetIdHash_set")]
+		    public static extern void assetIdHash_set(CppRef objRef, int value);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_get")]
 		    public static extern Vector3 diffuseColor_get(CppRef objRef);
@@ -276,8 +288,20 @@ namespace EngineDll {
 
 		public static class Image {
 		
-            [DllImport(Paths.Exe, EntryPoint = "Image_PushAsset")]
-		    public static extern CppRef PushAsset(CppRef gameRef, int assetId);
+            [DllImport(Paths.Exe, EntryPoint = "Image_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "Image_assetId_get")]
+		    public static extern size_t assetId_get(CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Image_assetId_set", CharSet = CharSet.Ansi)]
+		    public static extern void assetId_set(CppRef cppRef, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Image_assetIdHash_get")]
+		    public static extern int assetIdHash_get(CppRef objRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Image_assetIdHash_set")]
+		    public static extern void assetIdHash_set(CppRef objRef, int value);
 
             [DllImport(Paths.Exe, EntryPoint = "Image_Init", CharSet = CharSet.Ansi)]
 		    public static extern void Init(CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height);
@@ -286,14 +310,20 @@ namespace EngineDll {
 
 		public static class Texture {
 		
+            [DllImport(Paths.Exe, EntryPoint = "Texture_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "Texture_assetId_get")]
+		    public static extern size_t assetId_get(CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Texture_assetId_set", CharSet = CharSet.Ansi)]
+		    public static extern void assetId_set(CppRef cppRef, string value);
+
             [DllImport(Paths.Exe, EntryPoint = "Texture_assetIdHash_get")]
 		    public static extern int assetIdHash_get(CppRef objRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Texture_assetIdHash_set")]
 		    public static extern void assetIdHash_set(CppRef objRef, int value);
-
-            [DllImport(Paths.Exe, EntryPoint = "Texture_PushAsset")]
-		    public static extern CppRef PushAsset(CppRef gameRef, int assetId);
 
             [DllImport(Paths.Exe, EntryPoint = "Texture_Init")]
 		    public static extern void Init(CppRef gameRef, CppRef texRef, uint width, uint height);
@@ -305,12 +335,6 @@ namespace EngineDll {
 
 		public static class MeshAsset {
 
-            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_Load")]
-		    public static extern void Load(CppRef meshAssetRef, int assetHash);
-
-            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_GetMesh")]
-		    public static extern CppRef GetMesh(CppRef meshAssetRef, int assetHash);
-
             [DllImport(Paths.Exe, EntryPoint = "MeshAsset_CreateDynamicMaterial")]
 		    public static extern CppRef CreateDynamicMaterial(CppRef meshAssetRef, CppRef otherMaterialRef);
 
@@ -321,14 +345,32 @@ namespace EngineDll {
 
 		public static class Mesh4 {
 		
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetId_get")]
+		    public static extern size_t assetId_get(CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetId_set", CharSet = CharSet.Ansi)]
+		    public static extern void assetId_set(CppRef cppRef, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetIdHash_get")]
+		    public static extern int assetIdHash_get(CppRef objRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetIdHash_set")]
+		    public static extern void assetIdHash_set(CppRef objRef, int value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_Init", CharSet = CharSet.Ansi)]
+		    public static extern void Init(CppRef gameRef, CppRef meshRef, string path);
+
             [DllImport(Paths.Exe, EntryPoint = "Mesh4_ShapeCount")]
 		    public static extern int ShapeCount(CppRef mesh4Ref);
 
             [DllImport(Paths.Exe, EntryPoint = "Mesh4_MaterialMaxIndex")]
 		    public static extern int MaterialMaxIndex(CppRef mesh4Ref);
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetIdHash_get")]
-		    public static extern int assetIdHash_get(CppRef objRef);
+            [DllImport(Paths.Exe, EntryPoint = "Mesh4_materials_set")]
+		    public static extern void materials_set(CppRef meshRef, size_t[] cppRefs, int count);
 
 		}
 
@@ -366,6 +408,12 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_GetMaterial")]
 		    public static extern CppRef GetMaterial(CppRef compRef, size_t index);
+
+            [DllImport(Paths.Exe, EntryPoint = "MeshComponent_SetPreInitMesh")]
+		    public static extern void SetPreInitMesh(CppRef compRef, CppRef meshRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "MeshComponent_SetPreInitMaterials")]
+		    public static extern void SetPreInitMaterials(CppRef compRef, size_t[] matRefs, int count);
 
 		}
 	}

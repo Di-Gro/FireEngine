@@ -159,7 +159,6 @@ namespace EngineDll {
 		public static class Texture {
 		
 <#
-			PROP_GETSET("Texture", "int", "assetIdHash");
 			PUSH_ASSET("Texture");
 			FUNC("Texture", "Init", "void", "CppRef gameRef, CppRef texRef, uint width, uint height");
 			FUNC("Texture", "InitFromImage", "void", "CppRef gameRef, CppRef texRef, CppRef imageRef");
@@ -171,8 +170,8 @@ namespace EngineDll {
 <#
 			//ANSI_FUNC("MeshAsset", "CreateHash",	"size_t", 	"CppRef meshAssetRef, string fileName");
 
-			FUNC("MeshAsset", "Load",		"void", 	"CppRef meshAssetRef, int assetHash");
-			FUNC("MeshAsset", "GetMesh",	"CppRef", 	"CppRef meshAssetRef, int assetHash");
+			//FUNC("MeshAsset", "Load",		"void", 	"CppRef meshAssetRef, int assetHash");
+			//FUNC("MeshAsset", "GetMesh",	"CppRef", 	"CppRef meshAssetRef, int assetHash");
 
 			FUNC("MeshAsset", "CreateDynamicMaterial",	"CppRef",	"CppRef meshAssetRef, CppRef otherMaterialRef");
 			FUNC("MeshAsset", "DeleteDynamicMaterial",	"void",		"CppRef meshAssetRef, CppRef otherMaterialRef");
@@ -182,9 +181,12 @@ namespace EngineDll {
 		public static class Mesh4 {
 		
 <#
+			PUSH_ASSET("Mesh4");
+			ANSI_FUNC("Mesh4", "Init", "void", "CppRef gameRef, CppRef meshRef, string path");
+
 			FUNC("Mesh4", "ShapeCount",			"int", "CppRef mesh4Ref");
 			FUNC("Mesh4", "MaterialMaxIndex",	"int", "CppRef mesh4Ref");
-			PROP_GET("Mesh4", "int", "assetIdHash");
+			FUNC("Mesh4", "materials_set", "void", "CppRef meshRef, size_t[] cppRefs, int count");
 #>
 		}
 
@@ -207,6 +209,9 @@ namespace EngineDll {
 
 			FUNC("MeshComponent", "SetMaterial",		"void",		"CppRef compRef, size_t index, CppRef materialRef");
 			FUNC("MeshComponent", "GetMaterial",		"CppRef",	"CppRef compRef, size_t index");
+
+			FUNC("MeshComponent", "SetPreInitMesh", "void", "CppRef compRef, CppRef meshRef");
+			FUNC("MeshComponent", "SetPreInitMaterials", "void", "CppRef compRef, size_t[] matRefs, int count");
 
 #>
 		}

@@ -2,7 +2,10 @@
 <#+
     private void PUSH_ASSET(string className)
     {
-        FUNC(className, "PushAsset", "CppRef", "CppRef gameRef, int assetId");
+        ANSI_FUNC(className, "PushAsset", "CppRef", "CppRef gameRef, string assetId, int assetIdHash");
+        FUNC(className, "assetId_get", "size_t", "CppRef cppRef");
+        ANSI_FUNC(className, "assetId_set", "void", "CppRef cppRef, string value");
+        PROP_GETSET(className, "int", "assetIdHash");
     }
 #>
 <#+

@@ -22,8 +22,14 @@ class RenderPass;
 class MeshAsset;
 class Material;
 
+FUNC(MeshComponent, SetPreInitMesh, void)(CppRef compRef, CppRef meshRef);
+FUNC(MeshComponent, SetPreInitMaterials, void)(CppRef compRef, size_t* matRefs, int count);
+
 class MeshComponent : public Component, public IShadowCaster {
-	COMPONENT(MeshComponent)
+	COMPONENT(MeshComponent);
+
+	FRIEND_FUNC(MeshComponent, SetPreInitMesh, void)(CppRef compRef, CppRef meshRef);
+	FRIEND_FUNC(MeshComponent, SetPreInitMaterials, void)(CppRef compRef, size_t* matRefs, int count);
 
 public:
 	bool isDebug = false;
@@ -42,6 +48,11 @@ private:
 
 	bool m_castShadow = true;
 	Pass::ShadowCaster m_shadowCaster;
+
+	const Mesh4* m_preinitMesh = nullptr;
+	std::vector<const Material*> m_preinitMaterials;
+
+	int m_meshVersion = 0;
 
 private:
 	static bool mono_inited;
@@ -93,6 +104,7 @@ public:
 
 private:
 	void m_SetMaterialsFromMesh();
+	void m_OnMeshReload();
 	void m_InitMono();
 	void m_InitDynamic();
 	void m_Draw(RenderPass* renderPass = nullptr, const Vector3& scale = Vector3::One);
@@ -123,6 +135,7 @@ FUNC(MeshComponent, ClearMesh, void)(CppRef compRef);
 
 FUNC(MeshComponent, SetMaterial, void)(CppRef compRef, size_t index, CppRef materialRef);
 FUNC(MeshComponent, GetMaterial, CppRef)(CppRef compRef, size_t index);
+
 
 
 

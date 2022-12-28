@@ -63,7 +63,10 @@
     <ClCompile Include="LineMath.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshComponent.cpp" />
+    <ClCompile Include="MeshComponent.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="LinedPlain.cpp" />
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MonoInst.cpp" />

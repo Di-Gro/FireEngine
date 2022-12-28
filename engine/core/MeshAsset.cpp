@@ -80,7 +80,7 @@ void MeshAsset::Destroy() {
 
 Material* MeshAsset::m_NewMaterialAsset(const std::string& assetId) {
 	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
-	auto cppRef = Material_PushAsset(CppRefs::GetRef(m_game), assetIdHash);
+	auto cppRef = Material_PushAsset(CppRefs::GetRef(m_game), assetId.c_str(), assetIdHash);
 	auto material = CppRefs::ThrowPointer<Material>(cppRef);
 
 	material->Init(m_game->render());
@@ -89,20 +89,20 @@ Material* MeshAsset::m_NewMaterialAsset(const std::string& assetId) {
 }
 
 void MeshAsset::m_DeleteMaterialAsset(Material* material) {
-	m_game->assets()->Pop(material->assetIdHash);
+	m_game->assets()->Pop(material->assetIdHash());
 	delete material;
 }
 
 Texture* MeshAsset::m_NewTextureAsset(const std::string& assetId) {
 	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
-	auto texCppRef = Texture_PushAsset(CppRefs::GetRef(m_game), assetIdHash);
+	auto texCppRef = Texture_PushAsset(CppRefs::GetRef(m_game), assetId.c_str(), assetIdHash);
 
 	return CppRefs::ThrowPointer<Texture>(texCppRef);
 }
 
 Mesh4* MeshAsset::m_NewMeshAsset(const std::string& assetId) {
 	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
-	auto cppRef = Mesh4_PushAsset(CppRefs::GetRef(m_game), assetIdHash);
+	auto cppRef = Mesh4_PushAsset(CppRefs::GetRef(m_game), assetId.c_str(), assetIdHash);
 
 	return CppRefs::ThrowPointer<Mesh4>(cppRef);
 }
@@ -126,14 +126,17 @@ void MeshAsset::m_Load(int hash, fs::path path) {
 const Mesh4* MeshAsset::GetMesh(fs::path path) {
 	auto hash = CreateHash(path);
 
-	m_Load(hash, path);
+	if (!m_game->assets()->Contains(hash))
+		m_Load(hash, path);
+
 	return (Mesh4*)m_game->assets()->Get(hash);
 }
 
 const Mesh4* MeshAsset::GetMesh(int hash) {
-	auto path = m_assetPaths.at(hash);
-
-	m_Load(hash, path);
+	if (!m_game->assets()->Contains(hash)) {
+		auto path = m_assetPaths.at(hash);
+		m_Load(hash, path);
+	}
 	return (Mesh4*)m_game->assets()->Get(hash);
 }
 
@@ -154,10 +157,26 @@ const std::vector<const Material*>* MeshAsset::GetMaterials(fs::path path) {
 }
 
 const std::vector<const Material*>* MeshAsset::GetMaterials(const Mesh4* mesh) {
-	if (mesh->assetIdHash == 0)
-		return nullptr;
-
 	return &mesh->f_staticMaterials;
+}
+
+void MeshAsset::InitMesh(Mesh4* mesh, const fs::path& path) {
+	auto dir = path.parent_path().string();
+
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+
+	std::string warn, err;
+	assert(tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.string().c_str(), dir.c_str()));
+
+	m_InitMesh(mesh, attrib, shapes);
+
+	if (err != "")
+		std::cout << err << std::endl;
+
+	if (warn != "")
+		std::cout << warn << std::endl;
 }
 
 Mesh4* MeshAsset::m_CreateMeshAsset(int hash, fs::path path) {
@@ -230,7 +249,7 @@ Material* MeshAsset::CreateDynamicMaterial(const std::string& name, const fs::pa
 	mat->textures.push_back(deffuseTex);
 	mat->resources.emplace_back(ShaderResource::Create(deffuseTex));
 
-	m_dynamicMaterials.insert({ mat->cppRef(), mat });
+	m_dynamicMaterials.insert({ CppRefs::GetRef((void*)mat), mat });
 	return mat;
 }
 
@@ -248,9 +267,12 @@ Material* MeshAsset::CreateDynamicMaterial(const Material* other) {
 	for (int i = 0; i < other->textures.size(); i++) {
 		auto& otherTex = other->textures[i];
 
-		const auto* image = otherTex->name.empty()
-			? images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111)
-			: images->Get(otherTex->name);
+		const auto* image = otherTex->image;
+		assert(image != nullptr);
+
+			//otherTex->name.empty()
+			//? images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111)
+			//: images->Get(otherTex->name);
 
 		auto assetId = otherTex->name + "deffuseTex" + std::to_string(Random().Int());
 		auto thisTex = m_NewTextureAsset(assetId);
@@ -263,17 +285,18 @@ Material* MeshAsset::CreateDynamicMaterial(const Material* other) {
 		thisTex->name = otherTex->name;
 	}
 
-	m_dynamicMaterials.insert({ mat->cppRef(), mat });
+	m_dynamicMaterials.insert({ CppRefs::GetRef((void*)mat), mat});
 	return mat;
 }
 
 void MeshAsset::DeleteDynamicMaterial(Material* mat) {
-	if (m_dynamicMaterials.count(mat->cppRef()) == 0)
+	auto matRef = CppRefs::GetRef((void*)mat);
+	if (m_dynamicMaterials.count(matRef) == 0)
 		return;
 
 	m_game->render()->UnRegisterMaterial(mat);
 
-	m_dynamicMaterials.erase(mat->cppRef());
+	m_dynamicMaterials.erase(matRef);
 	m_DeleteMaterialAsset(mat);
 }
 
@@ -635,7 +658,7 @@ DEF_FUNC(MeshAsset, CreateDynamicMaterial, CppRef)(CppRef meshAssetRef, CppRef o
 
 	auto newMaterial = meshAsset->CreateDynamicMaterial(material);
 
-	return newMaterial->cppRef();
+	return CppRefs::GetRef(newMaterial);
 }
 
 DEF_FUNC(MeshAsset, DeleteDynamicMaterial, void)(CppRef meshAssetRef, CppRef otherMaterialRef) {

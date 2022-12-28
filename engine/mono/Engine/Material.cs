@@ -72,6 +72,14 @@ namespace Engine {
 
         public StaticMaterial(CppRef cppRef) {
             m_proxy.cppRef = cppRef;
+            assetId = Assets.ReadCString(Dll.Material.assetId_get(cppRef));
+            assetIdHash = Dll.Material.assetIdHash_get(cppRef);
+        }
+
+        public StaticMaterial LoadFromAsset(string assetId) {
+            this.assetId = assetId;
+            LoadAsset();
+            return this;
         }
 
         public void LoadAsset() {
@@ -79,7 +87,7 @@ namespace Engine {
 
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
-                cppRef = Dll.Material.PushAsset(Game.gameRef, assetIdHash);
+                cppRef = Dll.Material.PushAsset(Game.gameRef, assetId, assetIdHash);
                 ReloadAsset();
             }
         }

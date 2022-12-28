@@ -10,6 +10,7 @@ namespace FireYaml {
     public class AssetStore {
 
         public static AssetStore Instance { get; set; } = new AssetStore();
+        public static string M_Default = "M_Default";
 
         private Dictionary<int, string> m_typeId_typeName = new Dictionary<int, string>();
         private Dictionary<string, string> m_typeName_typeId = new Dictionary<string, string>();
@@ -36,17 +37,26 @@ namespace FireYaml {
             AddTypeId("00000010010", typeof(Engine.Texture).FullName);
             AddTypeId("00000010011", typeof(Engine.Image).FullName);
             AddTypeId("00000010012", typeof(Engine.StaticMaterial).FullName);
+            AddTypeId("00000010013", typeof(Engine.StaticMesh).FullName);
 
             if (addDefaultAssets) {
                 AddAssetId("TestPrefab", $"{m_assetsPath}TestPrefab.yml");
                 AddAssetId("TestMesh", $"{m_assetsPath}TestMesh.yml");
+                AddAssetId("TestMeshPrefab", "../../data/assets/new/TestMeshPrefab.yml");
 
-                AddAssetId("MESH000001", "../../data/assets/levels/farm/meshes/House_Red.obj");
-                AddAssetId("MESH000002", "../../data/assets/levels/farm/meshes/House_Purple.obj");
-                AddAssetId("MESH000003", "../../data/assets/levels/farm/meshes/House_Blue.obj");
+                AddAssetId("MESH000001", "../../data/assets/new/House_Red.yml");
+                AddAssetId("MESH000002", "../../data/assets/new/House_Purple.yml");
+                AddAssetId("MESH000003", "../../data/assets/new/House_Blue.yml");
+                AddAssetId("IMG0000004", "../../data/assets/new/Gradients.yml");
+                AddAssetId("TEX0000005", "../../data/assets/new/Texture.yml");
+                AddAssetId("MAT0000006", "../../data/assets/new/Material.yml");
+
                 AddAssetId("TestTexture1", $"{m_assetsPath}TestTexture1.yml");
                 AddAssetId("TestImage1", $"{m_assetsPath}TestImage1.yml");
                 AddAssetId("TestMaterial1", $"{m_assetsPath}TestMaterial1.yml");
+                AddAssetId("TestMesh1", $"{m_assetsPath}TestMesh1.yml");
+                AddAssetId("M_Default", $"{m_assetsPath}M_Default.yml");
+                AddAssetId("TestPrefab2", $"{m_assetsPath}TestPrefab2.yml");
             }
         }
 

@@ -22,9 +22,16 @@ namespace CSBridge {
 
 #define PROP_SET(ClassName, propType, propName) extern "C" __declspec(dllexport) void ClassName##_##propName##_set(CppRef objRef, propType value);\
 
+#define PROP_GET_ANSI(ClassName, propName) extern "C" __declspec(dllexport) size_t ClassName##_##propName##_get(CppRef objRef);\
+
+
 #define PROP_GETSET(ClassName, propType, propName)\
 	PROP_GET(ClassName, propType, propName)\
 	PROP_SET(ClassName, propType, propName)\
+
+#define PROP_GETSET_ANSI(ClassName, propName)\
+	PROP_GET_ANSI(ClassName, propName)\
+	PROP_SET(ClassName, const char*, propName)\
 
 #define DEF_PROP_GET(ClassName, propType, propName)\
 	propType ClassName##_##propName##_get(CppRef objRef) {\
@@ -35,6 +42,16 @@ namespace CSBridge {
 			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
 \
 		return propType();\
+	}\
+
+#define DEF_PROP_GET_ANSI(ClassName, propName)\
+	size_t ClassName##_##propName##_get(CppRef objRef) {\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
+		if (a != nullptr)\
+			return (size_t)a->propName();\
+		else\
+			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
+		throw std::exception();\
 	}\
 
 #define DEF_PROP_SET(ClassName, propType, propName)\
@@ -76,6 +93,10 @@ namespace CSBridge {
 	DEF_PROP_GET_F(ClassName, propType, propName, field)\
 	DEF_PROP_SET_F(ClassName, propType, propName, field)\
 
+#define DEF_PROP_GETSET_ANSI(ClassName, propName)\
+	DEF_PROP_GET_ANSI(ClassName, propName)\
+	DEF_PROP_SET(ClassName, const char*, propName)\
+
 #define FUNC(ClassName, funcName, retType) extern "C" __declspec(dllexport) retType ClassName##_##funcName
 
 #define FRIEND_FUNC(ClassName, funcName, retType) friend retType ClassName##_##funcName
@@ -83,20 +104,28 @@ namespace CSBridge {
 #define DEF_FUNC(ClassName, funcName, retType) retType ClassName##_##funcName 
 
 #define PUSH_ASSET(ClassName)\
-FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, int assetId)\
+FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, const char* assetId, int assetIdHash);\
+PROP_GETSET_ANSI(ClassName, assetId)\
+PROP_GETSET(ClassName, int, assetIdHash)\
 
 #define DEF_PUSH_ASSET(ClassName)\
-DEF_FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, int assetIdHash) {\
+DEF_FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, const char* assetId, int assetIdHash) {\
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);\
 \
 	auto* asset = (ClassName*)game->assets()->Get(assetIdHash);\
 	if (asset == nullptr) {\
 		asset = new ClassName();\
-		asset->assetIdHash = assetIdHash;\
+		asset->assetId(assetId);\
+		asset->assetIdHash(assetIdHash);\
 		game->assets()->Push(assetIdHash, asset);\
 	}\
 	return CppRefs::GetRef(asset);\
 }\
+DEF_PROP_GETSET_ANSI(ClassName, assetId)\
+DEF_PROP_GETSET(ClassName, int, assetIdHash)\
+
+
+
 
 //#define DEC_COMPONENT_CREATE(ClassName)\
 //FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \

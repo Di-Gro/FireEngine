@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "Assets.h"
+#include "MeshAsset.h"
 #include "Render.h"
 
 #include "DirectionLight.h"
@@ -144,6 +145,8 @@ void Mesh4::m_InitShape(Mesh4::Shape& shape) {
 	constBufferDesc.StructureByteStride = 0;
 	constBufferDesc.ByteWidth = sizeof(MeshCBuffer);
 
+	auto device = m_render->device();
+
 	m_render->device()->CreateBuffer(&vertexBufferDesc, &vertexData, shape.vertexBuffer.GetAddressOf());
 	m_render->device()->CreateBuffer(&indexBufferDesc, &indexData, shape.indexBuffer.GetAddressOf());
 	m_render->device()->CreateBuffer(&constBufferDesc, nullptr, shape.meshCBuffer.GetAddressOf());
@@ -282,6 +285,31 @@ DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
 	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
 }
 
-DEF_PROP_GET_F(Mesh4, int, assetIdHash, assetIdHash);
-
 DEF_PUSH_ASSET(Mesh4);
+
+DEF_FUNC(Mesh4, Init, void)(CppRef gameRef, CppRef meshRef, const char* path) {
+	auto* game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+
+	game->meshAsset()->InitMesh(mesh, path);
+	mesh->version++;
+}
+
+DEF_FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count) {
+	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+
+	mesh->f_staticMaterials.clear();
+
+	auto ptr = cppRefs;
+	for (int i = 0; i < count; i++, ptr++) {
+		auto cppRef = RefCpp(*ptr);
+		auto* material = CppRefs::ThrowPointer<Material>(cppRef);
+
+		mesh->f_staticMaterials.push_back(material);
+	}
+}
+
+DEF_FUNC(Mesh4, NextVersion, void)(CppRef meshRef) {
+	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+	mesh->version++;
+}

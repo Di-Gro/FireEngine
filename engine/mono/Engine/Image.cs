@@ -35,7 +35,7 @@ namespace Engine {
 
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if (cppRef.value == 0) {
-                cppRef = Dll.Image.PushAsset(Game.gameRef, assetIdHash);
+                cppRef = Dll.Image.PushAsset(Game.gameRef, assetId, assetIdHash);
                 ReloadAsset();
             }
         }

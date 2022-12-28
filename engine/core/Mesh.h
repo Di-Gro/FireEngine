@@ -46,9 +46,14 @@ class Render;
 class MeshAsset;
 class MeshComponent;
 
+
+FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count);
+
 class Mesh4 : /*public CsLink,*/ public IAsset {
 	friend class MeshAsset;
 	friend class MeshComponent;
+
+	FRIEND_FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count);
 
 public:
 	class Vertex {
@@ -83,6 +88,7 @@ private:
 
 public:
 	mutable D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	int version = 0;
 
 private:
 	std::vector<const Material*> f_staticMaterials;
@@ -125,7 +131,7 @@ public:
 
 	int maxMaterialIndex() const;
 
-	const std::vector<const Material*>* GetMaterials() { return &f_staticMaterials; }
+	const std::vector<const Material*>* GetMaterials() const { return &f_staticMaterials; }
 
 	Shape* GetShape(int index);
 
@@ -154,6 +160,7 @@ public:
 
 FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);
 FUNC(Mesh4, MaterialMaxIndex, int)(CppRef mesh4Ref);
-PROP_GET(Mesh4, int, assetIdHash);
 
 PUSH_ASSET(Mesh4);
+
+FUNC(Mesh4, Init, void)(CppRef gameRef, CppRef meshRef, const char* path);

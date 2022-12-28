@@ -1,0 +1,7 @@
+.file0.assetId: {AssetId: MESH000003}
+.file0.files: {Var: 1}
+
+.file1!script: {Var: StaticMesh}
+.file1!scriptId: {AssetId: 00000010013}
+.file1.ext: {Var: obj}
+.file1.m_materials.0.assetId: {AssetId: MAT0000006}

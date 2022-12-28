@@ -25,6 +25,16 @@ void MeshComponent::OnInit() {
 	m_InitMono();
 
 	m_shadowCaster = m_render->AddShadowCaster(this);
+
+	if (m_preinitMesh != nullptr) {
+		mesh(m_preinitMesh);
+		m_preinitMesh = nullptr;
+	}
+	if (m_preinitMaterials.size() > 0) {
+		for (int i = 0; i < m_preinitMaterials.size() || i < m_materials.size(); i++)
+			SetMaterial(i, m_preinitMaterials[i]);
+		m_preinitMaterials.clear();
+	}
 }
 
 void MeshComponent::m_InitMono() {
@@ -43,7 +53,7 @@ void MeshComponent::m_InitDynamic() {
 
 	auto assetId = "DynamicMesh_" + std::to_string(Random().Int());
 	auto assetIdHash = game()->assets()->GetCsHash(assetId);
-	auto meshCppRef = Mesh4_PushAsset(CppRefs::GetRef(game()), assetIdHash);
+	auto meshCppRef = Mesh4_PushAsset(CppRefs::GetRef(game()), assetId.c_str(), assetIdHash);
 	auto newMesh = CppRefs::ThrowPointer<Mesh4>(meshCppRef);
 
 	*newMesh = *m_mesh;
@@ -89,7 +99,7 @@ void MeshComponent::ClearMesh() {
 void MeshComponent::m_DeleteResources() {
 	m_DeleteMaterials();
 	if (IsDynamic()) {
-		game()->assets()->Pop(m_dynamicMesh->assetIdHash);
+		game()->assets()->Pop(m_dynamicMesh->assetIdHash());
 		delete m_dynamicMesh;
 		m_dynamicMesh = nullptr;
 		m_mesh = nullptr;
@@ -207,6 +217,7 @@ void MeshComponent::m_FillByDefaultMaterial(int targetSize) {
 void MeshComponent::m_SetMesh(const Mesh4* mesh, bool isDynamic) {
 	m_DeleteResources();
 	m_mesh = mesh;
+	m_meshVersion = m_mesh->version;
 	m_SetMaterialsFromMesh();
 
 	if(isDynamic)
@@ -229,8 +240,8 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 		return;
 
 	// Берем статик материалы меша
-	auto* staticMaterials = m_meshAsset->GetMaterials(m_mesh);
-	auto newSize = staticMaterials != nullptr ? staticMaterials->size() : 0;
+	auto* staticMaterials = m_mesh->GetMaterials();
+	auto newSize = staticMaterials->size();
 
 	// Создаем массивы для материалов
 	m_materials.reserve(newSize);
@@ -251,6 +262,10 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 	// Если новых материалов меньше, чем используется,
 	// Заполняем стандартными материалами.
 	m_FillByDefaultMaterial(m_mesh->maxMaterialIndex() + 1);
+}
+
+void MeshComponent::m_OnMeshReload() {
+	std::cout << "MeshComponent::m_OnMeshReload() NotImplemented" << std::endl;
 }
 
 void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
@@ -314,6 +329,9 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 	if (!visible || m_mesh == nullptr)
 		return;
 
+	if (m_meshVersion != m_mesh->version)
+		m_OnMeshReload();
+
 	auto camera = m_render->camera();
 	auto cameraPosition = camera->worldPosition();
 	auto worldMatrix = Matrix::CreateScale(meshScale * scale) * GetWorldMatrix();
@@ -341,6 +359,9 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 void MeshComponent::OnDrawShape(int index) {
 	if (!visible || m_mesh == nullptr)
 		return;
+
+	if (m_meshVersion != m_mesh->version)
+		m_OnMeshReload();
 
 	auto camera = m_render->camera();
 	auto cameraPosition = camera->worldPosition();
@@ -412,5 +433,26 @@ DEF_FUNC(MeshComponent, SetMaterial, void)(CppRef compRef, size_t index, CppRef 
 
 DEF_FUNC(MeshComponent, GetMaterial, CppRef)(CppRef compRef, size_t index) {
 	auto material = CppRefs::ThrowPointer<MeshComponent>(compRef)->GetMaterial(index);
-	return material != nullptr ? material->f_cppRef : RefCpp(0);
+	return material != nullptr ? CppRefs::GetRef((void*)material) : RefCpp(0);
+}
+
+DEF_FUNC(MeshComponent, SetPreInitMesh, void)(CppRef compRef, CppRef meshRef) {
+	auto meshComp = CppRefs::ThrowPointer<MeshComponent>(compRef);
+	auto mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+
+	meshComp->m_preinitMesh = mesh;
+}
+
+DEF_FUNC(MeshComponent, SetPreInitMaterials, void)(CppRef compRef, size_t* matRefs, int count) {
+	auto* meshComp = CppRefs::ThrowPointer<MeshComponent>(compRef);
+
+	meshComp->m_preinitMaterials.clear();
+
+	auto ptr = matRefs;
+	for (int i = 0; i < count; i++, ptr++) {
+		auto cppRef = RefCpp(*ptr);
+		auto* material = CppRefs::ThrowPointer<Material>(cppRef);
+
+		meshComp->m_preinitMaterials.push_back(material);
+	}
 }

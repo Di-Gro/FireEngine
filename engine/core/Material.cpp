@@ -48,8 +48,6 @@ void Material::UpdateDepthStencilState() {
 
 DEF_PUSH_ASSET(Material);
 
-DEF_PROP_GETSET_F(Material, int, assetIdHash, assetIdHash);
-
 DEF_PROP_GETSET_F(Material, Vector3, diffuseColor, data.diffuseColor)
 DEF_PROP_GETSET_F(Material, float, diffuse, data.diffuse)
 DEF_PROP_GETSET_F(Material, float, ambient, data.ambient)
@@ -88,6 +86,11 @@ DEF_FUNC(Material, shader_set, void)(CppRef gameRef, CppRef matRef, const char* 
 
 	if (hasShader)
 		material->shader = game->shaderAsset()->GetShader(hash);
+	else {
+		std::string str = "Missing Shader File: ";
+		str += name;
+		throw std::exception(str.c_str());
+	}
 }
 
 DEF_FUNC(Material, shader_length, size_t)(CppRef matRef) {
