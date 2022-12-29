@@ -34,6 +34,8 @@ public:
 	Matrix GetWorldMatrix();
 	Matrix GetLocalMatrix();
 
+	void SetLocalMatrix(Matrix);
+
 	const Vector3 localPosition();
 	const Vector3 localRotation();
 	const Quaternion localRotationQ();
@@ -76,11 +78,10 @@ private:
 	Transform* transform;
 
 public:
-	//CsRef transformCsRef() { return transform->csRef(); }
-	//CppRef transformCppRef() { return transform->cppRef(); }
-
 	inline Matrix GetWorldMatrix() { return transform->GetWorldMatrix(); }
 	inline Matrix GetLocalMatrix() { return transform->GetLocalMatrix(); }
+
+	inline void SetLocalMatrix(Matrix matrix) { transform->SetLocalMatrix(matrix); }
 
 	inline const Vector3 localPosition() { return transform->localPosition(); }
 	inline const Vector3 localRotation() { return transform->localRotation(); }

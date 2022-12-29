@@ -52,6 +52,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{e1ce7b92-18aa-4c25-8cef-40ffde6f16ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="imguizmo">
+      <UniqueIdentifier>{a3f48340-4891-484e-8141-6d641a32d4be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
@@ -305,6 +308,12 @@
     </ClCompile>
     <ClCompile Include="BlurPass.cpp">
       <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="imguizmo\ImGuizmo.cpp">
+      <Filter>imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -616,6 +625,12 @@
     </ClInclude>
     <ClInclude Include="IAsset.h">
       <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="imguizmo\ImGuizmo.h">
+      <Filter>imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

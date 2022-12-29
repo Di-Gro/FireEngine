@@ -35,12 +35,14 @@ public:
 	bool isActive();
 
 	Vector2 mouseViewportPosition() { return f_mouseViewportPosition; };
+	Vector2 viewportPosition() { return f_viewportPosition; };
 
 	void SetCallbacks(const Callbacks&);
 	Callbacks _callbacks;
 
 private: /// For class friends
 	Vector2 f_mouseViewportPosition;
+	Vector2 f_viewportPosition;
 
 private:
 	void InitMono();

@@ -11,6 +11,20 @@ const Vector3 Transform::localPosition() {
 	return m_localPosition; 
 }
 
+void Transform::SetLocalMatrix(Matrix matrix) {
+	Quaternion quat = Quaternion::Identity;
+	Vector3 nScale = Vector3::Zero;
+	Vector3 nPos = Vector3::Zero;
+
+	bool res = matrix.Decompose(nScale, quat, nPos);
+
+	m_localMatrix = matrix;
+	m_localPosition = m_localMatrix.Translation();
+	m_localRotation = quat.ToEuler();
+	m_localRotationMatrix = Matrix::CreateFromQuaternion(quat);
+	m_localScale = nScale;
+}
+
 void Transform::localPosition(const Vector3& value) { 
 	m_localPosition = value;
 	m_localMatrix.Translation(m_localPosition);

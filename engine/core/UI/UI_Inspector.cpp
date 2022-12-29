@@ -1,8 +1,20 @@
 #include "UI_Inspector.h"
+
+#include <list>
+
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_internal.h"
+#include "../imguizmo/ImGuizmo.h"
+
 #include "../Game.h"
 #include "UserInterface.h"
-#include "../imgui/imgui_internal.h"
-#include <list>
+#include "../Render.h"
+#include "../HotKeys.h"
+
+#include "../CameraComponent.h"
+
+
+
 
 bool UI_Inspector::ButtonCenteredOnLine(const char* label, float alignment)
 {
@@ -18,19 +30,57 @@ bool UI_Inspector::ButtonCenteredOnLine(const char* label, float alignment)
 	return ImGui::Button(label);
 }
 
-void UI_Inspector::Draw_UI_Inspector()
-{
-	if (ImGui::Begin("Inspector"))
-	{
-		if (_ui->HasActor())
-		{
-			if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow))
-			{
-				ImGui::Separator();
-				DrawActorTransform();
+//void InspectorSeparator() {
+//	ImGuiStyleVar_
+//	ImGui::PushStyleVar()
+//	ImGui::Separator();
+//
+//}
+
+void UI_Inspector::BigSpace() {
+	ImGui::Dummy(m_compSpacing);
+}
+
+void UI_Inspector::Space() {
+	ImGui::Dummy(m_lineSpacing);
+}
+
+void UI_Inspector::m_DrawItem(void(UI_Inspector::*itemFunc)()) {
+	BigSpace();
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 3.0f, 0.0f });
+
+	(this->*itemFunc)();
+
+	ImGui::PopStyleVar(2);
+	BigSpace();
+	ImGui::Separator();
+}
+
+void UI_Inspector::Draw_UI_Inspector() {
+
+	auto treeNodeFlags = 0
+		| ImGuiTreeNodeFlags_DefaultOpen
+		| ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick
+		| ImGuiTreeNodeFlags_Framed
+		| ImGuiTreeNodeFlags_SpanFullWidth
+		;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
+
+	if (ImGui::Begin("Inspector")) {
+		if (_ui->HasActor()) {
+
+			m_DrawItem(&UI_Inspector::m_DrawHeader);
+									
+			if (ImGui::TreeNodeEx("Transform", treeNodeFlags)) {
+				m_DrawItem(&UI_Inspector::DrawActorTransform);
 				ImGui::TreePop();
 			}
-
 			DrawActorComponents();
 
 			/*ImGui::Separator();
@@ -38,37 +88,67 @@ void UI_Inspector::Draw_UI_Inspector()
 			{
 
 			}*/
+
 		}
-		else
-		{
+		else {
 			ImGui::Text("Actor is not get!");
 		}
 		
-	}ImGui::End();
+	}
+	ImGui::End();
+	ImGui::PopStyleVar(4);
 }
 
 void UI_Inspector::DrawActorTransform()
 {
-	auto wp = _ui->GetActor()->localPosition();
-	auto lastWp = wp;
+	auto actor = _ui->GetActor();
+	auto matrix = (ImGuizmo::matrix_t&)actor->GetLocalMatrix();
 
-	auto wr = _ui->GetActor()->localRotation();
-	auto lastWr = wr;
+	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+	ImGuizmo::DecomposeMatrixToComponents(matrix.m16, matrixTranslation, matrixRotation, matrixScale);
 
-	auto ws = _ui->GetActor()->localScale();
-	auto lastWs = ws;
+	ShowVector3((Vector3*)matrixTranslation, "Position");
+	Space();
+	ShowVector3((Vector3*)matrixRotation, "Rotation");
+	Space();
+	ShowVector3((Vector3*)matrixScale, "Scale");
 
-	ShowVector3(&wp, "Position");
-	if (wp != lastWp)
-		_ui->GetActor()->localPosition(wp);
+	ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix.m16);
+	actor->SetLocalMatrix((Matrix)matrix);
+}
 
-	ShowVector3(&wr, "Rotation");
-	if (wr != lastWr)
-		_ui->GetActor()->localRotation(wr);
+void UI_Inspector::m_DrawHeader() {
 
-	ShowVector3(&ws, "Scale");
-	if (ws != lastWs)
-		_ui->GetActor()->localScale(ws);
+	auto actor = _game->ui()->GetActor();
+	
+	const auto bufSize = 80;
+	char nameBuffer[bufSize] = { 0 };
+	auto name = actor->GetName();
+	std::memcpy(&nameBuffer, name.c_str(), min(name.size(), bufSize));
+
+	bool isActive = true;
+	auto id = "ID: " + std::to_string(actor->Id());
+
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10.0f, 0.0f });
+		
+	ImGui::Indent(10);
+	ImGui::Checkbox("##ObjectIsActive", &isActive);
+
+	ImGui::SameLine();
+	ImGui::Text(id.c_str());
+ 
+	ImGui::SameLine();
+	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 10);
+	ImGui::InputText("##ObjectName", nameBuffer, bufSize);
+	bool textActive = ImGui::IsItemActive();
+
+	ImGui::PopStyleVar(1);
+	ImGui::Unindent(10);
+
+	if (textActive && _game->hotkeys()->GetButtonDown(Keys::Enter)) {
+		//TODO: установить измененное имя. 
+		//TODO: как стирать символы?
+	}
 }
 
 void UI_Inspector::DrawActorComponents()
@@ -125,12 +205,8 @@ void UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 	ImGui::Columns(1);
 }
 
-void UI_Inspector::Init(Game* game)
+void UI_Inspector::Init(Game* game, UserInterface* ui)
 {
 	_game = game;
-}
-
-void UI_Inspector::InitUI(UserInterface* ui)
-{
 	_ui = ui;
 }

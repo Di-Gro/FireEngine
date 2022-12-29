@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../SimpleMath.h"
+#include "../imgui/imgui.h"
 
 class Game;
 class UserInterface;
@@ -9,8 +10,7 @@ class UI_Inspector
 {
 public:
 	void Draw_UI_Inspector();
-	void Init(Game* game);
-	void InitUI(UserInterface* ui);
+	void Init(Game* game, UserInterface* ui);
 
 	void DrawActorTransform();
 	void DrawActorComponents();
@@ -19,9 +19,19 @@ public:
 
 	void ShowVector3(Vector3* vec3, const std::string& title);
 
+	void BigSpace();
+	void Space();
+
 private:
 	Game* _game;
 	UserInterface* _ui;
 	bool isLocal = false;
+
+	ImVec2 m_compSpacing = { 0, 8 };
+	ImVec2 m_lineSpacing = { 0, 3 };
+
+private:
+	void m_DrawHeader();
+	void m_DrawItem(void(UI_Inspector::*func)());
 };
 

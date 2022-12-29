@@ -126,9 +126,5 @@ private:
 	void m_DeleteMaterialAsset(Material* mat);
 };
 
-//FUNC(MeshAsset, CreateHash, size_t)(CppRef meshAssetRef, const char* fileName);
-//FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, int assetHash);
-//FUNC(MeshAsset, GetMesh, CppRef)(CppRef meshAssetRef, int assetHash);
-
 FUNC(MeshAsset, CreateDynamicMaterial, CppRef)(CppRef meshAssetRef, CppRef otherMaterialRef);
 FUNC(MeshAsset, DeleteDynamicMaterial, void)(CppRef meshAssetRef, CppRef otherMaterialRef);

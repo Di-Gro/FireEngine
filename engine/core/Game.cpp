@@ -7,6 +7,7 @@
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_dx11.h"
 #include "imgui\imgui_impl_win32.h"
+#include "imguizmo\ImGuizmo.h"
 
 #include "Window.h"
 #include "Render.h"
@@ -26,6 +27,7 @@
 #include "GameController.h"
 #include "DirectionLight.h"
 #include "FlyingCamera.h"
+#include "EditorCamera.h"
 #include "ImageComponent.h"
 #include "MeshComponent.h"
 #include "Player.h"
@@ -140,7 +142,10 @@ void Game::Run() {
 	m_assets->CreateAssetId();
 	//isExitRequested = true; // return;
 	///
-
+	m_editorCamera = CreateActor("editor camera")->AddComponent<EditorCamera>();
+	m_editorCamera->localPosition({ 350, 403, -20 });
+	m_editorCamera->localRotation({ -0.803, 1.781, 0 });
+	
 	m_defaultCamera = CreateActor("default camera")->AddComponent<FlyingCamera>();
 	m_defaultCamera->localPosition({ 0, 0, 300 });
 	m_defaultCamera->localRotation({ rad(-45), rad(45 + 180), 0 });
@@ -154,6 +159,10 @@ void Game::Run() {
 	CreateActor("GameController")->AddComponent<GameController>();
 	CreateActor()->AddComponent<TestLightComponent>();
 	
+	inFocus = false;
+	m_lastGameCamera = mainCamera();
+	m_editorCamera->Attach();
+
 	MSG msg = {};
 	
 	while (!isExitRequested) {
@@ -217,8 +226,18 @@ void Game::m_Update() {
 	/// Post Update
 	m_hotkeys->LateUpdate();
 
-	if (m_hotkeys->GetButtonDown(Keys::Tilda))
+	if (m_hotkeys->GetButtonDown(Keys::Tilda)) {
 		inFocus = !inFocus;
+		if (!inFocus) {
+			m_lastGameCamera = mainCamera();
+			m_editorCamera->Attach();
+		}
+		else {
+			ui()->SelectedActor(nullptr);
+			m_lastGameCamera->Attach();
+			m_lastGameCamera = nullptr;
+		}
+	}
 
 	if (!inFocus) {
 		auto w = (float)window()->GetWidth();
@@ -478,6 +497,7 @@ void Game::m_BeginUpdateImGui() {
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 }
 
 void Game::m_EndUpdateImGui() {

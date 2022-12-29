@@ -638,11 +638,6 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<Actor*>* objects) {
 	}
 }
 
-
-//DEF_FUNC(MeshAsset, CreateHash, size_t)(CppRef meshAssetRef, const char* fileName) {
-//	return CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->CreateHash(fileName);
-//}
-
 FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, int assetHash) {
 	CppRefs::ThrowPointer<MeshAsset>(meshAssetRef)->Load(assetHash);
 }

@@ -54,6 +54,8 @@ private:
 
 	CameraComponent* m_defaultCamera = nullptr;
 	CameraComponent* m_mainCamera = nullptr;
+	CameraComponent* m_editorCamera = nullptr;
+	CameraComponent* m_lastGameCamera = nullptr;
 
 	std::list<Actor*> m_actors;
 
