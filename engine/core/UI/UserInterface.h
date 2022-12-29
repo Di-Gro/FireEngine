@@ -20,17 +20,17 @@ class UserInterface {
 public:
 	struct Callbacks
 	{
-		void (*onDrawComponent)(CsRef);
+		void (*onDrawComponent)(CsRef, float);
 	};
 
 	void Draw();
 	void Init(Game* game);
-	
+
 	void SelectedActor(Actor* actor);
 	void SetActorActive();
-	
+
 	inline Actor* GetActor() const { return _actor; }
-	
+
 	bool HasActor();
 	bool isActive();
 
@@ -60,7 +60,6 @@ private:
 	bool _isActorActive = false;
 
 	UI_Hierarchy uiHierarchy;
-	UI_Inspector uiInspector;
 	UI_Editor uiEditor;
 	UI_BarMenu uiBarMenu;
 	UI_UpperMenu uiUpperMenu;
@@ -69,4 +68,4 @@ private:
 	UI_Console uiConsole;
 };
 
-FUNC(UserInterface, SetCallbacks, void)(CppRef cppRef, void(*func)(CsRef));
+FUNC(UserInterface, SetCallbacks, void)(CppRef cppRef, void(*func)(CsRef, float));

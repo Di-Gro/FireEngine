@@ -2,6 +2,7 @@
 
 #include "../SimpleMath.h"
 #include "../imgui/imgui.h"
+#include "../CSBridge.h"
 
 class Game;
 class UserInterface;
@@ -17,10 +18,15 @@ public:
 
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
-	void ShowVector3(Vector3* vec3, const std::string& title);
+	bool ShowVector3(Vector3* vec3, const std::string& title);
+	void AddComponent();
+	void SearchComponent(char* searchText);
+
+	static char textBuffer[1024];
 
 	void BigSpace();
 	void Space();
+	float widthComponent = 0;
 
 private:
 	Game* _game;
@@ -35,3 +41,4 @@ private:
 	void m_DrawItem(void(UI_Inspector::*func)());
 };
 
+FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr);

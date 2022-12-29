@@ -13,7 +13,7 @@
 
 #include "../CameraComponent.h"
 
-
+char UI_Inspector::textBuffer[1024] = { 0 };
 
 
 bool UI_Inspector::ButtonCenteredOnLine(const char* label, float alignment)
@@ -76,27 +76,36 @@ void UI_Inspector::Draw_UI_Inspector() {
 		if (_ui->HasActor()) {
 
 			m_DrawItem(&UI_Inspector::m_DrawHeader);
-									
+
 			if (ImGui::TreeNodeEx("Transform", treeNodeFlags)) {
 				m_DrawItem(&UI_Inspector::DrawActorTransform);
 				ImGui::TreePop();
 			}
 			DrawActorComponents();
-
-			/*ImGui::Separator();
-			if (ImGui::Button("Add Component"))
-			{
-
-			}*/
-
+			AddComponent();
 		}
-		else {
-			ImGui::Text("Actor is not get!");
-		}
-		
+
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(4);
+}
+
+void UI_Inspector::AddComponent()
+{
+	bool isActiveAddComponent = false;
+	std::string searchText = "";
+	if (ButtonCenteredOnLine("Add Component", 0.5f))
+	{
+		if (!isActiveAddComponent)
+			isActiveAddComponent = true;
+	}
+
+	if (isActiveAddComponent)
+	{
+		static char str0[128] = "Hello, world!";
+		ImGui::InputText("##Search", str0, IM_ARRAYSIZE(str0));
+		ImGui::Text(str0);
+	}
 }
 
 void UI_Inspector::DrawActorTransform()
@@ -120,7 +129,7 @@ void UI_Inspector::DrawActorTransform()
 void UI_Inspector::m_DrawHeader() {
 
 	auto actor = _game->ui()->GetActor();
-	
+
 	const auto bufSize = 80;
 	char nameBuffer[bufSize] = { 0 };
 	auto name = actor->GetName();
@@ -130,13 +139,13 @@ void UI_Inspector::m_DrawHeader() {
 	auto id = "ID: " + std::to_string(actor->Id());
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10.0f, 0.0f });
-		
+
 	ImGui::Indent(10);
 	ImGui::Checkbox("##ObjectIsActive", &isActive);
 
 	ImGui::SameLine();
 	ImGui::Text(id.c_str());
- 
+
 	ImGui::SameLine();
 	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 10);
 	ImGui::InputText("##ObjectName", nameBuffer, bufSize);
@@ -146,8 +155,8 @@ void UI_Inspector::m_DrawHeader() {
 	ImGui::Unindent(10);
 
 	if (textActive && _game->hotkeys()->GetButtonDown(Keys::Enter)) {
-		//TODO: установить измененное имя. 
-		//TODO: как стирать символы?
+		//TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.
+		//TODO: пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ?
 	}
 }
 
@@ -163,13 +172,22 @@ void UI_Inspector::DrawActorComponents()
 	for (auto component : *list) {
 		auto _csRef = component->csRef();
 		if (!component->IsDestroyed() && _csRef.value > 0) {
-			tmp(_csRef);
+			if (ImGui::TreeNodeEx("Component", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				widthComponent = ImGui::GetContentRegionAvail().x;
+				ImGui::Separator();
+				tmp(_csRef, widthComponent);
+				ImGui::TreePop();
+			}
+			break;
 		}
 	}
 }
 
-void UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
+bool UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 {
+	auto tmpValues = *values;
+
 	ImGui::Columns(2, nullptr, false);
 	ImGui::SetColumnWidth(0, 80.0f);
 	ImGui::Text(title.c_str());
@@ -181,7 +199,7 @@ void UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 	std::string nameZ = "##Z_" + title;
 
 	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 5.0f });
 
 	ImGui::Text(" X ");
 	ImGui::SameLine();
@@ -203,10 +221,40 @@ void UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 	ImGui::PopStyleVar();
 
 	ImGui::Columns(1);
+
+	return tmpValues != *values;
 }
 
 void UI_Inspector::Init(Game* game, UserInterface* ui)
 {
 	_game = game;
 	_ui = ui;
+}
+
+DEF_FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr)
+{
+	length = (length < 1024) ? length : 1024;
+	std::memcpy(UI_Inspector::textBuffer, buffer, length);
+
+	*ptr = (size_t)UI_Inspector::textBuffer;
+
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	std::string tmpLabel = "##" + (std::string)label;
+
+	ImGui::Columns(2, "", false);
+	ImGui::SetColumnWidth(0, 100.0f);
+
+	ImGui::Text(label);
+
+	ImGui::NextColumn();
+	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x + 7.0f);
+
+	//ImGui::InputText(tmpLabel.c_str(), (char*)buffer, length + 1);
+	ImGui::InputText(tmpLabel.c_str(), UI_Inspector::textBuffer, sizeof(UI_Inspector::textBuffer));
+
+	ImGui::PopItemWidth();
+	ImGui::Columns(1);
+
+	return false;
 }

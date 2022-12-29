@@ -10,9 +10,9 @@ public:
 	void Draw_UI_Hierarchy();
 	void Init(Game* game);
 	void InitUI(UserInterface* ui);
-	void VisitActor(Actor* actor);
+	void VisitActor(Actor* actor, int counter);
 
 private:
 	Game* _game;
-	UserInterface* _ui;
+	UserInterface* _ui;	
 };

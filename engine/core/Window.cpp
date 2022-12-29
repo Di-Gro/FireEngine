@@ -83,6 +83,7 @@ LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM l
     }
     case WM_KEYDOWN: {
         //std::cout << "Key: " << static_cast<unsigned int>(wparam) << std::endl;
+        ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
         return 0;
     }
     case WM_SIZE: {

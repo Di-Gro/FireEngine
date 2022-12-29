@@ -416,5 +416,12 @@ namespace EngineDll {
 		    public static extern void SetPreInitMaterials(CppRef compRef, size_t[] matRefs, int count);
 
 		}
+
+		public static class UI_Inspector {
+
+            [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowText", CharSet = CharSet.Ansi)]
+		    public static extern bool ShowText(CppRef gameRef, string label, string buffer, int length, ref ulong ptr);
+
+		}
 	}
 }

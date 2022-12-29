@@ -11,7 +11,6 @@
 using namespace DiGro::GameFramework;
 using namespace DirectX::SimpleMath;
 
-
 class Window : public IWindow {
 public:
     bool sizeChanged = false;

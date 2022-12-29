@@ -91,7 +91,7 @@ Game::~Game() {
 
 void Game::Init(MonoInst* imono) {
 	m_InitMono(imono);
-		
+
 	m_window->Init(L"CGLab6 - Shadow Map", 1920, 1080);
 	m_window->Create();
 
@@ -130,14 +130,14 @@ void Game::Run() {
 	bool isExitRequested = false;
 
 	m_render->Start();
-	m_meshAsset->Start(); 
+	m_meshAsset->Start();
 
 	///
 
 	auto cppObj = CppClass();
 	auto csLink = CSLinked<CppClass>(mono());
 
-	csLink.Link(cppObj, "EngineMono", "CSClass");	
+	csLink.Link(cppObj, "EngineMono", "CSClass");
 
 	m_assets->CreateAssetId();
 	//isExitRequested = true; // return;
@@ -145,7 +145,7 @@ void Game::Run() {
 	m_editorCamera = CreateActor("editor camera")->AddComponent<EditorCamera>();
 	m_editorCamera->localPosition({ 350, 403, -20 });
 	m_editorCamera->localRotation({ -0.803, 1.781, 0 });
-	
+
 	m_defaultCamera = CreateActor("default camera")->AddComponent<FlyingCamera>();
 	m_defaultCamera->localPosition({ 0, 0, 300 });
 	m_defaultCamera->localRotation({ rad(-45), rad(45 + 180), 0 });
@@ -158,13 +158,13 @@ void Game::Run() {
 
 	CreateActor("GameController")->AddComponent<GameController>();
 	CreateActor()->AddComponent<TestLightComponent>();
-	
+
 	inFocus = false;
 	m_lastGameCamera = mainCamera();
 	m_editorCamera->Attach();
 
 	MSG msg = {};
-	
+
 	while (!isExitRequested) {
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
@@ -178,7 +178,7 @@ void Game::Run() {
 
 		m_Update();
 		m_render->Draw();
-		
+
 		m_fpsCounter.Update();
 		if (m_fpsCounter.HasChanges()) {
 			WCHAR text[256];
@@ -270,7 +270,7 @@ Actor* Game::CreateActor(Actor* parent, std::string name) {
 	//std::cout << "+: Game.CreateActor()" << std::endl;
 
 	auto cppRef = mono_create();
-	
+
 	Actor* actor = CppRefs::ThrowPointer<Actor>(cppRef);
 	if (name != "")
 		actor->SetName(name);
@@ -407,8 +407,8 @@ void Game::Stat() {
 	std::cout << "+ <- " << std::endl;
 }
 
-/// ImGui 
-/// -> 
+/// ImGui
+/// ->
 
 void Game::m_InitImGui() {
 	// Application init: create a dear imgui context, setup some options, load fonts
@@ -424,6 +424,12 @@ void Game::m_InitImGui() {
 	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
 
 	io.WantCaptureMouse = true;
+	io.WantCaptureKeyboard = true;
+
+	//io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
+	//io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
+
+	io.KeysDown[io.KeyMap[ImGuiKey_Backspace]];
 
 #pragma region ImGuiStyle
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -479,7 +485,7 @@ void Game::m_InitImGui() {
 	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 	style.GrabRounding = style.FrameRounding = 2.3f;
 #pragma endregion ImGuiStyle
-			
+
 	// Initialize helper Platform and Renderer backends (here we are using imgui_impl_win32.cpp and imgui_impl_dx11.cpp)
 	ImGui_ImplWin32_Init(window()->GetHWindow());
 	ImGui_ImplDX11_Init(render()->device(), render()->context());
@@ -507,7 +513,7 @@ void Game::m_EndUpdateImGui() {
 }
 
 /// <-
-/// ImGui 
+/// ImGui
 
 std::list<Actor*>::iterator Game::GetNextRootActors(const std::list<Actor*>::iterator& iter)
 {
