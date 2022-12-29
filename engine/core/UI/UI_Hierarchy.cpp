@@ -22,11 +22,7 @@ void UI_Hierarchy::Draw_UI_Hierarchy()
 void UI_Hierarchy::Init(Game* game)
 {
 	_game = game;
-}
-
-void UI_Hierarchy::InitUI(UserInterface* ui)
-{
-	_ui = ui;
+	_ui = _game->ui();
 }
 
 void UI_Hierarchy::VisitActor(Actor* actor, int counter)

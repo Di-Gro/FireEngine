@@ -58,15 +58,6 @@ void UI_Inspector::m_DrawItem(void(UI_Inspector::*itemFunc)()) {
 }
 
 void UI_Inspector::Draw_UI_Inspector() {
-
-	auto treeNodeFlags = 0
-		| ImGuiTreeNodeFlags_DefaultOpen
-		| ImGuiTreeNodeFlags_OpenOnArrow
-		| ImGuiTreeNodeFlags_OpenOnDoubleClick
-		| ImGuiTreeNodeFlags_Framed
-		//| ImGuiTreeNodeFlags_SpanFullWidth
-		;
-
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
@@ -84,7 +75,6 @@ void UI_Inspector::Draw_UI_Inspector() {
 			DrawActorComponents();
 			AddComponent();
 		}
-
 	}
 	ImGui::End();
 	ImGui::PopStyleVar(4);
@@ -167,21 +157,24 @@ void UI_Inspector::DrawActorComponents()
 
 	auto list = _ui->GetActor()->GetComponentList();
 
-	auto tmp = _ui->_callbacks.onDrawComponent;
-
 	for (auto component : *list) {
-		auto _csRef = component->csRef();
-		if (!component->IsDestroyed() && _csRef.value > 0) {
-			if (ImGui::TreeNodeEx("Component", ImGuiTreeNodeFlags_DefaultOpen))
+		csRef = component->csRef();
+		if (!component->IsDestroyed() && csRef.value > 0) {
+			if (ImGui::TreeNodeEx("Component", treeNodeFlags))
 			{
 				widthComponent = ImGui::GetContentRegionAvail().x;
-				ImGui::Separator();
-				tmp(_csRef, widthComponent);
+				m_DrawItem(&UI_Inspector::DrawComponent);
 				ImGui::TreePop();
 			}
 			break;
 		}
 	}
+}
+
+void UI_Inspector::DrawComponent()
+{
+	auto tmp = _ui->_callbacks.onDrawComponent;
+	tmp(csRef, widthComponent);
 }
 
 bool UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
@@ -199,7 +192,7 @@ bool UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 	std::string nameZ = "##Z_" + title;
 
 	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 5.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0.0f });
 
 	ImGui::Text(" X ");
 	ImGui::SameLine();

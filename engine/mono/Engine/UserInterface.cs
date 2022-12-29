@@ -37,7 +37,12 @@ namespace Engine
 
         private bool hasBorder = false;
 
+        private sn.Vector2 m_lineSpacing = new sn.Vector2( 0, 3 );
+
         private CppRef _cppRef;
+
+        void Space() { ImGui.Dummy(m_lineSpacing); }
+
         public static void cpp_Init(CppRef cppRef)
         {
             Instance = new UserInterface();
@@ -52,12 +57,19 @@ namespace Engine
         {
             rectWidth = width;
             DrawIntField("Test Int", ref tmp);
+            Space();
             DrawFloatField("Test Float", ref tmpF);
+            Space();
             DrawVector2("Test Vector2", ref tmpVec);
+            Space();
             DrawVector3("Test Vector3", ref tmpVec3);
+            Space();
             DrawQuaternion("Test Quaternion", ref tmpQuaternion);
+            Space();
             DrawBoolField("Test Bool", ref boolCheckbox);
+            Space();
             DrawString("Test String", ref testString);
+            Space();
             object oo = mm;
             DrawEnum("Test Combo", ref mm);
         }
@@ -116,7 +128,7 @@ namespace Engine
 
             ImGui.Text(label);
 
-            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 5.0f };
+            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 0.0f };
 
             ImGui.NextColumn();
             ImGui.PushItemWidth(rectWidth - 135.0f);
@@ -147,7 +159,7 @@ namespace Engine
 
             ImGui.Text(label);
 
-            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 5.0f };
+            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 0.0f };
 
             ImGui.NextColumn();
             ImGui.PushItemWidth(rectWidth - 152.0f);
@@ -186,7 +198,7 @@ namespace Engine
 
             ImGui.Text(label);
 
-            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 5.0f };
+            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 0.0f };
 
             ImGui.NextColumn();
             ImGui.PushItemWidth(rectWidth - 170.0f);

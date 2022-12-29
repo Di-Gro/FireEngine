@@ -66,6 +66,7 @@ private:
 	UI_PlayGame uiPlayGame;
 	UI_ContentBrowser uiContentBrowser;
 	UI_Console uiConsole;
+	UI_Inspector uiInspector;
 };
 
 FUNC(UserInterface, SetCallbacks, void)(CppRef cppRef, void(*func)(CsRef, float));

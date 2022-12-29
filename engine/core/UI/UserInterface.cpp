@@ -78,7 +78,6 @@ void UserInterface::Init(Game* game)
 	uiBarMenu.Init(_game);
 
 	uiInspector.Init(_game, this);
-	uiHierarchy.InitUI(this);
 
 	InitMono();
 }

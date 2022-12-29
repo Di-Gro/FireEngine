@@ -9,7 +9,6 @@ class UI_Hierarchy
 public:
 	void Draw_UI_Hierarchy();
 	void Init(Game* game);
-	void InitUI(UserInterface* ui);
 	void VisitActor(Actor* actor, int counter);
 
 private:

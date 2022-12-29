@@ -27,8 +27,17 @@ public:
 	void BigSpace();
 	void Space();
 	float widthComponent = 0;
+	CsRef csRef;
 
 private:
+	ImGuiTreeNodeFlags treeNodeFlags = 0
+		| ImGuiTreeNodeFlags_DefaultOpen
+		| ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick
+		| ImGuiTreeNodeFlags_Framed
+		//| ImGuiTreeNodeFlags_SpanFullWidth
+		;
+
 	Game* _game;
 	UserInterface* _ui;
 	bool isLocal = false;
@@ -37,6 +46,7 @@ private:
 	ImVec2 m_lineSpacing = { 0, 3 };
 
 private:
+	void DrawComponent();
 	void m_DrawHeader();
 	void m_DrawItem(void(UI_Inspector::*func)());
 };
