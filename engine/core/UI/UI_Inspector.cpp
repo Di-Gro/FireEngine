@@ -64,7 +64,7 @@ void UI_Inspector::Draw_UI_Inspector() {
 		| ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick
 		| ImGuiTreeNodeFlags_Framed
-		| ImGuiTreeNodeFlags_SpanFullWidth
+		//| ImGuiTreeNodeFlags_SpanFullWidth
 		;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
