@@ -169,5 +169,12 @@ namespace EngineDll {
 
 #>
 		}
+
+		public static class UI_Inspector {
+
+<#
+			ANSI_FUNC("UI_Inspector", "ShowText", "bool", "CppRef gameRef, string label, string buffer, int length, ref ulong ptr");
+#>
+		}
 	}
 }

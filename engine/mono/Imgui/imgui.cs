@@ -23,6 +23,9 @@ namespace UI
 
     public static partial class ImGui
     {
+        [DllImport(Engine.Paths.Exe, EntryPoint = "?PushMultiItemsWidths@ImGui@@YAXHM@Z")]
+        public static extern void PushMultiItemsWidths(int components, float width_full);
+
         // ../../imgui/imgui.h:251
         [DllImport(Engine.Paths.Exe, EntryPoint = "?CreateContext@ImGui@@YAPEAUImGuiContext@@PEAUImFontAtlas@@@Z")]
         public static extern IntPtr CreateContext(

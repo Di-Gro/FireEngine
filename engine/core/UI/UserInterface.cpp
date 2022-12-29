@@ -53,7 +53,7 @@ void UserInterface::Draw()
 	// Begin Menu Bar
 	uiBarMenu.Draw_UI_BarMenu();
 	// Upper Menu
-	uiUpperMenu.Draw_UI_UpperMenu();
+	//uiUpperMenu.Draw_UI_UpperMenu();
 	// Hierarchy
 	uiHierarchy.Draw_UI_Hierarchy();
 	// Editor
@@ -76,7 +76,7 @@ void UserInterface::Init(Game* game)
 	uiEditor.Init(_game);
 	uiHierarchy.Init(_game);
 	uiBarMenu.Init(_game);
-
+	uiInspector.Init(_game);
 	uiInspector.InitUI(this);
 	uiHierarchy.InitUI(this);
 
@@ -125,7 +125,7 @@ void UserInterface::InitMono()
 //	component->SetCallbacks(callbacks);
 //}
 
-DEF_FUNC(UserInterface, SetCallbacks, void)(CppRef cppRef, void(*func)(CsRef)) {
+DEF_FUNC(UserInterface, SetCallbacks, void)(CppRef cppRef, void(*func)(CsRef, float)) {
 	auto component = CppRefs::ThrowPointer<UserInterface>(cppRef);
 	UserInterface::Callbacks callbacks;
 	callbacks.onDrawComponent = func;

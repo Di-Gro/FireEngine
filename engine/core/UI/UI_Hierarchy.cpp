@@ -1,18 +1,22 @@
 #include "UI_Hierarchy.h"
-#include "../Game.h"
 #include "UserInterface.h"
+#include "../Game.h"
 
 void UI_Hierarchy::Draw_UI_Hierarchy()
 {
+	int counter = 0;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	if (ImGui::Begin("Hierarchy"))
 	{
 		auto it = _game->GetNextRootActors(_game->BeginActor());
 		for (; it != _game->EndActor(); it = _game->GetNextRootActors(++it))
 		{
-			VisitActor(*it);
+			VisitActor(*it, counter);
+			counter++;
 		}
 	}
 	ImGui::End();
+	ImGui::PopStyleVar();
 }
 
 void UI_Hierarchy::Init(Game* game)
@@ -25,25 +29,37 @@ void UI_Hierarchy::InitUI(UserInterface* ui)
 	_ui = ui;
 }
 
-void UI_Hierarchy::VisitActor(Actor* actor)
+void UI_Hierarchy::VisitActor(Actor* actor, int counter)
 {
-
+	ImGuiTreeNodeFlags node_flags = (actor == _ui->GetActor() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding;
+	float treeNodeHeight = 3.0f;
+	static bool test_drag_and_drop = false;
+			
 	if (actor->GetChildrenCount() > 0)
 	{
-		//auto flags = (() ? (ImGuiTreeNodeFlags_Selected : 0))
-		bool selectedTree = ImGui::TreeNodeEx(actor->GetName().c_str(), ImGuiTreeNodeFlags_OpenOnArrow);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, treeNodeHeight));
+		bool selectedTree = ImGui::TreeNodeEx(actor->GetName().c_str(), node_flags);
+		ImGui::PopStyleVar();
 
 		if (ImGui::IsItemClicked())
-		{
+		{	
 			_ui->SelectedActor(actor);
 			_ui->SetActorActive();
+			test_drag_and_drop = true;
+		}
+
+		if (test_drag_and_drop && ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
+			ImGui::Text("This is a drag and drop source");
+			ImGui::EndDragDropSource();
 		}
 
 		if (selectedTree)
 		{
 			for (int i = 0; i < actor->GetChildrenCount(); ++i)
 			{
-				VisitActor(actor->GetChild(i));
+				VisitActor(actor->GetChild(i), counter);
 			}
 
 			ImGui::TreePop();
@@ -52,22 +68,26 @@ void UI_Hierarchy::VisitActor(Actor* actor)
 	else
 	{
 		ImGui::Indent();
-		std::string id = std::to_string(actor->Id());
-		auto name = actor->GetName() == "" ? "Empty" : actor->GetName();
-		//ImGui::Selectable((actor->GetName() + id).c_str());
-		ImGui::Selectable(name.c_str());
 
+		auto name = actor->GetName() == "" ? "Empty" : actor->GetName();
+
+		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, treeNodeHeight));
+		ImGui::TreeNodeEx(name.c_str(), node_flags);
+		ImGui::PopStyleVar();
+		
 		if (ImGui::IsItemClicked() && ImGui::IsItemActivated())
 		{
 			_ui->SelectedActor(actor);
-			//_ui->SetActorActive();
-			/*int n_next = n + (ImGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);
-			if (n_next >= 0 && n_next < IM_ARRAYSIZE(item_names))
-			{
-				item_names[n] = item_names[n_next];
-				item_names[n_next] = item;
-				ImGui::ResetMouseDragDelta();
-			}*/
+			test_drag_and_drop = true;
+		}
+
+		if (test_drag_and_drop && ImGui::BeginDragDropSource())
+		{
+			ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
+			ImGui::Text("This is a drag and drop source");
+			ImGui::EndDragDropSource();
 		}
 		ImGui::Unindent();
 	}

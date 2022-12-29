@@ -65,7 +65,8 @@ bool init(const std::string& domain, bool enable_debugging)
 		const char* options[] =
 		{
 			"--soft-breakpoints",
-			"--debugger-agent=transport=dt_socket,suspend=n,server=y,address=127.0.0.1:55555,embedding=1",
+			//"--debugger-agent=transport=dt_socket,suspend=n,server=y,address=127.0.0.1:55555,embedding=1",
+			"--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555,embedding=1",
 			"--debug-domain-unload",
 			"--use-fallback-tls",
 

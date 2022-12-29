@@ -1,8 +1,11 @@
 #include "UI_Inspector.h"
-#include "../Game.h"
 #include "UserInterface.h"
+#include "../Game.h"
 #include "../imgui/imgui_internal.h"
 #include <list>
+#include <string>
+
+char UI_Inspector::textBuffer[1024] = { 0 };
 
 bool UI_Inspector::ButtonCenteredOnLine(const char* label, float alignment)
 {
@@ -24,7 +27,7 @@ void UI_Inspector::Draw_UI_Inspector()
 	{
 		if (_ui->HasActor())
 		{
-			if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow))
+			if (ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick))
 			{
 				ImGui::Separator();
 				DrawActorTransform();
@@ -33,42 +36,46 @@ void UI_Inspector::Draw_UI_Inspector()
 
 			DrawActorComponents();
 
-			/*ImGui::Separator();
-			if (ImGui::Button("Add Component"))
-			{
 
-			}*/
-		}
-		else
-		{
-			ImGui::Text("Actor is not get!");
+			ImGui::Separator();
+			AddComponent();
 		}
 		
 	}ImGui::End();
 }
 
+void UI_Inspector::AddComponent()
+{
+	bool isActiveAddComponent = false;
+	std::string searchText = "";
+	if (ButtonCenteredOnLine("Add Component", 0.5f))
+	{
+		if (!isActiveAddComponent)
+			isActiveAddComponent = true;
+	}
+
+	if (isActiveAddComponent)
+	{
+		static char str0[128] = "Hello, world!";
+		ImGui::InputText("##Search", str0, IM_ARRAYSIZE(str0));
+		ImGui::Text(str0);
+	}
+}
+
 void UI_Inspector::DrawActorTransform()
 {
 	auto wp = _ui->GetActor()->localPosition();
-	auto lastWp = wp;
-
 	auto wr = _ui->GetActor()->localRotation();
-	auto lastWr = wr;
-
 	auto ws = _ui->GetActor()->localScale();
-	auto lastWs = ws;
 
-	ShowVector3(&wp, "Position");
-	if (wp != lastWp)
+	if(ShowVector3(&wp, "Position"))
 		_ui->GetActor()->localPosition(wp);
 
-	ShowVector3(&wr, "Rotation");
-	if (wr != lastWr)
-		_ui->GetActor()->localRotation(wr);
+	if (ShowVector3(&wr, "Rotation"))
+		_ui->GetActor()->localPosition(wr);
 
-	ShowVector3(&ws, "Scale");
-	if (ws != lastWs)
-		_ui->GetActor()->localScale(ws);
+	if (ShowVector3(&ws, "Scale"))
+		_ui->GetActor()->localPosition(ws);
 }
 
 void UI_Inspector::DrawActorComponents()
@@ -83,13 +90,22 @@ void UI_Inspector::DrawActorComponents()
 	for (auto component : *list) {
 		auto _csRef = component->csRef();
 		if (!component->IsDestroyed() && _csRef.value > 0) {
-			tmp(_csRef);
+			if (ImGui::TreeNodeEx("Component", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				widthComponent = ImGui::GetContentRegionAvail().x;
+				ImGui::Separator();
+				tmp(_csRef, widthComponent);
+				ImGui::TreePop();
+			}
+			break;
 		}
 	}
 }
 
-void UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
+bool UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 {
+	auto tmpValues = *values;
+
 	ImGui::Columns(2, nullptr, false);
 	ImGui::SetColumnWidth(0, 80.0f);
 	ImGui::Text(title.c_str());
@@ -101,7 +117,7 @@ void UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 	std::string nameZ = "##Z_" + title;
 
 	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 5.0f });
 
 	ImGui::Text(" X ");
 	ImGui::SameLine();
@@ -123,6 +139,8 @@ void UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 	ImGui::PopStyleVar();
 
 	ImGui::Columns(1);
+
+	return tmpValues != *values;
 }
 
 void UI_Inspector::Init(Game* game)
@@ -133,4 +151,32 @@ void UI_Inspector::Init(Game* game)
 void UI_Inspector::InitUI(UserInterface* ui)
 {
 	_ui = ui;
+}
+
+DEF_FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr)
+{
+	length = (length < 1024) ? length : 1024;
+	std::memcpy(UI_Inspector::textBuffer, buffer, length);
+	
+	*ptr = (size_t)UI_Inspector::textBuffer;
+
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	std::string tmpLabel = "##" + (std::string)label;
+
+	ImGui::Columns(2, "", false);
+	ImGui::SetColumnWidth(0, 100.0f);
+
+	ImGui::Text(label);
+
+	ImGui::NextColumn();
+	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x + 7.0f);
+	
+	//ImGui::InputText(tmpLabel.c_str(), (char*)buffer, length + 1);
+	ImGui::InputText(tmpLabel.c_str(), UI_Inspector::textBuffer, sizeof(UI_Inspector::textBuffer));
+
+	ImGui::PopItemWidth();
+	ImGui::Columns(1);
+
+	return false;
 }

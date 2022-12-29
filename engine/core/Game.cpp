@@ -66,7 +66,7 @@ void Game::Init(MonoInst* imono) {
 	m_lighting.Init(this);
 
 	m_InitImGui();
-	ui.Init(this);
+	m_ui.Init(this);
 }
 
 void Game::m_InitMono(MonoInst* imono) {
@@ -176,7 +176,7 @@ void Game::m_Update() {
 		it++;
 	}
 
-	ui.Draw();
+	m_ui.Draw();
 	/// Post Update
 	m_hotkeys.LateUpdate();
 
@@ -368,6 +368,12 @@ void Game::m_InitImGui() {
 	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
 
 	io.WantCaptureMouse = true;
+	io.WantCaptureKeyboard = true;
+
+	//io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
+	//io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
+
+	io.KeysDown[io.KeyMap[ImGuiKey_Backspace]];
 
 #pragma region ImGuiStyle
 	ImGuiStyle& style = ImGui::GetStyle();
