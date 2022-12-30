@@ -6,9 +6,11 @@
 #include "ActorConcepts.h"
 
 class Component;
+class Game;
+class Scene;
 
 class ActorBase : public CsLink, public ActorTransform {
-	friend class Game;
+	friend class Scene;
 	friend class Actor;
 
 private:
@@ -29,6 +31,7 @@ public:
 
 	Game* game();
 	Actor* actor();
+	Scene* scene();
 
 	bool HasParent();
 	Actor* parent();

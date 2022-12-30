@@ -77,9 +77,10 @@ namespace EngineDll {
 		public static class Game {
 		
 <# 
-			ANSI_FUNC("Game", "CreateGameObjectFromCS", "GameObjectInfo" , "CppRef gameRef, CsRef csRef, CppRef parentRef");
-			FUNC("Game", "GetRootActorsCount", "int", "CppRef gameRef");
-			FUNC("Game", "WriteRootActorsRefs", "void", "CppRef gameRef, CsRef[] refs");
+			FUNC("Game", "SetGameCallbacks", "void", "CppRef gameRef, GameCallbacks callbacks");
+			ANSI_FUNC("Game", "CreateGameObjectFromCS", "GameObjectInfo" , "CppRef sceneRef, CsRef csRef, CppRef parentRef");
+			FUNC("Game", "GetRootActorsCount", "int", "CppRef sceneRef");
+			FUNC("Game", "WriteRootActorsRefs", "void", "CppRef sceneRef, CsRef[] refs");
 #>
 
 		}

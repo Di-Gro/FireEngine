@@ -25,7 +25,10 @@ public:
 
 	void Draw();
 	void Init(Game* game);
-	
+
+	Scene* selectedScene() { return m_selectedScene; }
+	void selectedScene(Scene* scene) { m_selectedScene = scene; }
+		
 	void SelectedActor(Actor* actor);
 	void SetActorActive();
 	
@@ -47,9 +50,11 @@ private: /// For class friends
 private:
 	void InitMono();
 	void InitDockSpace();
+	void m_InitStyles();
 
 	Game* _game;
 	Actor* _actor;
+	Scene* m_selectedScene = nullptr;
 
 	static ImGuiDockNodeFlags dockspace_flags;
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;

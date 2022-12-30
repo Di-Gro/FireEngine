@@ -1,13 +1,18 @@
 #include "UI_Hierarchy.h"
 #include "../Game.h"
+#include "../Scene.h"
 #include "UserInterface.h"
 
 void UI_Hierarchy::Draw_UI_Hierarchy()
 {
+	auto scene = _game->ui()->selectedScene();
+	if (scene == nullptr)
+		return;
+
 	if (ImGui::Begin("Hierarchy"))
 	{
-		auto it = _game->GetNextRootActors(_game->BeginActor());
-		for (; it != _game->EndActor(); it = _game->GetNextRootActors(++it))
+		auto it = scene->GetNextRootActors(scene->BeginActor());
+		for (; it != scene->EndActor(); it = scene->GetNextRootActors(++it))
 		{
 			VisitActor(*it);
 		}

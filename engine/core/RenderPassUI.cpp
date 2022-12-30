@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include "Render.h"
+#include "ShaderAsset.h"
 #include "Window.h"
 #include "HotKeys.h"
 #include "OpaquePass.h"
@@ -150,7 +151,8 @@ void RenderPassUI::m_DrawTextEditorMenu() {
 		if (m_currentPath != "") {
 			if (ImGui::Button("Compile")) {
 				SaveFile(editor.GetText());
-				game()->SendGameMessage("recompile");
+				game()->shaderAsset()->RecompileShaders();
+				std::cout << std::endl;
 			}
 		}
 

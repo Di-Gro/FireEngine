@@ -12,6 +12,7 @@
 #include "CSLinked.h"
 
 class Actor;
+class Scene;
 class CameraComponent;
 class MonoInst;
 class Window;
@@ -25,13 +26,12 @@ class ImageAsset;
 class Assets;
 class UserInterface;
 
-extern "C" __declspec(dllexport) GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
 
 extern std::vector<std::string> game_shaderPaths;
 
-class Game {
-	friend GameObjectInfo Game_CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
+FUNC(Game, SetGameCallbacks, void)(CppRef gameRef, const GameCallbacks& callbacks);
 
+class Game {
 public:
 	bool inFocus = true;
 
@@ -57,13 +57,12 @@ private:
 	CameraComponent* m_editorCamera = nullptr;
 	CameraComponent* m_lastGameCamera = nullptr;
 
-	std::list<Actor*> m_actors;
+	Scene* m_mainScene;
+	std::list<Scene*> m_sceneStack;
+
+	GameCallbacks m_callbacks;
 
 	bool m_onExit = false;
-	unsigned int m_objectCount = 0;
-
-	mono::mono_method_invoker<CppRef()> mono_create;
-	mono::mono_method_invoker<void(GameUpdateData)> mono_setUpdateData;
 
 public:
 
@@ -83,6 +82,7 @@ public:
 	inline HotKeys* hotkeys() { return m_hotkeys; }
 	inline UserInterface* ui() { return m_ui; }
 	inline Assets* assets() { return m_assets; }
+	inline Scene* scene() { return m_sceneStack.empty() ? nullptr : m_sceneStack.back(); }
 
 	inline ShaderAsset* shaderAsset() { return m_shaderAsset; }
 	inline MeshAsset* meshAsset() { return m_meshAsset; }
@@ -93,24 +93,13 @@ public:
 
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
-	Actor* CreateActor(std::string name = "") { return CreateActor(nullptr, name); }
-	Actor* CreateActor(Actor* parent, std::string name = "");
-
-	void DestroyActor(Actor* actor);
-
-	int GetRootActorsCount();
-	void WriteRootActorsRefs(CsRef* refs);
-
-	void PrintSceneTree();
-
-	void SendGameMessage(const std::string& msg);
-
 	void Stat();
 
-	std::list<Actor*>::iterator GetNextRootActors(const std::list<Actor*>::iterator& iter);
-	std::list<Actor*>::iterator BeginActor() { return m_actors.begin(); }
-	std::list<Actor*>::iterator EndActor() { return m_actors.end(); }
-	//std::list<Actor*>::iterator GetNextRootActor(const std::list<Actor*>::iterator& iter);
+	GameCallbacks callbacks() { return m_callbacks; }
+	void callbacks(const GameCallbacks& _callbacks) { m_callbacks = _callbacks; }
+	
+	void PushScene(Scene* value);
+	void PopScene();
 	
 private:
 	void m_InitMono(MonoInst* imono);
@@ -123,13 +112,4 @@ private:
 	void m_BeginUpdateImGui();
 	void m_EndUpdateImGui();
 
-	GameObjectInfo m_CreateActorFromCs(CsRef csRef, CppRef parentRef);
-
-	std::list<Actor*>::iterator m_EraseActor(std::list<Actor*>::iterator it);
-
-	void m_PrintSceneTree(const std::string& prefix, const Actor* node);
-
 };
-
-FUNC(Game, GetRootActorsCount, int)(CppRef gameRef);
-FUNC(Game, WriteRootActorsRefs, void)(CppRef gameRef, CsRef* refs);

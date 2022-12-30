@@ -11,17 +11,19 @@ namespace Engine {
 
         public static CppRef gameRef { get; private set; }
         public static CppRef meshAssetRef { get; private set; }
+        public static CppRef sceneRef { get; private set; }
         public static float DeltaTime => m_updateData.deltaTime;
 
 
         private static GameUpdateData m_updateData;
+        private static GameCallbacks m_gameCallbacks;
 
 
         public static List<Actor> GetRootActors() {
-            int count = Dll.Game.GetRootActorsCount(gameRef);
+            int count = Dll.Game.GetRootActorsCount(sceneRef);
             var refs = new CsRef[count];
 
-            Dll.Game.WriteRootActorsRefs(gameRef, refs);
+            Dll.Game.WriteRootActorsRefs(sceneRef, refs);
 
             var result = new List<Actor>(count);
             foreach(var objRef in refs) {
@@ -31,28 +33,45 @@ namespace Engine {
             return result;
         }
 
+        private static void cpp_Init(CppRef _gameRef) {
+            gameRef = _gameRef;
 
-        private static void cpp_SetGameRef(CppRef value) {
-            Console.WriteLine($"#: Game.cpp_SetGameRef(): {value}");
+            m_gameCallbacks = new GameCallbacks();
+            m_gameCallbacks.setSceneRef = new GameCallbacks.SetRef(SetSceneRef);
+            m_gameCallbacks.setMeshAssetRef = new GameCallbacks.SetRef(SetMeshAssetRef);
+            m_gameCallbacks.setUpdateData = new GameCallbacks.SetUpdateData(SetUpdateData);
 
-            gameRef = value;
+            Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
 
-        private static void cpp_SetMeshAssetRef(CppRef value) {
-            Console.WriteLine($"#: Game.cpp_SetMeshAssetRef(): {value}");
+        private static void SetSceneRef(CppRef value) {
+            sceneRef = value;
+        }
 
+        private static void SetMeshAssetRef(CppRef value) {
             meshAssetRef = value;
         }
 
-        private static void cpp_SetUpdateData(GameUpdateData value) {
-            //Console.WriteLine($"#: Game.cpp_SetUpdateData(): {value.deltaTime}");
+        private static void SetUpdateData(GameUpdateData value) {
             m_updateData = value;
         }
 
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct GameUpdateData {
+    public struct GameUpdateData {
         public float deltaTime;
     };
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GameCallbacks {
+        public delegate void SetRef(CppRef value);
+        public delegate void SetUpdateData(GameUpdateData value);
+
+        public SetRef setSceneRef;
+        public SetRef setMeshAssetRef;
+        public SetUpdateData setUpdateData;
+    }
 }
+
+

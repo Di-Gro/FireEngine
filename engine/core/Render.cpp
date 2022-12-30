@@ -14,6 +14,7 @@
 #include "imgui\imgui_impl_dx11.h"
 
 #include "Game.h"
+#include "Scene.h"
 #include "ShaderAsset.h"
 #include "Lighting.h"
 #include "Actor.h"
@@ -105,7 +106,7 @@ void Render::Start() {
 	m_screenQuad.Init(this, m_game->shaderAsset()->GetShader("../../data/engine/shaders/rp_screen_quad.hlsl"));
 	m_screenQuad.deffuse = &m_mainResource;
 
-	m_game->CreateActor("Render Pass UI")->AddComponent<RenderPassUI>();
+	m_game->scene()->CreateActor("Render Pass UI")->AddComponent<RenderPassUI>();
 }
 
 void Render::Destroy() {

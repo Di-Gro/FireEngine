@@ -33,8 +33,9 @@ void Actor::m_CreateTransform() {
 //void Actor::m_RemoveTransform() {
 //}
 
-void Actor::f_Init(Game* game) {
+void Actor::f_Init(Game* game, Scene* scene) {
 	f_game = game;
+	f_scene = scene;
 	friend_gameObject = this;
 
 	m_InitMono();
@@ -147,6 +148,9 @@ void Actor::f_DestroyComponent(Component* component) {
 }
 
 void Actor::f_SetParent(Actor* actor) {
+	if (this->f_scene != actor->f_scene)
+		throw std::exception("actor.scene != parent.scene");
+
 	if (f_parent == actor)
 		return;
 
