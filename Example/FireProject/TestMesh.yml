@@ -1,0 +1,55 @@
+.file0.assetId: {AssetId: TestMesh}
+.file0.files: {Var: 4}
+
+.file1!script: {Var: Actor}
+.file1!scriptId: {AssetId: 00000010000}
+.file1.Name: {Var: Actor}
+.file1.localPosition.X: {Var: 0}
+.file1.localPosition.Y: {Var: 0}
+.file1.localPosition.Z: {Var: 0}
+.file1.localRotationQ.X: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Z: {Var: 0}
+.file1.localRotationQ.W: {Var: 1}
+.file1.localScale.X: {Var: 1}
+.file1.localScale.Y: {Var: 1}
+.file1.localScale.Z: {Var: 1}
+.file1.m_children: {Null: }
+.file1.m_components.0: {Ref: file2}
+.file1.m_components.1: {Ref: file3}
+.file1.m_components.2: {Ref: file4}
+
+.file2!script: {Var: TestMesh}
+.file2!scriptId: {AssetId: 00000010005}
+.file2.userPrefab.assetId: {AssetId: TestPrefab}
+.file2.nullStaticMaterial: {Null: }
+.file2.staticMaterial.assetId: {AssetId: 0000000000}
+.file2.vecList.0.X: {Var: 1}
+.file2.vecList.0.Y: {Var: 2}
+.file2.vecList.0.Z: {Var: 3}
+.file2.vecList.1.X: {Var: 4}
+.file2.vecList.1.Y: {Var: 5}
+.file2.vecList.1.Z: {Var: 6}
+.file2.floatField: {Var: 4.56}
+.file2.m_floatField4: {Var: 7.56}
+.file2.vector.X: {Var: 4}
+.file2.vector.Y: {Var: 3}
+.file2.vector.Z: {Var: 2}
+.file2!base!scriptId: {AssetId: 00000010008}
+.file2!base.floatField: {Var: 48.56}
+.file2.component: {Ref: file3}
+.file2.actorRef: {Ref: file1}
+.file2.m_meshComp: {Ref: file3}
+.file2.m_meshes.0.assetId: {AssetId: MESH000001}
+.file2.m_meshes.1.assetId: {AssetId: MESH000002}
+.file2.m_meshes.2.assetId: {AssetId: MESH000003}
+
+.file3!script: {Var: MeshComponent}
+.file3!scriptId: {AssetId: 00000010003}
+.file3.IsDebug: {Var: False}
+.file3.IsVisible: {Var: True}
+.file3.m_mesh.assetId: {AssetId: MESH000001}
+.file3.m_materials.0: {Null: }
+
+.file4!script: {Var: TestImGui}
+.file4!scriptId: {AssetId: 00000010006}

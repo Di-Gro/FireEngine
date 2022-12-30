@@ -1,0 +1,11 @@
+.file0.assetId: {AssetId: TestMesh1}
+.file0.files: {Var: 1}
+
+.file1!script: {Var: StaticMesh}
+.file1!scriptId: {AssetId: 00000010013}
+.file1.ext: {Var: obj}
+.file1.m_materials.0.assetId: {AssetId: TestMaterial1}
+# .file1.scale: {Var: 1.0}
+# .file1.flip_x: {Var: false}
+# .file1.flip_y: {Var: false}
+# .file1.flip_z: {Var: false}

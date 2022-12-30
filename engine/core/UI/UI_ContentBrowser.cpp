@@ -2,7 +2,7 @@
 #include "../Game.h"
 #include "../imgui/imgui.h"
 
-static const std::filesystem::path s_AssetsPath = "assets";
+static const std::filesystem::path s_AssetsPath = "..\\..\\Example\\Assets"; // "assets";
 
 UI_ContentBrowser::UI_ContentBrowser()
 	: m_CurrentDirectory(s_AssetsPath)

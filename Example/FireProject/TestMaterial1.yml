@@ -1,0 +1,18 @@
+.file0.assetId: {AssetId: TestMaterial1}
+.file0.files: {Var: 1}
+
+.file1!script: {Var: StaticMaterial}
+.file1!scriptId: {AssetId: 00000010012}
+.file1.Name: {Var: Material.005}
+.file1.Shader: {Var: ../../data/engine/shaders/opaque_default.hlsl}
+.file1.CullMode: {Var: Front}
+.file1.FillMode: {Var: Solid}
+.file1.Priority: {Var: 2000}
+.file1.DiffuseColor.X: {Var: 0.4}
+.file1.DiffuseColor.Y: {Var: 0.5}
+.file1.DiffuseColor.Z: {Var: 0.2}
+.file1.Diffuse: {Var: 0.4}
+.file1.Ambient: {Var: 0.6}
+.file1.Specular: {Var: 0.1}
+.file1.Shininess: {Var: 200}
+.file1.m_textures.0.assetId: {AssetId: TestTexture1} #: {Null: }

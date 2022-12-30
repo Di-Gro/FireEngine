@@ -1,0 +1,12 @@
+.file0.assetId: {AssetId: P0000000002T}
+.file0.files: {Scalar: 1}
+
+.file1!scriptId: {AssetId: 00000010000}
+.file1!prefabId: {AssetId: P0000000001T}
+.file1!.file1.name: {Scalar: "prefab_2_test"}
+.file1!.file1.vecList.0.Y: {Scalar: 6.2}
+.file1!.file1.matList.0.enumField: {Scalar: Front}
+.file1!.file1.matList.0.assetId: {AssetId: "00100000003"}
+.file1!.file1.matList.1: {Null: }
+.file1!.file1.matList.2.enumField: {Scalar: Back}
+.file1!.file1.matList.2.assetId: {AssetId: "00100000001"}

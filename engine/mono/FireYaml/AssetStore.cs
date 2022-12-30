@@ -22,7 +22,7 @@ namespace FireYaml {
         private Dictionary<int, string> m_assetIds = new Dictionary<int, string>();
         private Dictionary<int, string> m_assetPaths = new Dictionary<int, string>();
 
-        private string m_assetsPath = @"C:\Users\vladi\OneDrive\Рабочий стол\Example\FireProject\";
+        private string m_assetsPath = @"..\..\Example\FireProject\";
         private uint m_nextAssetId = 13;
 
         public AssetStore(bool addDefaultAssets = true) {
