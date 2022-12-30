@@ -137,14 +137,17 @@ namespace EngineDll {
 
 		public static class Game {
 		
+            [DllImport(Paths.Exe, EntryPoint = "Game_SetGameCallbacks")]
+		    public static extern void SetGameCallbacks(CppRef gameRef, GameCallbacks callbacks);
+
             [DllImport(Paths.Exe, EntryPoint = "Game_CreateGameObjectFromCS", CharSet = CharSet.Ansi)]
-		    public static extern GameObjectInfo CreateGameObjectFromCS(CppRef gameRef, CsRef csRef, CppRef parentRef);
+		    public static extern GameObjectInfo CreateGameObjectFromCS(CppRef sceneRef, CsRef csRef, CppRef parentRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Game_GetRootActorsCount")]
-		    public static extern int GetRootActorsCount(CppRef gameRef);
+		    public static extern int GetRootActorsCount(CppRef sceneRef);
 
             [DllImport(Paths.Exe, EntryPoint = "Game_WriteRootActorsRefs")]
-		    public static extern void WriteRootActorsRefs(CppRef gameRef, CsRef[] refs);
+		    public static extern void WriteRootActorsRefs(CppRef sceneRef, CsRef[] refs);
 
 
 		}

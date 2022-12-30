@@ -62,10 +62,10 @@ void Window::Create() {
     SetForegroundWindow(m_hWnd);
     ShowCursor(m_showCursor);
 
-    // Record the area in which the cursor can move. 
+    // Record the area in which the cursor can move.
     GetClipCursor(&m_rcOldClip);
-    //GetWindowRect(m_hWnd, &windowRect); // Get the dimensions of the application's window. 
-    ClipCursor(&windowRect);  // Confine the cursor to the application's window.  
+    //GetWindowRect(m_hWnd, &windowRect); // Get the dimensions of the application's window.
+    ClipCursor(&windowRect);  // Confine the cursor to the application's window.
 
 }
 
@@ -82,7 +82,6 @@ LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM l
         return DefWindowProc(hwnd, umessage, wparam, lparam);
     }
     case WM_KEYDOWN: {
-        //std::cout << "Key: " << static_cast<unsigned int>(wparam) << std::endl;
         ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
         return 0;
     }

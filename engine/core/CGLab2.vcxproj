@@ -85,6 +85,7 @@
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPassUI.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SelectionPass.cpp" />
     <ClCompile Include="ShaderAsset.cpp" />
     <ClCompile Include="ShaderResource.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="OutlinePass.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="SelectionPass.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="SpotLight.h" />

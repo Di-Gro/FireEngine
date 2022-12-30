@@ -17,11 +17,13 @@ FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
 FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
 class Render;
+class Game;
+class Scene;
 
 class Actor : public ActorBase {
 	OBJECT;
 
-	friend class Game;
+	friend class Scene;
 	friend class ActorBase;
 	friend class Render;
 
@@ -35,6 +37,7 @@ public:
 
 private:
 	Game* f_game = nullptr;
+	Scene* f_scene = nullptr;
 	unsigned int f_actorID;
 
 	Actor* f_parent = nullptr;
@@ -94,7 +97,7 @@ private:
 
 	void f_DestroyComponent(Component* component);
 
-	void f_Init(Game* game);
+	void f_Init(Game* game, Scene* scene);
 	void f_Update();
 	void f_Draw();
 	void f_DrawUI();

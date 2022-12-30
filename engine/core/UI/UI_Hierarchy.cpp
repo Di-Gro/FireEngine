@@ -1,15 +1,23 @@
 #include "UI_Hierarchy.h"
+
+#include "../Game.h"
+#include "../Scene.h"
 #include "UserInterface.h"
 #include "../Game.h"
 
 void UI_Hierarchy::Draw_UI_Hierarchy()
 {
+	auto scene = _game->ui()->selectedScene();
+	if (scene == nullptr)
+		return;
+
 	int counter = 0;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
 	if (ImGui::Begin("Hierarchy"))
 	{
-		auto it = _game->GetNextRootActors(_game->BeginActor());
-		for (; it != _game->EndActor(); it = _game->GetNextRootActors(++it))
+		auto it = scene->GetNextRootActors(scene->BeginActor());
+		for (; it != scene->EndActor(); it = scene->GetNextRootActors(++it))
 		{
 			VisitActor(*it, counter);
 			counter++;
@@ -30,7 +38,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int counter)
 	ImGuiTreeNodeFlags node_flags = (actor == _ui->GetActor() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding;
 	float treeNodeHeight = 3.0f;
 	static bool test_drag_and_drop = false;
-			
+
 	if (actor->GetChildrenCount() > 0)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, treeNodeHeight));
@@ -38,7 +46,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int counter)
 		ImGui::PopStyleVar();
 
 		if (ImGui::IsItemClicked())
-		{	
+		{
 			_ui->SelectedActor(actor);
 			_ui->SetActorActive();
 			test_drag_and_drop = true;
@@ -72,7 +80,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int counter)
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, treeNodeHeight));
 		ImGui::TreeNodeEx(name.c_str(), node_flags);
 		ImGui::PopStyleVar();
-		
+
 		if (ImGui::IsItemClicked() && ImGui::IsItemActivated())
 		{
 			_ui->SelectedActor(actor);

@@ -1,8 +1,14 @@
 #include "ActorBase.h"
 
 #include "Game.h"
+#include "Scene.h"
 #include "Actor.h"
 
+Scene* ActorBase::scene() {
+	if (!IsDestroyed())
+		return friend_gameObject->f_scene;
+	return nullptr;
+}
 
 Game* ActorBase::game() {
 	if (!IsDestroyed())
@@ -20,7 +26,7 @@ bool ActorBase::IsDestroyed() {
 
 Actor* ActorBase::CreateActor(std::string name) {
 	if (!IsDestroyed())
-		return game()->CreateActor(name);
+		return game()->scene()->CreateActor(name);
 	return nullptr;
 }
 
@@ -29,7 +35,7 @@ void ActorBase::Destroy() {
 		if (friend_component != nullptr)
 			actor()->f_DestroyComponent(friend_component);
 		else
-			game()->DestroyActor(friend_gameObject);
+			scene()->DestroyActor(friend_gameObject);
 	}
 }
 

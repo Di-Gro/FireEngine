@@ -73,7 +73,7 @@ namespace Engine {
 
             CppRef parentRef = targetParent != null ? targetParent.cppRef : 0;
 
-            var info = Dll.Game.CreateGameObjectFromCS(Game.gameRef, csRef, parentRef);
+            var info = Dll.Game.CreateGameObjectFromCS(Game.sceneRef, csRef, parentRef);
             Link(info.classRef, info.objectRef);
 
             //m_transformRef = info.transformRef;

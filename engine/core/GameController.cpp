@@ -13,6 +13,7 @@
 #include "Attachable.h"
 #include "HotKeys.h"
 #include "MeshAsset.h"
+#include "ShaderAsset.h"
 #include "LinedPlain.h"
 #include "Forms.h"
 #include "RotatorComponent.h"
@@ -157,7 +158,9 @@ void GameController::OnUpdate() {
 	}
 
 	if (hotkeys->GetButtonDown(Keys::R) && hotkeys->GetButton(Keys::Ctrl)) {
-		game()->SendGameMessage("recompile");
+		game()->shaderAsset()->RecompileShaders();
+		game()->meshAsset()->ReloadMaterials();
+		std::cout << std::endl;
 	}
 }
 

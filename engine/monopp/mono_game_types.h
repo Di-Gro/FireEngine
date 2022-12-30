@@ -80,5 +80,11 @@ public:
 	void(*onStart)();
 	void(*onUpdate)();
 	void(*onDestroy)();
+};
 
+class GameCallbacks {
+public:
+	void(*setSceneRef)(CppRef value);
+	void(*setMeshAssetRef)(CppRef value);
+	void(*setUpdateData)(GameUpdateData value);
 };
