@@ -52,6 +52,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{e1ce7b92-18aa-4c25-8cef-40ffde6f16ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Navigation">
+      <UniqueIdentifier>{ff6834e8-be81-48b8-82fa-97ab81cb6c73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
@@ -305,6 +308,9 @@
     </ClCompile>
     <ClCompile Include="BlurPass.cpp">
       <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="NavMesh.cpp">
+      <Filter>Navigation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -616,6 +622,9 @@
     </ClInclude>
     <ClInclude Include="IAsset.h">
       <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMesh.h">
+      <Filter>Navigation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

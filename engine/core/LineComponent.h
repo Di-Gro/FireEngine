@@ -43,4 +43,5 @@ public:
 		this->SetMaterial(0, Assets::ShaderVertexColor);
 		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
+	///TODO linelist
 };

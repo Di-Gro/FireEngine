@@ -68,6 +68,7 @@
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MonoInst.cpp" />
     <ClCompile Include="MoveController.cpp" />
+    <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="OpaquePass.cpp" />
     <ClCompile Include="OutlinePass.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="imgui\TextEditor\TextEditor.h" />
     <ClInclude Include="IShadowCaster.h" />
     <ClInclude Include="LightingPass.h" />
+    <ClInclude Include="NavMesh.h" />
     <ClInclude Include="OutlinePass.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
@@ -335,7 +337,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;$(SolutionDir)\engine\RecastDetour\DetourCrowd\Include;$(SolutionDir)\engine\RecastDetour\DetourTileCache\Include;$(SolutionDir)\engine\RecastDetour\Recast\Include;$(SolutionDir)\engine\RecastDetour\DebugUtils\Include;$(SolutionDir)\engine\RecastDetour\Detour\Include;$(SolutionDir)\engine\RecastDetour\fastlz;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4091;4190;4244;4267;4305;4715;5103;5104;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
