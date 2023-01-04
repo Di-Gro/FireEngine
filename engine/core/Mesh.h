@@ -134,7 +134,7 @@ public:
 	const std::vector<const Material*>* GetMaterials() const { return &f_staticMaterials; }
 
 	Shape* GetShape(int index);
-
+	const Shape* GetConstShape(int index) const;
 	void Release();
 
 };

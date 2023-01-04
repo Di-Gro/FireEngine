@@ -73,6 +73,7 @@
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MonoInst.cpp" />
     <ClCompile Include="MoveController.cpp" />
+    <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="OpaquePass.cpp" />
     <ClCompile Include="OutlinePass.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="imgui\TextEditor\TextEditor.h" />
     <ClInclude Include="IShadowCaster.h" />
     <ClInclude Include="LightingPass.h" />
+    <ClInclude Include="NavMesh.h" />
     <ClInclude Include="OutlinePass.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
@@ -344,14 +346,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;$(SolutionDir)\engine\RD\Detour\Include;$(SolutionDir)\engine\RD\DebugUtils\Include;$(SolutionDir)\engine\RD\DetourCrowd\Include;$(SolutionDir)\engine\RD\DetourTileCache\Include;$(SolutionDir)\engine\RD\Recast\Include;$(SolutionDir)\engine\RD\Recast\Source;$(SolutionDir)\engine\RD\Detour\Source;$(SolutionDir)\engine\RD\DetourTileCache\Source;$(SolutionDir)\engine\RD\DetourCrowd\Source;$(SolutionDir)\engine\RD\DebugUtils\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4091;4190;4244;4267;4305;4715;5103;5104;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;Detour.lib;Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib;$(SolutionDir)\engine\RD\Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

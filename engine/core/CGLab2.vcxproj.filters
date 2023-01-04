@@ -318,6 +318,9 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Not Components</Filter>
     </ClCompile>
+    <ClCompile Include="NavMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -636,6 +639,9 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMesh.h">
       <Filter>Not Components</Filter>
     </ClInclude>
   </ItemGroup>
