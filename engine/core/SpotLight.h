@@ -13,7 +13,7 @@ class Material;
 class RenderPass;
 
 class SpotLight : public Component, public ILightSource {
-	PURE_COMPONENT(SpotLight);
+	COMPONENT(SpotLight);
 
 public:
 	Vector3 color = Vector3::One;
@@ -46,4 +46,5 @@ public:
 	void OnDrawLight(RenderPass* renderPass) override;
 	LightCBuffer GetCBuffer() override;
 };
+DEC_COMPONENT(SpotLight);
 

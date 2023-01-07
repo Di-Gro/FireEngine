@@ -76,6 +76,18 @@ namespace FireYaml {
         public override string ToString() {
             return $"{name}";
         }
+
+        public TAttribute GetCustomAttribute<TAttribute>() where TAttribute : Attribute {
+            if (Instance == null)
+                return null;
+
+            if (m_field != null)
+                return m_field.GetCustomAttribute<TAttribute>();
+            else if (m_prop != null)
+                return m_prop.GetCustomAttribute<TAttribute>();
+
+            return null;
+        }
     }
 
     public class Serializer {
@@ -263,7 +275,7 @@ namespace FireYaml {
             var serializer = GetSerializer(type);
             var fields = GetFields(type, obj, serializer);
 
-            if (fields.Count == 0 && !m_IsComponent(type)) {
+            if (fields.Count == 0 && !IsComponent(type)) {
                 m_AddScalar(selfPath, obj);
                 return;
             }
@@ -306,6 +318,10 @@ namespace FireYaml {
 
         public static bool IsAsset(Type type){
             return type.GetInterface(nameof(IAsset)) != null;
+        }
+
+        public static bool IsFile(Type type) {
+            return type.GetInterface(nameof(IFile)) != null;
         }
 
         private YamlRef m_GetFileRef(ref object instance) {
@@ -420,11 +436,23 @@ namespace FireYaml {
             return false;
         }
 
-        private bool m_IsComponent(Type type) {
+        public static bool IsComponent(Type type) {
             if (typeof(Engine.Component).IsAssignableFrom(type))
                 return true;
 
             return false;
+        }
+
+        public static bool IsUserComponent(Type type) {
+            bool notBaseClass = true
+                && type != typeof(Engine.CSComponent)
+                && type != typeof(Engine.CppComponent);
+
+            bool isAssignable = false
+                || typeof(Engine.CSComponent).IsAssignableFrom(type)
+                || typeof(Engine.CppComponent).IsAssignableFrom(type);
+
+            return notBaseClass && isAssignable;
         }
 
         private void m_SetAssignedDoc(string docName, object obj) {

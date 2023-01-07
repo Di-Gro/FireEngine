@@ -461,8 +461,9 @@ namespace Engine
         /// Creates a matrix for rotating points around the X-axis.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateRotationX(float radians)
+        public static Matrix4x4 CreateRotationX(float degrees)
         {
+            float radians = degrees.rad();
             Matrix4x4 result;
 
             var c = radians.Cos();
@@ -495,12 +496,13 @@ namespace Engine
         /// <summary>
         /// Creates a matrix for rotating points around the X-axis, from a center point.
         /// </summary>
-        /// <param name="radians">The amount, in radians, by which to rotate around the X-axis.</param>
+        /// <param name="degrees">The amount, in degrees, by which to rotate around the X-axis.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateRotationX(float radians, Vector3 centerPoint)
+        public static Matrix4x4 CreateRotationX(float degrees, Vector3 centerPoint)
         {
+            float radians = degrees.rad();
             Matrix4x4 result;
 
             var c = radians.Cos();
@@ -536,11 +538,12 @@ namespace Engine
         /// <summary>
         /// Creates a matrix for rotating points around the Y-axis.
         /// </summary>
-        /// <param name="radians">The amount, in radians, by which to rotate around the Y-axis.</param>
+        /// <param name="degrees">The amount, in degrees, by which to rotate around the Y-axis.</param>
         /// <returns>The rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateRotationY(float radians)
+        public static Matrix4x4 CreateRotationY(float degrees)
         {
+            float radians = degrees.rad();
             Matrix4x4 result;
 
             var c = radians.Cos();
@@ -573,12 +576,13 @@ namespace Engine
         /// <summary>
         /// Creates a matrix for rotating points around the Y-axis, from a center point.
         /// </summary>
-        /// <param name="radians">The amount, in radians, by which to rotate around the Y-axis.</param>
+        /// <param name="degrees">The amount, in degrees, by which to rotate around the Y-axis.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateRotationY(float radians, Vector3 centerPoint)
+        public static Matrix4x4 CreateRotationY(float degrees, Vector3 centerPoint)
         {
+            float radians = degrees.rad();
             Matrix4x4 result;
 
             var c = radians.Cos();
@@ -614,11 +618,12 @@ namespace Engine
         /// <summary>
         /// Creates a matrix for rotating points around the Z-axis.
         /// </summary>
-        /// <param name="radians">The amount, in radians, by which to rotate around the Z-axis.</param>
+        /// <param name="degrees">The amount, in degrees, by which to rotate around the Z-axis.</param>
         /// <returns>The rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateRotationZ(float radians)
+        public static Matrix4x4 CreateRotationZ(float degrees)
         {
+            float radians = degrees.rad();
             Matrix4x4 result;
 
             var c = radians.Cos();
@@ -651,12 +656,13 @@ namespace Engine
         /// <summary>
         /// Creates a matrix for rotating points around the Z-axis, from a center point.
         /// </summary>
-        /// <param name="radians">The amount, in radians, by which to rotate around the Z-axis.</param>
+        /// <param name="degrees">The amount, in degrees, by which to rotate around the Z-axis.</param>
         /// <param name="centerPoint">The center point.</param>
         /// <returns>The rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateRotationZ(float radians, Vector3 centerPoint)
+        public static Matrix4x4 CreateRotationZ(float degrees, Vector3 centerPoint)
         {
+            float radians = degrees.rad();
             Matrix4x4 result;
 
             var c = radians.Cos();
@@ -693,11 +699,12 @@ namespace Engine
         /// Creates a matrix that rotates around an arbitrary vector.
         /// </summary>
         /// <param name="axis">The axis to rotate around.</param>
-        /// <param name="angle">The angle to rotate around the given axis, in radians.</param>
+        /// <param name="degrees">The angle to rotate around the given axis, in degrees.</param>
         /// <returns>The rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 CreateFromAxisAngle(Vector3 axis, float angle)
+        public static Matrix4x4 CreateFromAxisAngle(Vector3 axis, float degrees)
         {
+            float angle = degrees.rad();
             // a: angle
             // x, y, z: unit vector for axis.
             //
@@ -1058,13 +1065,13 @@ namespace Engine
         /// <summary>
         /// Creates a rotation matrix from the specified yaw, pitch, and roll.
         /// </summary>
-        /// <param name="yaw">Angle of rotation, in radians, around the Y-axis.</param>
-        /// <param name="pitch">Angle of rotation, in radians, around the X-axis.</param>
-        /// <param name="roll">Angle of rotation, in radians, around the Z-axis.</param>
+        /// <param name="yaw">Angle of rotation, in degrees, around the Y-axis.</param>
+        /// <param name="pitch">Angle of rotation, in degrees, around the X-axis.</param>
+        /// <param name="roll">Angle of rotation, in degrees, around the Z-axis.</param>
         /// <returns>The rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 CreateFromYawPitchRoll(float yaw, float pitch, float roll)
-            => CreateRotation(Quaternion.CreateFromYawPitchRoll(yaw, pitch, roll));
+            => CreateRotation(Quaternion.CreateFromYawPitchRoll(yaw.rad(), pitch.rad(), roll.rad()));
 
         /// <summary>
         /// Creates a Matrix that flattens geometry into a specified Plane as if casting a shadow from a specified light source.
@@ -2010,5 +2017,13 @@ namespace Engine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Matrix4x4 ScaleTranslation(float amount)
             => SetTranslation(Translation * amount);
+
+        public Vector3 Up => new Vector3(M21, M22, M23);
+        public Vector3 Down => new Vector3(-M21, -M22, -M23);
+        public Vector3 Right => new Vector3(M11, M12, M13);
+        public Vector3 Left => new Vector3(-M11, -M12, -M13);
+        public Vector3 Forward => new Vector3(-M31, -M32, -M33);
+        public Vector3 Backward => new Vector3(M31, M32, M33);
+
     }
 }

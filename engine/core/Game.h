@@ -25,7 +25,8 @@ class MeshAsset;
 class ImageAsset;
 class Assets;
 class UserInterface;
-
+class AssetStore;
+class Material;
 
 extern std::vector<std::string> game_shaderPaths;
 
@@ -33,36 +34,44 @@ FUNC(Game, SetGameCallbacks, void)(CppRef gameRef, const GameCallbacks& callback
 
 class Game {
 public:
-	bool inFocus = true;
+	bool inFocus = false;
 
 private:
 	MonoInst* m_mono;
 
 	Window* m_window;
 	Render* m_render;
-	Lighting* m_lighting;
+	//Lighting* m_lighting;
 	InputDevice* m_input;
 	FPSCounter m_fpsCounter;
+	FPSCounter m_updateCounter;
 	HotKeys* m_hotkeys;
 
 	ShaderAsset* m_shaderAsset;
 	MeshAsset* m_meshAsset;
 	ImageAsset* m_imageAsset;
 	Assets* m_assets;
+	AssetStore* m_assetStore;
 
 	UserInterface* m_ui;
 
-	CameraComponent* m_defaultCamera = nullptr;
-	CameraComponent* m_mainCamera = nullptr;
-	CameraComponent* m_editorCamera = nullptr;
-	CameraComponent* m_lastGameCamera = nullptr;
+	//CameraComponent* m_defaultCamera = nullptr;
+	//CameraComponent* m_mainCamera = nullptr;
+	//CameraComponent* m_editorCamera = nullptr;
+	//CameraComponent* m_lastGameCamera = nullptr;
 
-	Scene* m_mainScene;
+	Scene* m_editorScene;
+	Scene* m_gameScene = nullptr;
+
+	std::list<Scene*> m_scenes;
 	std::list<Scene*> m_sceneStack;
 
 	GameCallbacks m_callbacks;
 
 	bool m_onExit = false;
+	//bool m_isEditor = false;
+
+	std::string tmpSceneAssetId;
 
 public:
 
@@ -77,29 +86,45 @@ public:
 
 	inline Window* window() { return m_window; }
 	inline Render* render() { return m_render; }
-	inline Lighting* lighting() { return m_lighting; }
+	//inline Lighting* lighting() { return m_lighting; }
 	inline InputDevice* input() { return m_input; }
 	inline HotKeys* hotkeys() { return m_hotkeys; }
 	inline UserInterface* ui() { return m_ui; }
 	inline Assets* assets() { return m_assets; }
-	inline Scene* scene() { return m_sceneStack.empty() ? nullptr : m_sceneStack.back(); }
+	inline AssetStore* assetStore() { return m_assetStore; }
+	inline Scene* currentScene() { return m_sceneStack.empty() ? nullptr : m_sceneStack.back(); }
 
 	inline ShaderAsset* shaderAsset() { return m_shaderAsset; }
 	inline MeshAsset* meshAsset() { return m_meshAsset; }
 	ImageAsset* imageAsset() { return m_imageAsset; }
 
-	inline CameraComponent* mainCamera() { return m_mainCamera; }
-	void mainCamera(CameraComponent* camera) { m_mainCamera = camera; }
+	//inline bool isEditor() { return m_isEditor; }
+
+	//inline CameraComponent* mainCamera() { return m_mainCamera; }
+	//void mainCamera(CameraComponent* camera) {  m_mainCamera = camera; };
 
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
-	void Stat();
+	bool IsPlayMode() { return m_gameScene != nullptr; }
+
+	//void Stat();
 
 	GameCallbacks callbacks() { return m_callbacks; }
 	void callbacks(const GameCallbacks& _callbacks) { m_callbacks = _callbacks; }
 
 	void PushScene(Scene* value);
 	void PopScene();
+
+	Scene* CreateScene(bool isEditor);
+	void DestroyScene(Scene* scene);
+
+	inline std::list<Scene*>::iterator ScenesBegin() { return m_scenes.begin(); }
+	inline std::list<Scene*>::iterator ScenesEnd() { return m_scenes.end(); }
+
+	void DeleteMaterialFromAllScenes(const Material* material);
+
+	void TogglePlayMode();
+
 
 private:
 	void m_InitMono(MonoInst* imono);
@@ -109,7 +134,18 @@ private:
 	void m_Update();
 	void m_Destroy();
 
+	std::list<Scene*>::iterator m_EraseScene(std::list<Scene*>::iterator iter);
+
 	void m_BeginUpdateImGui();
 	void m_EndUpdateImGui();
 
 };
+
+FUNC(Game, mainCamera_get, CsRef)(CppRef gameRef);
+FUNC(Game, Exit, void)(CppRef gameRef);
+
+FUNC(Game, PushScene, void)(CppRef gameRef, CppRef sceneRef);
+FUNC(Game, PopScene, void)(CppRef gameRef);
+
+FUNC(Game, CreateScene, CppRef)(CppRef gameRef, bool isEditor);
+FUNC(Game, DestroyScene, void)(CppRef gameRef, CppRef sceneRef);

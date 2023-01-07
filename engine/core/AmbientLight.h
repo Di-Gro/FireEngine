@@ -11,7 +11,7 @@
 class RenderPass;
 
 class AmbientLight : public Component, public ILightSource {
-	PURE_COMPONENT(AmbientLight);
+	COMPONENT(AmbientLight);
 
 public:
 	Vector3 color = Vector3::One;
@@ -29,3 +29,4 @@ public:
 	void OnDrawLight(RenderPass* renderPass) override;
 	LightCBuffer GetCBuffer() override;
 };
+DEC_COMPONENT(AmbientLight);

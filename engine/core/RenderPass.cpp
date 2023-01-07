@@ -173,7 +173,7 @@ void RenderPass::m_SetCameraConstBuffer() {
 	context->Map(m_cameraBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 
 	auto* cbuf = (CameraCBuffer*)res.pData;
-	cbuf->position = m_render->camera()->worldPosition();
+	cbuf->position = m_game->currentScene()->renderer.camera()->worldPosition();
 
 	context->Unmap(m_cameraBuffer.Get(), 0);
 }

@@ -26,7 +26,7 @@ bool ActorBase::IsDestroyed() {
 
 Actor* ActorBase::CreateActor(std::string name) {
 	if (!IsDestroyed())
-		return game()->scene()->CreateActor(name);
+		return game()->currentScene()->CreateActor(name);
 	return nullptr;
 }
 

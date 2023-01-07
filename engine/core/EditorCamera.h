@@ -2,6 +2,7 @@
 
 #include <d3d11.h>
 #include <SimpleMath.h>
+#include "CSBridge.h"
 
 #include "CameraComponent.h"
 #include "InputDevice.h"
@@ -10,6 +11,7 @@ using namespace DirectX::SimpleMath;
 
 
 class EditorCamera : public CameraComponent {
+	PURE_COMPONENT(EditorCamera)
 
 private:
 

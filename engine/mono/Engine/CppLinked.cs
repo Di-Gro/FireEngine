@@ -5,7 +5,7 @@ using System.Text;
 
 
 namespace Engine {
-	interface ICppLinked {
+	public interface ICppLinked {
 		ClassInfo classInfo { get; }
 		CppRef cppRef { get; }
 		CsRef csRef { get; }
@@ -13,7 +13,7 @@ namespace Engine {
 		CsRef Link(CppRef classInfoRef, CppRef objRef);
 	}
 
-	class CppLinked : ICppLinked {
+	public class CppLinked : ICppLinked {
 		/// Static ->
 		private static Dictionary<CsRef, object> s_refs = new Dictionary<CsRef, object>();
 		private static CsRef s_nextRefId = 1;
@@ -21,7 +21,6 @@ namespace Engine {
 		public static object GetObjectByRef(CsRef csRef) {
 			if (s_refs.ContainsKey(csRef))
 				return s_refs[csRef];
-			Console.WriteLine($"#: CppLinked.GetObjectByRef: NULL)");
 			return null;
 		}
 		public static void RemoveObjectByRef(CsRef csRef) {

@@ -14,12 +14,14 @@
 
 class Shader;
 class Render;
+class SceneRenderer;
 
 enum class CullMode { Front, Back, None };
 enum class FillMode { Solid, Wireframe };
 
-class Material : /*public CsLink,*/ public IAsset {
+class Material : public IAsset {
 	friend class Render;
+	friend class SceneRenderer;
 
 	#pragma pack(push, 4)
 	public: struct Data {
@@ -52,8 +54,9 @@ public:
 	comptr<ID3D11DepthStencilState> depthStencilState;
 
 private:
-	mutable int f_passIndex = -1;
-	mutable Pass::MaterialIter f_materialIter;
+	//mutable int f_passIndex = -1;
+	//mutable RenderPass* f_renderPass = nullptr;
+	//mutable Pass::MaterialIter f_materialIter;
 
 private:
 	std::string m_name;

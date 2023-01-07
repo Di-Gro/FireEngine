@@ -158,6 +158,13 @@ namespace Engine {
             m_proxy.cppRef = Dll.MeshAsset.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
         }
 
+        public DynamicMaterial(string name, string assetId) {
+            var source = new StaticMaterial().LoadFromAsset(assetId);
+
+            m_proxy.cppRef = Dll.MeshAsset.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
+            m_proxy.Name = name;
+        }
+
         public void UpdateTextures() {
             if(textures.Count > 0) {
                 var cppRefs = new ulong[textures.Count];

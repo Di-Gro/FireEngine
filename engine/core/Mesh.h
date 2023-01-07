@@ -62,6 +62,13 @@ public:
 		Vector4 color = Vector4::One;
 		Vector4 normal = Vector4::One;
 		Vector4 uv = Vector4::Zero;
+
+		Vertex() {}
+		Vertex(Vector3 pos) {
+			position.x = pos.x;
+			position.y = pos.y;
+			position.z = pos.z;
+		}
 	};
 
 public:
@@ -154,6 +161,7 @@ public:
 public:
 
 	void Init(Render* render, const Shader* shader);
+	void Release();
 	void Draw() const;
 	void Draw2() const;
 };

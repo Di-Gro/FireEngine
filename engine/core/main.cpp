@@ -53,12 +53,14 @@ static void InsideMono() {
 }
 
 
+int main() {	
+	bool useMonoDebug = false;
 
-int main() {		
-	if (!mono::init("mono", false))
+	if (!mono::init("mono", useMonoDebug))
 		return 1;
 
 	InsideMono();
 
 	mono::shutdown();
+	std::cout << "EXIT_OK" << std::endl;
 }

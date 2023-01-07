@@ -2,10 +2,18 @@
 
 #include "CSBridge.h"
 #include "CSLinked.h"
+#include "Actor.h"
+#include "SceneRenderer.h"
+#include "Refs.h"
 
-class Actor;
 class Game;
+class DirectionLight;
+class AmbientLight;
+class LinedPlain;
+class CameraComponent;
 
+using CameraIter = std::list<CameraComponent*>::iterator;
+using SceneIter = std::list<Scene*>::iterator;
 
 FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, CppRef parentRef);
 FUNC(Game, GetRootActorsCount, int)(CppRef gameRef);
@@ -22,12 +30,36 @@ private:
 	static bool mono_inited;
 
 public:
+	DirectionLight* directionLight = nullptr;
+	AmbientLight* ambientLight = nullptr;
+
+	CameraComponent* editorCamera;
+	LinedPlain* linedPlain;
+
+	SceneRenderer renderer;
+
+private: // friend
+	SceneIter f_sceneIter;
+	Ref2 f_ref;
+	bool f_isDestroyed = false;
+
 private:
 	Game* m_game;
+	
 	std::list<Actor*> m_actors;
+	std::list<Actor*> m_staticActors;
+	std::list<CameraComponent*> m_cameras;
+
+	CameraComponent* m_mainCamera = nullptr;
+
+	bool m_isEditor = false;
+	bool m_isStarted = false;
 
 public:
-	void Init(Game* game);
+	void Init(Game* game, bool _isEditor);
+	void Start();
+
+	inline bool isEditor() { return m_isEditor; }
 
 	Actor* CreateActor(std::string name = "") { return CreateActor(nullptr, name); }
 	Actor* CreateActor(Actor* parent, std::string name = "");
@@ -41,6 +73,16 @@ public:
 	std::list<Actor*>::iterator BeginActor() { return m_actors.begin(); }
 	std::list<Actor*>::iterator EndActor() { return m_actors.end(); }
 
+	CameraIter AddCamera(CameraComponent* camera);
+	void RemoveCamera(CameraIter iter);
+
+	inline CameraComponent* mainCamera() { return m_mainCamera; }
+	void mainCamera(CameraComponent* camera);
+
+	void AttachGameCamera();
+
+	void Stat();
+
 private:
 	void f_Update();
 	void f_Destroy();
@@ -50,8 +92,13 @@ private:
 private:
 	void m_InitMono();
 
+	void m_Update(std::list<Actor*>* list);
+	void m_Destroy(std::list<Actor*>* list);
+
+	void m_MoveToStatic(Actor* actor);
+
 	GameObjectInfo m_CreateActorFromCs(CsRef csRef, CppRef parentRef);
 
-	std::list<Actor*>::iterator m_EraseActor(std::list<Actor*>::iterator it);
+	std::list<Actor*>::iterator m_EraseActor(std::list<Actor*>::iterator it, std::list<Actor*>* list);
 
 };

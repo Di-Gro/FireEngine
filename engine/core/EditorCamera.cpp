@@ -3,20 +3,27 @@
 #include "Game.h"
 #include "HotKeys.h"
 
+DEF_PURE_COMPONENT(EditorCamera, RunMode::EditPlay)
 
 void EditorCamera::OnInit() {
+	CameraComponent::OnInit();
+
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &EditorCamera::m_OnMouseMove);
-	UpdateProjectionMatrix(/*game()->window()*/);
+	UpdateProjectionMatrix();
 
 	game()->hotkeys()->RegisterHotkey(Keys::O);
 }
 
 void EditorCamera::OnDestroy() {
+	CameraComponent::OnDestroy();
+
 	game()->input()->MouseMove.Remove(m_mouseMoveHandle);
 	game()->hotkeys()->UnregisterHotkey(Keys::O);
 }
 
 void EditorCamera::OnUpdate() {
+	CameraComponent::OnUpdate();
+
 	if (!IsAttached() || game()->inFocus)
 		return;
 

@@ -11,11 +11,14 @@
 using namespace DiGro::GameFramework;
 using namespace DirectX::SimpleMath;
 
+class Game;
+
 class Window : public IWindow {
 public:
     bool sizeChanged = false;
 
 private:
+    Game* m_game;
     int m_height = 800;
     int m_width = 800;
     HINSTANCE m_hInstance = 0;
@@ -31,7 +34,7 @@ public:
 
     Window() {};
 
-    void Init(LPCWSTR name, int width, int height);
+    void Init(Game* game, LPCWSTR name, int width, int height);
     void Destroy();
 
     int GetHeight() override { return m_height; }

@@ -48,6 +48,13 @@ namespace Engine
     
     public partial struct Vector3 : ITransformable3D<Vector3>
     {
+        public static Vector3 Up = new Vector3(0, 1, 0);
+        public static Vector3 Down = new Vector3(0, -1, 0);
+        public static Vector3 Right = new Vector3(1, 0, 0);
+        public static Vector3 Left = new Vector3(-1, 0, 0);
+        public static Vector3 Forward = new Vector3(0, 0, -1);
+        public static Vector3 Backward = new Vector3(0, 0, 1);
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector3(float x, float y)
             : this(x, y, 0)

@@ -16,6 +16,21 @@ namespace Engine {
 
     public class OpenAttribute : Attribute { }
 
+    public class RangeAttribute : Attribute {
+        public int imin, imax;
+        public float fmin, fmax;
+
+        public RangeAttribute(int min, int max) {
+            imin = min;
+            imax = max;
+        }
+
+        public RangeAttribute(float min, float max) {
+            fmin = min;
+            fmax = max;
+        }
+    }
+
 }
 
 namespace Engine {
@@ -90,17 +105,32 @@ namespace Engine {
             if (actor == null)
                 return;
 
-            var components = actor.GetComponentsList();
             var children = actor.GetChildren();
+            var components = actor.GetComponentsList();
 
-            serializer.AddField($"{selfPath}.m_components", components.GetType(), components);
             serializer.AddField($"{selfPath}.m_children", children.GetType(), children);
+
+            m_AddComponents(serializer, selfPath, components);
 
             foreach (var child in children)
                 serializer.CreateDocument(child.GetType(), child);
-            
-            foreach (var component in components) 
-                serializer.CreateDocument(component.GetType(), component);
+
+            foreach (var component in components) {
+                if (!component.runtimeOnly)
+                    serializer.CreateDocument(component.GetType(), component);
+            }
+        }
+
+        private void m_AddComponents(FireYaml.Serializer serializer, string selfPath, List<Component> components) {
+            if (components.Count == 0) {
+                serializer.AddField($"{selfPath}.m_components", components.GetType(), components);
+                return;
+            }
+            int index = 0;
+            foreach (var component in components) {
+                if (!component.runtimeOnly)
+                    serializer.AddField($"{selfPath}.m_components.{index++}", component.GetType(), component);
+            }
         }
 
         public override void OnDeserialize(FireYaml.Deserializer deserializer, string selfPath, Type type, ref object instance) {

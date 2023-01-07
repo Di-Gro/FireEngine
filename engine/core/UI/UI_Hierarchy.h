@@ -14,4 +14,10 @@ public:
 private:
 	Game* _game;
 	UserInterface* _ui;	
+
+private:
+	void m_DrawSceneContextMenu();
+	void m_DrawActorContextMenu(Actor* actor);
+	void m_PushPopupStyles();
+	void m_PopPopupStyles();
 };

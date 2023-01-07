@@ -2,6 +2,9 @@
 
 #include "imgui\imgui_impl_win32.h"
 
+#include "Game.h"
+
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
@@ -15,7 +18,9 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM 
     return DefWindowProc(hwnd, umessage, wparam, lparam);
 }
 
-void Window::Init(LPCWSTR name, int width, int height) {
+void Window::Init(Game* game, LPCWSTR name, int width, int height) {
+    m_game = game;
+
     m_name = name;
     m_width = width;
     m_height = height;
@@ -58,14 +63,14 @@ void Window::Create() {
 
     SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
-    ShowWindow(m_hWnd, SW_SHOW);
+    ShowWindow(m_hWnd, SW_MAXIMIZE);
     SetForegroundWindow(m_hWnd);
     ShowCursor(m_showCursor);
 
-    // Record the area in which the cursor can move.
-    GetClipCursor(&m_rcOldClip);
-    //GetWindowRect(m_hWnd, &windowRect); // Get the dimensions of the application's window.
-    ClipCursor(&windowRect);  // Confine the cursor to the application's window.
+    //// Record the area in which the cursor can move.
+    //GetClipCursor(&m_rcOldClip);
+    ////GetWindowRect(m_hWnd, &windowRect); // Get the dimensions of the application's window.
+    //ClipCursor(&windowRect);  // Confine the cursor to the application's window.
 
 }
 
@@ -78,7 +83,9 @@ void Window::Exit(int code) { PostQuitMessage(code); }
 LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) {
     switch (umessage) {
     case WM_CLOSE: {
+        ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
 
+        m_game->Exit(0);
         return DefWindowProc(hwnd, umessage, wparam, lparam);
     }
     case WM_KEYDOWN: {
@@ -89,6 +96,7 @@ LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM l
         m_width = LOWORD(lparam);
         m_height = HIWORD(lparam);
         sizeChanged = true;
+        ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
         return 0;
     }
     case WM_INPUT: {

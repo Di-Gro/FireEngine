@@ -292,7 +292,7 @@ void MeshAsset::DeleteDynamicMaterial(Material* mat) {
 	if (m_dynamicMaterials.count(matRef) == 0)
 		return;
 
-	m_game->render()->UnRegisterMaterial(mat);
+	m_game->DeleteMaterialFromAllScenes(mat);
 
 	m_dynamicMaterials.erase(matRef);
 	m_DeleteMaterialAsset(mat);
@@ -584,7 +584,7 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<Actor*>* objects) {
 	auto sceneMeshPath = dir + "/" + scene.sceneObj;
 	Load(sceneMeshPath);
 
-	auto sceneObj = m_game->scene()->CreateActor("scene");
+	auto sceneObj = m_game->currentScene()->CreateActor("scene");
 	sceneObj->AddComponent<MeshComponent>()->mesh(GetMesh(sceneMeshPath));
 
 	if (objects != nullptr)
@@ -594,7 +594,7 @@ void MeshAsset::LoadScene(fs::path levelDir, std::vector<Actor*>* objects) {
 		auto meshPath = dir + "/" + data.obj;
 		Load(meshPath);
 
-		auto meshComp = m_game->scene()->CreateActor(data.name)->AddComponent<MeshComponent>();
+		auto meshComp = m_game->currentScene()->CreateActor(data.name)->AddComponent<MeshComponent>();
 		meshComp->mesh(GetMesh(meshPath));
 
 		meshComp->localPosition(data.pos);

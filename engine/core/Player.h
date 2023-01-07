@@ -3,7 +3,7 @@
 #include "Actor.h"
 
 class PlayerCamera;
-class BoxCollider;
+//class BoxCollider;
 class Mesh4;
 class Material;
 class MeshComponent;
@@ -19,9 +19,9 @@ private:
 	float m_startRadius = 0;
 	float m_startSpeed = 0;
 
-	bool m_onCollision = false;
-	Vector3 m_hitPoint;
-	BoxCollider* m_hitCollider;
+	//bool m_onCollision = false;
+	//Vector3 m_hitPoint;
+	//BoxCollider* m_hitCollider;
 	
 	Vector3 m_velocityDelta;
 	Vector3 m_lastVelocity;
@@ -53,9 +53,9 @@ public:
 	void Move(Vector3 direction);
 
 	void Attach(Actor* attachableObj);
-	void OnCollisionBegin(BoxCollider* collider);
-	void OnCollision(BoxCollider* collider);
-	void OnCollisionEnd(BoxCollider* collider);
+	//void OnCollisionBegin(BoxCollider* collider);
+	//void OnCollision(BoxCollider* collider);
+	//void OnCollisionEnd(BoxCollider* collider);
 
 };
 

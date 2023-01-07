@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "Lighting.h"
 #include "HotKeys.h"
+#include "UI/UserInterface.h"
 
 #include "PointLight.h"
 #include "SpotLight.h"
@@ -12,14 +13,11 @@
 #include "AmbientLight.h"
 #include "DirectionLight.h"
 
-DEF_PURE_COMPONENT(TestLightComponent)
+DEF_PURE_COMPONENT(TestLightComponent, RunMode::EditOnly)
 
 void TestLightComponent::OnInit() {
-	m_defaultCamera = game()->mainCamera();
-
-	m_directionalLight = game()->lighting()->directionLight();
-	m_ambientLight = AddComponent<AmbientLight>();
-	
+	m_directionalLight = GetComponent<DirectionLight>();
+	m_ambientLight = GetComponent<AmbientLight>();
 }
 
 void TestLightComponent::OnUpdate() {
@@ -37,8 +35,10 @@ void TestLightComponent::OnUpdate() {
 void TestLightComponent::m_DrawGUI() {
 	ImGui::Begin("Test Lights", &m_isOpened);
 
-	bool isSpot = game()->mainCamera() == m_spotCamera;
-	bool isPoint = game()->mainCamera() == m_pointCamera;
+	auto selectedActor = game()->ui()->GetActor();
+
+	bool isSpot = selectedActor != nullptr && m_spotLight != nullptr && selectedActor == m_spotLight->actor();
+	bool isPoint = selectedActor != nullptr && m_pointLight != nullptr && selectedActor == m_pointLight->actor();
 
 	/// Directional
 	if (m_directionalLight != nullptr) {
@@ -68,7 +68,6 @@ void TestLightComponent::m_DrawGUI() {
 	if (ImGui::Checkbox("Point Light", &checkboxValue)) {
 		if (checkboxValue) {
 			m_pointLight = CreateActor("PointLight")->AddComponent<PointLight>();
-			m_pointCamera = m_pointLight->AddComponent<FlyingCamera>();
 		}
 		else {
 			m_pointLight->actor()->Destroy();
@@ -77,11 +76,11 @@ void TestLightComponent::m_DrawGUI() {
 	}
 	if (m_pointLight != nullptr) {
 		ImGui::SameLine();
-		if (ImGui::RadioButton("", isPoint)) {
+		if (ImGui::RadioButton("##Select Point Light", isPoint)) {
 			if (isPoint)
-				m_defaultCamera->Attach();
+				game()->ui()->SelectedActor(nullptr);
 			else
-				m_pointCamera->Attach();
+				game()->ui()->SelectedActor(m_pointLight->actor());
 		}
 		ImGui::SameLine();
 		ImGui::Text("Point");
@@ -94,7 +93,6 @@ void TestLightComponent::m_DrawGUI() {
 	if (ImGui::Checkbox("Spot Light", &checkboxValue)) {
 		if (checkboxValue) {
 			m_spotLight = CreateActor("SpotLight")->AddComponent<SpotLight>();
-			m_spotCamera = m_spotLight->AddComponent<FlyingCamera>();
 		}
 		else {
 			m_spotLight->actor()->Destroy();
@@ -103,11 +101,11 @@ void TestLightComponent::m_DrawGUI() {
 	}
 	if (m_spotLight != nullptr) {
 		ImGui::SameLine();
-		if (ImGui::RadioButton("", isSpot)) {
+		if (ImGui::RadioButton("##Select Spot Light", isSpot)) {
 			if (isSpot)
-				m_defaultCamera->Attach();
+				game()->ui()->SelectedActor(nullptr);
 			else
-				m_spotCamera->Attach();
+				game()->ui()->SelectedActor(m_spotLight->actor());
 		}
 		ImGui::SameLine();
 		ImGui::Text("Spot");

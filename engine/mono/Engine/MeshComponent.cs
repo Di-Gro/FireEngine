@@ -4,6 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 
 using EngineDll;
+using FireYaml;
 
 
 namespace Engine {
@@ -12,8 +13,14 @@ namespace Engine {
 
         private Prop<bool> prop_IsDebug = new Prop<bool>(0);
         private Prop<bool> prop_Visible = new Prop<bool>(1);
+        private Prop<Vector3> prop_MeshScale = new Prop<Vector3>(2);
          
+        public Vector3 MeshScale { get => prop_MeshScale.value; set => prop_MeshScale.value = value; }
         public bool IsDebug { get => prop_IsDebug.value; set => prop_IsDebug.value = value; }
+        public bool CastShadow {
+            get => Dll.MeshComponent.castShadow_get(cppRef);
+            set => Dll.MeshComponent.castShadow_set(cppRef, value);
+        }
         public bool IsVisible { get => prop_Visible.value; set => prop_Visible.value = value; }
         public bool IsStatic => Dll.MeshComponent.IsStatic_get(cppRef);
         public bool IsDynamic => Dll.MeshComponent.IsDynamic_get(cppRef);

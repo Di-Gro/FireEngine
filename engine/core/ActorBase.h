@@ -21,7 +21,7 @@ private:
 	Actor* friend_gameObject = nullptr;
 	Component* friend_component = nullptr;
 	int friend_timeToDestroy = 1;
-	bool friend_isStarted = false;
+	//bool friend_isStarted = false;
 
 	bool m_onPreDestroy = false;
 	
@@ -44,7 +44,7 @@ public:
 
 
 	template<IsCppAddableComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
-	TComponent* AddComponent();
+	TComponent* AddComponent(bool isRuntimeOnly = false);
 
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	TComponent* GetComponent();

@@ -318,6 +318,24 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Not Components</Filter>
     </ClCompile>
+    <ClCompile Include="AssetStore.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ComponentPicker.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRenderer.cpp">
+      <Filter>Not Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\SceneWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\SceneEditorWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\AssetPickerPopup.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -637,6 +655,27 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetStore.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ComponentPicker.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="RunMode.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneRenderer.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\SceneWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\SceneEditorWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\AssetPickerPopup.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

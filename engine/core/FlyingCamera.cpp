@@ -5,6 +5,8 @@
 
 
 void FlyingCamera::OnInit() {
+	CameraComponent::OnInit();
+
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &FlyingCamera::m_OnMouseMove);
 	UpdateProjectionMatrix(/*game()->window()*/);
 
@@ -12,11 +14,15 @@ void FlyingCamera::OnInit() {
 }
 
 void FlyingCamera::OnDestroy() {
+	CameraComponent::OnDestroy();
+
 	game()->input()->MouseMove.Remove(m_mouseMoveHandle);
 	game()->hotkeys()->UnregisterHotkey(Keys::O);
 }
 
 void FlyingCamera::OnUpdate() {
+	CameraComponent::OnUpdate();
+
 	if (!IsAttached() || !game()->inFocus)
 		return;
 

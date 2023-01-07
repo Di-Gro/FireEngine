@@ -21,8 +21,6 @@ private:
 	DelegateHandle m_mouseMoveHandle;
 
 public:
-	//PlayerCamera(Actor* gameObject) : CameraComponent(gameObject) { }
-
 	void OnInit() override;
 	void OnDestroy() override;
 	void OnUpdate() override;
