@@ -108,7 +108,7 @@ void UI_Inspector::m_DrawAddComponent() {
 
 void UI_Inspector::m_DrawTransformContent()
 {
-	auto actor = m_ui->GetActor();
+	auto actor = _ui->GetActor();
 	auto matrix = (ImGuizmo::matrix_t&)actor->GetLocalMatrix();
 
 	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
@@ -171,6 +171,10 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 	result = ImGui::CollapsingHeader(nodeId.c_str(), collapsingHeaderFlags);
 	ImVec2 nextCursor = ImGui::GetCursorPos();
 
+	m_DrawComponentContextMenu(component);
+	if (component->IsDestroyed())
+		return false;
+
 	if (ImGui::BeginDragDropSource()) {
 		ImGui::SetDragDropPayload("Component", &component, sizeof(Component*));
 		ImGui::EndDragDropSource();
@@ -220,8 +224,8 @@ void UI_Inspector::m_DrawComponents()
 		if (!component->IsDestroyed() && csRef.value > 0) {
 			auto name = RequestComponentName(component);
 
-			if (CollapsingHeader(component, name)) {
-				m_DrawComponentContextMenu(component);
+			bool isOpen = CollapsingHeader(component, name);
+			if (isOpen) {
 				widthComponent = ImGui::GetContentRegionAvail().x;
 				m_DrawComponent(&UI_Inspector::m_DrawComponentContent);
 			}
@@ -458,6 +462,8 @@ Component* UI_Inspector::AcceptDroppedComponent(int scriptIdHash) {
 				}
 			}
 		}
+	}
+}
 
 Actor* UI_Inspector::GetDroppedActor()
 {

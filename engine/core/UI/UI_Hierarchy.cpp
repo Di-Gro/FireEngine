@@ -16,9 +16,9 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	if (ImGui::Begin("Hierarchy")) {
-		auto scene = _game->ui()->selectedScene();
+		auto scene = m_game->ui()->selectedScene();
 		if (scene != nullptr) {
-			_game->PushScene(scene);
+			m_game->PushScene(scene);
 
 			m_DrawSceneContextMenu();
 			auto it = scene->GetNextRootActors(scene->BeginActor());
@@ -30,7 +30,7 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 
 			ImGui::Dummy({ 0, 200.0f });
 
-			_game->PopScene();
+			m_game->PopScene();
 		}
 	}
 	ImGui::End();
@@ -62,26 +62,26 @@ void UI_Hierarchy::m_DrawSceneContextMenu() {
 	if (ImGui::BeginPopupContextWindow(0, flags))
 	{
 		if (ImGui::Selectable("Add Actor")) {
-			auto actor = _game->currentScene()->CreateActor();
+			auto actor = m_game->currentScene()->CreateActor();
 		}
 
 		bool canAddLight =
-				_game->currentScene()->directionLight == nullptr
-			||	_game->currentScene()->ambientLight == nullptr;
+			m_game->currentScene()->directionLight == nullptr
+			|| m_game->currentScene()->ambientLight == nullptr;
 
 		auto lightFlags = !canAddLight ? ImGuiSelectableFlags_Disabled : 0;
 
 		if (ImGui::Selectable("Add Light", false, lightFlags)) {
-			auto actor = _game->currentScene()->CreateActor();
+			auto actor = m_game->currentScene()->CreateActor();
 			actor->name("Light");
 
 			actor->localPosition({ 0, 0, 300 });
 			actor->localRotation({ rad(-45), rad(45 + 180), 0 });
 
-			if (_game->currentScene()->directionLight == nullptr)
+			if (m_game->currentScene()->directionLight == nullptr)
 				actor->AddComponent<DirectionLight>();
 
-			if (_game->currentScene()->ambientLight == nullptr)
+			if (m_game->currentScene()->ambientLight == nullptr)
 				actor->AddComponent<AmbientLight>();
 		}
 
@@ -97,11 +97,11 @@ void UI_Hierarchy::m_DrawActorContextMenu(Actor* actor) {
 	auto flags = ImGuiPopupFlags_MouseButtonRight;
 	if (ImGui::BeginPopupContextItem(0, flags)) {
 		if (ImGui::Selectable("Add Child")) {
-			auto child = _game->currentScene()->CreateActor(actor);
+			auto child = m_game->currentScene()->CreateActor(actor);
 		}
 		if (ImGui::Selectable("Remove")) {
-			if (_game->ui()->GetActor() == actor)
-				_game->ui()->SelectedActor(nullptr);
+			if (m_game->ui()->GetActor() == actor)
+				m_game->ui()->SelectedActor(nullptr);
 			actor->Destroy();
 		}
 		ImGui::EndPopup();

@@ -277,10 +277,12 @@ namespace EngineDll {
 			FUNC("AssetStore", "ClearTypes", "void", "CppRef gameRef");
 			FUNC("AssetStore", "ClearComponents", "void", "CppRef gameRef");
 			FUNC("AssetStore", "ClearAssets", "void", "CppRef gameRef");
+			FUNC("AssetStore", "ClearAssetTypes", "void", "CppRef gameRef");
 
 			ANSI_FUNC("AssetStore", "SetType", "void", "CppRef gameRef, int typeId, string fullName, string name");
 			FUNC("AssetStore", "AddComponent", "void", "CppRef gameRef, int typeId");
 			ANSI_FUNC("AssetStore", "AddAsset", "void", "CppRef gameRef, int typeId, int assetId, string name");
+			FUNC("AssetStore", "AddAssetType", "void", "CppRef gameRef, int typeId");
 #>
 		}
 	}

@@ -290,6 +290,7 @@ namespace FireYaml {
             typeNames.Sort();
 
             Dll.AssetStore.ClearTypes(Game.gameRef);
+            Dll.AssetStore.ClearAssetTypes(Game.gameRef);
 
             foreach (var typeName in typeNames) {
                 var type = Type.GetType(typeName);
@@ -300,6 +301,9 @@ namespace FireYaml {
 
                 if(Serializer.IsUserComponent(type))
                     Dll.AssetStore.AddComponent(Game.gameRef, typeIdHash);
+                
+                if(Serializer.IsAsset(type))
+                    Dll.AssetStore.AddAssetType(Game.gameRef, typeIdHash);
             }
         }
 

@@ -16,6 +16,7 @@ public:
 	std::unordered_map<AssetIdHash, std::string> assetNames;
 
 	std::vector<ScriptIdHash> components;
+	std::vector<ScriptIdHash> assetTypes;
 
 	std::unordered_map<ScriptIdHash, std::vector<AssetIdHash>> assets;
 	
@@ -60,16 +61,20 @@ public:
 	void SetType(ScriptIdHash typeId, const std::string& fullName, const std::string& name);
 	void AddComponent(ScriptIdHash typeId);
 	void AddAsset(ScriptIdHash typeId, AssetIdHash assetId, const std::string& name);
+	void AddAssetType(ScriptIdHash typeId);
 
 	void ClearTypes();
 	void ClearComponents();
 	void ClearAssets();
+	void ClearAssetTypes();
 };
 
 FUNC(AssetStore, ClearTypes, void)(CppRef gameRef);
 FUNC(AssetStore, ClearComponents, void)(CppRef gameRef);
 FUNC(AssetStore, ClearAssets, void)(CppRef gameRef);
+FUNC(AssetStore, ClearAssetTypes, void)(CppRef gameRef);
 
 FUNC(AssetStore, SetType, void)(CppRef gameRef, int typeId, const char* fullName, const char* name);
 FUNC(AssetStore, AddComponent, void)(CppRef gameRef, int typeId);
 FUNC(AssetStore, AddAsset, void)(CppRef gameRef, int typeId, int assetId, const char* name);
+FUNC(AssetStore, AddAssetType, void)(CppRef gameRef, int typeId);

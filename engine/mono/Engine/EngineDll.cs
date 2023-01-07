@@ -653,6 +653,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "AssetStore_ClearAssets")]
 		    public static extern void ClearAssets(CppRef gameRef);
 
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_ClearAssetTypes")]
+		    public static extern void ClearAssetTypes(CppRef gameRef);
+
             [DllImport(Paths.Exe, EntryPoint = "AssetStore_SetType", CharSet = CharSet.Ansi)]
 		    public static extern void SetType(CppRef gameRef, int typeId, string fullName, string name);
 
@@ -661,6 +664,9 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "AssetStore_AddAsset", CharSet = CharSet.Ansi)]
 		    public static extern void AddAsset(CppRef gameRef, int typeId, int assetId, string name);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_AddAssetType")]
+		    public static extern void AddAssetType(CppRef gameRef, int typeId);
 
 		}
 	}

@@ -142,14 +142,16 @@ void Game::Run() {
 	
 	tmpSceneAssetId = assets()->CreateAssetId();
 	///
-	//auto cppObj = CppClass();
-	//auto csLink = CSLinked<CppClass>(mono());
+	auto cppObj = CppClass();
+	auto csLink = CSLinked<CppClass>(mono());
 
-	//csLink.Link(cppObj, "EngineMono", "CSClass");
+	
 	
 	//isExitRequested = true; // return;
 	///
 	PushScene(m_editorScene);
+
+	//csLink.Link(cppObj, "EngineMono", "CSClass");
 	
 	//scene()->CreateActor("Lined Plain")->AddComponent<LinedPlain>();
 
@@ -166,6 +168,13 @@ void Game::Run() {
 	//lighting->AddComponent<TestLightComponent>();
 
 	//currentScene()->CreateActor("GameController")->AddComponent<GameController>();
+
+	//auto cube = currentScene()->CreateActor("Cube")->AddComponent<MeshComponent>();
+	//cube->mesh(meshAsset()->GetMesh("../../data/engine/models/cube.obj"));
+
+	//auto meshComponent = CppRefs::GetPointer<MeshComponent>(RefCpp(28));
+
+	//cube->SetMaterial(0, meshComponent->GetMaterial(0));
 
 	//inFocus = false;
 	//m_lastGameCamera = scene()->mainCamera();

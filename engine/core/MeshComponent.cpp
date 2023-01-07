@@ -366,6 +366,8 @@ void MeshComponent::OnDrawShape(int index) {
 	if (m_meshVersion != m_mesh->version)
 		m_OnMeshReload();
 
+	auto id = actor()->Id();
+
 	auto camera = m_render->renderer()->camera();
 	auto cameraPosition = camera->worldPosition();
 	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();

@@ -20,6 +20,18 @@ enum class ReorderEnum
 
 class UI_Hierarchy
 {
+
+private:
+	Game* m_game;
+	UserInterface* m_ui;
+
+	Image m_icMoveSeparator;
+	Texture m_moveSeparatorTex;
+	ShaderResource m_moveSeparatorRes;
+
+	bool m_isMouseReleaseOnDragActor = false;
+	Actor* m_dragTargetActor = nullptr;
+
 public:
 	void Draw_UI_Hierarchy();
 	void Init(Game* game);
@@ -28,17 +40,6 @@ public:
 	void HandleDrag(Actor* actor);
 	void HandleDrop(Actor* actor, bool selectedTree, float height, ImVec2 size, ImVec2 cursor);
 	void HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, float height);
-
-private:
-	Game* _game;
-	UserInterface* _ui;
-
-	Image m_icMoveSeparator;
-	Texture m_moveSeparatorTex;
-	ShaderResource m_moveSeparatorRes;
-
-	bool m_isMouseReleaseOnDragActor = false;
-	Actor* m_dragTargetActor = nullptr;
 
 private:
 	void m_InitIcons();

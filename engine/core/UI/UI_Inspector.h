@@ -16,19 +16,6 @@ class Component;
 class UI_Inspector
 {
 public:
-
-	void Draw_UI_Inspector();
-	void Init(Game* game, UserInterface* ui);
-
-	void DrawActorTransform();
-	void DrawActorComponents();
-
-	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
-
-	bool ShowVector3(Vector3* vec3, const std::string& title);
-	void AddComponent();
-
-	Actor* GetDroppedActor();
 	static char textBuffer[1024];
 	float widthComponent = 0;
 	CsRef csRef;
@@ -47,8 +34,13 @@ private:
 		;
 
 	Game* _game;
-	UserInterface* m_ui;
+	UserInterface* _ui;
 	bool isLocal = false;
+
+	float m_dropTargetHeight = 0.0f;
+	float m_mousePosY = 0.0f;
+	float m_closestHeight = 0.0f;
+	bool m_dragTargetNodeOpen = false;
 
 	ImVec2 m_compSpacing = { 0, 8 };
 	ImVec2 m_lineSpacing = { 0, 3 };
@@ -61,6 +53,13 @@ private:
 public:
 	void Draw_UI_Inspector();
 	void Init(Game* game, UserInterface* ui);
+
+	void DrawActorTransform();
+	void DrawActorComponents();
+
+	void AddComponent();
+
+	Actor* GetDroppedActor();
 
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
