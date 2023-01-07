@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <chrono>
-
+#include "NavMesh.h"
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_dx11.h"
 #include "imgui\imgui_impl_win32.h"
@@ -163,6 +163,31 @@ void Game::Run() {
 	scene()->CreateActor("GameController")->AddComponent<GameController>();
 	scene()->CreateActor()->AddComponent<TestLightComponent>();
 
+	auto  point_A = scene()->CreateActor("A_p");
+	auto  mesh_A = point_A->AddComponent<MeshComponent>();
+	mesh_A->mesh(meshAsset()->GetMesh(MeshAsset::formBox));
+	mesh_A->meshScale = Vector3(30, 30, 30);
+	point_A->worldPosition(Vector3(80.1, 14.40, -852.84));
+
+	auto  point_B = scene()->CreateActor("B_p");
+	auto  mesh_B = point_B->AddComponent<MeshComponent>();
+	mesh_B->mesh(meshAsset()->GetMesh(MeshAsset::formBox));
+	mesh_B->meshScale = Vector3(100, 100, 100);
+	point_B->worldPosition(Vector3(464.95, 1.48, 339.86));
+
+	NavMesh nav_mesh(this);
+	auto status = nav_mesh.NavMeshBuild();
+	std::cout << "Status = " << status << '\n';
+
+	//auto ret_find = nav_mesh.FindPath(Vector3(190, 0.5, -1500), Vector3(-1700, 0.5, 230), 0, 0);
+	//std::cout << "ret_find " << ret_find << std::endl;
+ //   auto path = nav_mesh.GetPath(0);
+	//std::cout << "path\n";
+	//for(const auto& vec: path)
+	//{
+	//	std::cout << "x="<<vec.x<<"\ty="<<vec.y<<"\tz="<<vec.z<<'\n';
+	//}
+
 	PopScene();
 
 	inFocus = false;
@@ -215,6 +240,10 @@ void Game::m_Update() {
 	/// Update
 	m_mainScene->f_Update();
 
+	if(hotkeys()->GetButtonDown(Keys::R))
+	{
+		MeshComponent::TempVisible =!MeshComponent::TempVisible;
+	}
 	ui()->selectedScene(m_mainScene);
 	ui()->Draw();
 

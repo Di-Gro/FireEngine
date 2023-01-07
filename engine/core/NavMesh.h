@@ -63,11 +63,12 @@ public:
 	void UpdateNavmesh();
 	void GetNavmesh();
 	bool SaveNavmesh();
-	void Configure();
 	bool NavMeshBuild();
 	std::vector<DirectX::SimpleMath::Vector3> GetPath(int pathSlot);
-	NavMesh(Game* game) :game(game) {};
-
+	int FindPath(DirectX::SimpleMath::Vector3 pStartPos, DirectX::SimpleMath::Vector3 pEndPos, int nPathSlot, int nTarget);
+	int FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarget);
+	NavMesh(Game* game);
+	void DebugDrawPolyMesh();
 protected:
 
 	unsigned char* m_triareas;
@@ -77,7 +78,7 @@ protected:
 	rcPolyMesh* m_pmesh;
 	rcConfig m_cfg;
 	rcPolyMeshDetail* m_dmesh;
-
+	void Configure();
 	class dtNavMesh* m_navMesh;
 	class dtNavMeshQuery* m_navQuery;
 	unsigned char m_navMeshDrawFlags;
@@ -98,7 +99,7 @@ protected:
 	float m_detailSampleDist;
 	float m_detailSampleMaxError;
 	bool m_keepInterResults;
-
+	
 	static const int MAX_OFFMESH_CONNECTIONS = 256;
 	float m_offMeshConVerts[MAX_OFFMESH_CONNECTIONS * 3 * 2];
 	float m_offMeshConRads[MAX_OFFMESH_CONNECTIONS];
@@ -109,14 +110,14 @@ protected:
 	int m_offMeshConCount;
 
 	void RecastCleanup();
-	int FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarget);
+
 	float mExtents[3];
 	float m_flTestStart[3];
 	float m_flTestEnd[3];
 	dtQueryFilter* mFilter;
 
 	pathdata m_PathStore[MAX_PATHS];
-
+	float m_scale;
 private:
 
 	Game* game;

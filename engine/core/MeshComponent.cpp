@@ -14,7 +14,7 @@
 
 using namespace DirectX::SimpleMath;
 
-
+bool MeshComponent::TempVisible = false;
 bool MeshComponent::mono_inited = false;
 mono::mono_method_invoker<void(CsRef, CppRef)> MeshComponent::mono_SetFromCpp;
 
@@ -328,7 +328,8 @@ void MeshComponent::OnDrawDebug() {
 void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 	if (!visible || m_mesh == nullptr)
 		return;
-
+	if (!TempVisible && !ingnore_TempVisible)
+		return;
 	if (m_meshVersion != m_mesh->version)
 		m_OnMeshReload();
 
@@ -358,6 +359,8 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 
 void MeshComponent::OnDrawShape(int index) {
 	if (!visible || m_mesh == nullptr)
+		return;
+	if(!TempVisible && !ingnore_TempVisible)
 		return;
 
 	if (m_meshVersion != m_mesh->version)

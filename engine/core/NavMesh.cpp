@@ -5,8 +5,61 @@
 
 #include "Transform.h"
 #include "MeshComponent.h"
+#include "LineComponent.h"
 #include "Render.h"
 #include "Scene.h"
+#include "DetourTileCacheBuilder.h"
+#include "MeshAsset.h"
+
+NavMesh::NavMesh(Game* game) :game(game)
+{
+    m_triareas = NULL;
+    m_solid = NULL;
+    m_chf = NULL;
+    m_cset = NULL;
+    m_pmesh = NULL;
+    //m_cfg;   
+    m_dmesh = NULL;
+  
+    m_navMesh = NULL;
+    m_navQuery = NULL;
+    //m_navMeshDrawFlags;
+    m_ctx = NULL;
+
+    RecastCleanup(); 
+   
+
+    m_scale = 1.25;
+
+
+ 
+
+
+    mExtents[0] = 2 * m_scale;
+	mExtents[1] = 4 * m_scale;
+	mExtents[2] = 2 * m_scale;
+
+    // Setup the default query filter
+    mFilter = new dtQueryFilter();
+    mFilter->setIncludeFlags(0xFFFF);    // Include all
+    mFilter->setExcludeFlags(0);         // Exclude none
+    // Area flags for polys to consider in search, and their cost
+    mFilter->setAreaCost(SAMPLE_POLYAREA_GROUND, 1.0f);       // TODO have a way of configuring the filter
+    mFilter->setAreaCost(DT_TILECACHE_WALKABLE_AREA, 1.0f);
+
+
+    // Init path store. MaxVertex 0 means empty path slot
+    for (int i = 0; i < MAX_PATHS; i++) {
+        m_PathStore[i].MaxVertex = 0;
+        m_PathStore[i].Target = 0;
+    }
+
+
+    // Set configuration
+    Configure();
+}
+
+
 
 void NavMesh::LoadStaticMeshes()
 {
@@ -15,8 +68,6 @@ void NavMesh::LoadStaticMeshes()
     uint64_t prevVerticiesCount = 0;
     uint64_t prevIndexCountTotal = 0;
 
-    rc_bmax[2] = FLT_MAX; rc_bmax[1] = FLT_MAX; rc_bmax[0] = FLT_MAX;
-    rc_bmin[2] = FLT_MIN; rc_bmin[1] = FLT_MIN; rc_bmin[0] = FLT_MIN;
     auto scene = game->scene();
     for (auto actor_it = scene->GetNextRootActors(scene->BeginActor()); actor_it != scene->EndActor(); ++actor_it) {
         auto actor = *actor_it;
@@ -27,17 +78,20 @@ void NavMesh::LoadStaticMeshes()
             auto meshComppnent = dynamic_cast<MeshComponent*>(component);
             if (meshComppnent != nullptr) {
                 auto mesh = meshComppnent->mesh();
-
+                if(mesh == nullptr || mesh->topology!= D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST )
+                    continue;
+                std::cout << actor->GetName()<<std::endl;
                 auto world_matrix = Matrix::CreateScale(meshComppnent->meshScale) * meshComppnent->GetWorldMatrix();
                 for (auto shape_i = 0; shape_i < mesh->shapeCount(); shape_i++)
                 {
 
                     auto shape = mesh->GetConstShape(shape_i);
                     auto transform = world_matrix /** camera_matrix*/;
-
+                    std::cout << " shape->vertecesSize =  " << shape->vertecesSize << '\n';
+                    std::cout << " shape->indecesSize =  " << shape->indecesSize << '\n';
                     StaticMeshesVert.resize(StaticMeshesVert.size() + shape->vertecesSize * 3);
                     StaticMeshesTris.resize(StaticMeshesTris.size() + shape->indecesSize);
-                    for (auto i = 0; i < shape->vertecesSize * 3; i++)
+                    for (auto i = 0; i < shape->vertecesSize; i++)
                     {
 
                         auto pos = shape->verteces[i].position;
@@ -47,30 +101,92 @@ void NavMesh::LoadStaticMeshes()
                         StaticMeshesVert[vertsIndex + 1] = NewPos.y;
                         StaticMeshesVert[vertsIndex + 2] = NewPos.z;
                         vertsIndex += 3;
-
-                        if (NewPos.x < rc_bmin[0]) rc_bmin[0] = NewPos.x;
-                        if (NewPos.y < rc_bmin[1]) rc_bmin[1] = NewPos.y;
-                        if (NewPos.z < rc_bmin[2]) rc_bmin[2] = NewPos.z;
-
-                        if (NewPos.x > rc_bmax[0]) rc_bmax[0] = NewPos.x;
-                        if (NewPos.y > rc_bmax[1]) rc_bmax[1] = NewPos.y;
-                        if (NewPos.z > rc_bmax[2]) rc_bmax[2] = NewPos.z;
-
-
                     }
 
                     for (size_t j = 0; j < shape->indecesSize; j++)
                     {
                         StaticMeshesTris[prevIndexCountTotal + j] = shape->indeces[j] + prevVerticiesCount;
                     }
-
+                    
                     prevIndexCountTotal += shape->indecesSize;
-                    prevVerticiesCount += shape->vertecesSize * 3;
+                    prevVerticiesCount += shape->vertecesSize;
+                    std::cout << "prevIndexCountTotal = " << prevIndexCountTotal<<'\n';
+                    std::cout << "prevVerticiesCount = " << prevVerticiesCount <<'\n';
                 }
             }
         }
     }
 
+}
+
+void NavMesh::DebugDrawPolyMesh()
+{
+    auto& mesh = *m_pmesh;
+    const int nvp = mesh.nvp;
+    const float cs = mesh.cs;
+    const float ch = mesh.ch;
+    const float* orig = mesh.bmin;
+    std::vector<Vector3> lines;
+
+    Vector4 color = { 1,1,1,1 };
+    DirectX::SimpleMath::Color coln = DirectX::SimpleMath::Color(0, 48 / 255.0f, 64 / 255.0f, 32 / 255.0f);
+    for (int i = 0; i < mesh.npolys; ++i)
+    {
+        const unsigned short* p = &mesh.polys[i * nvp * 2];
+        for (int j = 0; j < nvp; ++j)
+        {
+            if (p[j] == RC_MESH_NULL_IDX) break;
+            if (p[nvp + j] & 0x8000) continue;
+            const int nj = (j + 1 >= nvp || p[j + 1] == RC_MESH_NULL_IDX) ? 0 : j + 1;
+            const int vi[2] = { p[j], p[nj] };
+
+            DirectX::SimpleMath::Vector3 points[2];
+            for (int k = 0; k < 2; ++k) {
+                const unsigned short* v = &mesh.verts[vi[k] * 3];
+                const float x = orig[0] + v[0] * cs;
+                const float y = orig[1] + (v[1] + 1) * ch + 0.1f;
+                const float z = orig[2] + v[2] * cs;
+                points[k] = DirectX::SimpleMath::Vector3(x, y, z);
+            }
+            lines.emplace_back(points[0]);
+            lines.emplace_back(points[1]);
+        }
+    }
+
+    // Draw boundary edges
+    DirectX::SimpleMath::Color colb = DirectX::SimpleMath::Color(0.9f, 0.1f, 0.1f, 0.8f);
+    for (int i = 0; i < mesh.npolys; ++i)
+    {
+        const unsigned short* p = &mesh.polys[i * nvp * 2];
+        for (int j = 0; j < nvp; ++j)
+        {
+            if (p[j] == RC_MESH_NULL_IDX) break;
+            if ((p[nvp + j] & 0x8000) == 0) continue;
+            const int nj = (j + 1 >= nvp || p[j + 1] == RC_MESH_NULL_IDX) ? 0 : j + 1;
+            const int vi[2] = { p[j], p[nj] };
+
+            DirectX::SimpleMath::Color col = colb;
+            if ((p[nvp + j] & 0xf) != 0xf)
+                col = DirectX::SimpleMath::Color(1.0f, 1.0f, 1.0f, 0.5f);
+
+            DirectX::SimpleMath::Vector3 points[2];
+            for (int k = 0; k < 2; ++k)
+            {
+                const unsigned short* v = &mesh.verts[vi[k] * 3];
+                const float x = orig[0] + v[0] * cs;
+                const float y = orig[1] + (v[1] + 1) * ch + 0.1f;
+                const float z = orig[2] + v[2] * cs;
+                points[k] = DirectX::SimpleMath::Vector3(x, y, z);
+            }
+
+            lines.emplace_back(points[0]);
+            lines.emplace_back(points[1]);
+        }
+    }
+    auto actor = game->scene()->CreateActor("PathLine");
+    auto line = actor->AddComponent<LineComponent>();
+    line->ingnore_TempVisible = true;
+    line->SetVector(lines, color);
 }
 
 void NavMesh::RecastCleanup()
@@ -102,15 +218,20 @@ void NavMesh::RecastCleanup()
 
 void NavMesh::Configure()
 {
-    m_cellSize = 9.0;//0.3;
-    m_cellHeight = 6.0;//0.2;
+    if (m_ctx) {
+        delete m_ctx;
+        m_ctx = 0;
+    }
+    m_ctx = new rcContext(true);
+    m_cellSize = 0.3 * m_scale;//0.3;
+    m_cellHeight = 0.2 * m_scale;//0.2;
     m_agentMaxSlope = 45;
-    m_agentHeight = 64.0;
-    m_agentMaxClimb = 16;
-    m_agentRadius = 16;
-    m_edgeMaxLen = 512;
+    m_agentHeight = 0.2 * m_scale;
+    m_agentMaxClimb = 0.9 * m_scale;
+    m_agentRadius = 0.6 * m_scale;
+    m_edgeMaxLen = 12 * m_scale;
     m_edgeMaxError = 1.3;
-    m_regionMinSize = 50;
+    m_regionMinSize = 8 * m_scale;
     m_regionMergeSize = 20;
     m_vertsPerPoly = 6;
     m_detailSampleDist = 6;
@@ -131,31 +252,29 @@ void NavMesh::Configure()
     m_cfg.maxVertsPerPoly = (int)m_vertsPerPoly;
     m_cfg.detailSampleDist = m_detailSampleDist < 0.9f ? 0 : m_cellSize * m_detailSampleDist;
     m_cfg.detailSampleMaxError = m_cellHeight * m_detailSampleMaxError;
-
-
-
 }
 
 
 bool NavMesh::NavMeshBuild()
 {
-
-
-    m_ctx->resetTimers();
-    m_ctx->startTimer(RC_TIMER_TOTAL);
-
-
     LoadStaticMeshes();
-    Configure();
+    //auto t_actor = game->scene()->CreateActor("TestNavmeshActor");
+    //auto mesh_c = t_actor->AddComponent<MeshComponent>();
+    //std::vector<Mesh4::Vertex> vertex_buf;
+    //for(auto i = 0; i<StaticMeshesVert.size(); i+=3)
+    //{
+    //    auto& vert = vertex_buf.emplace_back();
+    //    vert.position = Vector4(Vector3(StaticMeshesVert[i], StaticMeshesVert[i + 1], StaticMeshesVert[i + 2]));
+    //    vert.color = Vector4(Vector3(1, 1, 1));
+    //}
+    //mesh_c->AddShape(&vertex_buf, &StaticMeshesTris,0);
 
-
-
+    rcCalcBounds(&StaticMeshesVert[0], StaticMeshesVert.size()/3, rc_bmin, rc_bmax);
     rcVcopy(m_cfg.bmin, rc_bmin);
     rcVcopy(m_cfg.bmax, rc_bmax);
     rcCalcGridSize(m_cfg.bmin, m_cfg.bmax, m_cfg.cs, &m_cfg.width, &m_cfg.height);
 
-    int nverts = StaticMeshesVert.size();
-    int ntris = StaticMeshesTris.size();
+    int ntris = StaticMeshesTris.size()/3;
 
 
     m_solid = rcAllocHeightfield();
@@ -173,13 +292,12 @@ bool NavMesh::NavMeshBuild()
     m_triareas = new unsigned char[ntris];
     if (!m_triareas)
     {
-
         return false;
     }
 
     memset(m_triareas, 0, ntris * sizeof(unsigned char));
-    rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), StaticMeshesTris.size(), m_triareas);
-    rcRasterizeTriangles(m_ctx, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), m_triareas, StaticMeshesTris.size(), *m_solid, m_cfg.walkableClimb);
+    rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), StaticMeshesTris.size()/3, m_triareas);
+    rcRasterizeTriangles(m_ctx, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), m_triareas, StaticMeshesTris.size()/3, *m_solid, m_cfg.walkableClimb);
 
     if (!m_keepInterResults)
     {
@@ -187,25 +305,14 @@ bool NavMesh::NavMeshBuild()
         m_triareas = 0;
     }
 
-
-
-
-
     rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.walkableClimb, *m_solid);
     rcFilterLedgeSpans(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
     rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
 
 
-
-
-
-
-
-
     m_chf = rcAllocCompactHeightfield();
     if (!m_chf)
     {
-
         return false;
     }
     if (!rcBuildCompactHeightfield(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid, *m_chf))
@@ -224,7 +331,7 @@ bool NavMesh::NavMeshBuild()
 
     if (!rcErodeWalkableArea(m_ctx, m_cfg.walkableRadius, *m_chf))
     {
-
+        m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not erode.");
         return false;
     }
 
@@ -240,12 +347,6 @@ bool NavMesh::NavMeshBuild()
 
         return false;
     }
-
-
-
-
-
-
 
     m_cset = rcAllocContourSet();
     if (!m_cset)
@@ -354,6 +455,26 @@ bool NavMesh::NavMeshBuild()
         params.ch = m_cfg.ch;
 
 
+  //      auto actor = game->scene()->CreateActor("Detail_PolyMesh");
+  //      auto mesh = actor->AddComponent<MeshComponent>();
+  //      std::vector<Mesh4::Vertex> vertex_buf;
+  //      std::vector<int> index_buf;
+		//for(auto i = 0; i<m_dmesh->nverts*3; i+=3)
+		//{
+		//    auto& vert = vertex_buf.emplace_back();
+		//    vert.position = Vector4(Vector3(m_dmesh->verts[i], m_dmesh->verts[i + 1], m_dmesh->verts[i + 2]));
+		//    vert.color = Vector4(Vector3(1, 1, 1));
+		//}
+  //      for(auto i = 0; i<m_dmesh->ntris*4; i+=4)
+  //      {
+  //          char a[4];
+  //          a[0] = m_dmesh->tris[i];
+  //          a[1] = m_dmesh->tris[i+1];
+  //          a[2] = m_dmesh->tris[i+2];
+  //          a[3] = m_dmesh->tris[i+3];
+  //          index_buf.emplace_back(*((int*)a));
+  //      }
+  //      mesh->AddShape(&vertex_buf, &index_buf, 0);
 
 
         if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
@@ -397,17 +518,27 @@ bool NavMesh::NavMeshBuild()
         }
 
     }
-
+    DebugDrawPolyMesh();
     m_ctx->stopTimer(RC_TIMER_TOTAL);
 
     return true;
 
 }
 
+int NavMesh::FindPath(Vector3 pStartpos, Vector3 pEndPos, int npathSlot, int nTarget)
+{
+    float start[3];
+    float end[3];
+    start[0] = pStartpos.x; start[1] = pStartpos.y; start[2] = pStartpos.z;
+    end[0] = pEndPos.x; end[1] = pEndPos.y; end[2] = pEndPos.z;
+    return FindPath(start, end, npathSlot, nTarget);
+}
+
 
 int NavMesh::FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarget)
 {
     dtStatus status;
+    float pExtents[3] = { 1.0f, 2.0f, 1.0f }; // size of box around start/end points to look for nav polygons
     dtPolyRef StartPoly;
     float StartNearest[3];
     dtPolyRef EndPoly;
@@ -418,15 +549,21 @@ int NavMesh::FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarg
     int nVertCount = 0;
 
 
+    // setup the filter
+    dtQueryFilter Filter;
+    Filter.setIncludeFlags(0xFFFF);
+    Filter.setExcludeFlags(0);
+    Filter.setAreaCost(SAMPLE_POLYAREA_GROUND, 1.0f);
+
     // find the start polygon
-    status = m_navQuery->findNearestPoly(pStartPos, mExtents, mFilter, &StartPoly, StartNearest);
+    status = m_navQuery->findNearestPoly(pStartPos, mExtents, &Filter, &StartPoly, StartNearest);
     if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -1; // couldn't find a polygon
 
     // find the end polygon
-    status = m_navQuery->findNearestPoly(pEndPos, mExtents, mFilter, &EndPoly, EndNearest);
+    status = m_navQuery->findNearestPoly(pEndPos, mExtents, &Filter, &EndPoly, EndNearest);
     if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -2; // couldn't find a polygon
 
-    status = m_navQuery->findPath(StartPoly, EndPoly, StartNearest, EndNearest, mFilter, PolyPath, &nPathCount, MAX_POLYGONS);
+    status = m_navQuery->findPath(StartPoly, EndPoly, StartNearest, EndNearest, &Filter, PolyPath, &nPathCount, MAX_POLYGONS);
     if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -3; // couldn't create a path
     if (nPathCount == 0) return -4; // couldn't find a path
 
@@ -434,6 +571,7 @@ int NavMesh::FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarg
     if ((status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK)) return -5; // couldn't create a path
     if (nVertCount == 0) return -6; // couldn't find a path
 
+    // At this point we have our path.  Copy it to the path store
     int nIndex = 0;
     for (int nVert = 0; nVert < nVertCount; nVert++)
     {
@@ -441,6 +579,8 @@ int NavMesh::FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarg
         m_PathStore[nPathSlot].pY[nVert] = StraightPath[nIndex++];
         m_PathStore[nPathSlot].pZ[nVert] = StraightPath[nIndex++];
 
+        //sprintf(m_chBug, "Path Vert %i, %f %f %f", nVert, m_PathStore[nPathSlot].PosX[nVert], m_PathStore[nPathSlot].PosY[nVert], m_PathStore[nPathSlot].PosZ[nVert]) ;
+        //m_pLog->logMessage(m_chBug);
     }
     m_PathStore[nPathSlot].MaxVertex = nVertCount;
     m_PathStore[nPathSlot].Target = nTarget;
@@ -461,6 +601,9 @@ std::vector<Vector3>NavMesh::GetPath(int pathSlot)
     for (int i = 0; i < path->MaxVertex; i++) {
         result.push_back(Vector3(path->pX[i], path->pY[i], path->pZ[i]));
     }
-
+    auto actor = game->scene()->CreateActor("PathLine");
+    auto line = actor->AddComponent<LineComponent>();
+    Vector4 color(1, 1, 1, 1);
+    line->SetVector(result,color);
     return result;
 }

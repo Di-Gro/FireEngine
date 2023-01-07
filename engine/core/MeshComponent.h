@@ -34,7 +34,8 @@ class MeshComponent : public Component, public IShadowCaster {
 public:
 	bool isDebug = false;
 	bool visible = true;
-
+	static bool TempVisible;
+	bool ingnore_TempVisible = false;
 	Vector3 meshScale = Vector3::One;
 
 private:
