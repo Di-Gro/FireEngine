@@ -3,6 +3,7 @@
 #include "../SimpleMath.h"
 #include "../imgui/imgui.h"
 #include "../CSBridge.h"
+#include "../Actor.h"
 
 #include "ComponentPicker.h"
 #include "AssetPickerPopup.h"
@@ -15,6 +16,19 @@ class Component;
 class UI_Inspector
 {
 public:
+
+	void Draw_UI_Inspector();
+	void Init(Game* game, UserInterface* ui);
+
+	void DrawActorTransform();
+	void DrawActorComponents();
+
+	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
+
+	bool ShowVector3(Vector3* vec3, const std::string& title);
+	void AddComponent();
+
+	Actor* GetDroppedActor();
 	static char textBuffer[1024];
 	float widthComponent = 0;
 	CsRef csRef;
@@ -26,14 +40,14 @@ private:
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick
 		| ImGuiTreeNodeFlags_Framed
 		;
-	
+
 	ImGuiTreeNodeFlags collapsingHeaderFlags = 0
-		| ImGuiTreeNodeFlags_DefaultOpen 
+		| ImGuiTreeNodeFlags_DefaultOpen
 		| ImGuiTreeNodeFlags_Framed
 		;
 
 	Game* _game;
-	UserInterface* _ui;
+	UserInterface* m_ui;
 	bool isLocal = false;
 
 	ImVec2 m_compSpacing = { 0, 8 };
@@ -61,12 +75,12 @@ public:
 	const std::string& RequestComponentName(Component* component);
 
 	void SetComponentName(const std::string& value) { m_componentName = value; }
-	const std::string& GetComponentName() { return m_componentName; }	
+	const std::string& GetComponentName() { return m_componentName; }
 
 	bool CollapsingHeader(Component* component, const std::string& name);
 
 	Component* AcceptDroppedComponent(int scriptIdHash);
-	
+
 private:
 	void m_DrawHeader();
 	void m_DrawComponents();
@@ -74,6 +88,8 @@ private:
 	void m_DrawTransformContent();
 	void m_DrawComponentContent();
 	void m_DrawAddComponent();
+
+	void m_DrawComponentContextMenu(Component* component);
 
 };
 

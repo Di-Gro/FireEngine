@@ -60,6 +60,8 @@ public:
 	const std::string& name() { return m_name; }
 	void name(const std::string& value) { m_name = value; }
 
+	void MoveChild(Actor* from, Actor* v_to, bool isPastBefore);
+
 	template<typename TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
 	static TComponent* inner_CreateComponent(CsRef csRef = CsRef::Void);
 
@@ -169,7 +171,7 @@ PROP_GET(Actor, Vector3, up)
 PROP_GET(Actor, Vector3, right)
 
 
-#pragma warning( pop ) 
+#pragma warning( pop )
 
 #include "Actor.inl"
 #include "ActorBase.inl"

@@ -31,7 +31,7 @@ void Scene::Start() {
 
 	linedPlain = CreateActor("Lined Plain")->AddComponent<LinedPlain>();
 	linedPlain->localPosition({ 0, -5, 0 });
-	
+
 	editorCamera = CreateActor("Editor Camera")->AddComponent<EditorCamera>();
 	editorCamera->localPosition({ 350, 403, -20 });
 	editorCamera->localRotation({ -0.803, 1.781, 0 });
@@ -50,7 +50,7 @@ void Scene::m_InitMono() {
 	mono_create = mono::make_method_invoker<CppRef()>(type_Actor, "cpp_Create");
 }
 
-void Scene::mainCamera(CameraComponent* camera) { 
+void Scene::mainCamera(CameraComponent* camera) {
 	m_mainCamera = camera;
 	if (m_mainCamera == nullptr)
 		m_mainCamera = editorCamera;
@@ -60,11 +60,11 @@ void Scene::f_Update() {
 	m_game->PushScene(this);
 
 	if (!m_isStarted)
-		throw std::exception("Scene not started"); // Забыли вызвать scene.Start()
+		throw std::exception("Scene not started"); // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ scene.Start()
 
 	m_Update(&m_staticActors);
 	m_Update(&m_actors);
-	
+
 	m_game->PopScene();
 }
 
@@ -103,11 +103,11 @@ void Scene::m_Destroy(std::list<Actor*>* list) {
 }
 
 void Scene::f_RemoveActor(Actor* actor) {
-	//TODO: Ундалить актор из списка без разрушения
+	//TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 }
 
 void Scene::f_AddActor(Actor* actor) {
-	//TODO: Добавить уже существующий актор
+	//TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 }
 
 Actor* Scene::CreateActor(Actor* parent, std::string name) {
@@ -192,7 +192,7 @@ void Scene::RemoveCamera(CameraIter iter) {
 }
 
 std::list<Actor*>::iterator Scene::GetNextRootActors(const std::list<Actor*>::iterator& iter) {
-	
+
 	for (auto it = iter; it != m_actors.end(); ++it) {
 		auto actor = *it;
 		if (!actor->IsDestroyed() && !actor->HasParent())
@@ -261,6 +261,46 @@ void Scene::Stat() {
 	std::cout << "+ csComponents: " << csComponents << std::endl;
 	std::cout << "+ cppComponents: " << cppComponents << std::endl;
 	std::cout << "+ <- " << std::endl;
+}
+
+void Scene::MoveActor(Actor* from, Actor* to, bool isPastBefore)
+{
+	bool isFrom = false;
+	bool isTo = false;
+
+	std::list<Actor*>::iterator newIt = m_actors.end();
+
+	// Throw Exception
+	auto it = m_actors.begin();
+	while (it != m_actors.end())
+	{
+		if (*it == from)
+		{
+			auto iter = m_actors.erase(it);
+			it = iter;
+			isFrom = true;
+			continue;
+		}
+
+		if (*it == to)
+		{
+			newIt = it;
+			isTo = true;
+		}
+
+		if (isFrom && isTo)
+			break;
+
+		it++;
+	}
+
+	if (newIt == m_actors.end())
+		return;
+
+	if(isPastBefore)
+		m_actors.insert(newIt, from);
+	else
+		m_actors.insert(++newIt, from);
 }
 
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef sceneRef, CsRef csRef, CppRef parentRef) {

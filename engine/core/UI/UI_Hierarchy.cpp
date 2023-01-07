@@ -11,7 +11,8 @@
 #include "../LinedPlain.h"
 
 void UI_Hierarchy::Draw_UI_Hierarchy() {
-	int counter = 0;
+	m_isMouseReleaseOnDragActor = false;
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	if (ImGui::Begin("Hierarchy")) {
@@ -22,17 +23,18 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 			m_DrawSceneContextMenu();
 			auto it = scene->GetNextRootActors(scene->BeginActor());
 			for (; it != scene->EndActor(); it = scene->GetNextRootActors(++it))
-			{
-				VisitActor(*it, counter);
-				counter++;
-			}
+				VisitActor(*it, -1, it);
+
+			if (m_isMouseReleaseOnDragActor && m_dragTargetActor != nullptr)
+				m_dragTargetActor = nullptr;
+
+			ImGui::Dummy({ 0, 200.0f });
 
 			_game->PopScene();
 		}
 	}
 	ImGui::End();
 	ImGui::PopStyleVar();
-
 }
 
 void UI_Hierarchy::m_PushPopupStyles() {
@@ -63,7 +65,7 @@ void UI_Hierarchy::m_DrawSceneContextMenu() {
 			auto actor = _game->currentScene()->CreateActor();
 		}
 
-		bool canAddLight = 
+		bool canAddLight =
 				_game->currentScene()->directionLight == nullptr
 			||	_game->currentScene()->ambientLight == nullptr;
 
@@ -109,79 +111,187 @@ void UI_Hierarchy::m_DrawActorContextMenu(Actor* actor) {
 
 void UI_Hierarchy::Init(Game* game)
 {
-	_game = game;
-	_ui = _game->ui();
+	m_game = game;
+	m_ui = m_game->ui();
+
+	m_InitIcons();
 }
 
-void UI_Hierarchy::VisitActor(Actor* actor, int counter)
+void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterator rootIter)
 {
-	ImGuiTreeNodeFlags node_flags = (actor == _ui->GetActor() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_FramePadding;
-	float treeNodeHeight = 3.0f;
-	static bool test_drag_and_drop = false;
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 4.5f));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+	ImGuiTreeNodeFlags node_flags = (actor == m_ui->GetActor() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick
+		| ImGuiTreeNodeFlags_SpanFullWidth
+		| ImGuiTreeNodeFlags_FramePadding;
+
+	bool isChild = actor->GetChildrenCount() == 0;
+
+	if (isChild)
+		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+	float mouseHeight = ImGui::GetMousePos().y;
+	float cursorHeight = ImGui::GetCursorScreenPos().y;
+	float mousePosY = mouseHeight - cursorHeight;
 
 	std::string actorId = std::to_string(actor->Id());
 	auto treeNodeId = actor->name() + "##" + actorId + "SceneTreeNodeEx";
 
-	if (actor->GetChildrenCount() > 0)
+	auto currentCursor = ImGui::GetCursorPos();
+	bool selectedTree = ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);
+	auto imGuiItemSize = ImGui::GetItemRectSize();
+
+	float height = mousePosY / (ImGui::GetFrameHeight() - 1);
+
+	m_DrawActorContextMenu(actor);
+
+	HandleDrag(actor);
+	HandleDrop(actor, selectedTree, height, imGuiItemSize, currentCursor);
+
+	ImGui::PopStyleVar(2);
+
+	if (ImGui::IsItemClicked())
+		m_ui->SelectedActor(actor);
+
+	if (selectedTree)
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, treeNodeHeight));
-		bool selectedTree = ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);
-		ImGui::PopStyleVar();
+		for (int i = 0; i < actor->GetChildrenCount(); ++i)
+			VisitActor(actor->GetChild(i), i, rootIter);
 
-		m_DrawActorContextMenu(actor);
-		
-		if (ImGui::IsItemClicked())
+		if(!isChild)
+			ImGui::TreePop();
+	}
+}
+
+void UI_Hierarchy::HandleDrag(Actor* actor)
+{
+	if (ImGui::BeginDragDropSource())
+	{
+		if (m_dragTargetActor == nullptr)
 		{
-			_ui->SelectedActor(actor);
-			//_ui->SetActorActive();
-			test_drag_and_drop = true;
+			std::cout << "Begin Drag" << std::endl;
+			m_dragTargetActor = actor;
+			ImGui::SetDragDropPayload("hierarchy", actor, sizeof(actor));
+		}
+		ImGui::EndDragDropSource();
+	}
+}
+
+void UI_Hierarchy::HandleDrop(Actor* actor, bool selectedTree, float height, ImVec2 size, ImVec2 cursor)
+{
+	if (ImGui::BeginDragDropTarget())
+	{
+		bool isUpSide = height <= 0.25;
+		bool isBottomSide = height >= 0.75;
+		bool isCenter = !isUpSide && !isBottomSide;
+
+		if (isCenter)
+		{
+			auto getP = ImGui::GetDragDropPayload();
+			ImGui::AcceptDragDropPayload("hierarchy");
+		}
+		else
+			m_DrawItemSeparator(&m_moveSeparatorRes, isUpSide, size, cursor);
+
+		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && m_dragTargetActor != nullptr)
+		{
+			std::cout << "Drop" << std::endl;
+			HandeDragDrop(m_dragTargetActor, actor, selectedTree, height);
+			m_dragTargetActor = nullptr;
+			std::cout << "End Drag" << std::endl;
 		}
 
-		if (test_drag_and_drop && ImGui::BeginDragDropSource())
-		{
-			ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
-			ImGui::Text("This is a drag and drop source");
-			ImGui::EndDragDropSource();
-		}
+		ImGui::EndDragDropTarget();
+	}
+	else if(actor == m_dragTargetActor && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+	{
+		m_isMouseReleaseOnDragActor = true;
+	}
+}
 
-		if (selectedTree)
+void UI_Hierarchy::HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, float height)
+{
+	if (drop == nullptr || drag == nullptr)
+		return;
+
+	if (m_FindTargetInActorParent(drop, drag))
+		return;
+
+	bool isUpSide = height <= 0.25;
+	bool isBottomSide = height >= 0.75;
+	bool isCenter = !isUpSide && !isBottomSide;
+
+	bool hasChildren = drop->GetChildrenCount() > 0;
+	bool needInsertInOpen = hasChildren && isDropOpen && isBottomSide;
+
+	bool isMove = drag->parent() == drop->parent() && !needInsertInOpen;
+	bool isInsert = !isMove || isCenter;
+
+	if (isInsert)
+	{
+		if (isCenter)
 		{
-			for (int i = 0; i < actor->GetChildrenCount(); ++i)
+			drag->parent(drop);
+			std::cout << "CENTER" << std::endl;
+		}
+		else
+		{
+			if (needInsertInOpen)
 			{
-				VisitActor(actor->GetChild(i), counter);
+				drag->parent(drop);
+				drop->MoveChild(drag, drop->GetChild(0), true);
+				return;
 			}
 
-			ImGui::TreePop();
+			if (drag->parent() != drop->parent())
+				drag->parent(drop->parent());
+
+			isMove = true;
+			isInsert = false;
 		}
 	}
-	else
+
+	if (isMove && !isInsert)
 	{
-		ImGui::Indent();
-
-		auto name = actor->name();
-		if (name == "") 
-			name = "Empty";
-
-		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, treeNodeHeight));
-		ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);
-		ImGui::PopStyleVar();
-
-		m_DrawActorContextMenu(actor);
-
-		if (ImGui::IsItemClicked() && ImGui::IsItemActivated())
-		{
-			_ui->SelectedActor(actor);
-			test_drag_and_drop = true;
-		}
-
-		if (test_drag_and_drop && ImGui::BeginDragDropSource())
-		{
-			ImGui::SetDragDropPayload("_TREENODE", NULL, 0);
-			ImGui::Text("This is a drag and drop source");
-			ImGui::EndDragDropSource();
-		}
-		ImGui::Unindent();
+		if(!drop->HasParent())
+			m_ui->selectedScene()->MoveActor(drag, drop, isUpSide);
+		else
+			drop->parent()->MoveChild(drag, drop, isUpSide);
 	}
+}
+
+bool UI_Hierarchy::m_FindTargetInActorParent(Actor* actor, Actor* target)
+{
+	auto parent = actor;
+
+	while (parent != nullptr)
+	{
+		if (parent == target)
+			return true;
+		parent = parent->parent();
+	}
+	return false;
+}
+
+void UI_Hierarchy::m_InitIcons() {
+	m_game->imageAsset()->InitImage(&m_icMoveSeparator, "../../data/engine/icons/ic_separator.png");
+	m_moveSeparatorTex = Texture::CreateFromImage(m_game->render(), &m_icMoveSeparator);
+	m_moveSeparatorRes = ShaderResource::Create(&m_moveSeparatorTex);
+}
+
+void UI_Hierarchy::m_DrawItemSeparator(ShaderResource* icon, bool isBeforeItem, ImVec2 size, ImVec2 cursor)
+{
+	auto tmpCursor = ImGui::GetCursorPos();
+	//cursor.y -= 1.5f;
+	ImGui::SetCursorPos(cursor);
+
+	ImVec4 color{ 0.11f, 0.64f, 0.92f, 1.00f };
+
+	if (isBeforeItem)
+		ImGui::Image(icon->get(), size, { 1, 1 }, { 0, 0 }, color);
+	else
+		ImGui::Image(icon->get(), size, { 0, 0 }, { 1, 1 }, color);
+
+	ImGui::SetCursorPos(tmpCursor);
 }

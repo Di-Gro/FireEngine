@@ -45,7 +45,7 @@ private: // friend
 
 private:
 	Game* m_game;
-	
+
 	std::list<Actor*> m_actors;
 	std::list<Actor*> m_staticActors;
 	std::list<CameraComponent*> m_cameras;
@@ -60,6 +60,8 @@ public:
 	void Start();
 
 	inline bool isEditor() { return m_isEditor; }
+
+	void MoveActor(Actor* from, Actor* to, bool isPastBefore);
 
 	Actor* CreateActor(std::string name = "") { return CreateActor(nullptr, name); }
 	Actor* CreateActor(Actor* parent, std::string name = "");
