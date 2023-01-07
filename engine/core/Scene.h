@@ -28,6 +28,7 @@ private:
 
 public:
 	void Init(Game* game);
+	void MoveActor(Actor* from, Actor* to, bool isPastBefore);
 
 	Actor* CreateActor(std::string name = "") { return CreateActor(nullptr, name); }
 	Actor* CreateActor(Actor* parent, std::string name = "");

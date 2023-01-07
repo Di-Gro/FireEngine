@@ -3,6 +3,7 @@
 #include "../SimpleMath.h"
 #include "../imgui/imgui.h"
 #include "../CSBridge.h"
+#include "../Actor.h"
 
 class Game;
 class UserInterface;
@@ -20,7 +21,8 @@ public:
 
 	bool ShowVector3(Vector3* vec3, const std::string& title);
 	void AddComponent();
-	void SearchComponent(char* searchText);
+
+	Actor* GetDroppedActor();
 
 	static char textBuffer[1024];
 
@@ -35,11 +37,10 @@ private:
 		| ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick
 		| ImGuiTreeNodeFlags_Framed
-		//| ImGuiTreeNodeFlags_SpanFullWidth
 		;
 
 	Game* _game;
-	UserInterface* _ui;
+	UserInterface* m_ui;
 	bool isLocal = false;
 
 	ImVec2 m_compSpacing = { 0, 8 };
@@ -49,6 +50,7 @@ private:
 	void DrawComponent();
 	void m_DrawHeader();
 	void m_DrawItem(void(UI_Inspector::*func)());
+	void m_DrawComponentContextMenu(Component* component);
 };
 
 FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr);

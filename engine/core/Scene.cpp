@@ -151,6 +151,46 @@ void Scene::WriteRootActorsRefs(CsRef* refs) {
 	}
 }
 
+void Scene::MoveActor(Actor* from, Actor* to, bool isPastBefore)
+{
+	bool isFrom = false;
+	bool isTo = false;
+	
+	std::list<Actor*>::iterator newIt = m_actors.end();
+
+	// Throw Exception
+	auto it = m_actors.begin();
+	while (it != m_actors.end())
+	{
+		if (*it == from)
+		{
+			auto iter = m_actors.erase(it);
+			it = iter;
+			isFrom = true;
+			continue;
+		}
+		
+		if (*it == to)
+		{
+			newIt = it;
+			isTo = true;
+		}
+	
+		if (isFrom && isTo)
+			break;
+
+		it++;
+	}
+	
+	if (newIt == m_actors.end())
+		return;
+
+	if(isPastBefore)
+		m_actors.insert(newIt, from);
+	else
+		m_actors.insert(++newIt, from);
+}
+
 
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef sceneRef, CsRef csRef, CppRef parentRef) {
 	return CppRefs::ThrowPointer<Scene>(sceneRef)->m_CreateActorFromCs(csRef, parentRef);

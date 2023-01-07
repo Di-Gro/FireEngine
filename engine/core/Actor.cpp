@@ -33,6 +33,41 @@ void Actor::m_CreateTransform() {
 //void Actor::m_RemoveTransform() {
 //}
 
+void Actor::MoveChild(Actor* from, Actor* to, bool isPastBefore)
+{
+	bool isFrom = false;
+	bool isTo = false;
+
+	int newIndex = 0;
+
+	std::vector<Actor*>::iterator newIt = m_childs.end();
+
+	for (int i = 0; i < m_childs.size(); ++i)
+	{
+		if (m_childs[i] == from)
+		{
+			m_childs.erase(m_childs.begin() + i);
+			isFrom = true;
+			--i;
+			continue;
+		}
+
+		if (m_childs[i] == to)
+		{
+			newIndex = i;
+			isTo = true;
+		}
+
+		if (isFrom && isTo)
+			break;
+	}
+
+	if (isPastBefore)
+		m_childs.insert(m_childs.begin() + newIndex, from);
+	else
+		m_childs.insert(m_childs.begin() + (newIndex + 1), from);
+}
+
 void Actor::f_Init(Game* game, Scene* scene) {
 	f_game = game;
 	f_scene = scene;
@@ -148,7 +183,7 @@ void Actor::f_DestroyComponent(Component* component) {
 }
 
 void Actor::f_SetParent(Actor* actor) {
-	if (this->f_scene != actor->f_scene)
+	if (actor != nullptr && this->f_scene != actor->f_scene)
 		throw std::exception("actor.scene != parent.scene");
 
 	if (f_parent == actor)
@@ -157,7 +192,7 @@ void Actor::f_SetParent(Actor* actor) {
 	transform->friend_ChangeParent(actor);
 	m_DeleteFromParent();
 	f_parent = actor;
-
+	
 	if (f_parent != nullptr)
 		f_parent->m_childs.push_back(this);
 }

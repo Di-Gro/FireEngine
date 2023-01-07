@@ -55,6 +55,10 @@ private:
 public:
 
 	unsigned int Id() { return f_actorID; }
+	void MoveChild(Actor* from, Actor* v_to, bool isPastBefore); // Added
+
+	std::vector<Actor*>::iterator Begin() { return m_childs.begin(); }
+	std::vector<Actor*>::iterator End() { return m_childs.end(); }
 
 	void SetName(const std::string& value);
 	const std::string& GetName() { return name; }
