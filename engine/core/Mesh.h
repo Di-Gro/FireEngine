@@ -80,7 +80,7 @@ private:
 
 		int vertecesSize = 0;
 		int indecesSize = 0;
-
+		DirectX::BoundingBox b_box;
 		comptr<ID3D11Buffer> vertexBuffer;
 		comptr<ID3D11Buffer> indexBuffer;
 		comptr<ID3D11Buffer> meshCBuffer;

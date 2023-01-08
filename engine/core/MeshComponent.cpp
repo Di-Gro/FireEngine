@@ -134,7 +134,7 @@ void MeshComponent::AddShape(
 	size_t materialIndex) 
 {
 	m_InitDynamic();
-
+	
 	m_dynamicMesh->AddShape(verteces, indeces, m_render, materialIndex);
 
 	m_FillByDefaultMaterial(m_dynamicMesh->maxMaterialIndex() + 1);

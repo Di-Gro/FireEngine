@@ -10,10 +10,13 @@
 #include "Scene.h"
 #include "DetourTileCacheBuilder.h"
 #include "MeshAsset.h"
+#include "DirectXCollision.h"
+
+
 
 NavMesh::NavMesh(Game* game) :game(game)
 {
-    m_triareas = NULL;
+    
     m_solid = NULL;
     m_chf = NULL;
     m_cset = NULL;
@@ -67,6 +70,15 @@ void NavMesh::LoadStaticMeshes()
     uint64_t vertsIndex = 0;
     uint64_t prevVerticiesCount = 0;
     uint64_t prevIndexCountTotal = 0;
+    auto test_navmesh = game->scene()->CreateActor("nav_test");
+    auto mesh = test_navmesh->AddComponent<MeshComponent>();
+    auto mesh_asset = game->meshAsset()->GetMesh("C:/Alex/Repositories/cube.obj");
+    mesh->mesh(mesh_asset);
+
+    mesh->localScale({ m_scale*3,m_scale*3,m_scale*3 });
+
+    mesh->ingnore_TempVisible = true;
+
 
     auto scene = game->scene();
     for (auto actor_it = scene->GetNextRootActors(scene->BeginActor()); actor_it != scene->EndActor(); ++actor_it) {
@@ -78,14 +90,17 @@ void NavMesh::LoadStaticMeshes()
             auto meshComppnent = dynamic_cast<MeshComponent*>(component);
             if (meshComppnent != nullptr) {
                 auto mesh = meshComppnent->mesh();
-                if(mesh == nullptr || mesh->topology!= D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST )
+                if(mesh == nullptr || mesh->topology!= D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
                     continue;
                 std::cout << actor->GetName()<<std::endl;
                 auto world_matrix = Matrix::CreateScale(meshComppnent->meshScale) * meshComppnent->GetWorldMatrix();
                 for (auto shape_i = 0; shape_i < mesh->shapeCount(); shape_i++)
                 {
-
+                   
                     auto shape = mesh->GetConstShape(shape_i);
+
+
+
                     auto transform = world_matrix /** camera_matrix*/;
                     std::cout << " shape->vertecesSize =  " << shape->vertecesSize << '\n';
                     std::cout << " shape->indecesSize =  " << shape->indecesSize << '\n';
@@ -117,6 +132,8 @@ void NavMesh::LoadStaticMeshes()
         }
     }
 
+
+
 }
 
 void NavMesh::DebugDrawPolyMesh()
@@ -128,7 +145,7 @@ void NavMesh::DebugDrawPolyMesh()
     const float* orig = mesh.bmin;
     std::vector<Vector3> lines;
 
-    Vector4 color = { 1,1,1,1 };
+    Vector4 color = { 0.5,0.5,0.5,1 };
     DirectX::SimpleMath::Color coln = DirectX::SimpleMath::Color(0, 48 / 255.0f, 64 / 255.0f, 32 / 255.0f);
     for (int i = 0; i < mesh.npolys; ++i)
     {
@@ -144,7 +161,7 @@ void NavMesh::DebugDrawPolyMesh()
             for (int k = 0; k < 2; ++k) {
                 const unsigned short* v = &mesh.verts[vi[k] * 3];
                 const float x = orig[0] + v[0] * cs;
-                const float y = orig[1] + (v[1] + 1) * ch + 0.1f;
+                const float y = orig[1] + (v[1] + 1) * ch + 2.f*m_scale*3;
                 const float z = orig[2] + v[2] * cs;
                 points[k] = DirectX::SimpleMath::Vector3(x, y, z);
             }
@@ -174,7 +191,7 @@ void NavMesh::DebugDrawPolyMesh()
             {
                 const unsigned short* v = &mesh.verts[vi[k] * 3];
                 const float x = orig[0] + v[0] * cs;
-                const float y = orig[1] + (v[1] + 1) * ch + 0.1f;
+                const float y = orig[1] + (v[1] + 1) * ch + 2.f*m_scale*3;
                 const float z = orig[2] + v[2] * cs;
                 points[k] = DirectX::SimpleMath::Vector3(x, y, z);
             }
@@ -187,12 +204,13 @@ void NavMesh::DebugDrawPolyMesh()
     auto line = actor->AddComponent<LineComponent>();
     line->ingnore_TempVisible = true;
     line->SetVector(lines, color);
+
 }
 
 void NavMesh::RecastCleanup()
 {
-    if (m_triareas) delete[] m_triareas;
-    m_triareas = 0;
+    if (m_triareas.data()) m_triareas.clear();
+    
 
     rcFreeHeightField(m_solid);
     m_solid = 0;
@@ -289,20 +307,20 @@ bool NavMesh::NavMeshBuild()
         return false;
     }
 
-    m_triareas = new unsigned char[ntris];
-    if (!m_triareas)
+    m_triareas.resize(ntris);
+    if (!m_triareas.data())
     {
         return false;
     }
 
-    memset(m_triareas, 0, ntris * sizeof(unsigned char));
-    rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), StaticMeshesTris.size()/3, m_triareas);
-    rcRasterizeTriangles(m_ctx, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), m_triareas, StaticMeshesTris.size()/3, *m_solid, m_cfg.walkableClimb);
+    memset(m_triareas.data(), 0, ntris * sizeof(unsigned char));
+    rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), StaticMeshesTris.size()/3, m_triareas.data());
+    rcRasterizeTriangles(m_ctx, StaticMeshesVert.data(), StaticMeshesVert.size(), StaticMeshesTris.data(), m_triareas.data(), StaticMeshesTris.size()/3, *m_solid, m_cfg.walkableClimb);
 
     if (!m_keepInterResults)
     {
-        delete[] m_triareas;
-        m_triareas = 0;
+         m_triareas.clear();
+       
     }
 
     rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.walkableClimb, *m_solid);
@@ -453,29 +471,6 @@ bool NavMesh::NavMeshBuild()
         rcVcopy(params.bmax, m_pmesh->bmax);
         params.cs = m_cfg.cs;
         params.ch = m_cfg.ch;
-
-
-  //      auto actor = game->scene()->CreateActor("Detail_PolyMesh");
-  //      auto mesh = actor->AddComponent<MeshComponent>();
-  //      std::vector<Mesh4::Vertex> vertex_buf;
-  //      std::vector<int> index_buf;
-		//for(auto i = 0; i<m_dmesh->nverts*3; i+=3)
-		//{
-		//    auto& vert = vertex_buf.emplace_back();
-		//    vert.position = Vector4(Vector3(m_dmesh->verts[i], m_dmesh->verts[i + 1], m_dmesh->verts[i + 2]));
-		//    vert.color = Vector4(Vector3(1, 1, 1));
-		//}
-  //      for(auto i = 0; i<m_dmesh->ntris*4; i+=4)
-  //      {
-  //          char a[4];
-  //          a[0] = m_dmesh->tris[i];
-  //          a[1] = m_dmesh->tris[i+1];
-  //          a[2] = m_dmesh->tris[i+2];
-  //          a[3] = m_dmesh->tris[i+3];
-  //          index_buf.emplace_back(*((int*)a));
-  //      }
-  //      mesh->AddShape(&vertex_buf, &index_buf, 0);
-
 
         if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
         {

@@ -147,6 +147,10 @@ void Mesh4::m_InitShape(Mesh4::Shape& shape) {
 
 	auto device = m_render->device();
 
+
+	auto vert_float3 = (DirectX::XMFLOAT3*)&shape.verteces->position;
+	DirectX::BoundingBox::CreateFromPoints(shape.b_box, shape.vertecesSize, vert_float3, sizeof(Mesh4::Vertex));
+
 	m_render->device()->CreateBuffer(&vertexBufferDesc, &vertexData, shape.vertexBuffer.GetAddressOf());
 	m_render->device()->CreateBuffer(&indexBufferDesc, &indexData, shape.indexBuffer.GetAddressOf());
 	m_render->device()->CreateBuffer(&constBufferDesc, nullptr, shape.meshCBuffer.GetAddressOf());

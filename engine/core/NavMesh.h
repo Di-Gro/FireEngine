@@ -71,7 +71,7 @@ public:
 	void DebugDrawPolyMesh();
 protected:
 
-	unsigned char* m_triareas;
+	std::vector<unsigned char> m_triareas;
 	rcHeightfield* m_solid;
 	rcCompactHeightfield* m_chf;
 	rcContourSet* m_cset;
