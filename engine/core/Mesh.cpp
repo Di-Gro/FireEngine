@@ -184,6 +184,7 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	cbuf->wvpMatrix = *data.transfMatrix;
 	cbuf->worldMatrix = *data.worldMatrix;
 	cbuf->cameraPosition = *data.cameraPosition;
+	//cbuf->absLocalMatrix = *data.absLocalMatrix;
 
 	context->Unmap(shape.meshCBuffer.Get(), 0);
 

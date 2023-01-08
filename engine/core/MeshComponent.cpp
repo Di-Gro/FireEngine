@@ -337,14 +337,18 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 
 	auto camera = m_render->renderer()->camera();
 	auto cameraPosition = camera->worldPosition();
-	auto worldMatrix = Matrix::CreateScale(meshScale * scale) * GetWorldMatrix();
+	auto worldMatrix = GetWorldMatrix();
+		 worldMatrix = Matrix::CreateScale(meshScale * scale) * worldMatrix;
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
+	//auto lscale = localScale();
 
 	Mesh4::DynamicShapeData data;
 	data.render = m_render;
 	data.worldMatrix = &worldMatrix;
 	data.transfMatrix = &transMatrix;
 	data.cameraPosition = &cameraPosition;
+
+	//data.absLocalMatrix = (Matrix*)&lscale;
 
 	for (int i = 0; i < m_mesh->shapeCount(); i++){
 		if (renderPass != nullptr) {
@@ -370,14 +374,18 @@ void MeshComponent::OnDrawShape(int index) {
 
 	auto camera = m_render->renderer()->camera();
 	auto cameraPosition = camera->worldPosition();
-	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();
+	auto worldMatrix = GetWorldMatrix();
+		 worldMatrix = Matrix::CreateScale(meshScale) * worldMatrix;
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
+	//auto lscale = localScale();
 
 	Mesh4::DynamicShapeData data;
 	data.render = m_render;
 	data.worldMatrix = &worldMatrix;
 	data.transfMatrix = &transMatrix;
 	data.cameraPosition = &cameraPosition;
+
+	//data.absLocalMatrix = (Matrix*)&lscale;
 
 	m_mesh->DrawShape(data, index);
 

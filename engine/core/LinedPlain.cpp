@@ -24,6 +24,7 @@ void LinedPlain::OnStart() {
 	m_meshComponent->AddShape(&verteces, &indeces);
 	m_meshComponent->mesh()->topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 	m_meshComponent->SetMaterial(0, m_material);
+	m_meshComponent->castShadow(false);
 
 	m_material->data.diffuseColor = color;
 	m_material->data.specular = 0;

@@ -19,7 +19,7 @@ class DirectionLight : public Component, public ILightSource {
 
 public:
 	Vector3 color = Vector3::One;
-	float intensity = 1.0f;
+	float intensity = 0.6f;
 
 private:
 	Texture m_renderTexture;

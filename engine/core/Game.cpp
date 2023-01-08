@@ -63,6 +63,7 @@ std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderEditorHihglight,
 	Assets::ShaderEditorOutline,
 	Assets::ShaderBlur,
+	Assets::ShaderWorldGride,
 	"../../data/engine/shaders/rp_image.hlsl",
 	"../../data/engine/shaders/shadow_map.hlsl",
 	"../../data/engine/shaders/rp_screen_quad.hlsl",
@@ -153,28 +154,19 @@ void Game::Run() {
 
 	//csLink.Link(cppObj, "EngineMono", "CSClass");
 	
-	//scene()->CreateActor("Lined Plain")->AddComponent<LinedPlain>();
-
-	//m_editorCamera = scene()->CreateActor("editor camera")->AddComponent<EditorCamera>();
-	//m_editorCamera->localPosition({ 350, 403, -20 });
-	//m_editorCamera->localRotation({ -0.803, 1.781, 0 });
-
-	//auto lighting = currentScene()->CreateActor("Lighting");
-	//lighting->localPosition({ 0, 0, 300 });
-	//lighting->localRotation({ rad(-45), rad(45 + 180), 0 });
-
-	//lighting->AddComponent<DirectionLight>();
-	//lighting->AddComponent<AmbientLight>();
-	//lighting->AddComponent<TestLightComponent>();
+	auto light = currentScene()->CreateActor("Light");
+	light->localPosition({ 0, 0, 300 });
+	light->localRotation({ rad(-45), rad(45 + 180), 0 });
+	light->AddComponent<DirectionLight>();
+	light->AddComponent<AmbientLight>();
 
 	//currentScene()->CreateActor("GameController")->AddComponent<GameController>();
 
-	//auto cube = currentScene()->CreateActor("Cube")->AddComponent<MeshComponent>();
-	//cube->mesh(meshAsset()->GetMesh("../../data/engine/models/cube.obj"));
+	auto material = meshAsset()->CreateDynamicMaterial("World Gride", Assets::ShaderWorldGride);
 
-	//auto meshComponent = CppRefs::GetPointer<MeshComponent>(RefCpp(28));
-
-	//cube->SetMaterial(0, meshComponent->GetMaterial(0));
+	auto testScene = currentScene()->CreateActor("test scene")->AddComponent<MeshComponent>();
+	testScene->mesh(meshAsset()->GetMesh("../../data/assets/models/test_navmesh.obj"));
+	testScene->SetMaterial(0, material);
 
 	//inFocus = false;
 	//m_lastGameCamera = scene()->mainCamera();
@@ -277,6 +269,12 @@ void Game::m_Update() {
 			ui()->SelectedActor(nullptr);
 			m_editorScene->AttachGameCamera();
 		}
+	}
+
+	if (m_hotkeys->GetButtonDown(Keys::R) && m_hotkeys->GetButton(Keys::Ctrl)) {
+		shaderAsset()->RecompileShaders();
+		meshAsset()->ReloadMaterials();
+		std::cout << std::endl;
 	}
 
 }

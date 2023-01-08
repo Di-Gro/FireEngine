@@ -86,11 +86,23 @@ void SceneEditorWindow::m_DrawGuizmo() {
 	auto mProjection = (ImGuizmo::matrix_t&)camera->projMatrix();
 
 	ImGuiIO& io = ImGui::GetIO();
-	auto vsize = viewportSize(); //scene()->renderer.viewportSize();
+	auto vsize = viewportSize();
 	auto vpos = viewportPosition();
 
+	auto wpos = actor->localPosition();
+	auto scale = actor->localScale();
+	Vector3 bound[] = { -scale/2, scale/2 };
+
 	ImGuizmo::SetRect(vpos.x, vpos.y, vsize.x, vsize.y);
-	ImGuizmo::Manipulate(mView.m16, mProjection.m16, m_CurrentGizmoOperation, m_CurrentGizmoMode, matrix.m16, NULL, NULL);
+	ImGuizmo::Manipulate(mView.m16, mProjection.m16,
+		m_CurrentGizmoOperation,
+		m_CurrentGizmoMode,
+		matrix.m16,
+		NULL,
+		NULL,
+		m_CurrentGizmoOperation == ImGuizmo::BOUNDS ? &bound[0].x : NULL,
+		NULL
+	);
 
 	m = (Matrix)matrix * inv;
 	actor->SetLocalMatrix(m);
@@ -124,6 +136,9 @@ void SceneEditorWindow::m_HandleEditorInput() {
 
 	if (game()->hotkeys()->GetButtonDown(Keys::T))
 		m_CurrentGizmoOperation = ImGuizmo::SCALE;
+
+	if (game()->hotkeys()->GetButtonDown(Keys::L))
+		m_CurrentGizmoOperation = ImGuizmo::BOUNDS;
 
 	auto hasClick = ImGui::IsMouseClicked(ImGuiMouseButton_::ImGuiMouseButton_Left);
 	m_hasClickInViewport = hasClick && ImGui::IsWindowHovered();

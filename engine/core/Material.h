@@ -25,7 +25,7 @@ class Material : public IAsset {
 
 	#pragma pack(push, 4)
 	public: struct Data {
-		Vector3 diffuseColor = Vector3::One;		// 12
+		Vector3 diffuseColor = {0.5, 0.5, 0.5};		// 12
 		float diffuse = 1.0f;		// Kd			// 4
 		float ambient = 0.8f;		// Ka			// 4
 		float specular = 0.5f;		// Ks			// 4

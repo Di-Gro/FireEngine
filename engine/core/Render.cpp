@@ -84,7 +84,8 @@ void Render::Init(Game* game, Window* window) {
 	rastDesc.CullMode = D3D11_CULL_NONE;
 	device()->CreateRasterizerState(&rastDesc, m_ñullWireframeNone.GetAddressOf());
 
-	onePixelStagingTex = Texture::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32_UINT);
+	onePixelStagingTexUINT = Texture::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32_UINT);
+	onePixelStagingTexFLOAT3 = Texture::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
 }
 
 //void Render::m_ResizeMainResouces(float width, float height) {
@@ -354,6 +355,9 @@ void Render::m_UpdateDeviceSize() {
 
 		float width = window->GetWidth();
 		float height = window->GetHeight();
+
+		width = width < 10 ? 10 : width;
+		height = height < 10 ? 10 : height;
 
 		m_device.Resize(width, height);
 		//m_device.ResizeViewport(width, height);
@@ -658,15 +662,47 @@ UINT Render::GetActorIdInViewport(Scene* scene, const Vector2& vpos)
 	srcBox.front = 0;
 	srcBox.back = 1;
 
-	context()->CopySubresourceRegion(onePixelStagingTex.get(), 0, 0, 0, 0, idsTexture->get(), 0, &srcBox);
+	context()->CopySubresourceRegion(onePixelStagingTexUINT.get(), 0, 0, 0, 0, idsTexture->get(), 0, &srcBox);
 
 	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
-	auto hres = context()->Map(onePixelStagingTex.get(), 0, D3D11_MAP_READ, 0, &MappedSubresource);
+	auto hres = context()->Map(onePixelStagingTexUINT.get(), 0, D3D11_MAP_READ, 0, &MappedSubresource);
 	assert(SUCCEEDED(hres));
 
 	auto pPixels = (uint32_t*)MappedSubresource.pData;
 
-	context()->Unmap(onePixelStagingTex.get(), 0);
+	context()->Unmap(onePixelStagingTexUINT.get(), 0);
 
 	return (UINT)*pPixels;
+}
+
+Vector3 Render::GetWposInViewport(Scene* scene, const Vector2& vpos)
+{
+	if (vpos.x < 0 || vpos.x > 1 || vpos.y < 0 || vpos.y > 1)
+		return Vector3::Zero;
+
+	auto idsTexture = scene->renderer.wposTexture();
+	if (idsTexture == nullptr)
+		return Vector3::Zero;
+
+	auto pixel = vpos * scene->renderer.viewportSize();
+
+	D3D11_BOX srcBox;
+	srcBox.left = pixel.x;
+	srcBox.right = pixel.x + 1;
+	srcBox.bottom = pixel.y + 1;
+	srcBox.top = pixel.y;
+	srcBox.front = 0;
+	srcBox.back = 1;
+
+	context()->CopySubresourceRegion(onePixelStagingTexFLOAT3.get(), 0, 0, 0, 0, idsTexture->get(), 0, &srcBox);
+
+	D3D11_MAPPED_SUBRESOURCE MappedSubresource;
+	auto hres = context()->Map(onePixelStagingTexFLOAT3.get(), 0, D3D11_MAP_READ, 0, &MappedSubresource);
+	assert(SUCCEEDED(hres));
+
+	auto pPixels = (Vector3*)MappedSubresource.pData;
+
+	context()->Unmap(onePixelStagingTexFLOAT3.get(), 0);
+
+	return *pPixels;
 }

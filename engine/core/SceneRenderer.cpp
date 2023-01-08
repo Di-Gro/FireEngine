@@ -150,6 +150,12 @@ Texture* SceneRenderer::idsTexture() {
 	return nullptr;
 }
 
+Texture* SceneRenderer::wposTexture() {
+	if (m_opaquePass != nullptr)
+		return &m_opaquePass->target3Tex;
+	return nullptr;
+}
+
 void SceneRenderer::ResizeViewport(const Vector2& size) {
 	ResizeViewport(size.x, size.y);
 }

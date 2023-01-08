@@ -15,7 +15,7 @@ class AmbientLight : public Component, public ILightSource {
 
 public:
 	Vector3 color = Vector3::One;
-	float intensity = 0.2f;
+	float intensity = 0.125f;
 
 private:
 	ScreenQuad m_screenQuad;

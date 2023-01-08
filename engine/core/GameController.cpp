@@ -140,11 +140,6 @@ void GameController::OnUpdate() {
 	//	}
 	//}
 
-	if (hotkeys->GetButtonDown(Keys::R) && hotkeys->GetButton(Keys::Ctrl)) {
-		game()->shaderAsset()->RecompileShaders();
-		game()->meshAsset()->ReloadMaterials();
-		std::cout << std::endl;
-	}
 }
 
 

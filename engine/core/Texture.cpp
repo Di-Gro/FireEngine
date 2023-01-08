@@ -72,7 +72,7 @@ Texture Texture::CreateStagingTexture(Render* render, int width, int height, DXG
 	res.m_desc.BindFlags = 0;
 	res.m_desc.Usage = D3D11_USAGE_STAGING;
 	res.m_desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	res.m_desc.Format = DXGI_FORMAT_R32G32_UINT;
+	res.m_desc.Format = format; // DXGI_FORMAT_R32G32_UINT;
 	res.m_desc.MipLevels = 1;
 	res.m_desc.MiscFlags = 0;
 	res.m_desc.SampleDesc.Count = 1;

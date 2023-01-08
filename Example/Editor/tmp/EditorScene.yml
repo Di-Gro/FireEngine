@@ -1,14 +1,15 @@
 .file0.assetId: {AssetId: 0000000022}
-.file0.files: {Var: 5}
+.file0.files: {Var: 6}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: 00000010014}
 .file1.Name: {Var: }
 .file1.m_roots.0: {Ref: file2}
+.file1.m_roots.1: {Ref: file4}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: 00000010000}
-.file2.Name: {Var: Actor}
+.file2.Name: {Var: Actor2}
 .file2.localPosition.X: {Var: 0}
 .file2.localPosition.Y: {Var: 0}
 .file2.localPosition.Z: {Var: 0}
@@ -21,13 +22,13 @@
 .file2.localScale.Z: {Var: 1}
 .file2.m_children: {Null: }
 .file2.m_components.0: {Ref: file3}
-.file2.m_components.1: {Ref: file4}
-.file2.m_components.2: {Ref: file5}
 
 .file3!script: {Var: TestMesh}
 .file3!scriptId: {AssetId: 00000010005}
+.file3.component: {Null: }
 .file3.actorRef: {Null: }
 .file3.userPrefab.assetId: {AssetId: TestPrefab}
+.file3.m_meshComp: {Null: }
 .file3.nullStaticMaterial: {Null: }
 .file3.staticMaterial: {Null: }
 .file3.vecList: {Null: }
@@ -40,28 +41,35 @@
 .file3.m_meshes: {Null: }
 .file3!base!scriptId: {AssetId: 00000010008}
 .file3!base.floatField: {Var: 48.56}
-.file3.component: {Ref: file5}
-.file3.m_meshComp: {Ref: file4}
 
-.file4!script: {Var: MeshComponent}
-.file4!scriptId: {AssetId: 00000010003}
-.file4.MeshScale.X: {Var: 1}
-.file4.MeshScale.Y: {Var: 1}
-.file4.MeshScale.Z: {Var: 1}
-.file4.IsDebug: {Var: False}
-.file4.CastShadow: {Var: True}
-.file4.IsVisible: {Var: True}
-.file4.m_mesh: {Null: }
-.file4.m_materials: {Null: }
+.file4!script: {Var: Actor}
+.file4!scriptId: {AssetId: 00000010000}
+.file4.Name: {Var: Light}
+.file4.localPosition.X: {Var: 0}
+.file4.localPosition.Y: {Var: 0}
+.file4.localPosition.Z: {Var: 300}
+.file4.localRotationQ.X: {Var: 0.1464458}
+.file4.localRotationQ.Y: {Var: 0.8535535}
+.file4.localRotationQ.Z: {Var: 0.3535532}
+.file4.localRotationQ.W: {Var: -0.3535535}
+.file4.localScale.X: {Var: 0.9999999}
+.file4.localScale.Y: {Var: 0.9999998}
+.file4.localScale.Z: {Var: 0.9999999}
+.file4.m_children: {Null: }
+.file4.m_components.0: {Ref: file5}
+.file4.m_components.1: {Ref: file6}
 
-.file5!script: {Var: CameraComponent}
-.file5!scriptId: {AssetId: 00000010004}
-.file5.OrthoWidth: {Var: 600}
-.file5.OrthoHeight: {Var: 600}
-.file5.OrthoNearPlane: {Var: 50}
-.file5.OrthoFarPlane: {Var: 1000}
-.file5.NearPlane: {Var: 0.1}
-.file5.FarPlane: {Var: 10000}
-.file5.DrawDebug: {Var: True}
-.file5.Orthographic: {Var: False}
+.file5!script: {Var: DirectionalLight}
+.file5!scriptId: {AssetId: 0000000018}
+.file5.Color.X: {Var: 1}
+.file5.Color.Y: {Var: 1}
+.file5.Color.Z: {Var: 1}
+.file5.Intensity: {Var: 1}
+
+.file6!script: {Var: AmbientLight}
+.file6!scriptId: {AssetId: 0000000016}
+.file6.Color.X: {Var: 1}
+.file6.Color.Y: {Var: 1}
+.file6.Color.Z: {Var: 1}
+.file6.Intensity: {Var: 0.2}
 

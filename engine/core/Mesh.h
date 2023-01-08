@@ -38,6 +38,7 @@ struct MeshCBuffer {
 	Matrix worldMatrix;
 	Vector3 cameraPosition;
 	float _1[1];
+	//Matrix absLocalMatrix;
 };
 #pragma pack(pop)
 
@@ -77,6 +78,7 @@ public:
 		const Matrix* worldMatrix;
 		const Matrix* transfMatrix;
 		const Vector3* cameraPosition;
+		//const Matrix* absLocalMatrix;
 	};
 
 private:

@@ -88,6 +88,7 @@ public:
 	inline ShaderResource* depthRes() { return &m_mainDepthResource; }
 
 	Texture* idsTexture();
+	Texture* wposTexture();
 
 	inline Vector2 viewportSize() { return m_newViewportSize; }
 

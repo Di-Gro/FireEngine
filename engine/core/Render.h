@@ -69,7 +69,8 @@ private:
 
 	//ScreenQuad m_screenQuad;
 
-	Texture onePixelStagingTex;
+	Texture onePixelStagingTexUINT;
+	Texture onePixelStagingTexFLOAT3;
 
 	//std::list<IShadowCaster*> m_shadowCasters;
 	//std::list<ILightSource*> m_lightSources;
@@ -151,6 +152,7 @@ public:
 	//void ResizeViewport(float width, float height);
 
 	UINT GetActorIdInViewport(Scene* scene, const Vector2& viewportPosition);
+	Vector3 GetWposInViewport(Scene* scene, const Vector2& viewportPosition);
 
 private:
 	//void m_Clear();
