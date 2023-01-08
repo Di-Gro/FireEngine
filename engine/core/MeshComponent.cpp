@@ -5,6 +5,7 @@
 
 #include "Game.h"
 #include "Render.h"
+#include "RenderPass.h"
 #include "MeshAsset.h"
 #include "Actor.h"
 #include "Random.h"
@@ -18,13 +19,22 @@ bool MeshComponent::TempVisible = false;
 bool MeshComponent::mono_inited = false;
 mono::mono_method_invoker<void(CsRef, CppRef)> MeshComponent::mono_SetFromCpp;
 
+void MeshComponent::m_InitMono() {
+	if (mono_inited)
+		return;
+
+	auto type = game()->mono()->GetType("Engine", "MeshComponent");
+	mono_SetFromCpp = mono::make_method_invoker<void(CsRef, CppRef)>(type, "cpp_SetFromCpp");
+
+	mono_inited = true;
+}
 
 void MeshComponent::OnInit() {
 	m_render = game()->render();
 	m_meshAsset = game()->meshAsset();
 	m_InitMono();
 
-	m_shadowCaster = m_render->AddShadowCaster(this);
+	m_shadowCaster = scene()->renderer.AddShadowCaster(this);
 
 	if (m_preinitMesh != nullptr) {
 		mesh(m_preinitMesh);
@@ -37,14 +47,14 @@ void MeshComponent::OnInit() {
 	}
 }
 
-void MeshComponent::m_InitMono() {
-	if (mono_inited)
-		return;
+void MeshComponent::OnDestroy() {
+	m_preinitMesh = m_mesh;
+	m_preinitMaterials = m_materials;
 
-	auto type = game()->mono()->GetType("Engine", "MeshComponent");
-	mono_SetFromCpp = mono::make_method_invoker<void(CsRef, CppRef)>(type, "cpp_SetFromCpp");
+	m_DeleteResources();
 
-	mono_inited = true;
+	if (m_castShadow)
+		scene()->renderer.RemoveShadowCaster(m_shadowCaster);
 }
 
 void MeshComponent::m_InitDynamic() {
@@ -59,13 +69,6 @@ void MeshComponent::m_InitDynamic() {
 	*newMesh = *m_mesh;
 			
 	m_SetMesh(newMesh, true);
-}
-
-void MeshComponent::OnDestroy() {
-	m_DeleteResources();
-
-	if(m_castShadow)
-		m_render->RemoveShadowCaster(m_shadowCaster);
 }
 
 void MeshComponent::RemoveMaterial(size_t index) {
@@ -277,7 +280,7 @@ void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
 		materialIndex == 0;
 
 	if (isNewDynamic) {
-		m_shapeIters[0] = m_render->RegisterShape(material, this, 0);
+		m_shapeIters[0] = scene()->renderer.RegisterShape(material, this, 0);
 		return;
 	}
 
@@ -285,7 +288,7 @@ void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
 		const auto* shape = &m_mesh->m_shapes[shapeIndex];
 
 		if (shape->materialIndex == materialIndex)
-			m_shapeIters[shapeIndex] = m_render->RegisterShape(material, this, shapeIndex);
+			m_shapeIters[shapeIndex] = scene()->renderer.RegisterShape(material, this, shapeIndex);
 	}
 }
 
@@ -296,16 +299,16 @@ void MeshComponent::m_UnRegisterShapesWithMaterial(int materialIndex) {
 		const auto* shape = &m_mesh->m_shapes[shapeIndex];
 
 		if (shape->materialIndex == materialIndex)
-			m_render->UnRegisterShape(material, m_shapeIters[shapeIndex]);
+			scene()->renderer.UnRegisterShape(material, m_shapeIters[shapeIndex]);
 	}
 }
 
 void MeshComponent::castShadow(bool value) {
 	if (m_castShadow && !value)
-		m_render->RemoveShadowCaster(m_shadowCaster);
+		scene()->renderer.RemoveShadowCaster(m_shadowCaster);
 
 	if (!m_castShadow && value)
-		m_shadowCaster = m_render->AddShadowCaster(this);
+		m_shadowCaster = scene()->renderer.AddShadowCaster(this);
 
 	m_castShadow = value;
 }
@@ -316,14 +319,14 @@ void MeshComponent::OnDrawShadow(RenderPass* renderPass, const Vector3& scale) {
 }
 
 void MeshComponent::OnDraw() {
-	if (!isDebug)
+	//if (!isDebug)
 		m_Draw();
 }
 
-void MeshComponent::OnDrawDebug() {
-	if (isDebug)
-		m_Draw();
-}
+//void MeshComponent::OnDrawDebug() {
+//	if (isDebug)
+//		m_Draw();
+//}
 
 void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 	if (!visible || m_mesh == nullptr)
@@ -333,16 +336,20 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 	if (m_meshVersion != m_mesh->version)
 		m_OnMeshReload();
 
-	auto camera = m_render->camera();
+	auto camera = m_render->renderer()->camera();
 	auto cameraPosition = camera->worldPosition();
-	auto worldMatrix = Matrix::CreateScale(meshScale * scale) * GetWorldMatrix();
+	auto worldMatrix = GetWorldMatrix();
+		 worldMatrix = Matrix::CreateScale(meshScale * scale) * worldMatrix;
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
+	//auto lscale = localScale();
 
 	Mesh4::DynamicShapeData data;
 	data.render = m_render;
 	data.worldMatrix = &worldMatrix;
 	data.transfMatrix = &transMatrix;
 	data.cameraPosition = &cameraPosition;
+
+	//data.absLocalMatrix = (Matrix*)&lscale;
 
 	for (int i = 0; i < m_mesh->shapeCount(); i++){
 		if (renderPass != nullptr) {
@@ -366,16 +373,22 @@ void MeshComponent::OnDrawShape(int index) {
 	if (m_meshVersion != m_mesh->version)
 		m_OnMeshReload();
 
-	auto camera = m_render->camera();
+	auto id = actor()->Id();
+
+	auto camera = m_render->renderer()->camera();
 	auto cameraPosition = camera->worldPosition();
-	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();
+	auto worldMatrix = GetWorldMatrix();
+		 worldMatrix = Matrix::CreateScale(meshScale) * worldMatrix;
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
+	//auto lscale = localScale();
 
 	Mesh4::DynamicShapeData data;
 	data.render = m_render;
 	data.worldMatrix = &worldMatrix;
 	data.transfMatrix = &transMatrix;
 	data.cameraPosition = &cameraPosition;
+
+	//data.absLocalMatrix = (Matrix*)&lscale;
 
 	m_mesh->DrawShape(data, index);
 
@@ -386,14 +399,16 @@ void MeshComponent::OnDrawShape(int index) {
 }
 
 
-DEF_COMPONENT(MeshComponent, Engine.MeshComponent, 2) {
+DEF_COMPONENT(MeshComponent, Engine.MeshComponent, 3, RunMode::EditPlay) {
 	OFFSET(0, MeshComponent, isDebug);
 	OFFSET(1, MeshComponent, visible);
+	OFFSET(2, MeshComponent, meshScale);
 }
 
-DEF_PROP_GET(MeshComponent, bool, IsDynamic)
-DEF_PROP_GET(MeshComponent, bool, IsStatic)
-DEF_PROP_GET(MeshComponent, int, MaterialCount)
+DEF_PROP_GET(MeshComponent, bool, IsDynamic);
+DEF_PROP_GET(MeshComponent, bool, IsStatic);
+DEF_PROP_GET(MeshComponent, int, MaterialCount);
+DEF_PROP_GETSET(MeshComponent, bool, castShadow);
 
 DEF_FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef) {
 	auto component = CppRefs::ThrowPointer<MeshComponent>(compRef);

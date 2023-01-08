@@ -30,11 +30,6 @@ private:
 	PointLight* m_pointLight = nullptr;
 	SpotLight* m_spotLight = nullptr;
 	
-	CameraComponent* m_pointCamera = nullptr;
-	CameraComponent* m_spotCamera = nullptr;
-
-	CameraComponent* m_defaultCamera;
-
 	bool m_isOpened = true;
 
 public:

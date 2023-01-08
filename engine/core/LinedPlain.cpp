@@ -5,48 +5,54 @@
 
 #include "MeshComponent.h"
 #include "Game.h"
+#include "Actor.h"
+#include "Material.h"
+#include "MeshAsset.h"
 
-using namespace DirectX::SimpleMath;
-
+DEF_PURE_COMPONENT(LinedPlain, RunMode::EditOnly);
 
 void LinedPlain::OnInit() {
-	std::vector<Vector4> points;
-	std::vector<int> indeces;
-	m_GeneratePoints(points, indeces);
+	m_material = game()->meshAsset()->CreateDynamicMaterial("Lined Plain material", Assets::ShaderDiffuseColor);
+}
 
+void LinedPlain::OnStart() {
 	std::vector<Mesh4::Vertex> verteces;
-	verteces.reserve(points.size());
-
-	for (int i = 0; i < points.size(); ++i) {
-		Mesh4::Vertex vertex;
-		vertex.position = Vector4(Vector3(points[i]));
-		vertex.color = m_color;
-		verteces.push_back(vertex);
-	}
+	std::vector<int> indeces;
+	m_GeneratePoints(verteces, indeces);
 
 	m_meshComponent = AddComponent<MeshComponent>();
 	m_meshComponent->AddShape(&verteces, &indeces);
 	m_meshComponent->mesh()->topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+	m_meshComponent->SetMaterial(0, m_material);
+	m_meshComponent->castShadow(false);
+
+	m_material->data.diffuseColor = color;
+	m_material->data.specular = 0;
 }
 
 void LinedPlain::OnDestroy() {
+	m_meshComponent->ClearMesh();
 	m_meshComponent->Destroy();
+
+	game()->meshAsset()->DeleteDynamicMaterial(m_material);
+	m_material = nullptr;
 }
 
-void LinedPlain::m_GeneratePoints(std::vector<Vector4>& points, std::vector<int>& indexes) {
+void LinedPlain::m_GeneratePoints(std::vector<Mesh4::Vertex>& points, std::vector<int>& indexes) {
+	using V4 = Mesh4::Vertex;
 
-	float halfSize = m_size / 2;
-	for (float delta = 0.0f; delta <= halfSize; delta += m_tileSize) {
+	float halfSize = size / 2;
+	for (float delta = 0.0f; delta <= halfSize; delta += tileSize) {
 
 		auto list = {
-			Vector4(delta, 0.0f, -halfSize, 1.0f),// m_color,
-			Vector4(delta, 0.0f, halfSize, 1.0f), //m_color,
-			Vector4(-delta, 0.0f, -halfSize, 1.0f), //m_color,
-			Vector4(-delta, 0.0f, halfSize, 1.0f), //m_color,
-			Vector4(-halfSize, 0.0f, delta, 1.0f), //m_color,
-			Vector4(halfSize, 0.0f, delta, 1.0f), //m_color,
-			Vector4(-halfSize, 0.0f, -delta, 1.0f), //m_color,
-			Vector4(halfSize, 0.0f, -delta, 1.0f), //m_color
+			V4({delta, 0.0f, -halfSize}),
+			V4({delta, 0.0f, halfSize}),
+			V4({-delta, 0.0f, -halfSize}),
+			V4({-delta, 0.0f, halfSize}),
+			V4({-halfSize, 0.0f, delta}),
+			V4({halfSize, 0.0f, delta}),
+			V4({-halfSize, 0.0f, -delta}),
+			V4({halfSize, 0.0f, -delta}),
 		};
 
 		int s = points.size();

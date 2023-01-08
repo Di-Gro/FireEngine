@@ -12,7 +12,7 @@ Material* Attachable::s_meshMaterial = nullptr;
 Material* Attachable::s_boundMaterial = nullptr;
 size_t Attachable::s_attachableCount = 0;
 
-DEF_PURE_COMPONENT(Attachable);
+DEF_PURE_COMPONENT(Attachable, RunMode::PlayOnly);
 
 void Attachable::OnInit() {
 	m_mesh = AddComponent<MeshComponent>();

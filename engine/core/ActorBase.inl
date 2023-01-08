@@ -3,9 +3,9 @@
 /// ->
 
 template<IsCppAddableComponent TComponent, typename>
-TComponent* ActorBase::AddComponent() {
+TComponent* ActorBase::AddComponent(bool isRuntimeOnly) {
 	if (!IsDestroyed())
-		return actor()->AddComponent<TComponent>();
+		return actor()->AddComponent<TComponent>(isRuntimeOnly);
 	return nullptr;
 }
 

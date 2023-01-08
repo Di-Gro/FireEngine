@@ -29,6 +29,8 @@ public:
 	static std::string ShaderEditorOutline;
 	static std::string ShaderBlur;
 
+	static std::string ShaderWorldGride;
+
 private:
 	std::unordered_map<int, Asset> m_assets;
 	Game* m_game;

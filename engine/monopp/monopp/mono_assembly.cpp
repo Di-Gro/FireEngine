@@ -24,6 +24,14 @@ mono_assembly::mono_assembly(const mono_domain& domain, const std::string& path)
 	image_ = mono_assembly_get_image(assembly_);
 }
 
+mono_assembly::~mono_assembly() {
+	//mono_assembly_close(assembly_);
+}
+
+//void mono_assembly::close() {
+//	mono_assembly_close(assembly_);
+//}
+
 auto mono_assembly::get_type(const std::string& name) const -> mono_type
 {
 	return mono_type(image_, name);

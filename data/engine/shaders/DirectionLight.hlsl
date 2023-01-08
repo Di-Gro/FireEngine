@@ -106,7 +106,7 @@ float4 PSMain(PS_IN input): SV_Target {
     float shadow = ShadowMap.SampleCmp(CompSampler, smuv.xy, x);
 
     // Directional Light
-    float3 kd = gbuf_matDiffuse * gbuf_diffuse * gbuf_vertexColor;
+    float3 kd = gbuf_diffuse; //gbuf_matDiffuse * gbuf_diffuse * gbuf_vertexColor;
     float3 normal = gbuf_normal;
 
     float3 viewDir = normalize(cb_camera.position.xyz - gbuf_worldPos.xyz);

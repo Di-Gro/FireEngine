@@ -4,22 +4,22 @@
 #include <sstream>
 
 #include "Game.h"
+#include "Scene.h"
 #include "Window.h"
 #include "Render.h"
 #include "Assets.h"
 #include "ShaderAsset.h"
 #include "Actor.h"
+#include "Lighting.h"
 
 #include "CameraComponent.h"
 #include "MeshComponent.h"
 #include "LineComponent.h"
 
-DEF_PURE_COMPONENT(DirectionLight);
-
 void DirectionLight::OnInit() {
 	auto window = game()->window();
 
-	m_camera = AddComponent<CameraComponent>();
+	m_camera = AddComponent<CameraComponent>(true);
 
 	m_camera->drawDebug = false;
 	m_camera->callPixelShader = false;
@@ -31,12 +31,26 @@ void DirectionLight::OnInit() {
 	m_camera->orthoNearPlane = -3000;
 	m_camera->orthoFarPlane = 3000;
 
-	Resize(window->GetWidth(), window->GetHeight());
+	auto vsize = scene()->renderer.viewportSize();
+	Resize(vsize.x, vsize.y);
 
 	m_screenQuad.Init(game()->render(), game()->shaderAsset()->GetShader(Assets::ShaderDirectionLight));
 
-	m_lightSource = game()->render()->AddLightSource(this);
-	
+	m_lightSource = scene()->renderer.AddLightSource(this);
+
+	scene()->directionLight = this;
+}
+
+
+void DirectionLight::OnDestroy() {
+	m_camera->Destroy();
+
+	m_screenQuad.Release();
+
+	scene()->renderer.RemoveLightSource(m_lightSource);
+
+	if (scene()->directionLight == this)
+		scene()->directionLight = nullptr;
 }
 
 void DirectionLight::Resize(float width, float height) {
@@ -48,10 +62,6 @@ void DirectionLight::Resize(float width, float height) {
 	m_depthTexture = Texture::CreateDepthTexture(render, width * m_mapScale, height * m_mapScale);
 	m_depthStencil = DepthStencil::Create(&m_depthTexture);
 	m_depthResource = ShaderResource::Create(&m_depthTexture);
-}
-
-void DirectionLight::OnDestroy() {
-	game()->render()->RemoveLightSource(m_lightSource);
 }
 
 void DirectionLight::drawDebug(bool value) {
@@ -141,4 +151,9 @@ LightCBuffer DirectionLight::GetCBuffer() {
 	cbuffer.param1 = intensity;
 
 	return cbuffer;
+}
+
+DEF_COMPONENT(DirectionLight, Engine.DirectionalLight, 2, RunMode::EditPlay) {
+	OFFSET(0, DirectionLight, color);
+	OFFSET(1, DirectionLight, intensity);
 }

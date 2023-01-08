@@ -28,6 +28,7 @@ namespace EngineDll {
 			DEC_COMPONENT("CameraComponent");
 			PROP_GET("CameraComponent", "bool", "IsAttached");
 			PROP_GETSET("CameraComponent", "bool", "orthographic");
+			PROP_GETSET("CameraComponent", "Matrix4x4", "viewMatrix");
 
 			FUNC("CameraComponent", "Attach", "void", "CppRef compRef");
 			FUNC("CameraComponent", "UpdateProjMatrix", "void", "CppRef compRef");
@@ -70,6 +71,8 @@ namespace EngineDll {
 			PROP_GET("Actor", "Vector3", "forward");
 			PROP_GET("Actor", "Vector3", "up");
 			PROP_GET("Actor", "Vector3", "right");
+
+			PROP_GETSET_STR("Actor", "name");
 #>
 
 		}
@@ -81,6 +84,14 @@ namespace EngineDll {
 			ANSI_FUNC("Game", "CreateGameObjectFromCS", "GameObjectInfo" , "CppRef sceneRef, CsRef csRef, CppRef parentRef");
 			FUNC("Game", "GetRootActorsCount", "int", "CppRef sceneRef");
 			FUNC("Game", "WriteRootActorsRefs", "void", "CppRef sceneRef, CsRef[] refs");
+			FUNC("Game", "mainCamera_get", "CsRef", "CppRef gameRef");
+			FUNC("Game", "Exit", "void", "CppRef gameRef");
+
+			FUNC("Game", "PushScene", "void", "CppRef gameRef, CppRef sceneRef");
+			FUNC("Game", "PopScene", "void", "CppRef gameRef");
+
+			FUNC("Game", "CreateScene", "CppRef", "CppRef gameRef, bool isEditor");
+			FUNC("Game", "DestroyScene", "void", "CppRef gameRef, CppRef sceneRef");
 #>
 
 		}
@@ -90,6 +101,8 @@ namespace EngineDll {
 <# 
 			//FUNC("CsComponent", "Create", "CppObjectInfo" , "CppRef cppObjRef, CsRef csCompRef");
 			FUNC("CsComponent", "Create", "CppObjectInfo" , "CsRef csCompRef");
+			PROP_GETSET("Component", "bool", "runtimeOnly");
+			PROP_GETSET("Component", "bool", "f_isCrashed");
 #>
 
 		}
@@ -107,6 +120,7 @@ namespace EngineDll {
 			FUNC("HotKeys", "MousePosition",		"Vector2", "CppRef objRef");
 
 			PROP_GET("HotKeys", "int", "wheelDelta");
+			PROP_GET("HotKeys", "Vector2", "mouseDelta");
 #>
 		}
 
@@ -199,6 +213,7 @@ namespace EngineDll {
 			PROP_GET("MeshComponent", "bool", "IsDynamic");
 			PROP_GET("MeshComponent", "bool", "IsStatic");
 			PROP_GET("MeshComponent", "int", "MaterialCount");
+			PROP_GETSET("MeshComponent", "bool", "castShadow");
 
 			FUNC("MeshComponent",	"SetFromCs", "void", "CppRef compRef, CppRef meshRef");
 
@@ -221,6 +236,53 @@ namespace EngineDll {
 
 <#
 			ANSI_FUNC("UI_Inspector", "ShowText", "bool", "CppRef gameRef, string label, string buffer, int length, ref ulong ptr");
+			ANSI_FUNC("UI_Inspector", "SetComponentName", "void", "CppRef gameRef, string value");
+			ANSI_FUNC("UI_Inspector", "ShowAsset", "bool", "CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash");
+			ANSI_FUNC("UI_Inspector", "ShowActor", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef");
+			ANSI_FUNC("UI_Inspector", "ShowComponent", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef, int scriptIdHash");
+#>
+		}
+
+		public static class DirectionalLight {
+		
+<#
+			DEC_COMPONENT("DirectionLight");
+#>
+		}
+
+		public static class AmbientLight {
+		
+<#
+			DEC_COMPONENT("AmbientLight");
+#>
+		}
+
+		public static class PointLight {
+		
+<#
+			DEC_COMPONENT("PointLight");
+#>
+		}
+
+		public static class SpotLight {
+		
+<#
+			DEC_COMPONENT("SpotLight");
+#>
+		}
+
+		public static class AssetStore {
+		
+<#
+			FUNC("AssetStore", "ClearTypes", "void", "CppRef gameRef");
+			FUNC("AssetStore", "ClearComponents", "void", "CppRef gameRef");
+			FUNC("AssetStore", "ClearAssets", "void", "CppRef gameRef");
+			FUNC("AssetStore", "ClearAssetTypes", "void", "CppRef gameRef");
+
+			ANSI_FUNC("AssetStore", "SetType", "void", "CppRef gameRef, int typeId, string fullName, string name");
+			FUNC("AssetStore", "AddComponent", "void", "CppRef gameRef, int typeId");
+			ANSI_FUNC("AssetStore", "AddAsset", "void", "CppRef gameRef, int typeId, int assetId, string name");
+			FUNC("AssetStore", "AddAssetType", "void", "CppRef gameRef, int typeId");
 #>
 		}
 	}

@@ -38,6 +38,7 @@ struct MeshCBuffer {
 	Matrix worldMatrix;
 	Vector3 cameraPosition;
 	float _1[1];
+	//Matrix absLocalMatrix;
 };
 #pragma pack(pop)
 
@@ -62,6 +63,13 @@ public:
 		Vector4 color = Vector4::One;
 		Vector4 normal = Vector4::One;
 		Vector4 uv = Vector4::Zero;
+
+		Vertex() {}
+		Vertex(Vector3 pos) {
+			position.x = pos.x;
+			position.y = pos.y;
+			position.z = pos.z;
+		}
 	};
 
 public:
@@ -70,6 +78,7 @@ public:
 		const Matrix* worldMatrix;
 		const Matrix* transfMatrix;
 		const Vector3* cameraPosition;
+		//const Matrix* absLocalMatrix;
 	};
 
 private:
@@ -154,6 +163,7 @@ public:
 public:
 
 	void Init(Render* render, const Shader* shader);
+	void Release();
 	void Draw() const;
 	void Draw2() const;
 };

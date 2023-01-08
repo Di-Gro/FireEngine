@@ -1,10 +1,38 @@
 #include "UserInterface.h"
+#include "SceneEditorWindow.h"
+
 #include "../Game.h"
 
 bool UserInterface::opt_fullscreen = true;
 bool UserInterface::dockspaceOpen = true;
 bool UserInterface::opt_padding = false;
 ImGuiDockNodeFlags UserInterface::dockspace_flags = ImGuiDockNodeFlags_None;
+
+UserInterface::UserInterface() { }
+
+UserInterface::~UserInterface() { }
+
+void UserInterface::Init(Game* game) {
+	_game = game;
+
+	m_InitStyles();
+	m_InitIcons();
+
+	uiEditor.Init(_game);
+	uiHierarchy.Init(_game);
+	uiBarMenu.Init(_game);
+
+	uiInspector.Init(_game, this);
+
+	InitMono();
+}
+
+void UserInterface::Destroy() {
+	for (auto hash_window : m_sceneWindows)
+		delete hash_window.second;
+
+	m_sceneWindows.clear();
+}
 
 void UserInterface::InitDockSpace()
 {
@@ -29,59 +57,6 @@ void UserInterface::InitDockSpace()
 
 	if (!opt_padding)
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-}
-
-void UserInterface::Draw()
-{
-	InitDockSpace();
-
-	ImGui::Begin("DockSpace Demo", NULL, window_flags);
-	if (!opt_padding)
-		ImGui::PopStyleVar();
-
-	if (opt_fullscreen)
-		ImGui::PopStyleVar(2);
-
-	// Submit the DockSpace
-	ImGuiIO& io = ImGui::GetIO();
-	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	{
-		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-	}
-
-	// Begin Menu Bar
-	uiBarMenu.Draw_UI_BarMenu();
-	// Upper Menu
-	//uiUpperMenu.Draw_UI_UpperMenu();
-	// Hierarchy
-	uiHierarchy.Draw_UI_Hierarchy();
-	//// Play Game
-	uiPlayGame.Draw_UI_PlayGame();
-	// Editor
-	uiEditor.Draw_UI_Editor();
-	//// Inspector
-	uiInspector.Draw_UI_Inspector();
-	//// Content Browser
-	uiContentBrowser.Draw_UI_ContentBrowser();
-	//// Console
-	uiConsole.Draw_UI_Console();
-
-	ImGui::End();
-}
-
-void UserInterface::Init(Game* game) {
-	_game = game;
-
-	m_InitStyles();
-
-	uiEditor.Init(_game);
-	uiHierarchy.Init(_game);
-	uiBarMenu.Init(_game);
-
-	uiInspector.Init(_game, this);
-
-	InitMono();
 }
 
 void UserInterface::m_InitStyles() {
@@ -139,51 +114,149 @@ void UserInterface::m_InitStyles() {
 	style.GrabRounding = style.FrameRounding = 2.3f;
 }
 
-void UserInterface::SelectedActor(Actor* actor)
+void UserInterface::m_InitIcons() {
+	_game->imageAsset()->InitImage(&m_imgMove, "../../data/engine/icons/ic_move.png");
+	_game->imageAsset()->InitImage(&m_imgRotate, "../../data/engine/icons/ic_rotate.png");
+	_game->imageAsset()->InitImage(&m_imgScale, "../../data/engine/icons/ic_scale.png");
+	_game->imageAsset()->InitImage(&m_imgPickup, "../../data/engine/icons/ic_pickup.png");
+	_game->imageAsset()->InitImage(&m_imgPickupActor, "../../data/engine/icons/ic_pickup_actor.png");
+	_game->imageAsset()->InitImage(&m_imgPickupComponent, "../../data/engine/icons/ic_pickup_component.png");
+	_game->imageAsset()->InitImage(&m_imgPickupAsset, "../../data/engine/icons/ic_pickup_asset.png");
+
+	m_texMove = Texture::CreateFromImage(_game->render(), &m_imgMove);
+	m_texRotate = Texture::CreateFromImage(_game->render(), &m_imgRotate);
+	m_texScale = Texture::CreateFromImage(_game->render(), &m_imgScale);
+	m_texPickup = Texture::CreateFromImage(_game->render(), &m_imgPickup);
+	m_texPickupActor = Texture::CreateFromImage(_game->render(), &m_imgPickupActor);
+	m_texPickupComponent = Texture::CreateFromImage(_game->render(), &m_imgPickupComponent);
+	m_texPickupAsset = Texture::CreateFromImage(_game->render(), &m_imgPickupAsset);
+
+	icMove = ShaderResource::Create(&m_texMove);
+	icRotate = ShaderResource::Create(&m_texRotate);
+	icScale = ShaderResource::Create(&m_texScale);
+	icPickup = ShaderResource::Create(&m_texPickup);
+	icPickupActor = ShaderResource::Create(&m_texPickupActor);
+	icPickupComponent = ShaderResource::Create(&m_texPickupComponent);
+	icPickupAsset = ShaderResource::Create(&m_texPickupAsset);
+}
+
+void UserInterface::Draw()
 {
+	InitDockSpace();
+
+	ImGui::Begin("DockSpace Demo", NULL, window_flags);
+	if (!opt_padding)
+		ImGui::PopStyleVar();
+
+	if (opt_fullscreen)
+		ImGui::PopStyleVar(2);
+
+	// Submit the DockSpace
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+	{
+		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+	}
+
+	// Begin Menu Bar
+	uiBarMenu.Draw_UI_BarMenu();
+	// Upper Menu
+	//uiUpperMenu.Draw_UI_UpperMenu();
+	// Hierarchy
+	uiHierarchy.Draw_UI_Hierarchy();
+	//// Play Game
+	//uiPlayGame.Draw_UI_PlayGame();
+	// Editor
+	//uiEditor.Draw_UI_Editor();
+	//// Inspector
+	uiInspector.Draw_UI_Inspector();
+	//// Content Browser
+	//uiContentBrowser.Draw_UI_ContentBrowser();
+	//// Console
+	//uiConsole.Draw_UI_Console();
+
+	auto dockSpaceId = ImGui::GetID("MyDockSpace");
+	auto node = ImGui::DockBuilderGetNode(dockSpaceId);
+	auto centralNodeId = node->CentralNode->ID;
+	
+	for (auto hash_window : m_sceneWindows) {
+		auto window = hash_window.second;
+		ImGui::DockBuilderDockWindow(window->windowId().c_str(), centralNodeId);
+		window->Draw();
+	}
+
+	ImGui::End();
+
+}
+
+
+void UserInterface::SelectedActor(Actor* actor) {
 	_actor = actor;
 }
 
-bool UserInterface::HasActor()
-{
+bool UserInterface::HasActor() {
 	if (_actor != nullptr)
 		return true;
 	return false;
 }
 
-void UserInterface::SetActorActive()
-{
+void UserInterface::SetActorActive() {
 	_isActorActive = true;
 }
 
-bool UserInterface::isActive()
-{
+bool UserInterface::isActive() {
 	if (_isActorActive)
 		return true;
 	return false;
 }
 
-void UserInterface::SetCallbacks(const Callbacks& callbacks)
-{
+void UserInterface::SetCallbacks(const Callbacks& callbacks) {
 	_callbacks = callbacks;
 }
 
-void UserInterface::InitMono()
-{
+void UserInterface::InitMono() {
 	auto type = _game->mono()->GetType("Engine", "UserInterface");
 	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_Init");
 	auto cppRefs = CppRefs::Create(this);
 	method(CppRef::Create(cppRefs.cppRef()));
 }
 
-//DEF_FUNC(UserInterface, SetCallbacks, void)(CppRef cppRef, const UserInterface::Callbacks& callbacks) {
-//	auto component = CppRefs::ThrowPointer<UserInterface>(cppRef);
-//	component->SetCallbacks(callbacks);
-//}
+bool UserInterface::HasSceneWindow(const std::string& sceneId) {
+	auto hash = m_StringHash(sceneId);
+	return m_sceneWindows.contains(hash);
+}
 
-DEF_FUNC(UserInterface, SetCallbacks, void)(CppRef cppRef, void(*func)(CsRef, float)) {
+SceneWindow* UserInterface::GetSceneWindow(const std::string& sceneId) {
+	auto hash = m_StringHash(sceneId);
+
+	if (m_sceneWindows.contains(hash))
+		return m_sceneWindows.at(hash);
+
+	return nullptr;
+}
+
+SceneWindow* UserInterface::CreateSceneWindow(const std::string& sceneId, const std::string& name) {
+	auto hash = m_StringHash(sceneId);
+
+	if (!m_sceneWindows.contains(hash)) {
+		auto window = new SceneEditorWindow(sceneId);
+		window->Init(_game);
+		window->name = name;
+
+		m_sceneWindows.insert(std::make_pair(hash, window));
+	}
+	return m_sceneWindows.at(hash);
+}
+
+void UserInterface::RemoveSceneWindow(const std::string& sceneId) {
+	auto hash = m_StringHash(sceneId);
+
+	if (m_sceneWindows.contains(hash))
+		m_sceneWindows.erase(hash);
+}
+
+DEF_FUNC(UserInterface, SetCallbacks2, void)(CppRef cppRef, const UserInterface::Callbacks& callbacks) {
 	auto component = CppRefs::ThrowPointer<UserInterface>(cppRef);
-	UserInterface::Callbacks callbacks;
-	callbacks.onDrawComponent = func;
 	component->SetCallbacks(callbacks);
 }

@@ -6,7 +6,8 @@ using System.Runtime.InteropServices;
 using EngineDll;
 
 namespace Engine {
-    sealed class CameraComponent : CppComponent {
+
+    public sealed class CameraComponent : CppComponent {
         private Prop<float> prop_orthoWidth = new Prop<float>(0);
         private Prop<float> prop_orthoHeight = new Prop<float>(1);
         private Prop<float> prop_orthoNearPlane = new Prop<float>(2);
@@ -35,12 +36,18 @@ namespace Engine {
             set => Dll.CameraComponent.orthographic_set(cppRef, value); 
         }
 
+        [Close] 
+        public Matrix4x4 viewMatrix {
+            get => Dll.CameraComponent.viewMatrix_get(cppRef);
+            set => Dll.CameraComponent.viewMatrix_set(cppRef, value);
+        }
+
         public void Attach() => Dll.CameraComponent.Attach(cppRef);
         public void UpdateProjMatrix() => Dll.CameraComponent.UpdateProjMatrix(cppRef);
 
 
-        public override CppObjectInfo CppConstructor(/*Actor target*/) {
-            return Dll.CameraComponent.Create(/*target.cppRef, */csRef);
+        public override CppObjectInfo CppConstructor() {
+            return Dll.CameraComponent.Create(csRef);
         }
 
     }

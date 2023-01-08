@@ -4,6 +4,7 @@
 #include "Assets.h"
 #include "MeshAsset.h"
 #include "Render.h"
+#include "RenderPass.h"
 
 #include "DirectionLight.h"
 #include "CameraComponent.h"
@@ -187,6 +188,7 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	cbuf->wvpMatrix = *data.transfMatrix;
 	cbuf->worldMatrix = *data.worldMatrix;
 	cbuf->cameraPosition = *data.cameraPosition;
+	//cbuf->absLocalMatrix = *data.absLocalMatrix;
 
 	context->Unmap(shape.meshCBuffer.Get(), 0);
 
@@ -219,9 +221,17 @@ void ScreenQuad::Init(Render* render, const Shader* shader) {
 	m_render->device()->CreateRasterizerState(&rastDesc, rastState.GetAddressOf());
 }
 
+void ScreenQuad::Release() {
+	if (m_sampler.Get() != nullptr)
+		m_sampler.ReleaseAndGetAddressOf();
+
+	if (rastState.Get() != nullptr)
+		m_sampler.ReleaseAndGetAddressOf();
+}
+
 void ScreenQuad::Draw() const {
 	auto* context = m_render->context();
-	auto* camera = m_render->camera();
+	auto* camera = m_render->renderer()->camera();
 
 	/// Material: SetResources
 	ID3D11ShaderResourceView* resources[] = { deffuse != nullptr ? deffuse->get() : nullptr };
@@ -248,7 +258,7 @@ void ScreenQuad::Draw() const {
 
 void ScreenQuad::Draw2() const {
 	auto* context = m_render->context();
-	auto* camera = m_render->camera();
+	auto* camera = m_render->renderer()->camera();
 
 	/// Mesh: SetTopology
 	context->IASetPrimitiveTopology(topology);

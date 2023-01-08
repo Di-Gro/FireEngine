@@ -21,13 +21,29 @@ namespace EngineDll {
 		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
             [DllImport(Paths.Exe, EntryPoint = "CameraComponent_IsAttached_get")]
-		    public static extern bool IsAttached_get(CppRef objRef);
+		    private static extern bool IsAttached_get_inner(CppRef objRef);
+
+            public static bool IsAttached_get(CppRef objRef) => objRef.value != 0 ? IsAttached_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "CameraComponent_orthographic_get")]
-		    public static extern bool orthographic_get(CppRef objRef);
+		    private static extern bool orthographic_get_inner(CppRef objRef);
+
+            public static bool orthographic_get(CppRef objRef) => objRef.value != 0 ? orthographic_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "CameraComponent_orthographic_set")]
-		    public static extern void orthographic_set(CppRef objRef, bool value);
+		    private static extern void orthographic_set_inner(CppRef objRef, bool value);
+
+            public static void orthographic_set(CppRef objRef, bool value) { if(objRef.value != 0) orthographic_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "CameraComponent_viewMatrix_get")]
+		    private static extern Matrix4x4 viewMatrix_get_inner(CppRef objRef);
+
+            public static Matrix4x4 viewMatrix_get(CppRef objRef) => objRef.value != 0 ? viewMatrix_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "CameraComponent_viewMatrix_set")]
+		    private static extern void viewMatrix_set_inner(CppRef objRef, Matrix4x4 value);
+
+            public static void viewMatrix_set(CppRef objRef, Matrix4x4 value) { if(objRef.value != 0) viewMatrix_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "CameraComponent_Attach")]
 		    public static extern void Attach(CppRef compRef);
@@ -73,64 +89,114 @@ namespace EngineDll {
 		    public static extern CsRef GetChild(CppRef objRef, int index);
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localPosition_get")]
-		    public static extern Vector3 localPosition_get(CppRef objRef);
+		    private static extern Vector3 localPosition_get_inner(CppRef objRef);
+
+            public static Vector3 localPosition_get(CppRef objRef) => objRef.value != 0 ? localPosition_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localPosition_set")]
-		    public static extern void localPosition_set(CppRef objRef, Vector3 value);
+		    private static extern void localPosition_set_inner(CppRef objRef, Vector3 value);
+
+            public static void localPosition_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) localPosition_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localRotation_get")]
-		    public static extern Vector3 localRotation_get(CppRef objRef);
+		    private static extern Vector3 localRotation_get_inner(CppRef objRef);
+
+            public static Vector3 localRotation_get(CppRef objRef) => objRef.value != 0 ? localRotation_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localRotation_set")]
-		    public static extern void localRotation_set(CppRef objRef, Vector3 value);
+		    private static extern void localRotation_set_inner(CppRef objRef, Vector3 value);
+
+            public static void localRotation_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) localRotation_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localRotationQ_get")]
-		    public static extern Quaternion localRotationQ_get(CppRef objRef);
+		    private static extern Quaternion localRotationQ_get_inner(CppRef objRef);
+
+            public static Quaternion localRotationQ_get(CppRef objRef) => objRef.value != 0 ? localRotationQ_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localRotationQ_set")]
-		    public static extern void localRotationQ_set(CppRef objRef, Quaternion value);
+		    private static extern void localRotationQ_set_inner(CppRef objRef, Quaternion value);
+
+            public static void localRotationQ_set(CppRef objRef, Quaternion value) { if(objRef.value != 0) localRotationQ_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localScale_get")]
-		    public static extern Vector3 localScale_get(CppRef objRef);
+		    private static extern Vector3 localScale_get_inner(CppRef objRef);
+
+            public static Vector3 localScale_get(CppRef objRef) => objRef.value != 0 ? localScale_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localScale_set")]
-		    public static extern void localScale_set(CppRef objRef, Vector3 value);
+		    private static extern void localScale_set_inner(CppRef objRef, Vector3 value);
+
+            public static void localScale_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) localScale_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_worldPosition_get")]
-		    public static extern Vector3 worldPosition_get(CppRef objRef);
+		    private static extern Vector3 worldPosition_get_inner(CppRef objRef);
+
+            public static Vector3 worldPosition_get(CppRef objRef) => objRef.value != 0 ? worldPosition_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_worldPosition_set")]
-		    public static extern void worldPosition_set(CppRef objRef, Vector3 value);
+		    private static extern void worldPosition_set_inner(CppRef objRef, Vector3 value);
+
+            public static void worldPosition_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) worldPosition_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_worldRotationQ_get")]
-		    public static extern Quaternion worldRotationQ_get(CppRef objRef);
+		    private static extern Quaternion worldRotationQ_get_inner(CppRef objRef);
+
+            public static Quaternion worldRotationQ_get(CppRef objRef) => objRef.value != 0 ? worldRotationQ_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_worldRotationQ_set")]
-		    public static extern void worldRotationQ_set(CppRef objRef, Quaternion value);
+		    private static extern void worldRotationQ_set_inner(CppRef objRef, Quaternion value);
+
+            public static void worldRotationQ_set(CppRef objRef, Quaternion value) { if(objRef.value != 0) worldRotationQ_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_worldScale_get")]
-		    public static extern Vector3 worldScale_get(CppRef objRef);
+		    private static extern Vector3 worldScale_get_inner(CppRef objRef);
+
+            public static Vector3 worldScale_get(CppRef objRef) => objRef.value != 0 ? worldScale_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_worldScale_set")]
-		    public static extern void worldScale_set(CppRef objRef, Vector3 value);
+		    private static extern void worldScale_set_inner(CppRef objRef, Vector3 value);
+
+            public static void worldScale_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) worldScale_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localForward_get")]
-		    public static extern Vector3 localForward_get(CppRef objRef);
+		    private static extern Vector3 localForward_get_inner(CppRef objRef);
+
+            public static Vector3 localForward_get(CppRef objRef) => objRef.value != 0 ? localForward_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localUp_get")]
-		    public static extern Vector3 localUp_get(CppRef objRef);
+		    private static extern Vector3 localUp_get_inner(CppRef objRef);
+
+            public static Vector3 localUp_get(CppRef objRef) => objRef.value != 0 ? localUp_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_localRight_get")]
-		    public static extern Vector3 localRight_get(CppRef objRef);
+		    private static extern Vector3 localRight_get_inner(CppRef objRef);
+
+            public static Vector3 localRight_get(CppRef objRef) => objRef.value != 0 ? localRight_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_forward_get")]
-		    public static extern Vector3 forward_get(CppRef objRef);
+		    private static extern Vector3 forward_get_inner(CppRef objRef);
+
+            public static Vector3 forward_get(CppRef objRef) => objRef.value != 0 ? forward_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_up_get")]
-		    public static extern Vector3 up_get(CppRef objRef);
+		    private static extern Vector3 up_get_inner(CppRef objRef);
+
+            public static Vector3 up_get(CppRef objRef) => objRef.value != 0 ? up_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Actor_right_get")]
-		    public static extern Vector3 right_get(CppRef objRef);
+		    private static extern Vector3 right_get_inner(CppRef objRef);
+
+            public static Vector3 right_get(CppRef objRef) => objRef.value != 0 ? right_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Actor_name_get")]
+		    private static extern size_t name_get_ptr(CppRef objRef);
+
+            public static string name_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(name_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "Actor_name_set", CharSet = CharSet.Ansi)]
+		    private static extern void name_set_inner(CppRef objRef, string value);
+
+            public static void name_set(CppRef objRef, string value) { if(objRef.value != 0) name_set_inner(objRef, value); }
 
 
 		}
@@ -149,6 +215,24 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "Game_WriteRootActorsRefs")]
 		    public static extern void WriteRootActorsRefs(CppRef sceneRef, CsRef[] refs);
 
+            [DllImport(Paths.Exe, EntryPoint = "Game_mainCamera_get")]
+		    public static extern CsRef mainCamera_get(CppRef gameRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Game_Exit")]
+		    public static extern void Exit(CppRef gameRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Game_PushScene")]
+		    public static extern void PushScene(CppRef gameRef, CppRef sceneRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Game_PopScene")]
+		    public static extern void PopScene(CppRef gameRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Game_CreateScene")]
+		    public static extern CppRef CreateScene(CppRef gameRef, bool isEditor);
+
+            [DllImport(Paths.Exe, EntryPoint = "Game_DestroyScene")]
+		    public static extern void DestroyScene(CppRef gameRef, CppRef sceneRef);
+
 
 		}
 
@@ -156,6 +240,26 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "CsComponent_Create")]
 		    public static extern CppObjectInfo Create(CsRef csCompRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Component_runtimeOnly_get")]
+		    private static extern bool runtimeOnly_get_inner(CppRef objRef);
+
+            public static bool runtimeOnly_get(CppRef objRef) => objRef.value != 0 ? runtimeOnly_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Component_runtimeOnly_set")]
+		    private static extern void runtimeOnly_set_inner(CppRef objRef, bool value);
+
+            public static void runtimeOnly_set(CppRef objRef, bool value) { if(objRef.value != 0) runtimeOnly_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Component_f_isCrashed_get")]
+		    private static extern bool f_isCrashed_get_inner(CppRef objRef);
+
+            public static bool f_isCrashed_get(CppRef objRef) => objRef.value != 0 ? f_isCrashed_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Component_f_isCrashed_set")]
+		    private static extern void f_isCrashed_set_inner(CppRef objRef, bool value);
+
+            public static void f_isCrashed_set(CppRef objRef, bool value) { if(objRef.value != 0) f_isCrashed_set_inner(objRef, value); }
 
 
 		}
@@ -181,7 +285,14 @@ namespace EngineDll {
 		    public static extern Vector2 MousePosition(CppRef objRef);
 
             [DllImport(Paths.Exe, EntryPoint = "HotKeys_wheelDelta_get")]
-		    public static extern int wheelDelta_get(CppRef objRef);
+		    private static extern int wheelDelta_get_inner(CppRef objRef);
+
+            public static int wheelDelta_get(CppRef objRef) => objRef.value != 0 ? wheelDelta_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "HotKeys_mouseDelta_get")]
+		    private static extern Vector2 mouseDelta_get_inner(CppRef objRef);
+
+            public static Vector2 mouseDelta_get(CppRef objRef) => objRef.value != 0 ? mouseDelta_get_inner(objRef) : default;
 
 		}
 
@@ -197,58 +308,94 @@ namespace EngineDll {
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
             [DllImport(Paths.Exe, EntryPoint = "Material_assetIdHash_get")]
-		    public static extern int assetIdHash_get(CppRef objRef);
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_assetIdHash_set")]
-		    public static extern void assetIdHash_set(CppRef objRef, int value);
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_get")]
-		    public static extern Vector3 diffuseColor_get(CppRef objRef);
+		    private static extern Vector3 diffuseColor_get_inner(CppRef objRef);
+
+            public static Vector3 diffuseColor_get(CppRef objRef) => objRef.value != 0 ? diffuseColor_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_set")]
-		    public static extern void diffuseColor_set(CppRef objRef, Vector3 value);
+		    private static extern void diffuseColor_set_inner(CppRef objRef, Vector3 value);
+
+            public static void diffuseColor_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) diffuseColor_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuse_get")]
-		    public static extern float diffuse_get(CppRef objRef);
+		    private static extern float diffuse_get_inner(CppRef objRef);
+
+            public static float diffuse_get(CppRef objRef) => objRef.value != 0 ? diffuse_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_diffuse_set")]
-		    public static extern void diffuse_set(CppRef objRef, float value);
+		    private static extern void diffuse_set_inner(CppRef objRef, float value);
+
+            public static void diffuse_set(CppRef objRef, float value) { if(objRef.value != 0) diffuse_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_ambient_get")]
-		    public static extern float ambient_get(CppRef objRef);
+		    private static extern float ambient_get_inner(CppRef objRef);
+
+            public static float ambient_get(CppRef objRef) => objRef.value != 0 ? ambient_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_ambient_set")]
-		    public static extern void ambient_set(CppRef objRef, float value);
+		    private static extern void ambient_set_inner(CppRef objRef, float value);
+
+            public static void ambient_set(CppRef objRef, float value) { if(objRef.value != 0) ambient_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_specular_get")]
-		    public static extern float specular_get(CppRef objRef);
+		    private static extern float specular_get_inner(CppRef objRef);
+
+            public static float specular_get(CppRef objRef) => objRef.value != 0 ? specular_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_specular_set")]
-		    public static extern void specular_set(CppRef objRef, float value);
+		    private static extern void specular_set_inner(CppRef objRef, float value);
+
+            public static void specular_set(CppRef objRef, float value) { if(objRef.value != 0) specular_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_shininess_get")]
-		    public static extern float shininess_get(CppRef objRef);
+		    private static extern float shininess_get_inner(CppRef objRef);
+
+            public static float shininess_get(CppRef objRef) => objRef.value != 0 ? shininess_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_shininess_set")]
-		    public static extern void shininess_set(CppRef objRef, float value);
+		    private static extern void shininess_set_inner(CppRef objRef, float value);
+
+            public static void shininess_set(CppRef objRef, float value) { if(objRef.value != 0) shininess_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_cullMode_get")]
-		    public static extern int cullMode_get(CppRef objRef);
+		    private static extern int cullMode_get_inner(CppRef objRef);
+
+            public static int cullMode_get(CppRef objRef) => objRef.value != 0 ? cullMode_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_cullMode_set")]
-		    public static extern void cullMode_set(CppRef objRef, int value);
+		    private static extern void cullMode_set_inner(CppRef objRef, int value);
+
+            public static void cullMode_set(CppRef objRef, int value) { if(objRef.value != 0) cullMode_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_fillMode_get")]
-		    public static extern int fillMode_get(CppRef objRef);
+		    private static extern int fillMode_get_inner(CppRef objRef);
+
+            public static int fillMode_get(CppRef objRef) => objRef.value != 0 ? fillMode_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_fillMode_set")]
-		    public static extern void fillMode_set(CppRef objRef, int value);
+		    private static extern void fillMode_set_inner(CppRef objRef, int value);
+
+            public static void fillMode_set(CppRef objRef, int value) { if(objRef.value != 0) fillMode_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_priority_get")]
-		    public static extern size_t priority_get(CppRef objRef);
+		    private static extern size_t priority_get_inner(CppRef objRef);
+
+            public static size_t priority_get(CppRef objRef) => objRef.value != 0 ? priority_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Material_priority_set")]
-		    public static extern void priority_set(CppRef objRef, size_t value);
+		    private static extern void priority_set_inner(CppRef objRef, size_t value);
+
+            public static void priority_set(CppRef objRef, size_t value) { if(objRef.value != 0) priority_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Material_name_set", CharSet = CharSet.Ansi)]
 		    public static extern void name_set(CppRef matRef, string name);
@@ -301,10 +448,14 @@ namespace EngineDll {
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
             [DllImport(Paths.Exe, EntryPoint = "Image_assetIdHash_get")]
-		    public static extern int assetIdHash_get(CppRef objRef);
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Image_assetIdHash_set")]
-		    public static extern void assetIdHash_set(CppRef objRef, int value);
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Image_Init", CharSet = CharSet.Ansi)]
 		    public static extern void Init(CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height);
@@ -323,10 +474,14 @@ namespace EngineDll {
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
             [DllImport(Paths.Exe, EntryPoint = "Texture_assetIdHash_get")]
-		    public static extern int assetIdHash_get(CppRef objRef);
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Texture_assetIdHash_set")]
-		    public static extern void assetIdHash_set(CppRef objRef, int value);
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Texture_Init")]
 		    public static extern void Init(CppRef gameRef, CppRef texRef, uint width, uint height);
@@ -358,10 +513,14 @@ namespace EngineDll {
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
             [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetIdHash_get")]
-		    public static extern int assetIdHash_get(CppRef objRef);
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetIdHash_set")]
-		    public static extern void assetIdHash_set(CppRef objRef, int value);
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Mesh4_Init", CharSet = CharSet.Ansi)]
 		    public static extern void Init(CppRef gameRef, CppRef meshRef, string path);
@@ -383,13 +542,29 @@ namespace EngineDll {
 		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_IsDynamic_get")]
-		    public static extern bool IsDynamic_get(CppRef objRef);
+		    private static extern bool IsDynamic_get_inner(CppRef objRef);
+
+            public static bool IsDynamic_get(CppRef objRef) => objRef.value != 0 ? IsDynamic_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_IsStatic_get")]
-		    public static extern bool IsStatic_get(CppRef objRef);
+		    private static extern bool IsStatic_get_inner(CppRef objRef);
+
+            public static bool IsStatic_get(CppRef objRef) => objRef.value != 0 ? IsStatic_get_inner(objRef) : default;
 
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_MaterialCount_get")]
-		    public static extern int MaterialCount_get(CppRef objRef);
+		    private static extern int MaterialCount_get_inner(CppRef objRef);
+
+            public static int MaterialCount_get(CppRef objRef) => objRef.value != 0 ? MaterialCount_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "MeshComponent_castShadow_get")]
+		    private static extern bool castShadow_get_inner(CppRef objRef);
+
+            public static bool castShadow_get(CppRef objRef) => objRef.value != 0 ? castShadow_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "MeshComponent_castShadow_set")]
+		    private static extern void castShadow_set_inner(CppRef objRef, bool value);
+
+            public static void castShadow_set(CppRef objRef, bool value) { if(objRef.value != 0) castShadow_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_SetFromCs")]
 		    public static extern void SetFromCs(CppRef compRef, CppRef meshRef);
@@ -424,6 +599,74 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowText", CharSet = CharSet.Ansi)]
 		    public static extern bool ShowText(CppRef gameRef, string label, string buffer, int length, ref ulong ptr);
+
+            [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_SetComponentName", CharSet = CharSet.Ansi)]
+		    public static extern void SetComponentName(CppRef gameRef, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowAsset", CharSet = CharSet.Ansi)]
+		    public static extern bool ShowAsset(CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowActor", CharSet = CharSet.Ansi)]
+		    public static extern bool ShowActor(CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowComponent", CharSet = CharSet.Ansi)]
+		    public static extern bool ShowComponent(CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef, int scriptIdHash);
+
+		}
+
+		public static class DirectionalLight {
+		
+            [DllImport(Paths.Exe, EntryPoint = "DirectionLight_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class AmbientLight {
+		
+            [DllImport(Paths.Exe, EntryPoint = "AmbientLight_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class PointLight {
+		
+            [DllImport(Paths.Exe, EntryPoint = "PointLight_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class SpotLight {
+		
+            [DllImport(Paths.Exe, EntryPoint = "SpotLight_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class AssetStore {
+		
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_ClearTypes")]
+		    public static extern void ClearTypes(CppRef gameRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_ClearComponents")]
+		    public static extern void ClearComponents(CppRef gameRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_ClearAssets")]
+		    public static extern void ClearAssets(CppRef gameRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_ClearAssetTypes")]
+		    public static extern void ClearAssetTypes(CppRef gameRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_SetType", CharSet = CharSet.Ansi)]
+		    public static extern void SetType(CppRef gameRef, int typeId, string fullName, string name);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_AddComponent")]
+		    public static extern void AddComponent(CppRef gameRef, int typeId);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_AddAsset", CharSet = CharSet.Ansi)]
+		    public static extern void AddAsset(CppRef gameRef, int typeId, int assetId, string name);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_AddAssetType")]
+		    public static extern void AddAssetType(CppRef gameRef, int typeId);
 
 		}
 	}

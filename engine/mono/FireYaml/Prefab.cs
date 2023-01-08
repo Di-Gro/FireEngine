@@ -21,8 +21,11 @@ namespace Engine {
 
         public Prefab() { }
 
-        public Prefab(string assetId) { this.assetId = assetId; }
-        
+        public Prefab(string assetId) { 
+            this.assetId = assetId; 
+            assetIdHash = assetId.GetHashCode(); 
+        }
+
         public Actor Instanciate() {
             return new FireYaml.Deserializer(assetId).Instanciate<Actor>();
         }

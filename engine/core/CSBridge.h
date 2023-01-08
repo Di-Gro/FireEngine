@@ -4,6 +4,7 @@
 
 #include "Refs.h"
 #include <mono_game_types.h>
+#include "RunMode.h"
 
 class ClassInfo;
 
@@ -22,16 +23,41 @@ namespace CSBridge {
 
 #define PROP_SET(ClassName, propType, propName) extern "C" __declspec(dllexport) void ClassName##_##propName##_set(CppRef objRef, propType value);\
 
-#define PROP_GET_ANSI(ClassName, propName) extern "C" __declspec(dllexport) size_t ClassName##_##propName##_get(CppRef objRef);\
+#define PROP_GET_STR(ClassName, propName) extern "C" __declspec(dllexport) size_t ClassName##_##propName##_get(CppRef objRef);\
+
+#define PROP_SET_STR(ClassName, propName) extern "C" __declspec(dllexport) void ClassName##_##propName##_set(CppRef objRef, const char* value);\
+
+#define PROP_GET_CSTR(ClassName, propName) extern "C" __declspec(dllexport) size_t ClassName##_##propName##_get(CppRef objRef);\
 
 
 #define PROP_GETSET(ClassName, propType, propName)\
 	PROP_GET(ClassName, propType, propName)\
 	PROP_SET(ClassName, propType, propName)\
 
-#define PROP_GETSET_ANSI(ClassName, propName)\
-	PROP_GET_ANSI(ClassName, propName)\
+#define PROP_GETSET_STR(ClassName, propName)\
+	PROP_GET_STR(ClassName, propName)\
+	PROP_SET_STR(ClassName, propName)\
+
+#define PROP_GETSET_CSTR(ClassName, propName)\
+	PROP_GET_CSTR(ClassName, propName)\
 	PROP_SET(ClassName, const char*, propName)\
+
+#define DEF_PROP_GETSET(ClassName, propType, propName)\
+	DEF_PROP_GET(ClassName, propType, propName)\
+	DEF_PROP_SET(ClassName, propType, propName)\
+
+#define DEF_PROP_GETSET_F(ClassName, propType, propName, field)\
+	DEF_PROP_GET_F(ClassName, propType, propName, field)\
+	DEF_PROP_SET_F(ClassName, propType, propName, field)\
+
+#define DEF_PROP_GETSET_STR(ClassName, propName)\
+	DEF_PROP_GET_STR(ClassName, propName)\
+	DEF_PROP_SET_STR(ClassName, propName)\
+
+#define DEF_PROP_GETSET_CSTR(ClassName, propName)\
+	DEF_PROP_GET_CSTR(ClassName, propName)\
+	DEF_PROP_SET(ClassName, const char*, propName)\
+
 
 #define DEF_PROP_GET(ClassName, propType, propName)\
 	propType ClassName##_##propName##_get(CppRef objRef) {\
@@ -42,16 +68,6 @@ namespace CSBridge {
 			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
 \
 		return propType();\
-	}\
-
-#define DEF_PROP_GET_ANSI(ClassName, propName)\
-	size_t ClassName##_##propName##_get(CppRef objRef) {\
-		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
-		if (a != nullptr)\
-			return (size_t)a->propName();\
-		else\
-			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
-		throw std::exception();\
 	}\
 
 #define DEF_PROP_SET(ClassName, propType, propName)\
@@ -85,17 +101,28 @@ namespace CSBridge {
 \
 	}\
 
-#define DEF_PROP_GETSET(ClassName, propType, propName)\
-	DEF_PROP_GET(ClassName, propType, propName)\
-	DEF_PROP_SET(ClassName, propType, propName)\
+#define DEF_PROP_GET_STR(ClassName, propName)\
+	size_t ClassName##_##propName##_get(CppRef objRef) {\
+		auto* obj = CppRefs::ThrowPointer<ClassName>(objRef);\
+		return (size_t)obj->propName().c_str();\
+	}\
 
-#define DEF_PROP_GETSET_F(ClassName, propType, propName, field)\
-	DEF_PROP_GET_F(ClassName, propType, propName, field)\
-	DEF_PROP_SET_F(ClassName, propType, propName, field)\
+#define DEF_PROP_SET_STR(ClassName, propName)\
+	void ClassName##_##propName##_set(CppRef objRef, const char* value) {\
+		auto* obj = CppRefs::ThrowPointer<ClassName>(objRef);\
+		obj->propName(value);\
+	}\
 
-#define DEF_PROP_GETSET_ANSI(ClassName, propName)\
-	DEF_PROP_GET_ANSI(ClassName, propName)\
-	DEF_PROP_SET(ClassName, const char*, propName)\
+#define DEF_PROP_GET_CSTR(ClassName, propName)\
+	size_t ClassName##_##propName##_get(CppRef objRef) {\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
+		if (a != nullptr)\
+			return (size_t)a->propName();\
+		else\
+			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
+		throw std::exception();\
+	}\
+
 
 #define FUNC(ClassName, funcName, retType) extern "C" __declspec(dllexport) retType ClassName##_##funcName
 
@@ -105,7 +132,7 @@ namespace CSBridge {
 
 #define PUSH_ASSET(ClassName)\
 FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, const char* assetId, int assetIdHash);\
-PROP_GETSET_ANSI(ClassName, assetId)\
+PROP_GETSET_CSTR(ClassName, assetId)\
 PROP_GETSET(ClassName, int, assetIdHash)\
 
 #define DEF_PUSH_ASSET(ClassName)\
@@ -121,59 +148,9 @@ DEF_FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, const char* assetId, int 
 	}\
 	return CppRefs::GetRef(asset);\
 }\
-DEF_PROP_GETSET_ANSI(ClassName, assetId)\
+DEF_PROP_GETSET_CSTR(ClassName, assetId)\
 DEF_PROP_GETSET(ClassName, int, assetIdHash)\
 
-
-
-
-//#define DEC_COMPONENT_CREATE(ClassName)\
-//FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \
-//
-//#define DEF_COMPONENT_CREATE(ClassName)\
-//DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
-//	CppObjectInfo strct;\
-//\
-//	auto* actor = CppRefs::GetPointer<Actor>(cppObjRef);\
-//	if (actor != nullptr) {\
-//		auto classInfoRef = CppRefs::Create(ClassInfo::Get<ClassName>());\
-//\
-//		strct.cppRef = actor->inner_CreateComponent<ClassName>(RefCs(csCompRef)).value;\
-//		strct.classRef = classInfoRef.cppRef();\
-//\
-//		return strct;\
-//	}\
-//	return strct;\
-//}\
-
-//#define COMPONENT public:\
-//static ClassInfo meta_offsets;\
-//static const char* meta_csComponentName;\
-//static const int meta_offsetCount;\
-//static void meta_WriteOffsets(int* offsets) \
-//
-//#define DEC_COMPONENT(ClassName)\
-//DEC_COMPONENT_CREATE(ClassName)\
-//
-//#define DEF_COMPONENT(ClassName, CsClassName, offsetsCount)\
-//ClassInfo ClassName##::meta_offsets;\
-//const int ClassName##::meta_offsetCount = offsetsCount;\
-//const char* ClassName##::meta_csComponentName = #CsClassName;\
-//DEF_COMPONENT_CREATE(ClassName)\
-//void ClassName##::meta_WriteOffsets(int* offsets)\
-
-//
-//#define PURE_NAME ""\
-//
-//#define PURE_COMPONENT COMPONENT\
-//
-//#define DEF_PURE_COMPONENT(ClassName)\
-//ClassInfo ClassName##::meta_offsets;\
-//const int ClassName##::meta_offsetCount = 0;\
-//const char* ClassName##::meta_csComponentName = PURE_NAME;\
-//void ClassName##::meta_WriteOffsets(int* offsets){ }\
-//
-//#define IS_PURE_COMPONENT(ClassName) ClassName##::meta_csComponentName == PURE_NAME\
 
 #define OBJECT public:\
 static ClassInfo meta_offsets;\
@@ -206,23 +183,6 @@ DEF_FUNC(ClassName, Create, CppObjectInfo)(CsRef csCompRef) {\
 	return strct;\
 }\
 
-//#define DEC_COMPONENT_CREATE(ClassName)\
-//FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) \
-
-//#define DEF_COMPONENT_CREATE(ClassName)\
-//DEF_FUNC(ClassName, Create, CppObjectInfo)(CppRef cppObjRef, CsRef csCompRef) {\
-//	auto* actor = CppRefs::ThrowPointer<Actor>(cppObjRef);\
-//\
-//	Component* component = actor->inner_CreateComponent<ClassName>(csCompRef);\
-//	auto meta = component->GetMeta();\
-//\
-//	CppObjectInfo strct;\
-//	strct.cppRef = component->cppRef();\
-//	strct.classRef = meta.classInfoRef;\
-//\
-//	return strct;\
-//}\
-
 #define DEF_COMPONENT_WRITE_OFFSETS_METHOD(ClassName)\
 void ClassName##::meta_WriteOffsets(int* offsets)\
 
@@ -232,9 +192,17 @@ private:\
 	static ClassInfo meta_classInfo;\
 	static const char* meta_csComponentName;\
 	static const int meta_offsetCount;\
+	static const RunMode meta_RunMode;\
 	static void meta_WriteOffsets(int* offsets); \
 
-#define COMPONENT_GET_META(ClassName, isPureComponent)\
+#define DEF_COMPONENT_STATIC_MEMBERS(ClassName, CsClassName, offsetsCount, runMode)\
+Ref2 ClassName##::meta_classInfoRef;\
+ClassInfo ClassName##::meta_classInfo;\
+const char* ClassName##::meta_csComponentName = #CsClassName;\
+const int ClassName##::meta_offsetCount = offsetsCount;\
+const RunMode ClassName##::meta_RunMode = runMode;\
+
+#define COMPONENT_VIRTUAL_MEHTODS(ClassName, isPureComponent)\
 public:\
 ComponentMeta GetMeta() override {\
 	if (!meta_classInfo.IsInited()) {\
@@ -248,6 +216,12 @@ ComponentMeta GetMeta() override {\
 	meta.classInfoRef = meta_classInfoRef.cppRef();\
 	return meta;\
 }\
+bool NeedRunInEditor() override {\
+	return meta_RunMode != RunMode::PlayOnly;\
+}\
+bool NeedRunInPlayer() override {\
+	return meta_RunMode != RunMode::EditOnly;\
+}\
 private:\
 
 #define COMPONENT_CONSTRUCTOR(ClassName)\
@@ -255,24 +229,20 @@ protected:\
 	ClassName##() {}\
 private:\
 
-#define DEF_COMPONENT_STATIC_MEMBERS(ClassName, CsClassName, offsetsCount)\
-Ref2 ClassName##::meta_classInfoRef;\
-ClassInfo ClassName##::meta_classInfo;\
-const char* ClassName##::meta_csComponentName = #CsClassName;\
-const int ClassName##::meta_offsetCount = offsetsCount;\
+
 
 /// COMPONENT
 /// ->
 
 #define COMPONENT(ClassName)\
 COMPONENT_STATIC_MEMBERS(ClassName)\
-COMPONENT_GET_META(ClassName, false)\
+COMPONENT_VIRTUAL_MEHTODS(ClassName, false)\
 
 #define DEC_COMPONENT(ClassName)\
 DEC_COMPONENT_CREATE(ClassName)\
 
-#define DEF_COMPONENT(ClassName, CsClassName, offsetsCount)\
-DEF_COMPONENT_STATIC_MEMBERS(ClassName, CsClassName, offsetsCount)\
+#define DEF_COMPONENT(ClassName, CsClassName, offsetsCount, playMode)\
+DEF_COMPONENT_STATIC_MEMBERS(ClassName, CsClassName, offsetsCount, playMode)\
 DEF_COMPONENT_CREATE(ClassName)\
 DEF_COMPONENT_WRITE_OFFSETS_METHOD(ClassName)\
 
@@ -284,10 +254,10 @@ DEF_COMPONENT_WRITE_OFFSETS_METHOD(ClassName)\
 
 #define PURE_COMPONENT(ClassName)\
 COMPONENT_STATIC_MEMBERS(ClassName)\
-COMPONENT_GET_META(ClassName, true)\
+COMPONENT_VIRTUAL_MEHTODS(ClassName, true)\
 
-#define DEF_PURE_COMPONENT(ClassName)\
-DEF_COMPONENT_STATIC_MEMBERS(ClassName, ClassName, 0)\
+#define DEF_PURE_COMPONENT(ClassName, playMode)\
+DEF_COMPONENT_STATIC_MEMBERS(ClassName, ClassName, 0, playMode)\
 DEF_COMPONENT_WRITE_OFFSETS_METHOD(ClassName){ }\
 
 /// <-

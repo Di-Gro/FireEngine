@@ -1,5 +1,6 @@
 #include "UI_Editor.h"
 #include "../Game.h"
+#include "../Scene.h"
 #include "../Render.h"
 #include "../HotKeys.h"
 #include "UserInterface.h"
@@ -36,16 +37,17 @@ void UI_Editor::Draw_UI_Editor()
 		
 		Draw_Tools();
 		m_DrawGuizmo();
+		m_HandleSelection();
 	}
 	ImGui::End();
 	ImGui::PopStyleVar();
 
-	m_HandleSelection();
 }
 
 void UI_Editor::m_DrawRender() {
-	_game->render()->ResizeViewport(m_viewportSize);
-	ImGui::Image(_game->render()->screenSRV(), (ImVec2&)m_viewportSize);
+	auto* renderer = &_game->currentScene()->renderer;
+	renderer->ResizeViewport(m_viewportSize);
+	ImGui::Image(renderer->screenSRV(), (ImVec2&)m_viewportSize);
 }
 
 void UI_Editor::Draw_Tools()
@@ -112,31 +114,32 @@ void UI_Editor::m_InitIcons() {
 }
 
 void UI_Editor::m_DrawGuizmo() {
-	auto actor = _game->ui()->GetActor();
-	if (actor == nullptr)
-		return;
+	//auto actor = _game->ui()->GetActor();
+	//auto camera = _game->currentScene()->mainCamera();
 
-	ImGuizmo::SetDrawlist();
+	//if (actor == nullptr || camera == nullptr)
+	//	return;
 
-	auto m = actor->GetWorldMatrix();
-	auto inv = Matrix::Identity;
-	if (actor->parent() != nullptr)
-		inv = actor->parent()->GetWorldMatrix().Invert();
+	//ImGuizmo::SetDrawlist();
 
-	auto matrix = (ImGuizmo::matrix_t&)m;
-	auto camera = _game->mainCamera();
-	auto mView = (ImGuizmo::matrix_t&)camera->viewMatrix();
-	auto mProjection = (ImGuizmo::matrix_t&)camera->projMatrix();
+	//auto m = actor->GetWorldMatrix();
+	//auto inv = Matrix::Identity;
+	//if (actor->parent() != nullptr)
+	//	inv = actor->parent()->GetWorldMatrix().Invert();
 
-	ImGuiIO& io = ImGui::GetIO();
-	auto vsize = _game->render()->viewportSize();
-	auto vpos = _game->ui()->viewportPosition(); 
+	//auto matrix = (ImGuizmo::matrix_t&)m;
+	//auto mView = (ImGuizmo::matrix_t&)camera->viewMatrix();
+	//auto mProjection = (ImGuizmo::matrix_t&)camera->projMatrix();
 
-	ImGuizmo::SetRect(vpos.x, vpos.y, vsize.x, vsize.y);
-	ImGuizmo::Manipulate(mView.m16, mProjection.m16, m_CurrentGizmoOperation, m_CurrentGizmoMode, matrix.m16, NULL, NULL);
+	//ImGuiIO& io = ImGui::GetIO();
+	//auto vsize = _game->currentScene()->renderer.viewportSize();
+	//auto vpos = _game->ui()->viewportPosition(); 
 
-	m = (Matrix)matrix * inv;
-	actor->SetLocalMatrix(m);
+	//ImGuizmo::SetRect(vpos.x, vpos.y, vsize.x, vsize.y);
+	//ImGuizmo::Manipulate(mView.m16, mProjection.m16, m_CurrentGizmoOperation, m_CurrentGizmoMode, matrix.m16, NULL, NULL);
+
+	//m = (Matrix)matrix * inv;
+	//actor->SetLocalMatrix(m);
 }
 
 void UI_Editor::m_DrawTransfotmButton(ShaderResource* icon, ImGuizmo::OPERATION target) {
@@ -173,29 +176,29 @@ void UI_Editor::m_HandleEditorInput() {
 }
 
 void UI_Editor::m_HandleSelection() {
-	if (m_hasClickInViewport && !ImGuizmo::IsOver() && !_game->inFocus) {
-		auto vpos = _game->ui()->mouseViewportPosition();
-		auto actorRef = _game->render()->GetActorIdInViewport(vpos);
-		if (actorRef != 0) {
-			auto actor = CppRefs::ThrowPointer<Actor>(RefCpp(actorRef));
-			_game->ui()->SelectedActor(actor);
-		}
-		else {
-			_game->ui()->SelectedActor(nullptr);
-		}
-	}
+	//if (m_hasClickInViewport && !ImGuizmo::IsOver() && !_game->inFocus) {
+	//	auto vpos = _game->ui()->mouseViewportPosition();
+	//	auto actorRef = _game->currentScene()->renderer.GetActorIdInViewport(vpos);
+	//	if (actorRef != 0) {
+	//		auto actor = CppRefs::ThrowPointer<Actor>(RefCpp(actorRef));
+	//		_game->ui()->SelectedActor(actor);
+	//	}
+	//	else {
+	//		_game->ui()->SelectedActor(nullptr);
+	//	}
+	//}
 }
 
 void UI_Editor::m_UpdateViewportRect() {
-	m_viewportSize = (Vector2&)ImGui::GetWindowSize() - Vector2(0, 19.0f);
+	//m_viewportSize = (Vector2&)ImGui::GetWindowSize() - Vector2(0, 19.0f);
 
-	_game->ui()->f_viewportPosition = (Vector2&)ImGui::GetWindowPos();
+	//_game->ui()->f_viewportPosition = (Vector2&)ImGui::GetWindowPos();
 }
 
 void UI_Editor::m_UpdateViewportMousePos() {
-	auto mousePos = (Vector2&)ImGui::GetMousePos();
-	mousePos -= (Vector2&)ImGui::GetWindowPos() + Vector2(0, 19.0f);
-	mousePos = mousePos / m_viewportSize;
+	//auto mousePos = (Vector2&)ImGui::GetMousePos();
+	//mousePos -= (Vector2&)ImGui::GetWindowPos() + Vector2(0, 19.0f);
+	//mousePos = mousePos / m_viewportSize;
 
-	_game->ui()->f_mouseViewportPosition = mousePos;
+	//_game->ui()->f_mouseViewportPosition = mousePos;
 }

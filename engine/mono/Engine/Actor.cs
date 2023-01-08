@@ -10,7 +10,7 @@ using EngineDll;
 namespace Engine {
 
     [Serializable]
-    sealed class Actor : CppLinked, FireYaml.IFile {
+    public sealed class Actor : CppLinked, FireYaml.IFile {
 
         /// FireYaml.IFile ->
         [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
@@ -20,7 +20,7 @@ namespace Engine {
         [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
         /// <- 
 
-        public string Name { get; set; }
+        public string Name { get => Dll.Actor.name_get(cppRef); set => Dll.Actor.name_set(cppRef, value); }
 
         public Vector3 localPosition {
             get => Dll.Actor.localPosition_get(cppRef);
@@ -29,8 +29,8 @@ namespace Engine {
 
         [Close]
         public Vector3 localRotation {
-            get => Dll.Actor.localRotation_get(cppRef);
-            set => Dll.Actor.localRotation_set(cppRef, value);
+            get => Dll.Actor.localRotation_get(cppRef).deg();
+            set => Dll.Actor.localRotation_set(cppRef, value.rad());
         }
 
         public Quaternion localRotationQ {
@@ -43,6 +43,24 @@ namespace Engine {
             set => Dll.Actor.localScale_set(cppRef, value);
         }
 
+        [Close]
+        public Vector3 worldPosition {
+            get => Dll.Actor.worldPosition_get(cppRef);
+            set => Dll.Actor.worldPosition_set(cppRef, value);
+        }
+
+        [Close]
+        public Quaternion worldRotationQ {
+            get => Dll.Actor.worldRotationQ_get(cppRef);
+            set => Dll.Actor.worldRotationQ_set(cppRef, value);
+        }
+
+        [Close]
+        public Vector3 worldScale {
+            get => Dll.Actor.worldScale_get(cppRef);
+            set => Dll.Actor.worldScale_set(cppRef, value);
+        }
+
         public Vector3 localForward => Dll.Actor.localForward_get(cppRef);
         public Vector3 localUp => Dll.Actor.localUp_get(cppRef);
         public Vector3 localRight => Dll.Actor.localRight_get(cppRef);
@@ -50,6 +68,8 @@ namespace Engine {
         public Vector3 forward => Dll.Actor.forward_get(cppRef);
         public Vector3 up => Dll.Actor.up_get(cppRef);
         public Vector3 right => Dll.Actor.right_get(cppRef);
+
+        public bool HasParent => parent != null;
 
         [Close] public Actor parent {
             get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
@@ -67,18 +87,13 @@ namespace Engine {
         public Actor(string name) : this(name, null) { }
         public Actor(Actor targetParent) : this("Actor", targetParent) { }
         
-        public Actor(string name, Actor targetParent) {
-            //Console.WriteLine($"#: GameObject(\"{name}\"): {csRef}, -> ");
-            Name = name;
-
+        public Actor(string name, Actor targetParent) {           
             CppRef parentRef = targetParent != null ? targetParent.cppRef : 0;
 
             var info = Dll.Game.CreateGameObjectFromCS(Game.sceneRef, csRef, parentRef);
             Link(info.classRef, info.objectRef);
 
-            //m_transformRef = info.transformRef;
-
-            //Console.WriteLine($"#: GameObject({csRef}, {cppRef}): \"{name}\"");
+            Name = name;
         }
 
 
@@ -176,15 +191,15 @@ namespace Engine {
             return list;
         }
 
-        public List<object> GetComponentsList() {
+        public List<Component> GetComponentsList() {
             var refs = m_GetComponentRefs();
-            var list = new List<object>();
+            var list = new List<Component>();
 
             foreach (var compRef in refs) {
                 if (compRef.value != 0) {
-                    var obj = GetObjectByRef(compRef);
-                    if (obj.GetType() != typeof(CSComponent))
-                        list.Add(obj);
+                    var component = GetObjectByRef(compRef) as Component;
+                    if (component.GetType() != typeof(CSComponent))
+                        list.Add(component);
                 }
             }
             return list;
@@ -254,7 +269,7 @@ namespace Engine {
   
         private static CsRef cpp_AddComponent(CsRef objRef, ulong ptr, ulong length, CppObjectInfo info) {
 
-            string name = ReadCString(ptr, length);
+            string name = Assets.ReadCString(ptr, length);
 
             //Console.WriteLine($"#: GameObject({objRef}).cpp_AddComponent(\"{name}\") -> ");
 
@@ -272,7 +287,7 @@ namespace Engine {
         private static CppRef cpp_AddCsComponent(CsRef objRef, ulong ptr, ulong length) {
             //Console.WriteLine($"#: GameObject.cpp_AddCsComponent(): obj: {objRef} -> ");
 
-            string name = ReadCString(ptr, length);
+            string name = Assets.ReadCString(ptr, length);
 
             var componentType = Type.GetType(name);
             var componentCppRefProp = componentType.GetProperty(nameof(CppLinked.cppRef));
@@ -292,25 +307,25 @@ namespace Engine {
             return cppRef;
         }
 
-        private static void cpp_SetName(CsRef objRef, ulong ptr, ulong length) {
-            var actor = CppLinked.GetObjectByRef(objRef) as Actor;
-            actor.Name = ReadCString(ptr, length);
+        //private static void cpp_SetName(CsRef objRef, ulong ptr, ulong length) {
+        //    var actor = CppLinked.GetObjectByRef(objRef) as Actor;
+        //    actor.Name = ReadCString(ptr, length);
 
-            //Console.WriteLine($"#: Actor.cpp_SetName('{actor.Name}')");
-        }
+        //    //Console.WriteLine($"#: Actor.cpp_SetName('{actor.Name}')");
+        //}
 
-        private static string ReadCString(ulong ptr, ulong length) {
-            string str = "";
-            unsafe {
-                byte[] bytes = new byte[length];
-                byte* bptr = (byte*)ptr;
-                for (ulong i = 0; i < length; i++, bptr++) {
-                    bytes[i] = *bptr;
-                }
-                str = Encoding.UTF8.GetString(bytes);
-            }
-            return str;
-        }
+        //private static string ReadCString(ulong ptr, ulong length) {
+        //    string str = "";
+        //    unsafe {
+        //        byte[] bytes = new byte[length];
+        //        byte* bptr = (byte*)ptr;
+        //        for (ulong i = 0; i < length; i++, bptr++) {
+        //            bytes[i] = *bptr;
+        //        }
+        //        str = Encoding.UTF8.GetString(bytes);
+        //    }
+        //    return str;
+        //}
 
         private static void cpp_InitComponent(CsRef compRef) {
             var component = GetObjectByRef(compRef) as Component;

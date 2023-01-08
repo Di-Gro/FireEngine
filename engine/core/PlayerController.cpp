@@ -8,7 +8,7 @@
 #include "Player.h"
 #include "PlayerCamera.h"
 
-DEF_PURE_COMPONENT(PlayerController);
+DEF_PURE_COMPONENT(PlayerController, RunMode::PlayOnly);
 
 void PlayerController::OnStart() {
 	m_player = GetComponent<Player>();

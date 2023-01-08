@@ -5,10 +5,12 @@
 #include "Game.h"
 
 
-DEF_PURE_COMPONENT(PlayerCamera);
+DEF_PURE_COMPONENT(PlayerCamera, RunMode::PlayOnly);
 
 
 void PlayerCamera::OnInit() {
+	CameraComponent::OnInit();
+
 	m_cameraRoot = parent();
 	if(!m_cameraRoot)
 		std::cout << "PlayerCamera haven't got a parent\n";
@@ -22,10 +24,14 @@ void PlayerCamera::OnInit() {
 }
 
 void PlayerCamera::OnDestroy() {
+	CameraComponent::OnDestroy();
+
 	game()->input()->MouseMove.Remove(m_mouseMoveHandle);
 }
 
 void PlayerCamera::OnUpdate() {
+	CameraComponent::OnUpdate();
+
 	if (!IsAttached())
 		return;
 

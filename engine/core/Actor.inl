@@ -17,8 +17,9 @@ TComponent* Actor::inner_CreateComponent(CsRef csRef) {
 }
 
 template<IsCppAddableComponent TComponent, typename >
-TComponent* Actor::AddComponent() {
+TComponent* Actor::AddComponent(bool isRuntimeOnly) {
 	Component* component = inner_CreateComponent<TComponent>();
+	component->runtimeOnly = isRuntimeOnly;
 	auto meta = component->GetMeta();
 
 	//std::cout << "+: Actor(" << this->csRef() << ", " << this->cppRef() << ").AddComponent<\"" << meta.name << "\">() ->" << std::endl;

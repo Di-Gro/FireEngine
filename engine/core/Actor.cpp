@@ -18,7 +18,7 @@ bool Actor::mono_inited;
 
 mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> Actor::mono_AddComponent;
 mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> Actor::mono_AddCsComponent;
-mono::mono_method_invoker<void(CsRef, size_t, size_t)> Actor::mono_SetName;
+//mono::mono_method_invoker<void(CsRef, size_t, size_t)> Actor::mono_SetName;
 
 
 Actor::Actor() {  }
@@ -32,6 +32,41 @@ void Actor::m_CreateTransform() {
 
 //void Actor::m_RemoveTransform() {
 //}
+
+void Actor::MoveChild(Actor* from, Actor* to, bool isPastBefore)
+{
+	bool isFrom = false;
+	bool isTo = false;
+
+	int newIndex = 0;
+
+	std::vector<Actor*>::iterator newIt = m_childs.end();
+
+	for (int i = 0; i < m_childs.size(); ++i)
+	{
+		if (m_childs[i] == from)
+		{
+			m_childs.erase(m_childs.begin() + i);
+			isFrom = true;
+			--i;
+			continue;
+		}
+
+		if (m_childs[i] == to)
+		{
+			newIndex = i;
+			isTo = true;
+		}
+
+		if (isFrom && isTo)
+			break;
+	}
+
+	if (isPastBefore)
+		m_childs.insert(m_childs.begin() + newIndex, from);
+	else
+		m_childs.insert(m_childs.begin() + (newIndex + 1), from);
+}
 
 void Actor::f_Init(Game* game, Scene* scene) {
 	f_game = game;
@@ -49,13 +84,35 @@ void Actor::m_InitMono() {
 	auto type = game()->mono()->GetType("Engine", "Actor");
 	mono_AddComponent = mono::make_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)>(type, "cpp_AddComponent");
 	mono_AddCsComponent = mono::make_method_invoker<CppRef(CsRef, size_t, size_t)>(type, "cpp_AddCsComponent");
-	mono_SetName = mono::make_method_invoker<void(CsRef, size_t, size_t)>(type, "cpp_SetName");
+	//mono_SetName = mono::make_method_invoker<void(CsRef, size_t, size_t)>(type, "cpp_SetName");
 
 	mono_inited = true;
 }
 
-void Actor::f_Destroy() {
+void Actor::f_Update() {
 
+	auto it = m_components.begin();
+	while (it != m_components.end()) {
+
+		auto component = (*it);
+		if (component->IsDestroyed()) {
+			component->friend_timeToDestroy--;
+			if (component->friend_timeToDestroy <= 0)
+				it = m_EraseComponent(it);
+			continue;
+		}
+
+		if (m_NeedRunComponent(component)) {
+			if (!component->f_isStarted)
+				m_RunOrCrash(component, &Actor::m_OnStartComponent);
+			else
+				m_RunOrCrash(component, &Actor::m_OnUpdateComponent);
+		}
+		it++;
+	}
+};
+
+void Actor::f_Destroy() {
 	for (int i = m_childs.size() - 1; i >= 0; --i)
 		m_childs[i]->Destroy();
 
@@ -73,46 +130,23 @@ void Actor::f_Destroy() {
 	friend_gameObject = nullptr;
 }
 
-void Actor::f_Update() {
-
-	auto it = m_components.begin();
-	while (it != m_components.end()) {
-
-		auto component = (*it);
-		if (component->IsDestroyed()) {
-			component->friend_timeToDestroy--;
-			if (component->friend_timeToDestroy <= 0)
-				it = m_EraseComponent(it);
-			continue;
-		}
-		if (component->friend_isStarted) {
-			m_OnUpdateComponent(component); 
-		} else {
-			//m_OnInitComponent(component);
-			m_OnStartComponent(component);
-			component->friend_isStarted = true;
-		}
-		it++;
-	}
-};
-
 void Actor::f_Draw() {
 	for (auto component : m_components) {
 		if (!component->IsDestroyed()) {
 			component->OnDraw();
 
-			if (game()->render()->camera()->drawDebug)
-				component->OnDrawDebug();
+			//if (game()->render()->camera()->drawDebug)
+			//	component->OnDrawDebug();
 		}
 	}
 };
 
-void Actor::f_DrawUI() {
-	for (auto component : m_components) {
-		if (!component->IsDestroyed())
-			component->OnDrawUI();
-	}
-};
+//void Actor::f_DrawUI() {
+//	for (auto component : m_components) {
+//		if (!component->IsDestroyed())
+//			component->OnDrawUI();
+//	}
+//};
 
 std::list<Component*>::iterator Actor::m_EraseComponent(std::list<Component*>::iterator it) {
 	auto* component = *it;
@@ -130,14 +164,16 @@ void Actor::m_BindComponent(Component* component) {
 }
 
 void Actor::m_InitComponent(Component* component) {
-	m_OnInitComponent(component);
+	if (m_NeedRunComponent(component))
+		m_RunOrCrash(component, &Actor::m_OnInitComponent);
 }
 
 void Actor::f_DestroyComponent(Component* component) {
 	if (component->ActorBase::friend_CanDestroy()) {
 		component->ActorBase::friend_StartDestroy();
 
-		m_OnDestroyComponent(component);
+		if (m_NeedRunComponent(component))
+			m_RunOrCrash(component, &Actor::m_OnDestroyComponent);
 
 		if (CppRefs::IsValid(component->f_ref)) {
 			CppRefs::Remove(component->f_ref);
@@ -148,7 +184,7 @@ void Actor::f_DestroyComponent(Component* component) {
 }
 
 void Actor::f_SetParent(Actor* actor) {
-	if (this->f_scene != actor->f_scene)
+	if (actor != nullptr && this->f_scene != actor->f_scene)
 		throw std::exception("actor.scene != parent.scene");
 
 	if (f_parent == actor)
@@ -157,7 +193,7 @@ void Actor::f_SetParent(Actor* actor) {
 	transform->friend_ChangeParent(actor);
 	m_DeleteFromParent();
 	f_parent = actor;
-
+	
 	if (f_parent != nullptr)
 		f_parent->m_childs.push_back(this);
 }
@@ -172,11 +208,6 @@ void Actor::m_DeleteFromParent() {
 		}
 		f_parent = nullptr;
 	}
-}
-
-void Actor::SetName(const std::string& value) {
-	name = value;
-	mono_SetName(csRef(), (size_t)value.c_str(), value.size());
 }
 
 int Actor::GetComponentsCount() {
@@ -226,32 +257,90 @@ static std::string ToString(Transform& transform) {
 
 void Actor::RecieveGameMessage(const std::string& msg) { }
 
+bool Actor::m_NeedRunComponent(Component* component) {
+	if (component->f_isCrashed)
+		return false;
+
+	if (scene()->isEditor())
+		return component->NeedRunInEditor();
+	return component->NeedRunInPlayer();
+}
+
+void Actor::m_RunOrCrash(Component* component, void (Actor::* func)(Component*)) {
+	try {
+		(this->*func)(component);
+	}
+	catch (std::exception ex) {
+		component->f_isCrashed = true;
+
+		auto className = component->GetMeta().name;
+		auto actorName = component->actor()->name();
+		auto actorId = std::to_string(component->actor()->Id());
+
+		std::cout << "ComponentCrash: Component was disabled.\n";
+		std::cout << "Component class: " << className << ", ";
+		std::cout <<  "Actor {name: " << actorName << ", ID : " << actorId << "}\n";
+		std::cout << "Exception: \n";
+		std::cout << ex.what() << "\n";
+	}
+}
+
 void Actor::m_OnInitComponent(Component* component) {
+	if (!m_NeedRunComponent(component))
+		return;
+
 	component->OnInit();
-	if (component->csRef().value > 0 && component->m_callbacks.onInit != nullptr)
-		component->m_callbacks.onInit();
+	component->f_isInited = true;
+	if (component->csRef().value > 0 && component->f_callbacks.onInit != nullptr) {
+		auto method = component->f_callbacks.onInit;
+		auto runOrCrash = game()->callbacks().runOrCrush;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method);
+	}
 }
 
 void Actor::m_OnStartComponent(Component* component) {
+	if(!component->f_isInited)
+		throw std::exception("Component is not inited.");
+
 	component->OnStart();
-	if (component->csRef().value > 0 && component->m_callbacks.onStart != nullptr)
-		component->m_callbacks.onStart();
+	component->f_isStarted = true;
+	if (component->csRef().value > 0 && component->f_callbacks.onStart != nullptr) {
+		auto method = component->f_callbacks.onStart;
+		auto runOrCrash = game()->callbacks().runOrCrush;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method);
+	}
 }
 
 void Actor::m_OnUpdateComponent(Component* component) {
+	if (!component->f_isStarted)
+		throw std::exception("Component is not started.");
+
 	component->OnUpdate();
-	if (component->csRef().value > 0 && component->m_callbacks.onUpdate != nullptr)
-		component->m_callbacks.onUpdate();
+	if (component->csRef().value > 0 && component->f_callbacks.onUpdate != nullptr) {
+		auto method = component->f_callbacks.onUpdate;
+		auto runOrCrash = game()->callbacks().runOrCrush;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method);
+	}
 }
 
 void Actor::m_OnDestroyComponent(Component* component) {
+	if (!component->f_isInited)
+		return;
+
 	component->OnDestroy();
-	if (component->csRef().value > 0 && component->m_callbacks.onDestroy != nullptr)
-		component->m_callbacks.onDestroy();
+	if (component->csRef().value > 0 && component->f_callbacks.onDestroy != nullptr) {
+		auto method = component->f_callbacks.onDestroy;
+		auto runOrCrash = game()->callbacks().runOrCrush;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method);
+	}
 }
 
 void Actor::m_SetComponentCallbacks(Component* component, ComponentCallbacks callbacks) {
-	component->m_callbacks = callbacks;
+	component->f_callbacks = callbacks;
 }
 
 
@@ -309,6 +398,8 @@ DEF_FUNC(Actor, GetChild, CsRef)(CppRef objRef, int index) {
 	return child != nullptr ? child->csRef() : CsRef();
 }
 
+DEF_PROP_GETSET_STR(Actor, name);
+
 DEF_PROP_GETSET(Actor, Vector3, localPosition)
 DEF_PROP_GETSET(Actor, Vector3, localRotation)
 DEF_PROP_GETSET(Actor, Quaternion, localRotationQ)
@@ -317,6 +408,9 @@ DEF_PROP_GETSET(Actor, Vector3, localScale)
 DEF_PROP_GETSET(Actor, Vector3, worldPosition)
 DEF_PROP_GETSET(Actor, Quaternion, worldRotationQ)
 DEF_PROP_GETSET(Actor, Vector3, worldScale)
+
+DEF_PROP_GETSET_F(Component, bool, runtimeOnly, runtimeOnly);
+DEF_PROP_GETSET_F(Component, bool, f_isCrashed, f_isCrashed);
 
 DEF_PROP_GET(Actor, Vector3, localForward)
 DEF_PROP_GET(Actor, Vector3, localUp)

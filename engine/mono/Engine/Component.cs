@@ -18,7 +18,18 @@ namespace Engine {
 
     }
 
-    abstract class Component : CppLinked {
+    public abstract class Component : CppLinked {
+
+        public bool runtimeOnly {
+            get => Dll.CsComponent.runtimeOnly_get(cppRef);
+            set => Dll.CsComponent.runtimeOnly_set(cppRef, value);
+        }
+
+        public bool isCrashed {
+            get => Dll.CsComponent.f_isCrashed_get(cppRef);
+            private set => Dll.CsComponent.f_isCrashed_set(cppRef, value);
+        }
+
         private CsRef m_objectRef;
 
         private ComponentCallbacks m_callbacks;
@@ -59,6 +70,30 @@ namespace Engine {
             return res;
         }
 
+        public static bool RunOrCrush(CsRef componentRef, ComponentCallbacks.ComponentCallback method) {
+            try {
+                method.Invoke();
+                return false;
+            }
+            catch(Exception ex) {
+                var component = CppLinked.GetObjectByRef(componentRef) as Component;
+
+                Console.WriteLine("ComponentCrash: Component was disabled.");
+                if (component == null) {
+                    Console.WriteLine($"Component: null {componentRef}");
+                } else {
+                    Console.WriteLine($"Component: {component.GetType().FullName}, ");
+                    Console.WriteLine($"Actor name: ({component.actor.Name})");
+                }
+                Console.WriteLine("Message: ");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("StackTrace: ");
+                Console.WriteLine(ex.StackTrace);
+                
+                return true;
+            }
+        }
+
         [DllImport(Paths.Exe, EntryPoint = "Actor_SetComponentCallbacks")]
         private static extern void dll_SetComponentCallbacks(CppRef componentRef, ComponentCallbacks callbacks);
     }
@@ -67,7 +102,7 @@ namespace Engine {
     /// Базовый класс для C# компонента.
     /// </summary>
     [Serializable]
-    abstract class CSComponent : Component, FireYaml.IFile {
+    public abstract class CSComponent : Component, FireYaml.IFile {
         /// FireYaml.IFile ->
         public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
 
@@ -86,7 +121,7 @@ namespace Engine {
     /// Базовый класс для C# тени C++ компонента.
     /// </summary>
     [Serializable]
-    abstract class CppComponent : Component, FireYaml.IFile {
+    public abstract class CppComponent : Component, FireYaml.IFile {
         /// FireYaml.IFile ->
         public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
 

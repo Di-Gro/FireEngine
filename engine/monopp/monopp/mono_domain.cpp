@@ -6,6 +6,7 @@
 BEGIN_MONO_INCLUDE
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/mono-debug.h>
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/threads.h>
 END_MONO_INCLUDE
@@ -53,7 +54,10 @@ mono_domain::~mono_domain()
 		auto res = mono_domain_set(root_domain, 0);
 		if(res)
 		{
-			mono_domain_unload(domain_);
+			if (mono_is_debugger_attached())
+				mono_debug_domain_unload(domain_);
+			else
+				mono_domain_unload(domain_);
 		}
 	}
 	mono_gc_collect(mono_gc_max_generation());

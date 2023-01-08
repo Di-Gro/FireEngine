@@ -65,7 +65,21 @@ namespace FireYaml {
                 throw new Exception("Prefab must contains root file 'file1'");
 
             var selfPath = GetFullPath(yamlRef.Name);
-            var target = LoadDocument(selfPath, true);
+            var target = LoadDocument(selfPath, isEntryPoint: true);
+
+            m_EndInstanciate();
+            return target;
+        }
+
+        public object InstanciateTo(ref object target) {
+            var yamlRef = new YamlRef(1);
+
+            var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
+            if (!hasFile)
+                throw new Exception("Prefab must contains root file 'file1'");
+
+            var selfPath = GetFullPath(yamlRef.Name);
+            LoadDocument(selfPath, ref target, isEntryPoint: true);
 
             m_EndInstanciate();
             return target;
@@ -178,6 +192,21 @@ namespace FireYaml {
             field.SetValue(value);
         }
 
+        public static void InitIAsset(ref object asset, string assetId) {
+            var flags =
+               BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
+               BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty |
+               BindingFlags.SetProperty;
+
+            var type = asset.GetType();
+
+            var idProp = type.GetProperty(nameof(IAsset.assetId), flags);
+            var hashProp = type.GetProperty(nameof(IAsset.assetIdHash), flags);
+
+            idProp.SetValue(asset, assetId);
+            hashProp.SetValue(asset, assetId.GetHashCode());
+        }
+
         private void m_SetAssignedObject(string fullPath, ref object obj) {
             m_loadedDocs[fullPath] = obj;
         }
@@ -203,7 +232,7 @@ namespace FireYaml {
             if (scriptId == "")
                 throw new Exception("Yaml document not contains scriptId");
 
-            var typeName = AssetStore.Instance.GetTypeName(scriptId);
+            var typeName = AssetStore.Instance.GetTypeFullName(scriptId);
             if (typeName == null)
                 throw new Exception("Component script asset not found");
 

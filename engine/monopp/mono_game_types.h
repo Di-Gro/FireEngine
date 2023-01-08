@@ -87,4 +87,13 @@ public:
 	void(*setSceneRef)(CppRef value);
 	void(*setMeshAssetRef)(CppRef value);
 	void(*setUpdateData)(GameUpdateData value);
+	void(*onInputUpdate)();
+
+	void(*saveScene)(CppRef cppSceneRef, size_t assetIdPtr, size_t pathPtr);
+	void(*loadScene)(CppRef cppSceneRef, size_t assetIdPtr);
+
+	bool(*runOrCrush)(CsRef componentRef, void(*method)());
+
+	bool(*isAssignable)(CsRef objRef, int typeIdHash);
 };
+

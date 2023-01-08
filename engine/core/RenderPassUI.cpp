@@ -16,7 +16,7 @@
 #include "SpotLight.h"
 
 
-DEF_PURE_COMPONENT(RenderPassUI)
+DEF_PURE_COMPONENT(RenderPassUI, RunMode::EditOnly)
 
 
 void RenderPassUI::OnStart() {
@@ -24,7 +24,7 @@ void RenderPassUI::OnStart() {
 }
 
 void RenderPassUI::OnUpdate() {		
-	auto opaquePass = game()->render()->opaquePass();
+	//auto opaquePass = game()->render()->opaquePass();
 	auto window = game()->window();
 
 	auto w = (float)window->GetWidth();

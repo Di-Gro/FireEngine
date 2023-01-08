@@ -17,6 +17,8 @@ std::string Assets::ShaderEditorHihglight = "../../data/engine/shaders/EditorHih
 std::string Assets::ShaderEditorOutline = "../../data/engine/shaders/EditorOutline.hlsl";
 std::string Assets::ShaderBlur = "../../data/engine/shaders/Blur.hlsl";
 
+std::string Assets::ShaderWorldGride = "../../data/engine/shaders/WorldGride.hlsl";
+
 
 void Assets::Init(Game* game) {
 	m_game = game;

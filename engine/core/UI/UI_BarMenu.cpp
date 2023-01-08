@@ -68,20 +68,19 @@ void UI_BarMenu::Draw_UI_BarMenu()
 			ImGui::EndMenu();
 		}
 
-		if (ButtonCenteredOnLine("Play", 0.4f))
-		{
+		if (!_game->IsPlayMode()) {
+			if (ButtonCenteredOnLine("Play", 0.4f))
+				_game->TogglePlayMode();
+		}
+		else {
+			if (ButtonCenteredOnLine("Stop", 0.4f))
+				_game->TogglePlayMode();
 
-		};
-		ImGui::SameLine();
-		if (ButtonCenteredOnLine("Pause", 0))
-		{
-			
-		};
-		ImGui::SameLine();
-		if (ButtonCenteredOnLine("Stop", 0))
-		{
+			ImGui::SameLine();
+			if (ButtonCenteredOnLine("Pause", 0)) {
 
-		};
+			}
+		}
 
 		ImGui::EndMenuBar();
 	}

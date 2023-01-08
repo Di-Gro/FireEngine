@@ -33,8 +33,8 @@ namespace Engine {
         private static FireYaml.IAsset m_CreateAssetWrapper(int assetId) {
             var assetStore = FireYaml.AssetStore.Instance;
 
-            var typeId = assetStore.GetTypeIdFromAsset(assetId);
-            var typeName = assetStore.GetTypeName(typeId);
+            var typeId = assetStore.GetAssetScriptId(assetId);
+            var typeName = assetStore.GetTypeFullName(typeId);
             var assetType = Type.GetType(typeName);
 
             var iassetName = nameof(FireYaml.IAsset);

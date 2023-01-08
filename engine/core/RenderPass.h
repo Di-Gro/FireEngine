@@ -51,9 +51,11 @@ class Render;
 class RenderTarget;
 class ShaderResource;
 class DepthStencil;
+class SceneRenderer;
 
 class RenderPass {
 	friend class Render;
+	friend class SceneRenderer;
 
 protected: /// For class friends
 	Pass::SortedMaterials f_sortedMaterials;

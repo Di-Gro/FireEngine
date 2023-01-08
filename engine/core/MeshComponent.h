@@ -95,11 +95,12 @@ public:
 	void ClearMesh();
 
 	void OnInit() override;
-	void OnDraw() override;
-	void OnDrawShape(int index) override;
-	void OnDrawDebug() override;
 	void OnDestroy() override;
 
+	void OnDraw() override;
+	void OnDrawShape(int index) override;
+	//void OnDrawDebug() override;
+	
 	void OnDrawShadow(RenderPass* renderPass, const Vector3& scale) override;
 	Component* GetComponent() override { return this; }
 
@@ -122,9 +123,10 @@ private:
 };
 DEC_COMPONENT(MeshComponent);
 
-PROP_GET(MeshComponent, bool, IsDynamic)
-PROP_GET(MeshComponent, bool, IsStatic)
-PROP_GET(MeshComponent, int, MaterialCount)
+PROP_GET(MeshComponent, bool, IsDynamic);
+PROP_GET(MeshComponent, bool, IsStatic);
+PROP_GET(MeshComponent, int, MaterialCount);
+PROP_GETSET(MeshComponent, bool, castShadow);
 
 FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef);
 

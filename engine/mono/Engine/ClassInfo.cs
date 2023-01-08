@@ -18,7 +18,7 @@ namespace Engine {
         //public CsRef transformRef;
     }
 
-    class ClassInfo {
+    public class ClassInfo {
 
         public CppRef classInfoRef { get; private set; }
 
