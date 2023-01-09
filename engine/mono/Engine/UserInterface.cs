@@ -59,8 +59,6 @@ namespace Engine
         private bool boolCheckbox = true;
         private string testString = "my test string";
 
-        private sn.Vector2 m_lineSpacing = new sn.Vector2( 0, 3 );
-
         private CppRef _cppRef;
 
 
@@ -77,9 +75,6 @@ namespace Engine
             m_fieldDrawers.Add(typeof(Actor).FullName.GetHashCode(), GUI.DrawActor);
             m_fieldDrawers.Add(typeof(Component).FullName.GetHashCode(), GUI.DrawComponent);
         }
-
-
-        void Space() { ImGui.Dummy(m_lineSpacing); }
 
         public static void cpp_Init(CppRef cppRef)
         {
@@ -111,8 +106,10 @@ namespace Engine
                 m_DrawField(fields[i]);
 
                 if (i != fields.Count - 1)
-                    Space();
+                    GUI.Space();
             }
+
+            serializer.OnDrawGui(type, ref instance);
         }
 
         private void m_DrawField(FireYaml.Field field) {
@@ -159,9 +156,16 @@ namespace Engine
         public static float floatSpeed = 0.01f;
         public static bool hasBorder = false;
 
+        public static sn.Vector2 lineSpacing = new sn.Vector2(0, 3);
+        public static sn.Vector2 headerSpacing = new sn.Vector2(0, 8);
+
         public static UI.ImGuiStyle style;
 
         private static TestGUIFields testObj = new TestGUIFields();
+
+        public static void Space() { ImGui.Dummy(lineSpacing); }
+        public static void HeaderSpace() { ImGui.Dummy(headerSpacing); }
+
 
         public static void DrawIntField(string label, FireYaml.Field field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
@@ -464,13 +468,36 @@ namespace Engine
                 instance = FireYaml.Deserializer.CreateInstance(field.type);
                 iasset = instance as FireYaml.IAsset;
                 field.SetValue(instance);
-                
+
                 var assetId = store.GetAssetId(assetIdHash);
 
                 FireYaml.Deserializer.InitIAsset(ref instance, assetId);
 
                 iasset.LoadAsset();
             }
+        }
+
+        public static bool DrawAsset(string label, Type type, int assetIdHash,  out object changedAsset) {
+            var store = FireYaml.AssetStore.Instance;
+
+            changedAsset = null;
+            
+            var scriptId = store.GetScriptIdByTypeName(type.FullName);
+            var scriptIdHash = scriptId.GetHashCode();          
+
+            bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash);
+
+            if (changed) {
+                changedAsset = FireYaml.Deserializer.CreateInstance(type);
+                var iasset = changedAsset as FireYaml.IAsset;
+
+                var assetId = store.GetAssetId(assetIdHash);
+
+                FireYaml.Deserializer.InitIAsset(ref changedAsset, assetId);
+
+                iasset.LoadAsset();
+            }
+            return changed;
         }
 
         public static void DrawActor(string label, FireYaml.Field field, RangeAttribute range = null) {
@@ -518,6 +545,29 @@ namespace Engine
                 var newComponent = CppLinked.GetObjectByRef(csRef);
                 field.SetValue(newComponent);
             }
+        }
+
+        public static bool CollapsingHeader(string label, ImGuiTreeNodeFlags_ flags) {
+
+            float headerWidth = rectWidth - padding;
+
+            // ImGui.PushStyleVar((int)ImGuiStyleVar_._FrameRounding, 10);
+
+            HeaderSpace();
+
+            ImGui.Columns(2, "CollapsingHeader", false);
+            ImGui.SetColumnWidth(0, headerWidth);
+            ImGui.SetColumnWidth(1, padding);
+
+            bool isOpen = ImGui.CollapsingHeader(label, (int)flags);
+            
+            ImGui.NextColumn();
+            ImGui.Columns(1);
+            // ImGui.PopStyleVar();
+
+            HeaderSpace();
+
+            return isOpen;
         }
 
         public static void TestDrawers() {

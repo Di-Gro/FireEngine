@@ -14,6 +14,8 @@ namespace Engine {
         public int ShapeCount => Dll.Mesh4.ShapeCount(cppRef);
         public int MaxMaterialIndex => Dll.Mesh4.MaterialMaxIndex(cppRef);
 
+        public bool IsDynamic => GetType() != typeof(StaticMesh);
+
         public Mesh() {}
         public Mesh(CppRef cppRef) => this.cppRef = cppRef;
     }

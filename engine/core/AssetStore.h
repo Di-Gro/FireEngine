@@ -24,6 +24,7 @@ private:
 	std::string m_emptyValue = "";
 	std::string m_nullValue = "Null";
 	std::string m_missingValue = "Missing";
+	std::string m_dynamicValue = "Dynamic";
 
 public:
 	~AssetStore();
@@ -31,6 +32,9 @@ public:
 	const std::string& GetAssetName(int assetIdHash) {
 		if (assetIdHash == 0)
 			return m_nullValue;
+
+		if (assetIdHash == -1)
+			return m_dynamicValue;
 
 		if (assetNames.contains(assetIdHash))
 			return assetNames[assetIdHash];

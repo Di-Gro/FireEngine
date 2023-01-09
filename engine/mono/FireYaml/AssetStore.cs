@@ -64,8 +64,10 @@ namespace FireYaml {
                 AddAssetId("TestImage1", $"{m_assetsPath}TestImage1.yml");
                 AddAssetId("TestMaterial1", $"{m_assetsPath}TestMaterial1.yml");
                 AddAssetId("TestMesh1", $"{m_assetsPath}TestMesh1.yml");
-                AddAssetId("M_Default", $"{m_assetsPath}M_Default.yml");
                 AddAssetId("TestPrefab2", $"{m_assetsPath}TestPrefab2.yml");
+                AddAssetId("M_Default", $"{m_assetsPath}M_Default.yml");
+                AddAssetId("M_WorldGride", $"{m_assetsPath}M_WorldGride.yml");
+                AddAssetId("test_navmesh", $"{m_assetsPath}test_navmesh.yml");
             }
         }
 

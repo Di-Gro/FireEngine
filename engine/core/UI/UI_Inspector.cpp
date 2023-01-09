@@ -169,6 +169,7 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 		ImGui::PushStyleColor(ImGuiCol_Header, { 0.4f, 0.0f, 0.0f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.5f, 0.0f, 0.0f, 1.0f });
 	}
+
 	ImVec2 lastCursor = ImGui::GetCursorPos();
 	result = ImGui::CollapsingHeader(nodeId.c_str(), collapsingHeaderFlags);
 	ImVec2 nextCursor = ImGui::GetCursorPos();
@@ -310,31 +311,32 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 
 	bool assetWasSelected = false;
 
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float iconWidth = ImGui::GetFrameHeight();
+	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
+
 	ImGui::Columns(2, "", false);
-	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
 
 	ImGui::Text(label.c_str());
-
-	float width = widthComponent - 97.0f;
-	float height = ImGui::GetFrameHeight();
-
+		
 	ImGui::NextColumn();
-	ImGui::PushItemWidth(width);
-	ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0, 0, 0, 0 });
-	ImGui::ImageButton(_ui->icPickupActor.get(), { height, height }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
+	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
-	ImGui::PopItemWidth();
 
 	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
-	ImGui::Button(buttonText.c_str(), { width, height });
+	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
-	ImGui::PopItemWidth();
 
 	m_assetPickerPopup.flags = ImGuiPopupFlags_MouseButtonRight;
 	assetWasSelected |= m_assetPickerPopup.Open(_game);
@@ -365,24 +367,26 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 
 	std::string buttonText = actorName + " (Actor) ";
 
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float iconWidth = ImGui::GetFrameHeight();
+	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
+
 	ImGui::Columns(2, "", false);
-	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
 
 	ImGui::Text(label.c_str());
 
-	float width = widthComponent - 97.0f;
-	float height = ImGui::GetFrameHeight();
-
 	ImGui::NextColumn();
-	ImGui::PushItemWidth(width);
-	ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0, 0, 0, 0 });
-	ImGui::ImageButton(_ui->icPickupActor.get(), { height, height }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
+	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
-	ImGui::PopItemWidth();
 
 	bool hasDraggedActor = HasDraggedActor(csRef);
 	if (hasDraggedActor) 
@@ -390,16 +394,15 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
-	ImGui::Button(buttonText.c_str(), { width, height });
+	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
-	ImGui::PopItemWidth();
 
 	if (hasDraggedActor)
 		ImGui::PopStyleColor(1);
 
-	bool changed = AcceptDroppedActor(csRef);
-
 	ImGui::Columns(1);
+
+	bool changed = AcceptDroppedActor(csRef);
 
 	return changed;
 }
@@ -419,24 +422,26 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
 	std::string buttonText = actorName + " (" + assetType + ") ";
 
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float iconWidth = ImGui::GetFrameHeight();
+	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
+
 	ImGui::Columns(2, "", false);
-	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
 
 	ImGui::Text(label.c_str());
 
-	float width = widthComponent - 97.0f;
-	float height = ImGui::GetFrameHeight();
-
 	ImGui::NextColumn();
-	ImGui::PushItemWidth(width);
-	ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0, 0, 0, 0 });
-	ImGui::ImageButton(_ui->icPickupActor.get(), { height, height }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
+	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
-	ImGui::PopItemWidth();
 
 	bool hasDraggedComponent = HasDraggedComponent(scriptIdHash, csRef);
 	if (hasDraggedComponent) 
@@ -444,16 +449,15 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 	
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
-	ImGui::Button(buttonText.c_str(), { width, height });
+	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
-	ImGui::PopItemWidth();
 
 	if (hasDraggedComponent)
 		ImGui::PopStyleColor(1);
 
-	bool changed = AcceptDroppedComponent(scriptIdHash, csRef);
-
 	ImGui::Columns(1);
+
+	bool changed = AcceptDroppedComponent(scriptIdHash, csRef);
 
 	return changed;
 }
