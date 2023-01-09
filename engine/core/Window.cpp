@@ -75,7 +75,7 @@ void Window::Create() {
 }
 
 void Window::Destroy() {
-    ClipCursor(&m_rcOldClip); // Restore the cursor to its previous area.
+    //ClipCursor(&m_rcOldClip); // Restore the cursor to its previous area.
 }
 
 void Window::Exit(int code) { PostQuitMessage(code); }

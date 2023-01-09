@@ -89,11 +89,13 @@ public:
 	void(*setUpdateData)(GameUpdateData value);
 	void(*onInputUpdate)();
 
-	void(*saveScene)(CppRef cppSceneRef, size_t assetIdPtr, size_t pathPtr);
-	void(*loadScene)(CppRef cppSceneRef, size_t assetIdPtr);
+	bool(*saveScene)(CppRef cppSceneRef, size_t assetIdPtr, size_t pathPtr);
+	bool(*loadScene)(CppRef cppSceneRef, size_t assetIdPtr);
 
 	bool(*runOrCrush)(CsRef componentRef, void(*method)());
 
 	bool(*isAssignable)(CsRef objRef, int typeIdHash);
+
+	void(*removeCsRef)(CsRef value);
 };
 

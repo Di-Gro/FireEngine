@@ -16,6 +16,8 @@ class Component;
 class UI_Inspector
 {
 public:
+	static const char* ComponentDragType;
+
 	static char textBuffer[1024];
 	float widthComponent = 0;
 	CsRef csRef;
@@ -45,10 +47,15 @@ private:
 	ImVec2 m_compSpacing = { 0, 8 };
 	ImVec2 m_lineSpacing = { 0, 3 };
 
+	ImVec4 m_dragTargetColor = { 0.11f, 0.64f, 0.92f, 0.60f };
+	ImVec4 m_dragTargetColorHovered = { 0.11f, 0.64f, 0.92f, 1.00f };
+
 	ComponentPicker m_componentPicker;
 	AssetPickerPopup m_assetPickerPopup;
 
 	std::string m_componentName;
+
+	CsRef m_focusedRef;
 
 public:
 	void Draw_UI_Inspector();
@@ -59,7 +66,7 @@ public:
 
 	void AddComponent();
 
-	Actor* GetDroppedActor();
+	//Actor* GetDroppedActor();
 
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
@@ -78,7 +85,11 @@ public:
 
 	bool CollapsingHeader(Component* component, const std::string& name);
 
-	Component* AcceptDroppedComponent(int scriptIdHash);
+	bool HasDraggedActor(CsRef* currentRef);
+	bool HasDraggedComponent(int scriptIdHash, CsRef* currentRef);
+
+	bool AcceptDroppedActor(CsRef* currentRef);
+	bool AcceptDroppedComponent(int scriptIdHash, CsRef* currentRef);
 
 private:
 	void m_DrawHeader();
@@ -98,3 +109,5 @@ FUNC(UI_Inspector, SetComponentName, void)(CppRef gameRef, const char* value);
 FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash);
 FUNC(UI_Inspector, ShowActor, bool)(CppRef gameRef, const char* label, CsRef* csRef, CppRef cppRef);
 FUNC(UI_Inspector, ShowComponent, bool)(CppRef gameRef, const char* label, CsRef* csRef, CppRef cppRef, int scriptIdHash);
+
+FUNC(ImGui, CalcTextWidth, float)(const char* value);

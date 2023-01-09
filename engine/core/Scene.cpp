@@ -102,14 +102,6 @@ void Scene::m_Destroy(std::list<Actor*>* list) {
 	}
 }
 
-void Scene::f_RemoveActor(Actor* actor) {
-	//TODO: �������� ����� �� ������ ��� ����������
-}
-
-void Scene::f_AddActor(Actor* actor) {
-	//TODO: �������� ��� ������������ �����
-}
-
 Actor* Scene::CreateActor(Actor* parent, std::string name) {
 	if (m_game->currentScene() != this)
 		throw std::exception(MissingPushPopMsg);
@@ -159,9 +151,11 @@ void Scene::DestroyActor(Actor* actor) {
 
 		actor->f_Destroy();
 
-		if (CppRefs::IsValid(actor->f_ref)) {
+		if (CppRefs::IsValid(actor->f_ref)) 
 			CppRefs::Remove(actor->f_ref);
-		}
+
+		if (actor->csRef().value > 0)
+			m_game->callbacks().removeCsRef(actor->csRef());
 	}
 }
 

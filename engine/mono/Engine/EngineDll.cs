@@ -669,5 +669,12 @@ namespace EngineDll {
 		    public static extern void AddAssetType(CppRef gameRef, int typeId);
 
 		}
+
+		public static class ImGui {
+		
+            [DllImport(Paths.Exe, EntryPoint = "ImGui_CalcTextWidth", CharSet = CharSet.Ansi)]
+		    public static extern float CalcTextWidth(string value);
+
+		}
 	}
 }

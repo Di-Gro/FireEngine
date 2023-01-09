@@ -7,6 +7,8 @@ namespace Engine {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct CppRef {
+        public static CppRef NullRef = 0;
+
         public ulong value;
 
         CppRef(ulong v) => value = v;
@@ -18,6 +20,9 @@ namespace Engine {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct CsRef {
+        public static CsRef NullRef = 0;
+        public static CsRef MissingRef = 1;
+
         public UInt64 value;
 
         CsRef(UInt64 v) => value = v;

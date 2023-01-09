@@ -11,6 +11,7 @@
 #include "../Game.h"
 #include "../Actor.h"
 #include "UserInterface.h"
+#include "UI_Hierarchy.h"
 #include "ComponentPicker.h"
 #include "../Render.h"
 #include "../HotKeys.h"
@@ -18,6 +19,7 @@
 
 #include "../CameraComponent.h"
 
+const char* UI_Inspector::ComponentDragType = "Inspector.Actor";
 char UI_Inspector::textBuffer[1024] = { 0 };
 
 
@@ -176,7 +178,7 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 		return false;
 
 	if (ImGui::BeginDragDropSource()) {
-		ImGui::SetDragDropPayload("Component", &component, sizeof(Component*));
+		ImGui::SetDragDropPayload(UI_Inspector::ComponentDragType, &component, sizeof(Component*));
 		ImGui::EndDragDropSource();
 	}
 
@@ -357,7 +359,10 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 		throw std::exception("ShowComponent: Bad actor reference");
 
 	std::string fieldName = label;
-	std::string actorName = actor == nullptr ? "Null" : actor->name();
+	std::string actorName = csRef->value == 1 ? "Missing" : "Null"; 
+	if(actor != nullptr)
+		actorName = actor->name();
+
 	std::string buttonText = actorName + " (Actor) ";
 
 	ImGui::Columns(2, "", false);
@@ -379,15 +384,24 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 	ImGui::PopStyleColor(3);
 	ImGui::PopItemWidth();
 
+	bool hasDraggedActor = HasDraggedActor(csRef);
+	if (hasDraggedActor) 
+		ImGui::PushStyleColor(ImGuiCol_Button, m_dragTargetColor);
+
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
 	ImGui::Button(buttonText.c_str(), { width, height });
 	ImGui::PopStyleVar(1);
 	ImGui::PopItemWidth();
 
+	if (hasDraggedActor)
+		ImGui::PopStyleColor(1);
+
+	bool changed = AcceptDroppedActor(csRef);
+
 	ImGui::Columns(1);
 
-	return false;
+	return changed;
 }
 
 bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef cppRef, int scriptIdHash) {
@@ -398,7 +412,10 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 		throw std::exception("ShowComponent: Bad component reference");
 
 	std::string fieldName = label;
-	std::string actorName = actor == nullptr ? "Null" : actor->name();
+	std::string actorName = csRef->value == 1 ? "Missing" : "Null";
+	if(actor != nullptr) 
+		actorName = actor->name();
+
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
 	std::string buttonText = actorName + " (" + assetType + ") ";
 
@@ -421,62 +438,137 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 	ImGui::PopStyleColor(3);
 	ImGui::PopItemWidth();
 
+	bool hasDraggedComponent = HasDraggedComponent(scriptIdHash, csRef);
+	if (hasDraggedComponent) 
+		ImGui::PushStyleColor(ImGuiCol_Button, m_dragTargetColor);
+	
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
 	ImGui::Button(buttonText.c_str(), { width, height });
 	ImGui::PopStyleVar(1);
 	ImGui::PopItemWidth();
 
-	bool changed = false;
+	if (hasDraggedComponent)
+		ImGui::PopStyleColor(1);
 
-	auto dropComponent = AcceptDroppedComponent(scriptIdHash);
-	if (dropComponent != nullptr) {
-		if (*csRef != dropComponent->csRef()) {
-			*csRef = dropComponent->csRef();
-			changed = true;
-		}
-	}
+	bool changed = AcceptDroppedComponent(scriptIdHash, csRef);
 
 	ImGui::Columns(1);
 
 	return changed;
 }
 
-Component* UI_Inspector::AcceptDroppedComponent(int scriptIdHash) {
-	auto dataType = "Component";
+bool UI_Inspector::HasDraggedActor(CsRef* currentRef) {
+	auto dataType = UI_Hierarchy::ActorDragType;
 
-	if (ImGui::BeginDragDropTarget()) {
-		auto payload = ImGui::GetDragDropPayload();
-		if (payload != nullptr && payload->IsDataType(dataType)) {
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
 
-			auto dropComponent = *(Component**)(payload->Data);
-			if (dropComponent != nullptr) {
+		auto draggedActor = *(Actor**)payload->Data;
+		return draggedActor != nullptr;
+	}
+	return false;
+}
 
-				auto csRef = dropComponent->csRef();
-				if (_game->callbacks().isAssignable(csRef, scriptIdHash)) {
-					ImGui::AcceptDragDropPayload(dataType);
+bool UI_Inspector::HasDraggedComponent(int scriptIdHash, CsRef* currentRef) {
+	auto dataType = UI_Inspector::ComponentDragType;
 
-					if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-						return dropComponent;
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+		auto draggedComponent = *(Component**)payload->Data;
+		if (draggedComponent != nullptr) {
+			auto draggedRef = draggedComponent->csRef();
+			bool isAssignable = _game->callbacks().isAssignable(draggedRef, scriptIdHash);
+			return isAssignable;
+		}
+	}
+	return false;
+}
+
+bool UI_Inspector::AcceptDroppedActor(CsRef* currentRef) {
+	auto dataType = UI_Hierarchy::ActorDragType;
+
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+		auto draggedActor = *(Actor**)payload->Data;
+		if (draggedActor != nullptr && ImGui::BeginDragDropTarget()) {
+			ImGui::AcceptDragDropPayload(dataType);
+
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+
+				auto draggedRef = draggedActor->csRef();
+				if (*currentRef != draggedRef) {
+					*currentRef = draggedRef;
+					return true;
+				}
+			}
+		}
+	}	
+	return false;
+}
+
+bool UI_Inspector::AcceptDroppedComponent(int scriptIdHash, CsRef* currentRef) {
+	auto dataType = UI_Inspector::ComponentDragType;
+
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+		auto draggedComponent = *(Component**)payload->Data;
+		if (draggedComponent != nullptr && ImGui::BeginDragDropTarget()) {
+			auto draggedRef = draggedComponent->csRef();
+
+			if (_game->callbacks().isAssignable(draggedRef, scriptIdHash)) {
+				ImGui::AcceptDragDropPayload(dataType);
+
+				if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+					if (*currentRef != draggedRef) {
+						*currentRef = draggedRef;
+						return true;
 					}
 				}
 			}
 		}
 	}
+	return false;
+
+	//if (ImGui::BeginDragDropTarget()) {
+	//	auto payload = ImGui::GetDragDropPayload();
+	//	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+	//		auto draggedComponent = *(Component**)payload->Data;
+	//		if (draggedComponent != nullptr) {
+
+	//			auto draggedRef = draggedComponent->csRef();
+	//			if (*currentRef != draggedRef) {
+	//				if (_game->callbacks().isAssignable(draggedRef, scriptIdHash)) {
+	//					ImGui::AcceptDragDropPayload(dataType);
+
+	//					if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+	//						*currentRef = draggedRef;
+	//						return true;
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+	//return false;
 }
 
-Actor* UI_Inspector::GetDroppedActor()
-{
-	if (ImGui::BeginDragDropTarget())
-	{
-		auto acceptPayload = ImGui::AcceptDragDropPayload("hierarchy");
-
-		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && acceptPayload != nullptr)
-			return (Actor*)acceptPayload->Data;
-		ImGui::EndDragDropTarget();
-	}
-	return nullptr;
-}
+//Actor* UI_Inspector::GetDroppedActor()
+//{
+//	if (ImGui::BeginDragDropTarget())
+//	{
+//		auto acceptPayload = ImGui::AcceptDragDropPayload("hierarchy");
+//
+//		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && acceptPayload != nullptr)
+//			return (Actor*)acceptPayload->Data;
+//		ImGui::EndDragDropTarget();
+//	}
+//	return nullptr;
+//}
 
 DEF_FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr)
 {
@@ -512,7 +604,6 @@ DEF_FUNC(UI_Inspector, SetComponentName, void)(CppRef gameRef, const char* value
 
 	game->ui()->inspector()->SetComponentName(value);
 }
-
 
 DEF_FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
@@ -553,4 +644,8 @@ void UI_Inspector::m_DrawComponentContextMenu(Component* component)
 
 	ImGui::PopStyleVar(6);
 	ImGui::PopStyleColor(3);
+}
+
+DEF_FUNC(ImGui, CalcTextWidth, float)(const char* value) {
+	return ImGui::CalcTextSize(value).x;
 }

@@ -88,8 +88,6 @@ public:
 private:
 	void f_Update();
 	void f_Destroy();
-	void f_RemoveActor(Actor* actor);
-	void f_AddActor(Actor* actor);
 
 private:
 	void m_InitMono();

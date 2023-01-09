@@ -244,6 +244,8 @@ void Game::m_Update() {
 			continue;
 		}
 		scene->f_Update();
+		assert(m_sceneStack.size() == 0);
+
 		it++;
 	}
 
@@ -388,16 +390,24 @@ void Game::TogglePlayMode() {
 		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
 		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
 		
-		m_callbacks.saveScene(editorSceneRef, (size_t)assetId, (size_t)tmpScenePath);
-		m_callbacks.loadScene(gameSceneRef, (size_t)assetId);
+		bool wasSaved = m_callbacks.saveScene(editorSceneRef, (size_t)assetId, (size_t)tmpScenePath);
+		bool wasLoaded = false;
 
-		auto gameWindow = ui()->GetSceneWindow("Game");
-		if (gameWindow == nullptr)
-			gameWindow = ui()->CreateSceneWindow("Game", "Game");
+		if (wasSaved) {
+			wasLoaded = m_callbacks.loadScene(gameSceneRef, (size_t)assetId);
+			if (wasLoaded) {
 
-		gameWindow->scene(m_gameScene);
-		gameWindow->visible = true;
-		gameWindow->focus();
+				auto gameWindow = ui()->GetSceneWindow("Game");
+				if (gameWindow == nullptr)
+					gameWindow = ui()->CreateSceneWindow("Game", "Game");
+
+				gameWindow->scene(m_gameScene);
+				gameWindow->visible = true;
+				gameWindow->focus();
+			}
+		}
+		if (!wasSaved || !wasLoaded)
+			DestroyScene(m_gameScene);
 	}
 	else {
 		if (ui()->selectedScene() == m_gameScene)

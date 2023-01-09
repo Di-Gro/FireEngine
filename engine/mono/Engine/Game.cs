@@ -59,8 +59,8 @@ namespace Engine {
             gameRef = _gameRef;
 
             m_gameCallbacks = new GameCallbacks();
-            m_gameCallbacks.setSceneRef = new GameCallbacks.SetRef(SetSceneRef);
-            m_gameCallbacks.setMeshAssetRef = new GameCallbacks.SetRef(SetMeshAssetRef);
+            m_gameCallbacks.setSceneRef = new GameCallbacks.TakeCppRef(SetSceneRef);
+            m_gameCallbacks.setMeshAssetRef = new GameCallbacks.TakeCppRef(SetMeshAssetRef);
             m_gameCallbacks.setUpdateData = new GameCallbacks.SetUpdateData(SetUpdateData);
             m_gameCallbacks.onInputUpdate = new GameCallbacks.Void(Input.OnUpdate);
             m_gameCallbacks.saveScene = new GameCallbacks.SaveScene(SaveScene);
@@ -68,6 +68,8 @@ namespace Engine {
 
             m_gameCallbacks.runOrCrush = new GameCallbacks.RunOrCrush(Component.RunOrCrush);
             m_gameCallbacks.isAssignable = new GameCallbacks.IsAssignable(FireYaml.AssetStore.IsAssignable);
+
+            m_gameCallbacks.removeCsRef = new GameCallbacks.TakeCsRef(CppLinked.RemoveCsRef);
 
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
 
@@ -95,30 +97,34 @@ namespace Engine {
             Dll.Game.PopScene(gameRef);
         }
 
-        private static void SaveScene(CppRef cppSceneRef, ulong assetIdPtr, ulong pathPtr) {
+        private static bool SaveScene(CppRef cppSceneRef, ulong assetIdPtr, ulong pathPtr) {
             var assetId = Assets.ReadCString(assetIdPtr);
             var path = Assets.ReadCString(pathPtr);
 
             try {
                 object scene = new Scene(cppSceneRef);
                 FireYaml.AssetStore.Instance.CreateAsset(path, scene, assetId);
+                return true;
 
             } catch (Exception e) {
 
-                Console.WriteLine("1", e.Message);
+                Console.WriteLine("Exception on SaveScene:", e.Message);
+                return false;
             }
         }
 
-        private static void LoadScene(CppRef cppSceneRef, ulong assetIdPtr) {
+        private static bool LoadScene(CppRef cppSceneRef, ulong assetIdPtr) {
             var assetId = Assets.ReadCString(assetIdPtr);
 
             try {
                 object scene = new Scene(cppSceneRef);
                 new FireYaml.Deserializer(assetId).InstanciateTo(ref scene);
+                return true;
 
             } catch (Exception e) {
 
-                Console.WriteLine("2", e.Message, e.StackTrace);
+                Console.WriteLine("Exception on LoadScene:", e.Message, e.StackTrace);
+                return false;
             }
         }
 
@@ -132,15 +138,16 @@ namespace Engine {
     [StructLayout(LayoutKind.Sequential)]
     public struct GameCallbacks {
         public delegate void Void();
-        public delegate void SetRef(CppRef value);
+        public delegate void TakeCppRef(CppRef value);
+        public delegate void TakeCsRef(CsRef value);
         public delegate void SetUpdateData(GameUpdateData value);
-        public delegate void SaveScene(CppRef cppSceneRef, ulong assetIdPtr, ulong pathPtr);
-        public delegate void LoadScene(CppRef cppSceneRef, ulong assetIdPtr);
+        public delegate bool SaveScene(CppRef cppSceneRef, ulong assetIdPtr, ulong pathPtr);
+        public delegate bool LoadScene(CppRef cppSceneRef, ulong assetIdPtr);
         public delegate bool RunOrCrush(CsRef componentRef, ComponentCallbacks.ComponentCallback method);
         public delegate bool IsAssignable(CsRef csRef, int typeIdHash);
 
-        public SetRef setSceneRef;
-        public SetRef setMeshAssetRef;
+        public TakeCppRef setSceneRef;
+        public TakeCppRef setMeshAssetRef;
         public SetUpdateData setUpdateData;
         public Void onInputUpdate;
 
@@ -150,6 +157,7 @@ namespace Engine {
         public RunOrCrush runOrCrush;
 
         public IsAssignable isAssignable; // From, To
+        public TakeCsRef removeCsRef;
     }
 }
 

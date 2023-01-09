@@ -14,18 +14,18 @@ namespace Engine {
 	}
 
 	public class CppLinked : ICppLinked {
-		/// Static ->
-		private static Dictionary<CsRef, object> s_refs = new Dictionary<CsRef, object>();
-		private static CsRef s_nextRefId = 1;
+        /// Static ->
+        private static Dictionary<CsRef, object> s_refs = new Dictionary<CsRef, object>();
+		private static CsRef s_nextRefId = 2; // NullRef = 0, MissingRef = 1
 
-		public static object GetObjectByRef(CsRef csRef) {
+        public static object GetObjectByRef(CsRef csRef) {
 			if (s_refs.ContainsKey(csRef))
 				return s_refs[csRef];
 			return null;
 		}
-		public static void RemoveObjectByRef(CsRef csRef) {
-			//Console.WriteLine($"#: CppLinked.RemoveObjectByRef({csRef})");
-			s_refs.Remove(csRef);
+		public static void RemoveCsRef(CsRef csRef) {
+            Console.WriteLine($"RemoveCsRef: {csRef}");
+            s_refs.Remove(csRef);
 		}
 		/// <- Static
 
@@ -41,6 +41,8 @@ namespace Engine {
 			csRef = s_nextRefId.value;
 			s_refs.Add(csRef, this);
 			s_nextRefId.value++;
+
+            Console.WriteLine($"CreateCsRef: {csRef}");
 		}
 
 		public virtual CsRef Link(CppRef classInfoRef, CppRef objRef) {

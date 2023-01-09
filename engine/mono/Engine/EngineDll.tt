@@ -285,5 +285,12 @@ namespace EngineDll {
 			FUNC("AssetStore", "AddAssetType", "void", "CppRef gameRef, int typeId");
 #>
 		}
+
+		public static class ImGui {
+		
+<#
+			ANSI_FUNC("ImGui", "CalcTextWidth", "float", "string value");
+#>
+		}
 	}
 }

@@ -18,7 +18,6 @@ bool Actor::mono_inited;
 
 mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> Actor::mono_AddComponent;
 mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> Actor::mono_AddCsComponent;
-//mono::mono_method_invoker<void(CsRef, size_t, size_t)> Actor::mono_SetName;
 
 
 Actor::Actor() {  }
@@ -30,34 +29,23 @@ void Actor::m_CreateTransform() {
 	transform->friend_gameObject = this;
 }
 
-//void Actor::m_RemoveTransform() {
-//}
-
-void Actor::MoveChild(Actor* from, Actor* to, bool isPastBefore)
-{
+void Actor::MoveChild(Actor* from, Actor* to, bool isPastBefore) {
 	bool isFrom = false;
 	bool isTo = false;
 
 	int newIndex = 0;
 
-	std::vector<Actor*>::iterator newIt = m_childs.end();
-
-	for (int i = 0; i < m_childs.size(); ++i)
-	{
-		if (m_childs[i] == from)
-		{
+	for (int i = 0; i < m_childs.size(); ++i) {
+		if (m_childs[i] == from) {
 			m_childs.erase(m_childs.begin() + i);
 			isFrom = true;
 			--i;
 			continue;
-		}
-
-		if (m_childs[i] == to)
-		{
+		} 
+		if (m_childs[i] == to) {
 			newIndex = i;
 			isTo = true;
-		}
-
+		} 
 		if (isFrom && isTo)
 			break;
 	}
@@ -84,7 +72,6 @@ void Actor::m_InitMono() {
 	auto type = game()->mono()->GetType("Engine", "Actor");
 	mono_AddComponent = mono::make_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)>(type, "cpp_AddComponent");
 	mono_AddCsComponent = mono::make_method_invoker<CppRef(CsRef, size_t, size_t)>(type, "cpp_AddCsComponent");
-	//mono_SetName = mono::make_method_invoker<void(CsRef, size_t, size_t)>(type, "cpp_SetName");
 
 	mono_inited = true;
 }
@@ -124,7 +111,6 @@ void Actor::f_Destroy() {
 		it = m_EraseComponent(it);
 	}
 	m_DeleteFromParent();
-	//m_RemoveTransform();
 
 	f_game = nullptr;
 	friend_gameObject = nullptr;
@@ -134,19 +120,10 @@ void Actor::f_Draw() {
 	for (auto component : m_components) {
 		if (!component->IsDestroyed()) {
 			component->OnDraw();
-
-			//if (game()->render()->camera()->drawDebug)
-			//	component->OnDrawDebug();
 		}
 	}
 };
 
-//void Actor::f_DrawUI() {
-//	for (auto component : m_components) {
-//		if (!component->IsDestroyed())
-//			component->OnDrawUI();
-//	}
-//};
 
 std::list<Component*>::iterator Actor::m_EraseComponent(std::list<Component*>::iterator it) {
 	auto* component = *it;
@@ -175,9 +152,12 @@ void Actor::f_DestroyComponent(Component* component) {
 		if (m_NeedRunComponent(component))
 			m_RunOrCrash(component, &Actor::m_OnDestroyComponent);
 
-		if (CppRefs::IsValid(component->f_ref)) {
+		if (CppRefs::IsValid(component->f_ref)) 
 			CppRefs::Remove(component->f_ref);
-		}
+		
+		if (component->csRef().value > 0) 
+			game()->callbacks().removeCsRef(component->csRef());
+		
 		component->ActorBase::friend_gameObject = nullptr;
 		component->ActorBase::friend_component = nullptr;
 	}

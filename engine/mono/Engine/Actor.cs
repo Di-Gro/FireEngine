@@ -99,7 +99,7 @@ namespace Engine {
 
         public void Destroy() {
             Dll.Actor.Destroy(cppRef);
-            RemoveObjectByRef(csRef);
+            //RemoveCsRef(csRef); // TODO: Actor.Destroy
         }
 
         ~Actor() {
@@ -327,31 +327,31 @@ namespace Engine {
         //    return str;
         //}
 
-        private static void cpp_InitComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_InitComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
 
-            component.OnInit();
-        }
+        //     component.OnInit();
+        // }
 
-        private static void cpp_StartComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_StartComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
 
-            component.OnStart();
-        }
+        //     component.OnStart();
+        // }
 
-        private static void cpp_UpdateComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_UpdateComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
 
-            component.OnUpdate();
-        }
+        //     component.OnUpdate();
+        // }
 
-        private static void cpp_DestroyComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_DestroyComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
             
-            component.OnDestroy();
+        //     component.OnDestroy();
 
-            RemoveObjectByRef(compRef);
-        }
+        //     RemoveCsRef(compRef);
+        // }
 
         #endregion
     }

@@ -20,6 +20,8 @@ enum class ReorderEnum
 
 class UI_Hierarchy
 {
+public:
+	static const char* ActorDragType;
 
 private:
 	Game* m_game;
@@ -31,6 +33,7 @@ private:
 
 	bool m_isMouseReleaseOnDragActor = false;
 	Actor* m_dragTargetActor = nullptr;
+	Actor* m_clickedActor = nullptr;
 
 public:
 	void Draw_UI_Hierarchy();

@@ -10,6 +10,24 @@ using sn = System.Numerics;
 
 namespace Engine
 {
+
+    class TestGUIFields {
+
+        public enum TestEnum {One, Two, Three, Four, Five}
+
+        public int _int = 14;
+        public float padding = 0;
+        public float width = 0;
+        public bool _bool = false;
+        public Vector2 _vec2 = new Vector2(1, 2);
+        public Vector3 _vec3 = new Vector3(1, 2, 3);
+        public Quaternion _quat = new Quaternion();
+        public TestEnum _enum = TestEnum.Four;
+        public string _str = "";
+
+    }
+
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Callbacks {
         public delegate void Callback(CsRef csRef, float width);
@@ -77,17 +95,22 @@ namespace Engine
 
         public void OnDrawComponent(CsRef csRef, float width) {
             GUI.rectWidth = width;
+            GUI.style = Marshal.PtrToStructure<UI.ImGuiStyle>(ImGui.GetStyle());
             
             var instance = CppLinked.GetObjectByRef(csRef);
+            DrawObject(ref instance);
+        }
+
+        public void DrawObject(ref object instance) {
             var type = instance.GetType();
             var serializer = FireYaml.Serializer.GetSerializer(type);
 
             var fields = FireYaml.Serializer.GetFields(type, instance, serializer);
 
-            for( int i = 0; i < fields.Count; i++) {
+            for (int i = 0; i < fields.Count; i++) {
                 m_DrawField(fields[i]);
 
-                if(i != fields.Count - 1)
+                if (i != fields.Count - 1)
                     Space();
             }
         }
@@ -123,42 +146,31 @@ namespace Engine
             Dll.UI_Inspector.SetComponentName(Game.gameRef, name);
         }
 
-        private void TestTypes() {
-            // DrawIntField("Test Int", ref tmp);
-            // Space();
-            // DrawFloatField("Test Float", ref tmpF);
-            // Space();
-            // DrawVector2("Test Vector2", ref tmpVec);
-            // Space();
-            // DrawVector3("Test Vector3", ref tmpVec3);
-            // Space();
-            // DrawQuaternion("Test Quaternion", ref tmpQuaternion);
-            // Space();
-            // DrawBoolField("Test Bool", ref boolCheckbox);
-            // Space();
-            // DrawString("Test String", ref testString);
-            // Space();
-            // object oo = mm;
-            // DrawEnum("Test Combo", ref mm);
-        }
 
         [DllImport(Paths.Exe, EntryPoint = "UserInterface_SetCallbacks2")]
         private static extern void dll_SetCallbacks2(CppRef cppRef, Callbacks callbacks);
     }
 
     public static class GUI {
+
         public static float rectWidth = 0;
+        public static float labelWidth = 100;
+        public static float padding = 20;
         public static float floatSpeed = 0.01f;
         public static bool hasBorder = false;
 
+        public static UI.ImGuiStyle style;
+
+        private static TestGUIFields testObj = new TestGUIFields();
+
         public static void DrawIntField(string label, FireYaml.Field field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, 100.0f);
+            ImGui.SetColumnWidth(0, labelWidth);
 
             ImGui.Text(label);
 
             ImGui.NextColumn();
-            ImGui.PushItemWidth(rectWidth - 97.0f);
+            ImGui.PushItemWidth(rectWidth - labelWidth - padding);
 
             var intValue = (int)field.Value;
             int min = range != null ? range.imin : 0;
@@ -180,12 +192,12 @@ namespace Engine
 
         public static void DrawFloatField(string label, FireYaml.Field field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, 100.0f);
+            ImGui.SetColumnWidth(0, labelWidth);
 
             ImGui.Text(label);
 
             ImGui.NextColumn();
-            ImGui.PushItemWidth(rectWidth - 97.0f);
+            ImGui.PushItemWidth(rectWidth - labelWidth - padding);
 
             var floatValue = (float)field.Value;
             float min = range != null ? range.fmin : 0;
@@ -207,7 +219,7 @@ namespace Engine
 
         public static void DrawBoolField(string label, FireYaml.Field field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, 100.0f);
+            ImGui.SetColumnWidth(0, labelWidth);
 
             ImGui.Text(label);
 
@@ -223,17 +235,7 @@ namespace Engine
         }
 
         public static void DrawVector2(string label, FireYaml.Field field, RangeAttribute range = null) {
-            ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, 100.0f);
-
-            ImGui.Text(label);
-
-            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 0.0f };
-
-            ImGui.NextColumn();
-            ImGui.PushItemWidth(rectWidth - 135.0f);
-            ImGui.PushMultiItemsWidths(2, ImGui.CalcItemWidth());
-            ImGui.PushStyleVar((int)ImGuiStyleVar_._ItemSpacing, in paddingVec);
+            bool changed = false;
 
             string nameX = "##X_" + label;
             string nameY = "##Y_" + label;
@@ -242,8 +244,20 @@ namespace Engine
             float min = range != null ? range.fmin : 0;
             float max = range != null ? range.fmax : 0;
 
-            bool changed = false;
+            float textSize = Dll.ImGui.CalcTextWidth(" X ");
+            float textWidth = (textSize + style.ItemSpacing.X) * 2;
+            float columns2Width = rectWidth - labelWidth - textWidth;
+                        
+            ImGui.Columns(2, "", hasBorder);
+            ImGui.SetColumnWidth(0, labelWidth);
 
+            ImGui.Text(label);
+
+            ImGui.NextColumn();
+            ImGui.PushMultiItemsWidths(2, columns2Width - padding);
+
+            /// Item 1
+            ImGui.PushID(1);
             ImGui.Text(" X ");
             ImGui.SameLine();
 
@@ -252,9 +266,12 @@ namespace Engine
             else
                 changed = changed || ImGui.SliderFloat(nameX, ref vecValue.X, min, max);
 
+            ImGui.PopID();
             ImGui.PopItemWidth();
-            ImGui.SameLine();
 
+            /// Item 2
+            ImGui.SameLine();
+            ImGui.PushID(2);
             ImGui.Text(" Y ");
             ImGui.SameLine();
 
@@ -263,8 +280,10 @@ namespace Engine
             else
                 changed = changed || ImGui.SliderFloat(nameY, ref vecValue.Y, min, max);
 
+            ImGui.PopID();
             ImGui.PopItemWidth();
-            ImGui.PopStyleVar();
+
+            /// End
             ImGui.Columns(1);
 
             if (changed)
@@ -272,17 +291,7 @@ namespace Engine
         }
 
         public static void DrawVector3(string label, FireYaml.Field field, RangeAttribute range = null) {
-            ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, 100.0f);
-
-            ImGui.Text(label);
-
-            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 0.0f };
-
-            ImGui.NextColumn();
-            ImGui.PushItemWidth(rectWidth - 152.0f);
-            ImGui.PushMultiItemsWidths(3, ImGui.CalcItemWidth());
-            ImGui.PushStyleVar((int)ImGuiStyleVar_._ItemSpacing, in paddingVec);
+            bool changed = false;
 
             string nameX = "##X_" + label;
             string nameY = "##Y_" + label;
@@ -290,43 +299,55 @@ namespace Engine
 
             var vecValue = (Vector3)field.Value;
             float min = range != null ? range.fmin : 0;
-            float max = range != null ? range.fmax : 0;
+            float max = range != null ? range.fmax : 0;        
 
-            bool changed = false;
+            float textSize = Dll.ImGui.CalcTextWidth(" X ");
+            float textWidth = (textSize + style.ItemSpacing.X) * 3;
+            float columns2Width = rectWidth - labelWidth - textWidth;
 
+            ImGui.Columns(2, "", hasBorder);
+            ImGui.SetColumnWidth(0, labelWidth);
+
+            ImGui.Text(label);
+           
+            ImGui.NextColumn();
+            ImGui.PushMultiItemsWidths(3, columns2Width - padding);
+
+            ImGui.PushID(1);
             ImGui.Text(" X ");
-            ImGui.SameLine();
 
+            ImGui.SameLine();
             if (range == null)
                 changed = changed || ImGui.DragFloat($"{nameX}", ref vecValue.X, floatSpeed, min, max);
             else
                 changed = changed || ImGui.SliderFloat($"{nameX}", ref vecValue.X, min, max);
-
+            ImGui.PopID();
             ImGui.PopItemWidth();
-            ImGui.SameLine();
 
+            ImGui.PushID(3);
+            ImGui.SameLine();
             ImGui.Text(" Y ");
+            
             ImGui.SameLine();
-
             if (range == null)
                 changed = changed || ImGui.DragFloat($"{nameY}", ref vecValue.Y, floatSpeed, min, max);
             else
                 changed = changed || ImGui.SliderFloat($"{nameY}", ref vecValue.Y, min, max);
-
+            ImGui.PopID();
             ImGui.PopItemWidth();
-            ImGui.SameLine();
 
+            ImGui.PushID(5);
+            ImGui.SameLine();
             ImGui.Text(" Z ");
+            
             ImGui.SameLine();
-
             if (range == null)
                 changed = changed || ImGui.DragFloat($"{nameZ}", ref vecValue.Z, floatSpeed, min, max);
             else
                 changed = changed || ImGui.SliderFloat($"{nameZ}", ref vecValue.Z, min, max);
-
+            ImGui.PopID();
             ImGui.PopItemWidth();
 
-            ImGui.PopStyleVar();
             ImGui.Columns(1);
 
             if (changed)
@@ -334,18 +355,6 @@ namespace Engine
         }
 
         public static void DrawQuaternion(string label, FireYaml.Field field, RangeAttribute range = null) {
-            ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, 100.0f);
-
-            ImGui.Text(label);
-
-            var paddingVec = new sn.Vector2() { X = 0.0f, Y = 0.0f };
-
-            ImGui.NextColumn();
-            ImGui.PushItemWidth(rectWidth - 170.0f);
-            ImGui.PushMultiItemsWidths(4, ImGui.CalcItemWidth());
-            ImGui.PushStyleVar((int)ImGuiStyleVar_._ItemSpacing, in paddingVec);
-
             string nameX = "##X_" + label;
             string nameY = "##Y_" + label;
             string nameZ = "##Z_" + label;
@@ -354,6 +363,19 @@ namespace Engine
             var quat = (Quaternion)field.Value;
             float min = range != null ? range.fmin : 0;
             float max = range != null ? range.fmax : 0;
+
+            int itemCount = 4;
+            float textSize = Dll.ImGui.CalcTextWidth(" X ");
+            float textWidth = (textSize + style.ItemSpacing.X) * itemCount;
+            float columns2Width = rectWidth - labelWidth - textWidth;
+            
+            ImGui.Columns(2, "", hasBorder);
+            ImGui.SetColumnWidth(0, labelWidth);
+
+            ImGui.Text(label);
+
+            ImGui.NextColumn();
+            ImGui.PushMultiItemsWidths(itemCount, columns2Width - padding);
 
             ImGui.Text(" X ");
             ImGui.SameLine();
@@ -378,7 +400,6 @@ namespace Engine
             changed = changed || ImGui.DragFloat(nameW, ref quat.W, 1, min, max);
             ImGui.PopItemWidth();
 
-            ImGui.PopStyleVar();
             ImGui.Columns(1);
 
             if (changed)
@@ -403,12 +424,12 @@ namespace Engine
             string newValue = "";
 
             ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, 100.0f);
+            ImGui.SetColumnWidth(0, labelWidth);
 
             ImGui.Text(label);
 
             ImGui.NextColumn();
-            ImGui.PushItemWidth(rectWidth - 97.0f);
+            ImGui.PushItemWidth(rectWidth - labelWidth - padding);
 
             if (ImGui.BeginCombo($"##{label}", value)) {
                 foreach (var item in values) {
@@ -440,11 +461,10 @@ namespace Engine
             bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash);
 
             if (changed) {
-                if (instance == null) {
-                    instance = FireYaml.Deserializer.CreateInstance(field.type);
-                    iasset = instance as FireYaml.IAsset;
-                    field.SetValue(instance);
-                }
+                instance = FireYaml.Deserializer.CreateInstance(field.type);
+                iasset = instance as FireYaml.IAsset;
+                field.SetValue(instance);
+                
                 var assetId = store.GetAssetId(assetIdHash);
 
                 FireYaml.Deserializer.InitIAsset(ref instance, assetId);
@@ -456,17 +476,22 @@ namespace Engine
         public static void DrawActor(string label, FireYaml.Field field, RangeAttribute range = null) {
             var actor = field.Value as Engine.Actor;
 
-            CsRef csRef = 0;
-            CppRef cppRef = 0;
+            var csRef = CsRef.NullRef;
+            var cppRef = CppRef.NullRef;
 
             if (actor != null) {
-                csRef = actor.csRef;
-                cppRef = actor.cppRef;
+                if (actor.IsDestroyed) {
+                    csRef = CsRef.MissingRef;
+                } else {
+                    csRef = actor.csRef;
+                    cppRef = actor.cppRef;
+                }
             }
             bool changed = Dll.UI_Inspector.ShowActor(Game.gameRef, label, ref csRef, cppRef);
 
             if (changed) {
-                Console.WriteLine($"DrawActor-> newActor: {csRef}, {cppRef}");
+                var newActor = CppLinked.GetObjectByRef(csRef);
+                field.SetValue(newActor);
             }
         }
 
@@ -474,14 +499,18 @@ namespace Engine
             var store = FireYaml.AssetStore.Instance;
             var component = field.Value as Engine.Component;
 
-            CsRef csRef = 0;
-            CppRef cppRef = 0;
+            var csRef = CsRef.NullRef;
+            var cppRef = CppRef.NullRef;
             var scriptId = store.GetScriptIdByTypeName(field.type.FullName);
             var scriptIdHash = scriptId.GetHashCode();
 
             if (component != null) {
-                csRef = component.csRef;
-                cppRef = component.cppRef;
+                if(component.IsDestroyed) {
+                    csRef = CsRef.MissingRef;
+                } else {
+                    csRef = component.csRef;
+                    cppRef = component.cppRef;
+                }
             }
             bool changed = Dll.UI_Inspector.ShowComponent(Game.gameRef, label, ref csRef, cppRef, scriptIdHash);
 
@@ -490,6 +519,13 @@ namespace Engine
                 field.SetValue(newComponent);
             }
         }
+
+        public static void TestDrawers() {
+            object instance = testObj;
+
+            UserInterface.Instance.DrawObject(ref instance);
+        }
+
 
         public static string ReadCString(ulong ptr) {
             string str = "";

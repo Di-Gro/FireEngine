@@ -10,6 +10,8 @@
 #include "../AmbientLight.h"
 #include "../LinedPlain.h"
 
+const char* UI_Hierarchy::ActorDragType = "Hierarchy.Actor";
+
 void UI_Hierarchy::Draw_UI_Hierarchy() {
 	m_isMouseReleaseOnDragActor = false;
 
@@ -27,6 +29,9 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 
 			if (m_isMouseReleaseOnDragActor && m_dragTargetActor != nullptr)
 				m_dragTargetActor = nullptr;
+
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+				m_clickedActor = nullptr;
 
 			ImGui::Dummy({ 0, 200.0f });
 
@@ -150,10 +155,15 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	HandleDrop(actor, selectedTree, height, imGuiItemSize, currentCursor);
 
 	ImGui::PopStyleVar(2);
+	
+	if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
+		m_clickedActor = actor;
 
-	if (ImGui::IsItemClicked())
-		m_ui->SelectedActor(actor);
-
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+		if (ImGui::IsItemHovered() && m_clickedActor == actor)
+			m_ui->SelectedActor(actor);
+	}
+			
 	if (selectedTree)
 	{
 		for (int i = 0; i < actor->GetChildrenCount(); ++i)
@@ -170,9 +180,9 @@ void UI_Hierarchy::HandleDrag(Actor* actor)
 	{
 		if (m_dragTargetActor == nullptr)
 		{
-			std::cout << "Begin Drag" << std::endl;
 			m_dragTargetActor = actor;
-			ImGui::SetDragDropPayload("hierarchy", actor, sizeof(actor));
+			m_clickedActor = nullptr;
+			ImGui::SetDragDropPayload(ActorDragType, &actor, sizeof(Actor*));
 		}
 		ImGui::EndDragDropSource();
 	}
@@ -182,24 +192,26 @@ void UI_Hierarchy::HandleDrop(Actor* actor, bool selectedTree, float height, ImV
 {
 	if (ImGui::BeginDragDropTarget())
 	{
+		auto payload = ImGui::GetDragDropPayload();
+		if (payload == nullptr || !payload->IsDataType(ActorDragType))
+			return;
+
 		bool isUpSide = height <= 0.25;
 		bool isBottomSide = height >= 0.75;
 		bool isCenter = !isUpSide && !isBottomSide;
 
 		if (isCenter)
 		{
-			auto getP = ImGui::GetDragDropPayload();
-			ImGui::AcceptDragDropPayload("hierarchy");
+			m_DrawItemSeparator(&m_moveSeparatorRes, true, size, cursor);
+			m_DrawItemSeparator(&m_moveSeparatorRes, false, size, cursor);
 		}
 		else
 			m_DrawItemSeparator(&m_moveSeparatorRes, isUpSide, size, cursor);
 
 		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && m_dragTargetActor != nullptr)
 		{
-			std::cout << "Drop" << std::endl;
 			HandeDragDrop(m_dragTargetActor, actor, selectedTree, height);
 			m_dragTargetActor = nullptr;
-			std::cout << "End Drag" << std::endl;
 		}
 
 		ImGui::EndDragDropTarget();
