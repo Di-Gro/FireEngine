@@ -110,7 +110,10 @@ namespace FireYaml {
 
         public YamlValues GetObject(string path) {
             var selected = from pair in m_values
-                           where pair.Key.StartsWith(path)
+                           where 
+                           pair.Key.StartsWith($"{path}:") || 
+                           pair.Key.StartsWith($"{path}.") || 
+                           pair.Key.StartsWith($"{path}!")
                            select pair;
 
             return new YamlValues(selected);
@@ -164,7 +167,8 @@ namespace FireYaml {
 
             var files = GetFiles();
             foreach (var file in files) {
-                text += GetObject($".{file}").ToText();
+                var obj = GetObject($".{file}");
+                text += obj.ToText();
                 text += "\n";
             }
             return text;

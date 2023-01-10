@@ -35,6 +35,7 @@ class Actor : public ActorBase {
 public:
 	/// TODO: bool isStatic = true;
 	/// TODO: bool isActive = true;
+	bool isSelectable = true;
 
 private:
 	std::string m_name = "";
@@ -169,6 +170,8 @@ PROP_GET(Actor, Vector3, localRight)
 PROP_GET(Actor, Vector3, forward)
 PROP_GET(Actor, Vector3, up)
 PROP_GET(Actor, Vector3, right)
+
+FUNC(Actor, scene_get, CppRef)(CppRef objRef);
 
 
 #pragma warning( pop )

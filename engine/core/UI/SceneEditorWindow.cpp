@@ -6,6 +6,7 @@
 #include "../HotKeys.h"
 #include "UserInterface.h"
 #include "../CameraComponent.h"
+#include "../EditorCamera.h"
 #include "../ImageAsset.h"
 #include "../Assets.h"
 
@@ -16,14 +17,17 @@ void SceneEditorWindow::OnInit() {
 
 
 void SceneEditorWindow::AfterDrawScene() {
-	if (!scene()->isEditor())
-		return;
-
-	m_HandleEditorInput();
-
-	m_DrawTools();
-	m_DrawGuizmo();
-	m_HandleSelection();
+	if (scene()->isEditor() || !game()->inFocus) {
+		m_HandleToolsInput();
+		m_DrawTools();
+		m_DrawGuizmo();
+		m_HandleSelection();
+	}
+	if (scene()->isEditor()) {
+		if (game()->hotkeys()->GetButtonDown(Keys::S, Keys::Ctrl)) {
+			game()->assets()->Save(scene()->assetIdHash());
+		}
+	}
 }
 
 void SceneEditorWindow::m_DrawTools()
@@ -65,6 +69,22 @@ void SceneEditorWindow::m_DrawTools()
 	ImGui::End();
 	ImGui::PopStyleColor();
 	ImGui::PopStyleColor();
+
+	if (scene()->editorCamera != nullptr) {
+		auto pos = (Vector2&)ImGui::GetWindowPos();
+		auto size = (Vector2&)ImGui::GetWindowSize();
+
+		auto lastCursor = (Vector2&)ImGui::GetCursorPos();
+
+		auto startPos = lastCursor + Vector2(50, -size.y+22);
+
+		ImGui::SetCursorPos((ImVec2&)startPos);
+
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##EditorCameraSpeed", &scene()->editorCamera->speed, 1, 0, 10000);
+
+		ImGui::SetCursorPos((ImVec2&)lastCursor);
+	}
 }
 
 void SceneEditorWindow::m_DrawGuizmo() {
@@ -94,7 +114,7 @@ void SceneEditorWindow::m_DrawGuizmo() {
 	Vector3 bound[] = { -scale/2, scale/2 };
 
 	ImGuizmo::SetRect(vpos.x, vpos.y, vsize.x, vsize.y);
-	ImGuizmo::Manipulate(mView.m16, mProjection.m16,
+	bool changed = ImGuizmo::Manipulate(mView.m16, mProjection.m16,
 		m_CurrentGizmoOperation,
 		m_CurrentGizmoMode,
 		matrix.m16,
@@ -106,6 +126,9 @@ void SceneEditorWindow::m_DrawGuizmo() {
 
 	m = (Matrix)matrix * inv;
 	actor->SetLocalMatrix(m);
+
+	if (changed)
+		game()->assets()->MakeDirty(actor->scene()->assetIdHash());
 }
 
 void SceneEditorWindow::m_DrawTransfotmButton(ShaderResource* icon, ImGuizmo::OPERATION target) {
@@ -124,7 +147,7 @@ void SceneEditorWindow::m_ToggleGizmoMode() {
 	m_CurrentGizmoMode = m_CurrentGizmoMode == ImGuizmo::LOCAL ? ImGuizmo::WORLD : ImGuizmo::LOCAL;
 }
 
-void SceneEditorWindow::m_HandleEditorInput() {
+void SceneEditorWindow::m_HandleToolsInput() {
 	if (game()->hotkeys()->GetButtonDown(Keys::Q))
 		m_ToggleGizmoMode();
 
@@ -137,8 +160,8 @@ void SceneEditorWindow::m_HandleEditorInput() {
 	if (game()->hotkeys()->GetButtonDown(Keys::T))
 		m_CurrentGizmoOperation = ImGuizmo::SCALE;
 
-	if (game()->hotkeys()->GetButtonDown(Keys::L))
-		m_CurrentGizmoOperation = ImGuizmo::BOUNDS;
+	//if (game()->hotkeys()->GetButtonDown(Keys::L))
+	//	m_CurrentGizmoOperation = ImGuizmo::BOUNDS;
 
 	auto hasClick = ImGui::IsMouseClicked(ImGuiMouseButton_::ImGuiMouseButton_Left);
 	m_hasClickInViewport = hasClick && ImGui::IsWindowHovered();

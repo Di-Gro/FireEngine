@@ -187,7 +187,7 @@ void RenderPass::SetActorConstBuffer(Actor* actor) {
 	context->Map(m_actorBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 
 	auto* cbuf = (ActorCBuffer*)res.pData;
-	cbuf->actorId = (UINT)actor->cppRef().value;
+	cbuf->actorId = actor->isSelectable ? (UINT)actor->cppRef().value : 0;
 
 	context->Unmap(m_actorBuffer.Get(), 0);
 }

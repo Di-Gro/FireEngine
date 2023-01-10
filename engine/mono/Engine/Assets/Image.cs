@@ -10,11 +10,13 @@ namespace Engine {
     [Serializable]
     public class Image : FireYaml.IFile, FireYaml.IAsset {
 
+        /// FireYaml.IAsset ->
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
-
+        [Close] public CppRef cppRef { get; private set; } = CppRef.NullRef;
+        /// <- 
         /// FireYaml.IFile ->
-        [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
+        [Close] public ulong assetInstance { get; set; } = 0;
 
         [Close] public int fileId { get; set; } = -1;
 
@@ -26,9 +28,12 @@ namespace Engine {
         [Close] public int width;
         [Close] public int height;
 
-        [Close] public CppRef cppRef { get; private set; }
+        public Image() {
+            Assets.AfterReloadEvent += OnAfterReload;
+            assetInstance = FireYaml.AssetInstance.PopId();
+        }
 
-        public Image() { Assets.AfterReloadEvent += OnAfterReload; }
+        ~Image() { Assets.AfterReloadEvent -= OnAfterReload; }
 
         public void LoadAsset() {
             assetIdHash = assetId.GetHashCode();
@@ -47,7 +52,7 @@ namespace Engine {
             if (cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.Deserializer(assetId).InstanciateIAssetAsFile(this);
+            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
 
             var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetId);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
@@ -66,6 +71,10 @@ namespace Engine {
             this.cppRef = image.cppRef;
             this.width = image.width;
             this.height = image.height;
+        }
+
+        public void SaveAsset() {
+
         }
 
     }

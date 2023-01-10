@@ -35,7 +35,7 @@ namespace Engine {
     class StaticMaterial : IMaterial, FireYaml.IFile, FireYaml.IAsset {
 
         /// IFile ->
-        [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
+        [Close] public ulong assetInstance { get; set; } = 0;
         [Close] public int fileId { get; set; } = -1;
         [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
         /// <- 
@@ -43,10 +43,10 @@ namespace Engine {
         /// IAsset ->
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
+        public CppRef cppRef { get => m_proxy.cppRef; protected set => m_proxy.cppRef = value; }
         /// <- 
 
         /// IMaterial ->
-        public CppRef cppRef { get => m_proxy.cppRef; protected set => m_proxy.cppRef = value; }
         public bool IsDynamic { get => m_proxy.IsDynamic; }
         [Open] public string Name { get => m_proxy.Name; private set => m_proxy.Name = value; }
         [Open] public string Shader { get => m_proxy.Shader; private set => m_proxy.Shader = value; }
@@ -68,12 +68,18 @@ namespace Engine {
 
         public StaticMaterial() {
             Assets.AfterReloadEvent += OnAfterReload;
+            assetInstance = FireYaml.AssetInstance.PopId();
         }
 
         public StaticMaterial(CppRef cppRef) {
             m_proxy.cppRef = cppRef;
             assetId = Assets.ReadCString(Dll.Material.assetId_get(cppRef));
             assetIdHash = Dll.Material.assetIdHash_get(cppRef);
+        }
+
+        ~StaticMaterial() { 
+            if(assetInstance != 0)
+                Assets.AfterReloadEvent -= OnAfterReload;
         }
 
         public StaticMaterial LoadFromAsset(string assetId) {
@@ -99,7 +105,7 @@ namespace Engine {
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.Deserializer(assetId).InstanciateIAssetAsFile(this);
+            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
 
             Dll.Material.Init(Game.gameRef, cppRef);
 
@@ -126,6 +132,10 @@ namespace Engine {
             this.m_proxy.Name = material.m_proxy.Name;
             this.m_proxy.Shader = material.m_proxy.Shader;
             this.m_proxy.cppRef = material.m_proxy.cppRef;
+        }
+
+        public void SaveAsset() {
+
         }
 
     }

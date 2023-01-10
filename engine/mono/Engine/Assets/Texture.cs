@@ -9,11 +9,13 @@ namespace Engine {
     [Serializable]
     public class Texture : FireYaml.IFile, FireYaml.IAsset {
 
+        /// FireYaml.IAsset ->
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
-
+        [Close] public CppRef cppRef { get; private set; } = CppRef.NullRef;
+        /// <- 
         /// FireYaml.IFile ->
-        [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
+        [Close] public ulong assetInstance { get; set; } = 0;
 
         [Close] public int fileId { get; set; } = -1;
 
@@ -23,12 +25,14 @@ namespace Engine {
         public Image image;
         public uint width;
         public uint height;
-
-        [Close] public CppRef cppRef { get; private set; }
+       
 
         public Texture() { 
             Assets.AfterReloadEvent += OnAfterReload;
+            assetInstance = FireYaml.AssetInstance.PopId();
         }
+
+        ~Texture() { Assets.AfterReloadEvent -= OnAfterReload; }
 
         public void LoadAsset() {
             assetIdHash = assetId.GetHashCode();
@@ -47,7 +51,7 @@ namespace Engine {
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.Deserializer(assetId).InstanciateIAssetAsFile(this);
+            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
 
             if (image == null)
                 Dll.Texture.Init(Game.gameRef, cppRef, width, height);
@@ -67,6 +71,10 @@ namespace Engine {
             this.image = texture.image;
             this.width = texture.width;
             this.height = texture.height;
+        }
+
+        public void SaveAsset() {
+
         }
     }
 }

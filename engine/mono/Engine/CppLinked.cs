@@ -24,13 +24,9 @@ namespace Engine {
 			return null;
 		}
 		public static void RemoveCsRef(CsRef csRef) {
-            Console.WriteLine($"RemoveCsRef: {csRef}");
             s_refs.Remove(csRef);
 		}
 		/// <- Static
-
-
-		//private ulong m_csRefId;
 
 		public ClassInfo classInfo { get; private set; }
 
@@ -41,14 +37,10 @@ namespace Engine {
 			csRef = s_nextRefId.value;
 			s_refs.Add(csRef, this);
 			s_nextRefId.value++;
-
-            Console.WriteLine($"CreateCsRef: {csRef}");
 		}
 
 		public virtual CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			cppRef = objRef;
-
-            //Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).Link(class:{classInfoRef}, obj:{objRef})");
 
             classInfo = ClassInfo.GetClassInfo(classInfoRef);
 
@@ -59,15 +51,11 @@ namespace Engine {
 		private void LinkProps() {
 			var type = GetType();
 
-			//Console.WriteLine($"#: {type.Name}.LinkProps() ->");
-
 			BindingFlags bindFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-			//Console.WriteLine($"#: LinkProps:");
 			foreach (var field in type.GetFields(bindFlags)) {
 				var iprop = field.FieldType.GetInterface(nameof(IProp));
 				if(iprop != null) {
-					//Console.WriteLine($" {field.Name}");
 
 					var propValue = field.GetValue(this);
 					var linkMethod = field.FieldType.GetMethod(nameof(IProp.Link));
@@ -75,7 +63,6 @@ namespace Engine {
 					linkMethod.Invoke(propValue, new object[] { this });
 				}
 			}
-			//Console.WriteLine($"#: <-");
 		}
 	}
 }

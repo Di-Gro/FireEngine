@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "Game.h"
+#include "Assets.h"
 #include "Actor.h"
 #include "CameraComponent.h"
 #include "EditorCamera.h"
@@ -31,6 +32,7 @@ void Scene::Start() {
 
 	linedPlain = CreateActor("Lined Plain")->AddComponent<LinedPlain>();
 	linedPlain->localPosition({ 0, -5, 0 });
+	linedPlain->actor()->isSelectable = false;
 
 	editorCamera = CreateActor("Editor Camera")->AddComponent<EditorCamera>();
 	editorCamera->localPosition({ 350, 403, -20 });
@@ -50,6 +52,10 @@ void Scene::m_InitMono() {
 	mono_create = mono::make_method_invoker<CppRef()>(type_Actor, "cpp_Create");
 }
 
+void Scene::Release() {
+	m_game->DestroyScene(this);
+}
+
 void Scene::mainCamera(CameraComponent* camera) {
 	m_mainCamera = camera;
 	if (m_mainCamera == nullptr)
@@ -60,7 +66,7 @@ void Scene::f_Update() {
 	m_game->PushScene(this);
 
 	if (!m_isStarted)
-		throw std::exception("Scene not started"); // ������ ������� scene.Start()
+		throw std::exception("Scene not started");
 
 	m_Update(&m_staticActors);
 	m_Update(&m_actors);
@@ -220,9 +226,9 @@ void Scene::WriteRootActorsRefs(CsRef* refs) {
 	}
 }
 
-void Scene::AttachGameCamera() {
+void Scene::AttachPlayerCamera() {
 	for (auto camera : m_cameras) {
-		if (camera != editorCamera)
+		if (camera != editorCamera && camera->isPlayerCamera)
 			return camera->Attach();
 	}
 }
@@ -314,3 +320,7 @@ DEF_FUNC(Game, WriteRootActorsRefs, void)(CppRef sceneRef, CsRef* refs) {
 
 	CppRefs::ThrowPointer<Scene>(sceneRef)->WriteRootActorsRefs(refs);
 }
+
+DEF_PUSH_ASSET(Scene);
+
+DEF_PROP_GETSET_STR(Scene, name);

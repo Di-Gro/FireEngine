@@ -26,8 +26,14 @@ private:
 public:
 	bool Open(Game* game);
 
+	bool isOpen() { return m_isOpen; }
+
+public:
+	static void PushPopupStyles();
+	static void PopPopupStyles();
+
 private:
 	static bool IsMatch(std::string source, std::string target);
-	
+
 };
 

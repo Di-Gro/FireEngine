@@ -73,6 +73,8 @@ namespace EngineDll {
 			PROP_GET("Actor", "Vector3", "right");
 
 			PROP_GETSET_STR("Actor", "name");
+
+			FUNC("Actor", "scene_get", "CppRef", "CppRef objRef");
 #>
 
 		}
@@ -92,6 +94,8 @@ namespace EngineDll {
 
 			FUNC("Game", "CreateScene", "CppRef", "CppRef gameRef, bool isEditor");
 			FUNC("Game", "DestroyScene", "void", "CppRef gameRef, CppRef sceneRef");
+
+			ANSI_FUNC("Game", "SetEditorSettings", "void", "CppRef gameRef, string startupScene");
 #>
 
 		}
@@ -157,9 +161,10 @@ namespace EngineDll {
 		public static class Assets {
 		
 <#
-			//ANSI_FUNC("Assets", "GetHash", "ulong", "CppRef gameRef, string path");
 			FUNC("Assets", "Reload", "void", "CppRef gameRef, int assetIdHash");
 			FUNC("Assets", "Get", "CppRef", "CppRef gameRef, int assetIdHash");
+			FUNC("Assets", "MakeDirty", "void", "CppRef gameRef, int assetIdHash");
+			FUNC("Assets", "IsDirty", "bool", "CppRef gameRef, int assetIdHash");
 #>
 		}
 
@@ -283,6 +288,12 @@ namespace EngineDll {
 			FUNC("AssetStore", "AddComponent", "void", "CppRef gameRef, int typeId");
 			ANSI_FUNC("AssetStore", "AddAsset", "void", "CppRef gameRef, int typeId, int assetId, string name");
 			FUNC("AssetStore", "AddAssetType", "void", "CppRef gameRef, int typeId");
+
+			PROP_GETSET_STR("AssetStore", "projectPath");
+			PROP_GETSET_STR("AssetStore", "assetsPath");
+			PROP_GETSET_STR("AssetStore", "editorPath");
+
+			PROP_GETSET("AssetStore", "int", "actorTypeIdHash");
 #>
 		}
 
@@ -290,6 +301,14 @@ namespace EngineDll {
 		
 <#
 			ANSI_FUNC("ImGui", "CalcTextWidth", "float", "string value");
+#>
+		}
+
+		public static class Scene {
+		
+<#
+			PUSH_ASSET("Scene");
+			PROP_GETSET_STR("Scene", "name");
 #>
 		}
 	}

@@ -80,3 +80,8 @@ DEF_FUNC(AssetStore, AddAssetType, void)(CppRef gameRef, int typeId) {
 	game->assetStore()->AddAssetType(typeId);
 }
 
+DEF_PROP_GETSET_STR(AssetStore, projectPath);
+DEF_PROP_GETSET_STR(AssetStore, assetsPath);
+DEF_PROP_GETSET_STR(AssetStore, editorPath);
+
+DEF_PROP_GETSET_F(AssetStore, int, actorTypeIdHash, actorTypeIdHash);

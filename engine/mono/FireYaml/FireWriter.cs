@@ -90,7 +90,7 @@ namespace FireYaml {
         }
     }
 
-    public class Serializer {
+    public class FireWriter {
         public static bool showLog = false;
 
         private class InnerLink {
@@ -138,7 +138,7 @@ namespace FireYaml {
                BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty |
                BindingFlags.SetProperty;
 
-        public Serializer(int startId = 1, bool ignoreExistingIds = false, bool writeNewIds = true) {
+        public FireWriter(int startId = 1, bool ignoreExistingIds = false, bool writeNewIds = true) {
             m_nextDocIndex = startId;
             m_ignoreExistingIds = ignoreExistingIds;
             m_writeNewIds = writeNewIds;
@@ -305,6 +305,12 @@ namespace FireYaml {
 
         private void m_CreateAsset(string selfPath, ref object obj) {
             var asset = (IAsset)obj;
+
+            bool isTmpId = AssetStore.IsTmpAssetId(asset.assetIdHash);
+            if(isTmpId) {
+                m_values.AddValue(selfPath, new YamlValue());
+                return;
+            }
 
             var assetId = new YamlValue();
             assetId.type = YamlValue.Type.AssetId;

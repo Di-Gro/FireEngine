@@ -269,6 +269,7 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 
 void MeshComponent::m_OnMeshReload() {
 	std::cout << "MeshComponent::m_OnMeshReload() NotImplemented" << std::endl;
+	m_meshVersion = m_mesh->version;
 }
 
 void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {

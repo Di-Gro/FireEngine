@@ -55,6 +55,9 @@
     <Filter Include="imguizmo">
       <UniqueIdentifier>{a3f48340-4891-484e-8141-6d641a32d4be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ContextMenu">
+      <UniqueIdentifier>{5a3df525-2064-477c-b6ac-7f471709846a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
@@ -335,6 +338,15 @@
     </ClCompile>
     <ClCompile Include="UI\AssetPickerPopup.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorSettings.cpp">
+      <Filter>Not Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ContextMenu.cpp">
+      <Filter>ContextMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -676,6 +688,15 @@
     </ClInclude>
     <ClInclude Include="UI\AssetPickerPopup.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorSettings.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextMenu.h">
+      <Filter>ContextMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -71,6 +71,8 @@ namespace Engine {
 
         public bool HasParent => parent != null;
 
+        public Scene scene => new Scene(Dll.Actor.scene_get(cppRef));
+
         [Close] public Actor parent {
             get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
             set => Dll.Actor.parent_set(cppRef, value.cppRef);
@@ -99,7 +101,6 @@ namespace Engine {
 
         public void Destroy() {
             Dll.Actor.Destroy(cppRef);
-            //RemoveCsRef(csRef); // TODO: Actor.Destroy
         }
 
         ~Actor() {

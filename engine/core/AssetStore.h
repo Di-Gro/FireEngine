@@ -19,6 +19,8 @@ public:
 	std::vector<ScriptIdHash> assetTypes;
 
 	std::unordered_map<ScriptIdHash, std::vector<AssetIdHash>> assets;
+
+	int actorTypeIdHash;
 	
 private:
 	std::string m_emptyValue = "";
@@ -26,8 +28,21 @@ private:
 	std::string m_missingValue = "Missing";
 	std::string m_dynamicValue = "Dynamic";
 
+	std::string m_projectPath;
+	std::string m_assetsPath;
+	std::string m_editorPath;
+
 public:
 	~AssetStore();
+
+	const std::string& projectPath() { return m_projectPath; }
+	void projectPath(const std::string& value) { m_projectPath = value; }
+
+	const std::string& assetsPath() { return m_assetsPath; }
+	void assetsPath(const std::string& value) { m_assetsPath = value; }
+
+	const std::string& editorPath() { return m_editorPath; }
+	void editorPath(const std::string& value) { m_editorPath = value; }
 
 	const std::string& GetAssetName(int assetIdHash) {
 		if (assetIdHash == 0)
@@ -82,3 +97,9 @@ FUNC(AssetStore, SetType, void)(CppRef gameRef, int typeId, const char* fullName
 FUNC(AssetStore, AddComponent, void)(CppRef gameRef, int typeId);
 FUNC(AssetStore, AddAsset, void)(CppRef gameRef, int typeId, int assetId, const char* name);
 FUNC(AssetStore, AddAssetType, void)(CppRef gameRef, int typeId);
+
+PROP_GETSET_STR(AssetStore, projectPath);
+PROP_GETSET_STR(AssetStore, assetsPath);
+PROP_GETSET_STR(AssetStore, editorPath);
+
+PROP_GETSET(AssetStore, int, actorTypeIdHash);

@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace FireYaml {
 
-    public class Deserializer {
+    public class FireReader {
         public event Action EndLoadEvent;
 
         private class InnerLink {
@@ -42,11 +42,11 @@ namespace FireYaml {
 
         public bool showLog = true;
 
-        public Deserializer(YamlValues values) {
+        public FireReader(YamlValues values) {
             m_values = values;
         }
 
-        public Deserializer(string assetId) {
+        public FireReader(string assetId) {
             m_assetId = assetId;
             m_values = AssetStore.Instance.ThrowAssetValues(m_assetId);
         }
@@ -71,19 +71,19 @@ namespace FireYaml {
             return target;
         }
 
-        public object InstanciateTo(ref object target) {
-            var yamlRef = new YamlRef(1);
+        // public object InstanciateTo(ref object target) {
+        //     var yamlRef = new YamlRef(1);
 
-            var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
-            if (!hasFile)
-                throw new Exception("Prefab must contains root file 'file1'");
+        //     var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
+        //     if (!hasFile)
+        //         throw new Exception("Prefab must contains root file 'file1'");
 
-            var selfPath = GetFullPath(yamlRef.Name);
-            LoadDocument(selfPath, ref target, isEntryPoint: true);
+        //     var selfPath = GetFullPath(yamlRef.Name);
+        //     LoadDocument(selfPath, ref target, isEntryPoint: true);
 
-            m_EndInstanciate();
-            return target;
-        }
+        //     m_EndInstanciate();
+        //     return target;
+        // }
 
         public void InstanciateIAssetAsFile(IAsset target) {
             var yamlRef = new YamlRef(1);
@@ -94,7 +94,7 @@ namespace FireYaml {
 
             var selfPath = GetFullPath(yamlRef.Name);
             object self = target;
-            LoadDocument(selfPath, ref self, true, isIAssetAsFile: true);
+            LoadDocument(selfPath, ref self, isEntryPoint: true, isIAssetAsFile: true);
 
             m_EndInstanciate();
         }
@@ -155,7 +155,7 @@ namespace FireYaml {
             IFile.SetFileId(fileId, ref target);
 
             if(!isIAssetAsFile) {
-                if(isEntryPoint &&  Serializer.IsAsset(type)) {
+                if(isEntryPoint &&  FireWriter.IsAsset(type)) {
                     m_LoadAsset(fullPath, m_assetId, target);
                     return;
                 }
@@ -166,7 +166,7 @@ namespace FireYaml {
             if (prefabId != IFile.NotPrefab)
                 m_LoadPrefab(fullPath, type, ref target, prefabId);
             else
-                m_LoadObject(fullPath, type, ref target);
+                m_LoadObject(fullPath, type, ref target, isIAssetAsFile);
 
             if (isEntryPoint && m_assetId != "")
                 IFile.SetPrefabId(m_assetId, ref target);
@@ -184,7 +184,7 @@ namespace FireYaml {
         private void m_LoadAsset(string path, string assetId, object asset) {
             var fieldName = nameof(IAsset.assetId);
             var serializer = new Engine.SerializerBase();
-            var field = Serializer.GetField(fieldName, asset.GetType(), asset, serializer);
+            var field = FireWriter.GetField(fieldName, asset.GetType(), asset, serializer);
 
             var value = m_Convert(field.type, assetId);
 
@@ -192,7 +192,15 @@ namespace FireYaml {
             field.SetValue(value);
         }
 
-        public static void InitIAsset(ref object asset, string assetId) {
+
+        /// <summary>
+        /// Инициализирует IAsset независимо от того, есть ассет в AssetStore или нет.
+        /// </summary>
+        /// <param name="asset">Ссылка на объект asset-а</param>
+        /// <param name="assetId">ID asset-а</param>
+        /// <param name="cppRef">Ссылка на Cpp-объект, нужна только в том случае, 
+        /// если asset загружается как файл для asset-а созданного в C++</param>
+        public static void InitIAsset(ref object asset, string assetId, Engine.CppRef cppRef) {
             var flags =
                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
                BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty |
@@ -202,9 +210,11 @@ namespace FireYaml {
 
             var idProp = type.GetProperty(nameof(IAsset.assetId), flags);
             var hashProp = type.GetProperty(nameof(IAsset.assetIdHash), flags);
+            var refProp = type.GetProperty(nameof(IAsset.cppRef), flags);
 
             idProp.SetValue(asset, assetId);
             hashProp.SetValue(asset, assetId.GetHashCode());
+            refProp.SetValue(asset, cppRef);
         }
 
         private void m_SetAssignedObject(string fullPath, ref object obj) {
@@ -243,17 +253,17 @@ namespace FireYaml {
             return type;
         }
 
-        private void m_LoadObject(string selfPath, Type type, ref object instance) {
+        private void m_LoadObject(string selfPath, Type type, ref object instance, bool isIAssetAsFile = false) {
 
-            var serializer = Serializer.GetSerializer(type);
-            var fields = Serializer.GetFields(type, instance, serializer);
+            var serializer = FireWriter.GetSerializer(type);
+            var fields = FireWriter.GetFields(type, instance, serializer);
 
             if(serializer.NeedIncludeBase(type))
                 m_LoadBaseObject(selfPath, ref instance);
 
             foreach (var field in fields) {
                 var fieldPath = $"{selfPath}.{field.name}";
-                m_LoadField(fieldPath, field);
+                m_LoadField(fieldPath, field, isIAssetAsFile);
             }
             serializer.OnDeserialize(this, selfPath, type, ref instance);
         }
@@ -287,20 +297,16 @@ namespace FireYaml {
             IFile.SetPrefabId(last_prefabId, ref instance);
         }
 
-        private void m_LoadField(string fieldPath, Field field) {
-            m_LoadFieldFromValues(m_values, fieldPath, field);
-        }
+        private void m_LoadField(string fieldPath, Field field, bool isIAssetAsFile = false) {
+            if (m_values == null)
+                return;
 
-        private bool m_LoadFieldFromValues(YamlValues? values, string fieldPath, Field field) {
-            if (values == null)
-                return false;
-
-            var isList = Serializer.IsList(field.type);
+            var isList = FireWriter.IsList(field.type);
 
             /// Поле записано.
             /// Либо простой тип, либо объект равный нулю, либо ссылка.
-            if (values.HasValue(fieldPath)) {
-                var yamlValue = values.GetValue(fieldPath);
+            if (m_values.HasValue(fieldPath)) {
+                var yamlValue = m_values.GetValue(fieldPath);
                 object? value = null;
 
                 if (yamlValue.type == YamlValue.Type.Var)
@@ -317,21 +323,22 @@ namespace FireYaml {
                 if (yamlValue.type == YamlValue.Type.AssetId) {
                     value = m_Convert(field.type, yamlValue.value);
 
-                    m_assets.Add((IAsset)field.Instance);
+                    if (!isIAssetAsFile)
+                        m_assets.Add((IAsset)field.Instance);
                 }
                 if (yamlValue.type == YamlValue.Type.Null) {
-                    if(isList) {
+                    if (isList) {
                         m_InitListInField(field);
-                        return true;
+                        return;
                     }
                 }
                 field.SetValue(value);
-                return true;
+                return;
             }
 
             /// Есть дочерний путь.
             /// Объект или список не равные нулю.
-            var hasChildren = values.HasChildren(fieldPath);
+            var hasChildren = m_values.HasChildren(fieldPath);
             if (hasChildren) {
                 /// Список
                 if (isList)
@@ -347,12 +354,12 @@ namespace FireYaml {
                     if (field.type.IsValueType)
                         field.SetValue(fieldValue);
                 }
-                return true;
+                return;
             }
 
             /// Нет ни пути, ни дочерних путей.
             /// Ничего не делаем - оставляем значение по умолчанию.
-            return false;
+            return;
         }
 
         private void m_LoadList(string listPath, Field field) {

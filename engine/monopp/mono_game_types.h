@@ -86,6 +86,7 @@ class GameCallbacks {
 public:
 	void(*setSceneRef)(CppRef value);
 	void(*setMeshAssetRef)(CppRef value);
+	void(*setAssetStoreRef)(CppRef value);
 	void(*setUpdateData)(GameUpdateData value);
 	void(*onInputUpdate)();
 
@@ -97,5 +98,19 @@ public:
 	bool(*isAssignable)(CsRef objRef, int typeIdHash);
 
 	void(*removeCsRef)(CsRef value);
+
+	void(*loadAssetStore)();
+	bool(*hasAssetInStore)(int assetIdHash);
+
+	int(*getStringHash)(size_t stringPtr);
+
+	bool(*loadAsset)(int assetIdHash, CppRef cppRef);
+	void (*reloadAsset)(int assetIdHash);
+	void (*saveAsset)(int assetIdHash);
+
+	void (*pushClipboard)(CsRef value);
+	CppRef (*peekClipboard)();
+	bool (*clipboardIsAssignable)(int scriptIdHash);
+	bool (*clipboardIsSameType)(int scriptIdHash);
 };
 

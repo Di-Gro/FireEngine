@@ -1,0 +1,27 @@
+.file1!script: {Var: Actor}
+.file1!scriptId: {AssetId: 00000010000}
+.file1.Name: {Var: Cpp actor (14) (15) (19)}
+.file1.localPosition.X: {Var: 431.8095}
+.file1.localPosition.Y: {Var: 0.0009807078}
+.file1.localPosition.Z: {Var: -674.305}
+.file1.localRotationQ.X: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Z: {Var: 0}
+.file1.localRotationQ.W: {Var: 1}
+.file1.localScale.X: {Var: 1}
+.file1.localScale.Y: {Var: 1}
+.file1.localScale.Z: {Var: 1}
+.file1.m_children: {Null: }
+.file1.m_components.0: {Ref: file2}
+
+.file2!script: {Var: MeshComponent}
+.file2!scriptId: {AssetId: 00000010003}
+.file2.MeshScale.X: {Var: 1}
+.file2.MeshScale.Y: {Var: 1}
+.file2.MeshScale.Z: {Var: 1}
+.file2.IsDebug: {Var: False}
+.file2.CastShadow: {Var: True}
+.file2.IsVisible: {Var: True}
+.file2.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
+.file2.m_materials.0.assetId: {AssetId: M_WorldGride}
+

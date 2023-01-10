@@ -55,7 +55,7 @@ private:
 
 	std::string m_componentName;
 
-	CsRef m_focusedRef;
+	CsRef m_groupRef;
 
 public:
 	void Draw_UI_Inspector();

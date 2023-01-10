@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 
+using Engine;
+
 namespace FireYaml {
 
     public interface IAsset {
 
         string assetId { get; }
         int assetIdHash { get; }
+        CppRef cppRef { get; }
 
         void LoadAsset();
         void ReloadAsset();
+        void SaveAsset();
 
     }
 }

@@ -2,15 +2,23 @@
 
 #include "../Game.h"
 #include "../Scene.h"
-#include "UserInterface.h"
-#include "../Game.h"
 #include "../Actor.h"
+#include "../Assets.h"
 #include "../Lighting.h"
-#include "../DirectionLight.h"
-#include "../AmbientLight.h"
-#include "../LinedPlain.h"
+#include "../ContextMenu.h"
+#include "../HotKeys.h"
+
+#include "UserInterface.h"
 
 const char* UI_Hierarchy::ActorDragType = "Hierarchy.Actor";
+
+
+void UI_Hierarchy::Init(Game* game) {
+	m_game = game;
+	m_ui = m_game->ui();
+
+	m_InitIcons();
+}
 
 void UI_Hierarchy::Draw_UI_Hierarchy() {
 	m_isMouseReleaseOnDragActor = false;
@@ -35,6 +43,17 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 
 			ImGui::Dummy({ 0, 200.0f });
 
+			auto actor = m_game->ui()->GetActor();
+			if (m_game->hotkeys()->GetButtonDown(Keys::C, Keys::Ctrl)) {
+				ActorMenu::Copy(m_game->ui()->GetActor());
+			}
+			if (m_game->hotkeys()->GetButtonDown(Keys::V, Keys::Ctrl)) {
+				ActorMenu::Paste(m_game);
+			}
+			if (m_game->hotkeys()->GetButtonDown(Keys::Delete)) {
+				//ActorMenu::Remove(m_game->ui()->GetActor());
+			}
+
 			m_game->PopScene();
 		}
 	}
@@ -42,7 +61,7 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 	ImGui::PopStyleVar();
 }
 
-void UI_Hierarchy::m_PushPopupStyles() {
+void UI_Hierarchy::PushPopupStyles() {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 10.0f, 10.0f });
 	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.0f);
@@ -55,71 +74,51 @@ void UI_Hierarchy::m_PushPopupStyles() {
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.8f, 0.8f ,0.9f ,1.0f });
 }
 
-void UI_Hierarchy::m_PopPopupStyles() {
+void UI_Hierarchy::PopPopupStyles() {
 	ImGui::PopStyleVar(6);
 	ImGui::PopStyleColor(3);
 }
 
 void UI_Hierarchy::m_DrawSceneContextMenu() {
-	m_PushPopupStyles();
+	PushPopupStyles();
+
+	auto scene = m_game->ui()->selectedScene();
 
 	auto flags = ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems;
 	if (ImGui::BeginPopupContextWindow(0, flags))
 	{
-		if (ImGui::Selectable("Add Actor")) {
-			auto actor = m_game->currentScene()->CreateActor();
-		}
+		if (ImGui::Selectable("Add Actor"))
+			SceneMenu::AddActor(scene);
 
-		bool canAddLight =
-			m_game->currentScene()->directionLight == nullptr
-			|| m_game->currentScene()->ambientLight == nullptr;
+		bool canAddLight = 
+			scene->directionLight == nullptr || 
+			scene->ambientLight == nullptr;
 
 		auto lightFlags = !canAddLight ? ImGuiSelectableFlags_Disabled : 0;
 
-		if (ImGui::Selectable("Add Light", false, lightFlags)) {
-			auto actor = m_game->currentScene()->CreateActor();
-			actor->name("Light");
-
-			actor->localPosition({ 0, 0, 300 });
-			actor->localRotation({ rad(-45), rad(45 + 180), 0 });
-
-			if (m_game->currentScene()->directionLight == nullptr)
-				actor->AddComponent<DirectionLight>();
-
-			if (m_game->currentScene()->ambientLight == nullptr)
-				actor->AddComponent<AmbientLight>();
-		}
+		if (ImGui::Selectable("Add Light", false, lightFlags))
+			SceneMenu::AddLight(scene);
 
 		ImGui::EndPopup();
 	}
 
-	m_PopPopupStyles();
+	PopPopupStyles();
 }
 
 void UI_Hierarchy::m_DrawActorContextMenu(Actor* actor) {
-	m_PushPopupStyles();
+	PushPopupStyles();
 
 	auto flags = ImGuiPopupFlags_MouseButtonRight;
 	if (ImGui::BeginPopupContextItem(0, flags)) {
-		if (ImGui::Selectable("Add Child")) {
-			auto child = m_game->currentScene()->CreateActor(actor);
-		}
-		if (ImGui::Selectable("Remove")) {
-			if (m_game->ui()->GetActor() == actor)
-				m_game->ui()->SelectedActor(nullptr);
-			actor->Destroy();
-		}
+		if (ImGui::Selectable("Add Child"))
+			ActorMenu::AddChild(actor);
+
+		if (ImGui::Selectable("Remove")) 
+			ActorMenu::Remove(actor);
+		
 		ImGui::EndPopup();
 	}
-	m_PopPopupStyles();
-}
-
-void UI_Hierarchy::Init(Game* game)
-{
-	m_game = game;
-	m_ui = m_game->ui();
-
-	m_InitIcons();
+	PopPopupStyles();
 }
 
 void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterator rootIter)
@@ -210,7 +209,9 @@ void UI_Hierarchy::HandleDrop(Actor* actor, bool selectedTree, float height, ImV
 
 		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && m_dragTargetActor != nullptr)
 		{
-			HandeDragDrop(m_dragTargetActor, actor, selectedTree, height);
+			if(HandeDragDrop(m_dragTargetActor, actor, selectedTree, height))
+				m_game->assets()->MakeDirty(actor->scene()->assetIdHash());
+
 			m_dragTargetActor = nullptr;
 		}
 
@@ -222,13 +223,12 @@ void UI_Hierarchy::HandleDrop(Actor* actor, bool selectedTree, float height, ImV
 	}
 }
 
-void UI_Hierarchy::HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, float height)
-{
+bool UI_Hierarchy::HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, float height) {
 	if (drop == nullptr || drag == nullptr)
-		return;
+		return false;
 
 	if (m_FindTargetInActorParent(drop, drag))
-		return;
+		return false;
 
 	bool isUpSide = height <= 0.25;
 	bool isBottomSide = height >= 0.75;
@@ -240,37 +240,35 @@ void UI_Hierarchy::HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, floa
 	bool isMove = drag->parent() == drop->parent() && !needInsertInOpen;
 	bool isInsert = !isMove || isCenter;
 
-	if (isInsert)
-	{
-		if (isCenter)
-		{
+	bool changed = false;
+
+	if (isInsert) {
+		if (isCenter) {
 			drag->parent(drop);
-			std::cout << "CENTER" << std::endl;
+			changed = true;
 		}
-		else
-		{
-			if (needInsertInOpen)
-			{
+		else {
+			if (needInsertInOpen) {
 				drag->parent(drop);
 				drop->MoveChild(drag, drop->GetChild(0), true);
-				return;
 			}
-
 			if (drag->parent() != drop->parent())
 				drag->parent(drop->parent());
 
 			isMove = true;
 			isInsert = false;
+			changed = true;
 		}
-	}
-
-	if (isMove && !isInsert)
-	{
+	} 
+	if (isMove && !isInsert) {
 		if(!drop->HasParent())
 			m_ui->selectedScene()->MoveActor(drag, drop, isUpSide);
 		else
 			drop->parent()->MoveChild(drag, drop, isUpSide);
+
+		changed = true;
 	}
+	return changed;
 }
 
 bool UI_Hierarchy::m_FindTargetInActorParent(Actor* actor, Actor* target)

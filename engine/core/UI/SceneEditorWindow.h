@@ -35,7 +35,7 @@ private:
 	void m_DrawTransfotmButton(ShaderResource* icon, ImGuizmo::OPERATION target);
 
 	void m_ToggleGizmoMode();
-	void m_HandleEditorInput();
+	void m_HandleToolsInput();
 	void m_HandleSelection();
 
 };

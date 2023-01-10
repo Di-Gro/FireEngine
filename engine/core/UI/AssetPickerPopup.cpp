@@ -7,6 +7,7 @@
 #include "../Game.h"
 #include "../Math.h"
 #include "../AssetStore.h"
+#include "ComponentPicker.h"
 
 
 bool AssetPickerPopup::IsMatch(std::string source, std::string target) {
@@ -31,20 +32,21 @@ bool AssetPickerPopup::Open(Game* game) {
 
 	bool hasSelected = false;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 3.0f, 3.0f });
-	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 6.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 1.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
+	//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 3.0f, 3.0f });
+	//ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 6.0f);
+	//ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 1.0f);
+	//ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
+	//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
+	//ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+	//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
 
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.2f, 0.2f ,0.2f ,1.0f });
-	ImGui::PushStyleColor(ImGuiCol_Text, { 0.8f, 0.8f ,0.8f ,1.0f });
-	ImGui::PushStyleColor(ImGuiCol_Header, { 0.4f, 0.4f ,0.4f ,1.0f });
-	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.4f, 0.4f ,0.4f ,1.0f });
-	ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, { 0.2f, 0.2f ,0.2f ,1.0f });
-	ImGui::PushStyleColor(ImGuiCol_ChildBg, { 0.2f, 0.2f ,0.2f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.2f, 0.2f ,0.2f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_Text, { 0.8f, 0.8f ,0.8f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_Header, { 0.4f, 0.4f ,0.4f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.4f, 0.4f ,0.4f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, { 0.2f, 0.2f ,0.2f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_ChildBg, { 0.2f, 0.2f ,0.2f ,1.0f });
+	ComponentPicker::PushPopupStyles();
 
 	auto filtered = std::vector<int>();
 	filtered.reserve(content->size());
@@ -120,8 +122,9 @@ bool AssetPickerPopup::Open(Game* game) {
 	}
 	//ImGui::PopID();
 
-	ImGui::PopStyleVar(7);
-	ImGui::PopStyleColor(6);
+	//ImGui::PopStyleVar(7);
+	//ImGui::PopStyleColor(6);
+	ComponentPicker::PopPopupStyles();
 
 	return hasSelected;
 }

@@ -1,0 +1,151 @@
+.file0.assetId: {AssetId: scene_1}
+.file0.files: {Var: 12}
+
+.file1!script: {Var: Scene}
+.file1!scriptId: {AssetId: 00000010014}
+.file1.Name: {Var: scene_1}
+.file1.m_roots.0: {Ref: file2}
+.file1.m_roots.1: {Ref: file4}
+.file1.m_roots.2: {Ref: file7}
+.file1.m_roots.3: {Ref: file9}
+.file1.m_roots.4: {Ref: file11}
+
+.file2!script: {Var: Actor}
+.file2!scriptId: {AssetId: 00000010000}
+.file2.Name: {Var: Hello Actor}
+.file2.localPosition.X: {Var: -361.308}
+.file2.localPosition.Y: {Var: 0}
+.file2.localPosition.Z: {Var: -135.9138}
+.file2.localRotationQ.X: {Var: 8.996501E-08}
+.file2.localRotationQ.Y: {Var: 0.5823773}
+.file2.localRotationQ.Z: {Var: 1.282747E-07}
+.file2.localRotationQ.W: {Var: 0.8129187}
+.file2.localScale.X: {Var: 1}
+.file2.localScale.Y: {Var: 1}
+.file2.localScale.Z: {Var: 1}
+.file2.m_children: {Null: }
+.file2.m_components.0: {Ref: file3}
+
+.file3!script: {Var: MeshComponent}
+.file3!scriptId: {AssetId: 00000010003}
+.file3.MeshScale.X: {Var: 1}
+.file3.MeshScale.Y: {Var: 1}
+.file3.MeshScale.Z: {Var: 1}
+.file3.IsDebug: {Var: False}
+.file3.CastShadow: {Var: True}
+.file3.IsVisible: {Var: True}
+.file3.m_mesh.assetId: {AssetId: MESH000001}
+.file3.m_materials.0.assetId: {AssetId: MAT0000006}
+
+.file4!script: {Var: Actor}
+.file4!scriptId: {AssetId: 00000010000}
+.file4.Name: {Var: Light}
+.file4.localPosition.X: {Var: 0}
+.file4.localPosition.Y: {Var: 0}
+.file4.localPosition.Z: {Var: 300}
+.file4.localRotationQ.X: {Var: 0.1464458}
+.file4.localRotationQ.Y: {Var: 0.8535535}
+.file4.localRotationQ.Z: {Var: 0.3535532}
+.file4.localRotationQ.W: {Var: -0.3535535}
+.file4.localScale.X: {Var: 0.9999999}
+.file4.localScale.Y: {Var: 0.9999998}
+.file4.localScale.Z: {Var: 0.9999999}
+.file4.m_children: {Null: }
+.file4.m_components.0: {Ref: file5}
+.file4.m_components.1: {Ref: file6}
+
+.file5!script: {Var: DirectionalLight}
+.file5!scriptId: {AssetId: 0000010020}
+.file5.Color.X: {Var: 1}
+.file5.Color.Y: {Var: 1}
+.file5.Color.Z: {Var: 1}
+.file5.Intensity: {Var: 0.6}
+
+.file6!script: {Var: AmbientLight}
+.file6!scriptId: {AssetId: 0000010018}
+.file6.Color.X: {Var: 1}
+.file6.Color.Y: {Var: 1}
+.file6.Color.Z: {Var: 1}
+.file6.Intensity: {Var: 0.125}
+
+.file7!script: {Var: Actor}
+.file7!scriptId: {AssetId: 00000010000}
+.file7.Name: {Var: Actor 2}
+.file7.localPosition.X: {Var: 0}
+.file7.localPosition.Y: {Var: 0}
+.file7.localPosition.Z: {Var: 0}
+.file7.localRotationQ.X: {Var: 0}
+.file7.localRotationQ.Y: {Var: 0}
+.file7.localRotationQ.Z: {Var: 0}
+.file7.localRotationQ.W: {Var: 1}
+.file7.localScale.X: {Var: 1}
+.file7.localScale.Y: {Var: 1}
+.file7.localScale.Z: {Var: 1}
+.file7.m_children: {Null: }
+.file7.m_components.0: {Ref: file8}
+
+.file8!script: {Var: MeshComponent}
+.file8!scriptId: {AssetId: 00000010003}
+.file8.MeshScale.X: {Var: 1}
+.file8.MeshScale.Y: {Var: 1}
+.file8.MeshScale.Z: {Var: 1}
+.file8.IsDebug: {Var: False}
+.file8.CastShadow: {Var: True}
+.file8.IsVisible: {Var: True}
+.file8.m_mesh.assetId: {AssetId: test_navmesh}
+.file8.m_materials.0.assetId: {AssetId: M_WorldGride}
+
+.file9!script: {Var: Actor}
+.file9!scriptId: {AssetId: 00000010000}
+.file9.Name: {Var: House 2}
+.file9.localPosition.X: {Var: 11.72424}
+.file9.localPosition.Y: {Var: 0}
+.file9.localPosition.Z: {Var: -482.1368}
+.file9.localRotationQ.X: {Var: 0}
+.file9.localRotationQ.Y: {Var: -0.002433404}
+.file9.localRotationQ.Z: {Var: 0}
+.file9.localRotationQ.W: {Var: 0.9999971}
+.file9.localScale.X: {Var: 0.9999323}
+.file9.localScale.Y: {Var: 1}
+.file9.localScale.Z: {Var: 0.9999323}
+.file9.m_children: {Null: }
+.file9.m_components.0: {Ref: file10}
+
+.file10!script: {Var: MeshComponent}
+.file10!scriptId: {AssetId: 00000010003}
+.file10.MeshScale.X: {Var: 1}
+.file10.MeshScale.Y: {Var: 1}
+.file10.MeshScale.Z: {Var: 1}
+.file10.IsDebug: {Var: False}
+.file10.CastShadow: {Var: True}
+.file10.IsVisible: {Var: True}
+.file10.m_mesh.assetId: {AssetId: MESH000002}
+.file10.m_materials.0.assetId: {AssetId: MAT0000006}
+
+.file11!script: {Var: Actor}
+.file11!scriptId: {AssetId: 00000010000}
+.file11.Name: {Var: House 3}
+.file11.localPosition.X: {Var: 388.6878}
+.file11.localPosition.Y: {Var: 0}
+.file11.localPosition.Z: {Var: -70.35061}
+.file11.localRotationQ.X: {Var: 1.942008E-08}
+.file11.localRotationQ.Y: {Var: 0.7096735}
+.file11.localRotationQ.Z: {Var: -1.705285E-06}
+.file11.localRotationQ.W: {Var: -0.7045307}
+.file11.localScale.X: {Var: 0.9998538}
+.file11.localScale.Y: {Var: 1}
+.file11.localScale.Z: {Var: 0.9998538}
+.file11.m_children: {Null: }
+.file11.m_components.0: {Ref: file12}
+
+.file12!script: {Var: MeshComponent}
+.file12!scriptId: {AssetId: 00000010003}
+.file12.MeshScale.X: {Var: 1}
+.file12.MeshScale.Y: {Var: 1}
+.file12.MeshScale.Z: {Var: 1}
+.file12.IsDebug: {Var: False}
+.file12.CastShadow: {Var: True}
+.file12.IsVisible: {Var: True}
+.file12.m_mesh.assetId: {AssetId: MESH000003}
+.file12.m_materials.0.assetId: {AssetId: TestMaterial1}
+

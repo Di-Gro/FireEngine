@@ -11,6 +11,8 @@
 #include "CSBridge.h"
 #include "CSLinked.h"
 
+#include "EditorSettings.h"
+
 class Actor;
 class Scene;
 class CameraComponent;
@@ -27,6 +29,7 @@ class Assets;
 class UserInterface;
 class AssetStore;
 class Material;
+class SceneWindow;
 
 extern std::vector<std::string> game_shaderPaths;
 
@@ -35,6 +38,7 @@ FUNC(Game, SetGameCallbacks, void)(CppRef gameRef, const GameCallbacks& callback
 class Game {
 public:
 	bool inFocus = false;
+	EditorSettings editorSettings;
 
 private:
 	MonoInst* m_mono;
@@ -56,9 +60,12 @@ private:
 	UserInterface* m_ui;
 
 	//CameraComponent* m_defaultCamera = nullptr;
-	//CameraComponent* m_mainCamera = nullptr;
+	CameraComponent* m_mainCamera = nullptr;
 	//CameraComponent* m_editorCamera = nullptr;
 	//CameraComponent* m_lastGameCamera = nullptr;
+
+	SceneWindow* m_editorWindow;
+	SceneWindow* m_gameWindow;
 
 	Scene* m_editorScene;
 	Scene* m_gameScene = nullptr;
@@ -100,8 +107,8 @@ public:
 
 	//inline bool isEditor() { return m_isEditor; }
 
-	//inline CameraComponent* mainCamera() { return m_mainCamera; }
-	//void mainCamera(CameraComponent* camera) {  m_mainCamera = camera; };
+	inline CameraComponent* mainCamera() { return m_mainCamera; }
+	void mainCamera(CameraComponent* camera) {  m_mainCamera = camera; };
 
 	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
 
@@ -116,6 +123,7 @@ public:
 	void PopScene();
 
 	Scene* CreateScene(bool isEditor);
+	Scene* CreateScene(bool isEditor, const std::string& assetId);
 	void DestroyScene(Scene* scene);
 
 	inline std::list<Scene*>::iterator ScenesBegin() { return m_scenes.begin(); }
@@ -124,6 +132,9 @@ public:
 	void DeleteMaterialFromAllScenes(const Material* material);
 
 	void TogglePlayMode();
+	void ToggleGameFocus();
+
+	bool LoadScene(Scene* targetScene, const char* assetId = nullptr);
 
 
 private:

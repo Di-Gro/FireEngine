@@ -404,3 +404,8 @@ DEF_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const Componen
 	auto component = CppRefs::ThrowPointer<Component>(componentRef);
 	Actor::m_SetComponentCallbacks(component, callbacks);
 }
+
+DEF_FUNC(Actor, scene_get, CppRef)(CppRef objRef) {
+	auto actor = CppRefs::ThrowPointer<Actor>(objRef);
+	return CppRefs::GetRef(actor->scene());
+}

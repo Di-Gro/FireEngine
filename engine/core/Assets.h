@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <set>
 
 #include "FileSystem.h"
 #include "Refs.h"
@@ -33,12 +34,15 @@ public:
 
 private:
 	std::unordered_map<int, Asset> m_assets;
+	std::set<int> m_dirtyAssets;
 	Game* m_game;
 
-	mono::mono_method_invoker<void(int)> m_method_Load;
-	mono::mono_method_invoker<void(int)> m_method_Reload;
-	mono::mono_method_invoker<int(size_t, size_t)> m_method_GetStringHash;
+	//mono::mono_method_invoker<void(int)> m_method_Load;
+	//mono::mono_method_invoker<void(int)> m_method_Reload;
+	//mono::mono_method_invoker<int(size_t, size_t)> m_method_GetStringHash;
 	mono::mono_method_invoker<unsigned int(void)> m_method_CreateAssetId;
+	mono::mono_method_invoker<unsigned int(void)> m_method_CreateTmpAssetId;
+	mono::mono_method_invoker<void(unsigned int)> m_method_AddTmpAssetIdHash;
 
 public:
 	~Assets();
@@ -57,14 +61,25 @@ public:
 	IAsset* Get(const std::string& assetId);
 	IAsset* Get(int assetIdHash);
 
+	bool Load(int assetIdHash, CppRef cppRef = RefCpp(0));
+
 	void ReloadAll();
 	void Reload(int assetIdHash);
 
+	void Save(int assetIdHash);
+
+	void MakeDirty(int assetIdHash);
+	bool IsDirty(int assetIdHash);
+
 	int GetCsHash(const std::string& str);
-	std::string CreateAssetId();
+	//std::string CreateAssetId();
+	std::string CreateTmpAssetId();
 
 		
 };
 
 FUNC(Assets, Reload, void)(CppRef gameRef, int assetIdHash);
 FUNC(Assets, Get, CppRef)(CppRef gameRef, int assetIdHash);
+
+FUNC(Assets, MakeDirty, void)(CppRef gameRef, int assetIdHash);
+FUNC(Assets, IsDirty, bool)(CppRef gameRef, int assetIdHash);

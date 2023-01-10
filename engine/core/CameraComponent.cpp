@@ -25,6 +25,10 @@ bool CameraComponent::IsAttached() {
 	return scene()->mainCamera() == this;
 }
 
+bool CameraComponent::IsMainCamera() { 
+	return game()->mainCamera() == this;
+}
+
 void CameraComponent::UpdateProjectionMatrix() {
 	auto size = scene()->renderer.viewportSize();
 
@@ -40,7 +44,7 @@ void CameraComponent::UpdateProjectionMatrix() {
 	}
 }
 
-DEF_COMPONENT(CameraComponent, Engine.CameraComponent, 7, RunMode::EditPlay) {
+DEF_COMPONENT(CameraComponent, Engine.CameraComponent, 8, RunMode::EditPlay) {
 	OFFSET(0, CameraComponent, orthoWidth);
 	OFFSET(1, CameraComponent, orthoHeight);
 	OFFSET(2, CameraComponent, orthoNearPlane);
@@ -48,6 +52,7 @@ DEF_COMPONENT(CameraComponent, Engine.CameraComponent, 7, RunMode::EditPlay) {
 	OFFSET(4, CameraComponent, nearPlane);
 	OFFSET(5, CameraComponent, farPlane);
 	OFFSET(6, CameraComponent, drawDebug);
+	OFFSET(7, CameraComponent, isPlayerCamera);
 }
 
 DEF_PROP_GET(CameraComponent, bool, IsAttached)

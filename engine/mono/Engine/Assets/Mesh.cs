@@ -10,7 +10,7 @@ using EngineDll;
 namespace Engine {
 
     class Mesh  {
-        public CppRef cppRef { get; protected set; }
+        public CppRef cppRef { get; protected set; } = CppRef.NullRef;
         public int ShapeCount => Dll.Mesh4.ShapeCount(cppRef);
         public int MaxMaterialIndex => Dll.Mesh4.MaterialMaxIndex(cppRef);
 
@@ -22,16 +22,15 @@ namespace Engine {
 
     [Serializable]
     class StaticMesh : Mesh, FireYaml.IFile, FireYaml.IAsset {
-
-        /// IFile ->
-        [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
-        [Close] public int fileId { get; set; } = -1;
-        [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
-        /// <- 
-
-        /// IAsset ->
+        /// FireYaml.IAsset ->
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
+        /// CppRef cppRef -> Mesh
+        /// <- 
+        /// FireYaml.IFile ->
+        [Close] public ulong assetInstance { get; set; } = 0;
+        [Close] public int fileId { get; set; } = -1;
+        [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
         /// <- 
 
         public string ext = "";
@@ -39,6 +38,7 @@ namespace Engine {
 
         public StaticMesh() {
             Assets.AfterReloadEvent += OnAfterReload;
+            assetInstance = FireYaml.AssetInstance.PopId();
         }
 
         public StaticMesh(int assetIdHash) {
@@ -46,6 +46,8 @@ namespace Engine {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             this.assetId = Assets.ReadCString(Dll.Mesh4.assetId_get(cppRef));
         }
+
+        ~StaticMesh() { Assets.AfterReloadEvent -= OnAfterReload; }
 
         public StaticMesh LoadFromFile(string path) {
             assetId = path;
@@ -84,7 +86,7 @@ namespace Engine {
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.Deserializer(assetId).InstanciateIAssetAsFile(this);
+            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
 
             var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetId);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
@@ -112,6 +114,9 @@ namespace Engine {
             this.m_materials = mesh.m_materials;
         }
 
+        public void SaveAsset() {
+
+        }
     }
 
 }

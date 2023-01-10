@@ -34,6 +34,7 @@ namespace Engine {
         public Actor actorRef;
 
         public Prefab userPrefab = new Prefab("TestPrefab");
+        public Scene sameScene = new Scene("scene_1");
 
         [Open] private MeshComponent m_meshComp;
         [Open] private DynamicMaterial m_material;
@@ -78,14 +79,11 @@ namespace Engine {
         public override void OnStart() {
             m_material = new DynamicMaterial(m_meshComp.GetMaterial(0));
             m_meshComp.SetMaterial(0, m_material);
-
-            //m_meshComp.actor.localRotation = new Vector3(90, 0, 0);
-            actor.localRotationQ = Quaternion.CreateXRotation(90);
         }
 
         public override void OnUpdate() {
 
-            //actor.localRotationQ = actor.localRotationQ * Quaternion.CreateXRotation(Game.DeltaTime * 45);
+            actor.localRotationQ = actor.localRotationQ * Quaternion.CreateXRotation(Game.DeltaTime * 45);
 
             if (Input.GetButtonDown(Key.Enter)) {
                 m_meshComp.mesh = m_meshes[m_index];
