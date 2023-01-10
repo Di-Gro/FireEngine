@@ -28,7 +28,5 @@ public:
 
 private:
 	static bool IsMatch(std::string source, std::string target);
-
-
 };
 

@@ -1,9 +1,8 @@
 #include "UI_Hierarchy.h"
 
-#include "../Game.h"
-#include "../Scene.h"
 #include "UserInterface.h"
 #include "../Game.h"
+#include "../Scene.h"
 #include "../Actor.h"
 #include "../Lighting.h"
 #include "../DirectionLight.h"

@@ -39,6 +39,7 @@
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\TextEditor\TextEditor.cpp" />
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="main.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="UI\SceneEditorWindow.cpp" />
     <ClCompile Include="UI\SceneWindow.cpp" />
     <ClCompile Include="UI\ComponentPicker.cpp" />
+    <ClCompile Include="UI\UI_AssetsStore.cpp" />
     <ClCompile Include="UI\UI_BarMenu.cpp" />
     <ClCompile Include="UI\UI_Console.cpp" />
     <ClCompile Include="UI\UI_ContentBrowser.cpp" />
@@ -138,6 +140,7 @@
     <ClInclude Include="Delegates.h" />
     <ClInclude Include="DirectionLight.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="RunMode.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorCBuffer.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="UI\SceneEditorWindow.h" />
     <ClInclude Include="UI\SceneWindow.h" />
     <ClInclude Include="UI\ComponentPicker.h" />
+    <ClInclude Include="UI\UI_AssetsStore.h" />
     <ClInclude Include="UI\UI_BarMenu.h" />
     <ClInclude Include="UI\UI_Console.h" />
     <ClInclude Include="UI\UI_ContentBrowser.h" />

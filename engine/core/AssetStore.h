@@ -10,7 +10,7 @@ class AssetStore {
 public:
 	using ScriptIdHash = int;
 	using AssetIdHash = int;
-
+	
 	std::unordered_map<ScriptIdHash, std::string> typeFullNames;
 	std::unordered_map<ScriptIdHash, std::string> typeNames;
 	std::unordered_map<AssetIdHash, std::string> assetNames;

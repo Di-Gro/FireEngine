@@ -336,6 +336,12 @@
     <ClCompile Include="UI\AssetPickerPopup.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UI_AssetsStore.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -676,6 +682,12 @@
     </ClInclude>
     <ClInclude Include="UI\AssetPickerPopup.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_AssetsStore.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

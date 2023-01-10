@@ -9,6 +9,7 @@
 #include "UI_PlayGame.h"
 #include "UI_ContentBrowser.h"
 #include "UI_Console.h"
+#include "UI_AssetsStore.h"
 #include "../imgui/imgui.h"
 #include "../Actor.h"
 #include "../SimpleMath.h"
@@ -23,6 +24,9 @@ public:
 	struct Callbacks {
 		void (*onDrawComponent)(CsRef, float);
 		void (*requestComponentName)(CsRef);
+		void (*sendAssetIdForCreate)(CsRef, int);
+		void (*sendAssetIdForRename)(CsRef, std::string);
+		void (*sendAssetIdForRemove)(CsRef, int);
 	};
 
 private:
@@ -40,6 +44,7 @@ public:
 	ShaderResource icPickupActor;
 	ShaderResource icPickupComponent;
 	ShaderResource icPickupAsset;
+	ShaderResource icSearch;
 
 private: /// For friends
 	//Vector2 f_mouseViewportPosition;
@@ -60,6 +65,7 @@ private:
 	UI_ContentBrowser uiContentBrowser;
 	UI_Console uiConsole;
 	UI_Inspector uiInspector;
+	UI_AssetsStore uiAssetsStore;
 
 	static ImGuiDockNodeFlags dockspace_flags;
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -73,6 +79,7 @@ private:
 	Image m_imgPickupActor;
 	Image m_imgPickupComponent;
 	Image m_imgPickupAsset;
+	Image m_imgSearch;
 
 	Texture m_texMove;
 	Texture m_texRotate;
@@ -81,6 +88,7 @@ private:
 	Texture m_texPickupActor;
 	Texture m_texPickupComponent;
 	Texture m_texPickupAsset;
+	Texture m_texSearch;
 
 public:
 	UserInterface();

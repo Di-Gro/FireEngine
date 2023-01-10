@@ -21,6 +21,7 @@ void UserInterface::Init(Game* game) {
 	uiEditor.Init(_game);
 	uiHierarchy.Init(_game);
 	uiBarMenu.Init(_game);
+	uiAssetsStore.Init(game);
 
 	uiInspector.Init(_game, this);
 
@@ -122,6 +123,7 @@ void UserInterface::m_InitIcons() {
 	_game->imageAsset()->InitImage(&m_imgPickupActor, "../../data/engine/icons/ic_pickup_actor.png");
 	_game->imageAsset()->InitImage(&m_imgPickupComponent, "../../data/engine/icons/ic_pickup_component.png");
 	_game->imageAsset()->InitImage(&m_imgPickupAsset, "../../data/engine/icons/ic_pickup_asset.png");
+	_game->imageAsset()->InitImage(&m_imgSearch, "../../data/engine/icons/ic_search.png");
 
 	m_texMove = Texture::CreateFromImage(_game->render(), &m_imgMove);
 	m_texRotate = Texture::CreateFromImage(_game->render(), &m_imgRotate);
@@ -130,6 +132,7 @@ void UserInterface::m_InitIcons() {
 	m_texPickupActor = Texture::CreateFromImage(_game->render(), &m_imgPickupActor);
 	m_texPickupComponent = Texture::CreateFromImage(_game->render(), &m_imgPickupComponent);
 	m_texPickupAsset = Texture::CreateFromImage(_game->render(), &m_imgPickupAsset);
+	m_texSearch = Texture::CreateFromImage(_game->render(), &m_imgSearch);
 
 	icMove = ShaderResource::Create(&m_texMove);
 	icRotate = ShaderResource::Create(&m_texRotate);
@@ -138,6 +141,7 @@ void UserInterface::m_InitIcons() {
 	icPickupActor = ShaderResource::Create(&m_texPickupActor);
 	icPickupComponent = ShaderResource::Create(&m_texPickupComponent);
 	icPickupAsset = ShaderResource::Create(&m_texPickupAsset);
+	icSearch = ShaderResource::Create(&m_texSearch);
 }
 
 void UserInterface::Draw()
@@ -175,6 +179,9 @@ void UserInterface::Draw()
 	//uiContentBrowser.Draw_UI_ContentBrowser();
 	//// Console
 	//uiConsole.Draw_UI_Console();
+
+	// Assets Store
+	uiAssetsStore.DrawAssetsStore();
 
 	auto dockSpaceId = ImGui::GetID("MyDockSpace");
 	auto node = ImGui::DockBuilderGetNode(dockSpaceId);
