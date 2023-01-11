@@ -17,6 +17,7 @@ namespace Engine {
         /// FireYaml.IAsset
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
+        [Close] public CppRef cppRef { get; private set; } = CppRef.NullRef;
         /// <-
 
         public Prefab() { }
@@ -27,20 +28,14 @@ namespace Engine {
         }
 
         public Actor Instanciate() {
-            return new FireYaml.Deserializer(assetId).Instanciate<Actor>();
+            return new FireYaml.FireReader(assetId).Instanciate<Actor>();
         }
 
+        public void LoadAsset() { }
 
-        public void LoadAsset() {
-            Console.WriteLine($"NotImplemented: {nameof(Prefab.LoadAsset)}");
-        }
+        public void ReloadAsset() { }
 
-        public void ReloadAsset() {
+        public void SaveAsset() { }
 
-        }
-
-        private void OnAfterReload(int assetId, FireYaml.IAsset asset) {
-
-        }
     }
 }

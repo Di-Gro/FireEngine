@@ -50,7 +50,7 @@ class MeshComponent;
 
 FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count);
 
-class Mesh4 : /*public CsLink,*/ public IAsset {
+class Mesh4 : public IAsset {
 	friend class MeshAsset;
 	friend class MeshComponent;
 

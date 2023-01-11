@@ -8,7 +8,6 @@ class Scene;
 class SceneWindow {
 public:
 	std::string sceneId = "";
-	std::string name = "SceneWindow";
 	bool visible = false;
 
 public:
@@ -25,7 +24,8 @@ public:
 	Scene* scene() { return m_scene; }
 	void scene(Scene* value) { m_scene = value; }
 
-	std::string windowId() { return name + "##" + sceneId; }
+	const std::string& name();
+	std::string windowId() { return name() + "##" + sceneId; }
 
 	Vector2 viewportSize() { return m_viewportSize; }
 	Vector2 viewportPosition() { return m_viewportPosition; }

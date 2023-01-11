@@ -32,6 +32,7 @@
     <ClCompile Include="CSComponent.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="EditorSettings.cpp" />
     <ClCompile Include="imguizmo\ImGuizmo.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\TextEditor\TextEditor.cpp" />
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="main.cpp" />
@@ -87,6 +89,7 @@
     <ClCompile Include="RenderPassUI.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ContextMenu.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
     <ClCompile Include="SelectionPass.cpp" />
     <ClCompile Include="ShaderAsset.cpp" />
@@ -138,6 +141,8 @@
     <ClInclude Include="Delegates.h" />
     <ClInclude Include="DirectionLight.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="EditorSettings.h" />
+    <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="RunMode.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorCBuffer.h" />
@@ -158,6 +163,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ContextMenu.h" />
     <ClInclude Include="SceneRenderer.h" />
     <ClInclude Include="SelectionPass.h" />
     <ClInclude Include="ShaderResource.h" />

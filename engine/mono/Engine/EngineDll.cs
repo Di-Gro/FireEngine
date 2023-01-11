@@ -198,6 +198,9 @@ namespace EngineDll {
 
             public static void name_set(CppRef objRef, string value) { if(objRef.value != 0) name_set_inner(objRef, value); }
 
+            [DllImport(Paths.Exe, EntryPoint = "Actor_scene_get")]
+		    public static extern CppRef scene_get(CppRef objRef);
+
 
 		}
 
@@ -232,6 +235,9 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "Game_DestroyScene")]
 		    public static extern void DestroyScene(CppRef gameRef, CppRef sceneRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Game_SetEditorSettings", CharSet = CharSet.Ansi)]
+		    public static extern void SetEditorSettings(CppRef gameRef, string startupScene);
 
 
 		}
@@ -433,6 +439,12 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "Assets_Get")]
 		    public static extern CppRef Get(CppRef gameRef, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "Assets_MakeDirty")]
+		    public static extern void MakeDirty(CppRef gameRef, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "Assets_IsDirty")]
+		    public static extern bool IsDirty(CppRef gameRef, int assetIdHash);
 
 		}
 
@@ -667,6 +679,86 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "AssetStore_AddAssetType")]
 		    public static extern void AddAssetType(CppRef gameRef, int typeId);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_projectPath_get")]
+		    private static extern size_t projectPath_get_ptr(CppRef objRef);
+
+            public static string projectPath_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(projectPath_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_projectPath_set", CharSet = CharSet.Ansi)]
+		    private static extern void projectPath_set_inner(CppRef objRef, string value);
+
+            public static void projectPath_set(CppRef objRef, string value) { if(objRef.value != 0) projectPath_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_assetsPath_get")]
+		    private static extern size_t assetsPath_get_ptr(CppRef objRef);
+
+            public static string assetsPath_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetsPath_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_assetsPath_set", CharSet = CharSet.Ansi)]
+		    private static extern void assetsPath_set_inner(CppRef objRef, string value);
+
+            public static void assetsPath_set(CppRef objRef, string value) { if(objRef.value != 0) assetsPath_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_editorPath_get")]
+		    private static extern size_t editorPath_get_ptr(CppRef objRef);
+
+            public static string editorPath_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(editorPath_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_editorPath_set", CharSet = CharSet.Ansi)]
+		    private static extern void editorPath_set_inner(CppRef objRef, string value);
+
+            public static void editorPath_set(CppRef objRef, string value) { if(objRef.value != 0) editorPath_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_actorTypeIdHash_get")]
+		    private static extern int actorTypeIdHash_get_inner(CppRef objRef);
+
+            public static int actorTypeIdHash_get(CppRef objRef) => objRef.value != 0 ? actorTypeIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_actorTypeIdHash_set")]
+		    private static extern void actorTypeIdHash_set_inner(CppRef objRef, int value);
+
+            public static void actorTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) actorTypeIdHash_set_inner(objRef, value); }
+
+		}
+
+		public static class ImGui {
+		
+            [DllImport(Paths.Exe, EntryPoint = "ImGui_CalcTextWidth", CharSet = CharSet.Ansi)]
+		    public static extern float CalcTextWidth(string value);
+
+		}
+
+		public static class Scene {
+		
+            [DllImport(Paths.Exe, EntryPoint = "Scene_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_assetId_get")]
+		    public static extern size_t assetId_get(CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_assetId_set", CharSet = CharSet.Ansi)]
+		    public static extern void assetId_set(CppRef cppRef, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_assetIdHash_get")]
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_assetIdHash_set")]
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_name_get")]
+		    private static extern size_t name_get_ptr(CppRef objRef);
+
+            public static string name_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(name_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_name_set", CharSet = CharSet.Ansi)]
+		    private static extern void name_set_inner(CppRef objRef, string value);
+
+            public static void name_set(CppRef objRef, string value) { if(objRef.value != 0) name_set_inner(objRef, value); }
 
 		}
 	}

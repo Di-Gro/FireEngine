@@ -110,7 +110,7 @@ public:
 
 	bool HasSceneWindow(const std::string& sceneId);
 	SceneWindow* GetSceneWindow(const std::string& sceneId);
-	SceneWindow* CreateSceneWindow(const std::string& sceneId, const std::string& name);
+	SceneWindow* CreateSceneWindow(const std::string& sceneId);
 	void RemoveSceneWindow(const std::string& sceneId);
 
 private:

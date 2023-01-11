@@ -62,4 +62,5 @@ enum class Keys {
 	Ctrl = 0x11,
 	ALT = 0x12,
 	Tilda = 0xC0,
+	Delete = 0x2E,
 };

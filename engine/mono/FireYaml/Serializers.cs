@@ -7,9 +7,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Globalization;
 using System;
+using System.Linq;
 using System.Diagnostics;
+
 using FireYaml;
 using EngineDll;
+using UI;
 
 namespace Engine {
     public class CloseAttribute : Attribute { }
@@ -74,10 +77,11 @@ namespace Engine {
             return true;
         }
 
-        public virtual void OnSerialize(FireYaml.Serializer serializer, string selfPath, Type type, object instance) { }
+        public virtual void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) { }
 
-        public virtual void OnDeserialize(FireYaml.Deserializer deserializer, string selfPath, Type type, ref object instance) { }
+        public virtual void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) { }
 
+        public virtual void OnDrawGui(Type type, ref object instance) { }
     }
 
     public class ActorSerializer : SerializerBase {
@@ -95,7 +99,7 @@ namespace Engine {
             }
         }
 
-        public override void OnSerialize(FireYaml.Serializer serializer, string selfPath, Type type, object instance) {
+        public override void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) {
             base.OnSerialize(serializer, selfPath, type, instance);
 
             if (type != typeof(Engine.Actor))
@@ -121,7 +125,7 @@ namespace Engine {
             }
         }
 
-        private void m_AddComponents(FireYaml.Serializer serializer, string selfPath, List<Component> components) {
+        private void m_AddComponents(FireYaml.FireWriter serializer, string selfPath, List<Component> components) {
             if (components.Count == 0) {
                 serializer.AddField($"{selfPath}.m_components", components.GetType(), components);
                 return;
@@ -133,7 +137,7 @@ namespace Engine {
             }
         }
 
-        public override void OnDeserialize(FireYaml.Deserializer deserializer, string selfPath, Type type, ref object instance) {
+        public override void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) {
             base.OnDeserialize(deserializer, selfPath, type, ref instance);
 
             if (type != typeof(Engine.Actor))
@@ -150,7 +154,7 @@ namespace Engine {
             m_LoadActorChildren(deserializer, childrenPath, actor);
         }
 
-        private void m_LoadActorChildren(FireYaml.Deserializer deserializer, string childrenPath, Engine.Actor actor) {
+        private void m_LoadActorChildren(FireYaml.FireReader deserializer, string childrenPath, Engine.Actor actor) {
             var children = deserializer.GetField(childrenPath);
 
             var count = children.GetItemsCount(childrenPath);
@@ -169,7 +173,7 @@ namespace Engine {
             }
         }
 
-        private void m_LoadComponents(FireYaml.Deserializer deserializer, string componentsPath, Engine.Actor actor) {
+        private void m_LoadComponents(FireYaml.FireReader deserializer, string componentsPath, Engine.Actor actor) {
             var components = deserializer.GetField(componentsPath);
 
             var count = components.GetItemsCount(componentsPath);
@@ -219,7 +223,7 @@ namespace Engine {
 
     public class MeshComponentSerializer : ComponentSerializer {
 
-        public override void OnSerialize(FireYaml.Serializer serializer, string selfPath, Type type, object instance) {
+        public override void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) {
             base.OnSerialize(serializer, selfPath, type, instance);
 
             var meshComponent = instance as Engine.MeshComponent;
@@ -235,7 +239,7 @@ namespace Engine {
             serializer.AddField($"{selfPath}.m_materials", materials.GetType(), materials);
         }
 
-        public override void OnDeserialize(FireYaml.Deserializer deserializer, string selfPath, Type type, ref object instance) {
+        public override void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) {
             base.OnDeserialize(deserializer, selfPath, type, ref instance);
 
             var meshComponent = instance as Engine.MeshComponent;
@@ -260,7 +264,7 @@ namespace Engine {
             return list;
         }
 
-        private void m_LoadMesh(FireYaml.Deserializer deserializer, string meshPath, MeshComponent meshComponent) {
+        private void m_LoadMesh(FireYaml.FireReader deserializer, string meshPath, MeshComponent meshComponent) {
             
             var meshAssetPath = $"{meshPath}.assetId";
             var meshField = deserializer.GetField(meshPath);
@@ -275,18 +279,28 @@ namespace Engine {
                 
             var yamlValue = meshField.GetValue(meshAssetPath);
             var assetId = yamlValue.value;
+            var isPath = m_IsPath(assetId);
 
-            if (!AssetStore.Instance.HasAssetPath(assetId))
+            if (!isPath && !AssetStore.Instance.HasAssetPath(assetId))
                     throw new Exception($"Missing AssetId: {assetId}");
 
             if (yamlValue.type == YamlValue.Type.AssetId) {
-                var mesh = new StaticMesh().LoadFromAsset(assetId);
+                StaticMesh mesh = null;
+                if (isPath)
+                    mesh = new StaticMesh().LoadFromFile(assetId);
+                else
+                    mesh = new StaticMesh().LoadFromAsset(assetId);
+
                 Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
                 return;
             }
         }
 
-        private void m_LoadMaterials(FireYaml.Deserializer deserializer, string materialsPath, MeshComponent meshComponent) {
+        private bool m_IsPath(string value) {
+            return value.Contains('/') || value.Contains('\\') || value.Contains('.');
+        }
+
+        private void m_LoadMaterials(FireYaml.FireReader deserializer, string materialsPath, MeshComponent meshComponent) {
             var yamlObject = deserializer.GetField(materialsPath);
 
             var count = yamlObject.GetItemsCount(materialsPath);
@@ -319,6 +333,45 @@ namespace Engine {
             }
             Dll.MeshComponent.SetPreInitMaterials(meshComponent.cppRef, matRefs.ToArray(), matRefs.Count);
         }
+
+        public override void OnDrawGui(Type type, ref object instance) {
+            base.OnDrawGui(type, ref instance);
+
+            var meshComponent = instance as Engine.MeshComponent;
+            if (meshComponent == null)
+                return;
+
+            var mesh = meshComponent.mesh;
+            int assetIdHash = 0;
+
+            if(mesh != null)
+                assetIdHash = mesh.IsDynamic ? -1 : ((StaticMesh)mesh).assetIdHash;
+
+            GUI.Space();
+
+            object changedMesh;
+            if (GUI.DrawAsset("Mesh", typeof(StaticMesh), assetIdHash, out changedMesh))
+                meshComponent.mesh = changedMesh as Mesh;
+            
+            var flags = ImGuiTreeNodeFlags_._Framed | ImGuiTreeNodeFlags_._DefaultOpen;
+            if(GUI.CollapsingHeader("Materials", flags)) {
+
+                var count = (ulong) meshComponent.MaterialCount;
+                for (ulong index = 0; index < count; index++) {
+                    var material = meshComponent.GetMaterial(index);
+
+                    assetIdHash = material.IsDynamic ? -1 : material.assetIdHash;
+
+                    object changedMaterial;
+                    if (GUI.DrawAsset($"Material: {index}", typeof(StaticMaterial), assetIdHash, out changedMaterial))
+                        meshComponent.SetMaterial(index, changedMaterial as StaticMaterial);
+
+                    if(index < count - 1)
+                        GUI.Space();
+                }
+            }
+        }
+
     }
 
 }

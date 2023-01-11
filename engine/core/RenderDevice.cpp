@@ -169,6 +169,6 @@ void RenderDevice::BeginDraw() {
 }
 
 void RenderDevice::EndDraw() {
-	m_swapChain->Present(0, 0); // делит RefreshRate на 1 -> 60 раз в сек.
+	m_swapChain->Present(1, 0); // делит RefreshRate на 1 -> 60 раз в сек.
 }
 

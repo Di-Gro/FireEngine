@@ -23,13 +23,10 @@ std::string Assets::ShaderWorldGride = "../../data/engine/shaders/WorldGride.hls
 void Assets::Init(Game* game) {
 	m_game = game;
 
-	auto type = m_game->mono()->GetType("Engine", "Assets");
-	m_method_Load = mono::make_method_invoker<void(int)>(type, "Load");
-	m_method_Reload = mono::make_method_invoker<void(int)>(type, "Reload");
-	m_method_GetStringHash = mono::make_method_invoker<int(size_t, size_t)>(type, "GetStringHash");
-
 	auto type2 = m_game->mono()->GetType("FireYaml", "AssetStore");
 	m_method_CreateAssetId = mono::make_method_invoker<unsigned int(void)>(type2, "CreateAssetIdInt");
+	m_method_CreateTmpAssetId = mono::make_method_invoker<unsigned int(void)>(type2, "CreateTmpAssetIdInt");
+	m_method_AddTmpAssetIdHash = mono::make_method_invoker<void(int)>(type2, "AddTmpAssetIdHash");
 }
 
 Assets::~Assets() {
@@ -78,6 +75,9 @@ IAsset* Assets::Pop(int assetIdHash) {
 	CppRefs::Remove(asset.ref);
 
 	m_assets.erase(assetIdHash);
+
+	if (m_dirtyAssets.contains(assetIdHash))
+		m_dirtyAssets.erase(assetIdHash);
 }
 
 IAsset* Assets::Get(const std::string& assetId) {
@@ -92,38 +92,73 @@ IAsset* Assets::Get(int assetIdHash) {
 	return m_assets.at(assetIdHash).ptr;
 }
 
+bool Assets::Load(int assetIdHash, CppRef cppRef) {
+	if (!Contains(assetIdHash))
+		return false;
+
+	return m_game->callbacks().loadAsset(assetIdHash, cppRef);
+}
+
 void Assets::ReloadAll() {
 	for (auto& pair : m_assets) {
 		auto iasset = pair.second.ptr;
-		m_method_Reload(iasset->assetIdHash());
+		m_game->callbacks().reloadAsset(iasset->assetIdHash());
 	}
 }
 
 void Assets::Reload(int assetIdHash) {
 	auto iasset = Get(assetIdHash);
-	iasset->Release();
+	if (iasset == nullptr)
+		return;
 
-	m_method_Reload(assetIdHash);
+	iasset->Release();
+	m_game->callbacks().reloadAsset(iasset->assetIdHash());
 }
 
+void Assets::Save(int assetIdHash) {
+	auto iasset = Get(assetIdHash);
+	if (iasset == nullptr)
+		return;
+
+	m_game->callbacks().saveAsset(iasset->assetIdHash());
+
+	if (m_dirtyAssets.contains(assetIdHash))
+		m_dirtyAssets.erase(assetIdHash);
+}
+
+void Assets::MakeDirty(int assetIdHash) {
+	m_dirtyAssets.insert(assetIdHash);
+}
+
+bool Assets::IsDirty(int assetIdHash) {
+	return m_dirtyAssets.contains(assetIdHash);
+}
 
 int Assets::GetCsHash(const std::string& str) {
-	auto cstr = str.c_str();
-	auto ptr = &cstr[0];
-	auto length = str.length();
-
-	auto hash = m_method_GetStringHash((size_t)ptr, length);
+	int hash = m_game->callbacks().getStringHash((size_t)str.c_str());
 	return hash;
 }
 
-std::string Assets::CreateAssetId() {
-	auto id = m_method_CreateAssetId();
+//std::string Assets::CreateAssetId() {
+//	auto id = m_method_CreateAssetId();
+//	auto idStr = std::to_string(id);
+//	auto nullCount = 10 - idStr.size(CreateTmpAssetId);
+//	auto assetId = std::string(nullCount, '0') + idStr;
+//	return assetId;
+//}
+
+std::string Assets::CreateTmpAssetId() {
+	auto id = m_method_CreateTmpAssetId();
 	auto idStr = std::to_string(id);
 	auto nullCount = 10 - idStr.size();
 	auto assetId = std::string(nullCount, '0') + idStr;
+	assetId = "tmp_" + assetId;
+
+	auto hash = GetCsHash(assetId);
+	m_method_AddTmpAssetIdHash(hash);
+
 	return assetId;
 }
-
 
 DEF_FUNC(Assets, Reload, void)(CppRef gameRef, int pathHash) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
@@ -134,4 +169,14 @@ DEF_FUNC(Assets, Get, CppRef)(CppRef gameRef, int pathHash) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
 	auto iasset = game->assets()->Get(pathHash);
 	return CppRefs::GetRef(iasset);
+}
+
+FUNC(Assets, MakeDirty, void)(CppRef gameRef, int assetIdHash) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	game->assets()->MakeDirty(assetIdHash);
+} 
+
+FUNC(Assets, IsDirty, bool)(CppRef gameRef, int assetIdHash) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	return game->assets()->IsDirty(assetIdHash);
 }

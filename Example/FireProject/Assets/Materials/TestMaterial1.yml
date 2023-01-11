@@ -5,7 +5,7 @@
 .file1!scriptId: {AssetId: 00000010012}
 .file1.Name: {Var: Material.005}
 .file1.Shader: {Var: ../../data/engine/shaders/opaque_default.hlsl}
-.file1.CullMode: {Var: Front}
+.file1.CullMode: {Var: Back}
 .file1.FillMode: {Var: Solid}
 .file1.Priority: {Var: 2000}
 .file1.DiffuseColor.X: {Var: 0.4}

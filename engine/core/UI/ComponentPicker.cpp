@@ -7,6 +7,9 @@
 #include "../Math.h"
 #include "../Game.h"
 #include "../AssetStore.h"
+#include "UI_Hierarchy.h"
+
+#include "../imgui/misc/cpp/imgui_stdlib.h"
 
 
 bool ComponentPicker::IsMatch(std::string source, std::string target) {
@@ -18,20 +21,25 @@ bool ComponentPicker::IsMatch(std::string source, std::string target) {
 	return res != std::string::npos;
 }
 
-bool ComponentPicker::Open(Game* game) {
-	auto store = game->assetStore();
-
-	const auto* content = &store->components;
-
-	bool hasSelected = false;
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 3.0f, 3.0f });
-	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 6.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 1.0f);
+void ComponentPicker::PushPopupStyles() {
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 10.0f, 10.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
+
+	//ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, { 0.7f, 0.7f ,0.7f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_ChildBg, { 0.7f, 0.7f ,0.7f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.7f, 0.7f ,0.7f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 0.0f ,0.0f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_Header, { 0.8f, 0.8f ,0.9f ,1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.8f, 0.8f ,0.9f ,1.0f });
+
+	//ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.5f, 0.5f, 0.5f, 1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, { 0.5f, 0.5f, 0.5f, 1.0f });
+	//ImGui::PushStyleColor(ImGuiCol_FrameBgActive, { 0.5f, 0.5f, 0.5f, 1.0f });
 
 	ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.2f, 0.2f ,0.2f ,1.0f });
 	ImGui::PushStyleColor(ImGuiCol_Text, { 0.8f, 0.8f ,0.8f ,1.0f });
@@ -39,6 +47,22 @@ bool ComponentPicker::Open(Game* game) {
 	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.4f, 0.4f ,0.4f ,1.0f });
 	ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, { 0.2f, 0.2f ,0.2f ,1.0f });
 	ImGui::PushStyleColor(ImGuiCol_ChildBg, { 0.2f, 0.2f ,0.2f ,1.0f });
+}
+
+void ComponentPicker::PopPopupStyles() {
+	ImGui::PopStyleVar(7);
+	//ImGui::PopStyleColor(9);
+	ImGui::PopStyleColor(6);
+}
+
+bool ComponentPicker::Open(Game* game) {
+	auto store = game->assetStore();
+
+	const auto* content = &store->components;
+
+	bool hasSelected = false;
+
+	PushPopupStyles();
 
 	auto filtered = std::vector<int>();
 	filtered.reserve(content->size());
@@ -61,11 +85,7 @@ bool ComponentPicker::Open(Game* game) {
 		ImGui::Text(headerText);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
-		const size_t bufSize = 80;
-		char nameBuffer[bufSize] = { 0 };
-		std::memcpy(nameBuffer, m_input.c_str(), std::min(bufSize, m_input.size()));
-		ImGui::InputText("##findType", nameBuffer, bufSize);
-		m_input = nameBuffer;
+		ImGui::InputText("##findType", &m_input);
 
 		if (!ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
 			ImGui::SetKeyboardFocusHere(0);
@@ -77,7 +97,7 @@ bool ComponentPicker::Open(Game* game) {
 
 		for (int i = 0; i < content->size(); i++) {
 			auto name = store->GetScriptName(content->at(i));
-			if (IsMatch(name, nameBuffer))
+			if (IsMatch(name, m_input))
 				filtered.push_back(i);
 		}
 
@@ -114,9 +134,8 @@ bool ComponentPicker::Open(Game* game) {
 
 		ImGui::EndPopup();
 	}
-
-	ImGui::PopStyleVar(7);
-	ImGui::PopStyleColor(6);
+	PopPopupStyles();
+	
 
 	return hasSelected;
 }

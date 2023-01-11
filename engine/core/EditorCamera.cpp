@@ -24,7 +24,7 @@ void EditorCamera::OnDestroy() {
 void EditorCamera::OnUpdate() {
 	CameraComponent::OnUpdate();
 
-	if (!IsAttached() || game()->inFocus)
+	if (!IsMainCamera())
 		return;
 
 	if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
@@ -56,7 +56,7 @@ void EditorCamera::OnUpdate() {
 		auto direction = rotator.Forward() * axis.x + Vector3::Up * axis.y + rotator.Right() * axis.z;
 		direction.Normalize();
 
-		auto newPos = localPosition() + direction * m_speed * game()->deltaTime();
+		auto newPos = localPosition() + direction * speed * game()->deltaTime();
 		localPosition(newPos);
 	}
 
@@ -67,7 +67,7 @@ void EditorCamera::OnUpdate() {
 }
 
 void EditorCamera::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
-	if (!IsAttached() || game()->inFocus)
+	if (!IsMainCamera())
 		return;
 
 	if (!game()->input()->IsKeyDown(Keys::RightButton))
@@ -78,9 +78,9 @@ void EditorCamera::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
 	m_updateRotation = true;
 
 	if (args.WheelDelta > 0)
-		m_speed += 1;
+		speed += 1;
 	if (args.WheelDelta < 0)
-		m_speed -= 1;
+		speed -= 1;
 }
 
 void EditorCamera::RecieveGameMessage(const std::string& msg) {

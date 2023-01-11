@@ -25,7 +25,7 @@ namespace Engine {
             set => Dll.CsComponent.runtimeOnly_set(cppRef, value);
         }
 
-        public bool isCrashed {
+        public bool IsCrashed {
             get => Dll.CsComponent.f_isCrashed_get(cppRef);
             private set => Dll.CsComponent.f_isCrashed_set(cppRef, value);
         }

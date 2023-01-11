@@ -11,6 +11,7 @@ class DirectionLight;
 class AmbientLight;
 class LinedPlain;
 class CameraComponent;
+class EditorCamera;
 
 using CameraIter = std::list<CameraComponent*>::iterator;
 using SceneIter = std::list<Scene*>::iterator;
@@ -19,7 +20,7 @@ FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, 
 FUNC(Game, GetRootActorsCount, int)(CppRef gameRef);
 FUNC(Game, WriteRootActorsRefs, void)(CppRef gameRef, CsRef* refs);
 
-class Scene {
+class Scene : public IAsset {
 	FRIEND_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, CppRef parentRef);
 
 	friend class Game;
@@ -33,7 +34,7 @@ public:
 	DirectionLight* directionLight = nullptr;
 	AmbientLight* ambientLight = nullptr;
 
-	CameraComponent* editorCamera;
+	EditorCamera* editorCamera;
 	LinedPlain* linedPlain;
 
 	SceneRenderer renderer;
@@ -45,6 +46,7 @@ private: // friend
 
 private:
 	Game* m_game;
+	std::string m_name = "";
 
 	std::list<Actor*> m_actors;
 	std::list<Actor*> m_staticActors;
@@ -58,6 +60,14 @@ private:
 public:
 	void Init(Game* game, bool _isEditor);
 	void Start();
+	void Release() override;
+
+	bool IsAsset() { return assetIdHash() != 0; }
+
+	Game* game() { return m_game; }
+
+	const std::string& name() { return m_name; }
+	void name(const std::string& value) { m_name = value; }
 
 	inline bool isEditor() { return m_isEditor; }
 
@@ -81,15 +91,13 @@ public:
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera);
 
-	void AttachGameCamera();
+	void AttachPlayerCamera();
 
 	void Stat();
 
 private:
 	void f_Update();
 	void f_Destroy();
-	void f_RemoveActor(Actor* actor);
-	void f_AddActor(Actor* actor);
 
 private:
 	void m_InitMono();
@@ -104,3 +112,6 @@ private:
 	std::list<Actor*>::iterator m_EraseActor(std::list<Actor*>::iterator it, std::list<Actor*>* list);
 
 };
+
+PUSH_ASSET(Scene);
+PROP_GETSET_STR(Scene, name);

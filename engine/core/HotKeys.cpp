@@ -97,6 +97,14 @@ bool HotKeys::GetButtonDown(Keys key) {
 	return Is(key, KeyState::Press);
 }
 
+bool HotKeys::GetButtonDown(Keys key, Keys modifier) {
+	return Is(key, KeyState::Press) && Is(modifier);
+}
+
+bool HotKeys::GetButtonDown(Keys key, Keys modifier1, Keys modifier2) {
+	return Is(key, KeyState::Press) && Is(modifier1) && Is(modifier2);
+}
+
 bool HotKeys::GetButtonUp(Keys key) {
 	return Is(key, KeyState::Release);
 }

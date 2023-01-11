@@ -28,10 +28,17 @@ namespace FireYaml {
         private Dictionary<int, string> m_assetIdHash_assetPath = new Dictionary<int, string>();
         private Dictionary<int, int> m_assetIdHash_scriptIdHash = new Dictionary<int, int>();
 
-        private string m_assetsPath = @"..\..\Example\FireProject\";
-        private uint m_nextAssetId = 16;
+        private HashSet<int> m_tmpAssetIdHashes = new HashSet<int>();
+
+        public string ProjectPath = "../../Example/FireProject";
+        public string AssetsPath => $"{ProjectPath}/Assets";
+        public string EditorPath => $"{ProjectPath}/Editor";
+
+        private uint m_nextAssetId = 1;
+        private uint m_nextTmpAssetId = 1;
 
         public AssetStore(bool addDefaultAssets = true) {
+
             AddScriptId("00000010000", typeof(Engine.Actor).FullName);
             AddScriptId("00000010003", typeof(Engine.MeshComponent).FullName);
             AddScriptId("00000010004", typeof(Engine.CameraComponent).FullName);
@@ -47,25 +54,37 @@ namespace FireYaml {
             AddScriptId("00000010014", typeof(Engine.Scene).FullName);
             AddScriptId("00000010015", typeof(Engine.Prefab).FullName);
             AddScriptId("00000010016", typeof(Engine.Component).FullName);
+            AddScriptId("00000010017", typeof(Engine.EditorSettings).FullName);
+            m_nextAssetId = 10018;
 
             if (addDefaultAssets) {
-                AddAssetId("TestPrefab", $"{m_assetsPath}TestPrefab.yml");
-                AddAssetId("TestMesh", $"{m_assetsPath}TestMesh.yml");
-                AddAssetId("TestMeshPrefab", "../../data/assets/new/TestMeshPrefab.yml");
+                var project = ProjectPath;
 
-                AddAssetId("MESH000001", "../../data/assets/new/House_Red.yml");
-                AddAssetId("MESH000002", "../../data/assets/new/House_Purple.yml");
-                AddAssetId("MESH000003", "../../data/assets/new/House_Blue.yml");
-                AddAssetId("IMG0000004", "../../data/assets/new/Gradients.yml");
-                AddAssetId("TEX0000005", "../../data/assets/new/Texture.yml");
-                AddAssetId("MAT0000006", "../../data/assets/new/Material.yml");
+                AddAssetId("editor_settings", $"{EditorPath}/editor_settings.yml");
 
-                AddAssetId("TestTexture1", $"{m_assetsPath}TestTexture1.yml");
-                AddAssetId("TestImage1", $"{m_assetsPath}TestImage1.yml");
-                AddAssetId("TestMaterial1", $"{m_assetsPath}TestMaterial1.yml");
-                AddAssetId("TestMesh1", $"{m_assetsPath}TestMesh1.yml");
-                AddAssetId("M_Default", $"{m_assetsPath}M_Default.yml");
-                AddAssetId("TestPrefab2", $"{m_assetsPath}TestPrefab2.yml");
+                AddAssetId("MESH000001", $"{AssetsPath}/Meshes/Farm/House_Red.yml");
+                AddAssetId("MESH000002", $"{AssetsPath}/Meshes/Farm/House_Purple.yml");
+                AddAssetId("MESH000003", $"{AssetsPath}/Meshes/Farm/House_Blue.yml");
+                AddAssetId("TestMesh1", $"{AssetsPath}/Meshes/TestMesh1.yml");
+                AddAssetId("test_navmesh", $"{AssetsPath}/Meshes/test_navmesh.yml");
+
+                AddAssetId("IMG0000004", $"{AssetsPath}/Images/Gradients.yml");
+                AddAssetId("TestImage1", $"{AssetsPath}/Images/TestImage1.yml");
+
+                AddAssetId("TEX0000005", $"{AssetsPath}/Textures/Texture.yml");
+                AddAssetId("TestTexture1", $"{AssetsPath}/Textures/TestTexture1.yml");
+
+                AddAssetId("M_Default", $"{AssetsPath}/Materials/M_Default.yml");
+                AddAssetId("M_WorldGride", $"{AssetsPath}/Materials/M_WorldGride.yml");
+                AddAssetId("MAT0000006", $"{AssetsPath}/Materials/Material.yml");
+                AddAssetId("TestMaterial1", $"{AssetsPath}/Materials/TestMaterial1.yml");
+
+                AddAssetId("TestMesh", $"{AssetsPath}/Prefabs/TestMesh.yml");
+                AddAssetId("TestMeshPrefab", $"{AssetsPath}/Prefabs/TestMeshPrefab.yml");
+                AddAssetId("TestPrefab", $"{AssetsPath}/Prefabs/TestPrefab.yml");
+                AddAssetId("TestPrefab2", $"{AssetsPath}/Prefabs/TestPrefab2.yml");
+                
+                AddAssetId("scene_1", $"{AssetsPath}/Scenes/scene_1.yml");
             }
         }
 
@@ -95,6 +114,10 @@ namespace FireYaml {
 
         public bool HasAssetPath(string assetId) {
             return GetAssetPath(assetId) != "";
+        }
+
+        public static bool HasAsset(int assetIdHash) {
+            return Instance.m_assetIdHash_assetPath.ContainsKey(assetIdHash);
         }
 
         public bool TryGetAssetIdByType(string typeName, out string assetId) {
@@ -206,14 +229,17 @@ namespace FireYaml {
         }
 
         public void CreateAsset(string path, object data, string tmp_id) {
-            var serializer = new Serializer(ignoreExistingIds: true, startId: 1);
+            if(!path.Contains(ProjectPath))
+                throw new Exception($"Asset Path not contains project path");
+
+            var serializer = new FireWriter(ignoreExistingIds: true, startId: 1);
             serializer.Serialize(data);
 
             if (!serializer.Result)
                 throw new Exception($"Can not create asset: Serialization failed.");
 
             var values = serializer.Values;
-            var assetPath = $"{m_assetsPath}\\{path}";
+            var assetPath = path;
 
             values.AddValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, tmp_id));
             values.AddValue(".file0.files", new YamlValue(YamlValue.Type.Var, $"{serializer.FilesCount}"));
@@ -232,7 +258,7 @@ namespace FireYaml {
             var assetInfo = GetAssetInfo(assetId);
             var assetPath = GetAssetPath(assetId);
 
-            var serializer = new Serializer(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
+            var serializer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
             serializer.Serialize(data);
 
             if (!serializer.Result)
@@ -263,10 +289,22 @@ namespace FireYaml {
         }
 
         public static string CreateAssetId() {
-            var id = AssetStore.Instance.m_nextAssetId++;
+            var id = CreateAssetIdInt();
             var idStr = id.ToString();
             var nullCount = 10 - idStr.Length;
             var assetId = new string('0', nullCount) + idStr;
+            return assetId;
+        }
+
+        public static string CreateTmpAssetId() {
+            var id = CreateTmpAssetIdInt();
+            var idStr = id.ToString();
+            var nullCount = 10 - idStr.Length;
+            var assetId = new string('0', nullCount) + idStr;
+            assetId = $"tmp_{id.ToString()}";
+
+            AddTmpAssetIdHash(assetId.GetHashCode());
+
             return assetId;
         }
 
@@ -275,13 +313,28 @@ namespace FireYaml {
             return id;
         }
 
+        public static uint CreateTmpAssetIdInt() {
+            var id = AssetStore.Instance.m_nextTmpAssetId++;
+            return id;
+        }
+
+        public static void AddTmpAssetIdHash(int tmpAssetIdHash) {
+            Instance.m_tmpAssetIdHashes.Add(tmpAssetIdHash);
+        }
+
+        public static bool IsTmpAssetId(int tmpAssetIdHash) => Instance.m_tmpAssetIdHashes.Contains(tmpAssetIdHash);
+
         public static void UpdateTypesInCpp() {
+            Dll.AssetStore.projectPath_set(Game.assetStoreRef, Instance.ProjectPath);
+            Dll.AssetStore.assetsPath_set(Game.assetStoreRef, Instance.AssetsPath);
+            Dll.AssetStore.editorPath_set(Game.assetStoreRef, Instance.EditorPath);
+
             var typeNames = new List<string>();
             var assembly = Assembly.GetAssembly(typeof(AssetStore));
 
             var types = assembly.GetTypes();
             foreach(var type in types) {
-                if (Serializer.IsComponent(type) || Serializer.IsAsset(type) || Serializer.IsFile(type)) { 
+                if (FireWriter.IsComponent(type) || FireWriter.IsAsset(type) || FireWriter.IsFile(type)) { 
                     typeNames.Add(type.FullName);
                     if(!Instance.HasTypeName(type.FullName))
                         Instance.AddScriptId(CreateAssetId(), type.FullName);
@@ -299,21 +352,22 @@ namespace FireYaml {
 
                 Dll.AssetStore.SetType(Game.gameRef, typeIdHash, type.FullName, type.Name);
 
-                if(Serializer.IsUserComponent(type))
+                if(FireWriter.IsUserComponent(type))
                     Dll.AssetStore.AddComponent(Game.gameRef, typeIdHash);
                 
-                if(Serializer.IsAsset(type))
+                if(FireWriter.IsAsset(type))
                     Dll.AssetStore.AddAssetType(Game.gameRef, typeIdHash);
             }
         }
 
         public static void UpdateAssetsInCpp() {
-            Dll.AssetStore.ClearAssets(Game.gameRef);
-
             var store = Instance;
 
             var actorId = Instance.GetScriptIdByTypeName(typeof(Engine.Actor).FullName);
             var prefabId = Instance.GetScriptIdByTypeName(typeof(Engine.Prefab).FullName);
+
+            Dll.AssetStore.ClearAssets(Game.gameRef);
+            Dll.AssetStore.actorTypeIdHash_set(Game.assetStoreRef, actorId.GetHashCode());
 
             foreach(var assetIdHash in Instance.m_assetIdHash_assetId.Keys) {
                 var assetId = Instance.GetAssetId(assetIdHash);
@@ -331,7 +385,8 @@ namespace FireYaml {
             }
         }
 
-        private static string m_ReadScriptId(int assetIdHash){
+        private static string m_ReadScriptId(int assetIdHash) {
+            var inst = Instance;
             var path = Instance.m_assetIdHash_assetPath[assetIdHash];
 
             var lines = File.ReadLines(path);

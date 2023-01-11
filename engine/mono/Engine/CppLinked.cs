@@ -14,23 +14,19 @@ namespace Engine {
 	}
 
 	public class CppLinked : ICppLinked {
-		/// Static ->
-		private static Dictionary<CsRef, object> s_refs = new Dictionary<CsRef, object>();
-		private static CsRef s_nextRefId = 1;
+        /// Static ->
+        private static Dictionary<CsRef, object> s_refs = new Dictionary<CsRef, object>();
+		private static CsRef s_nextRefId = 2; // NullRef = 0, MissingRef = 1
 
-		public static object GetObjectByRef(CsRef csRef) {
+        public static object GetObjectByRef(CsRef csRef) {
 			if (s_refs.ContainsKey(csRef))
 				return s_refs[csRef];
 			return null;
 		}
-		public static void RemoveObjectByRef(CsRef csRef) {
-			//Console.WriteLine($"#: CppLinked.RemoveObjectByRef({csRef})");
-			s_refs.Remove(csRef);
+		public static void RemoveCsRef(CsRef csRef) {
+            s_refs.Remove(csRef);
 		}
 		/// <- Static
-
-
-		//private ulong m_csRefId;
 
 		public ClassInfo classInfo { get; private set; }
 
@@ -46,8 +42,6 @@ namespace Engine {
 		public virtual CsRef Link(CppRef classInfoRef, CppRef objRef) {
 			cppRef = objRef;
 
-            //Console.WriteLine($"#: {GetType().Name}({csRef}, {cppRef}).Link(class:{classInfoRef}, obj:{objRef})");
-
             classInfo = ClassInfo.GetClassInfo(classInfoRef);
 
 			LinkProps();
@@ -57,15 +51,11 @@ namespace Engine {
 		private void LinkProps() {
 			var type = GetType();
 
-			//Console.WriteLine($"#: {type.Name}.LinkProps() ->");
-
 			BindingFlags bindFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-			//Console.WriteLine($"#: LinkProps:");
 			foreach (var field in type.GetFields(bindFlags)) {
 				var iprop = field.FieldType.GetInterface(nameof(IProp));
 				if(iprop != null) {
-					//Console.WriteLine($" {field.Name}");
 
 					var propValue = field.GetValue(this);
 					var linkMethod = field.FieldType.GetMethod(nameof(IProp.Link));
@@ -73,7 +63,6 @@ namespace Engine {
 					linkMethod.Invoke(propValue, new object[] { this });
 				}
 			}
-			//Console.WriteLine($"#: <-");
 		}
 	}
 }

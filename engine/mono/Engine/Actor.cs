@@ -71,6 +71,8 @@ namespace Engine {
 
         public bool HasParent => parent != null;
 
+        public Scene scene => new Scene(Dll.Actor.scene_get(cppRef));
+
         [Close] public Actor parent {
             get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
             set => Dll.Actor.parent_set(cppRef, value.cppRef);
@@ -99,7 +101,6 @@ namespace Engine {
 
         public void Destroy() {
             Dll.Actor.Destroy(cppRef);
-            RemoveObjectByRef(csRef);
         }
 
         ~Actor() {
@@ -327,31 +328,31 @@ namespace Engine {
         //    return str;
         //}
 
-        private static void cpp_InitComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_InitComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
 
-            component.OnInit();
-        }
+        //     component.OnInit();
+        // }
 
-        private static void cpp_StartComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_StartComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
 
-            component.OnStart();
-        }
+        //     component.OnStart();
+        // }
 
-        private static void cpp_UpdateComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_UpdateComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
 
-            component.OnUpdate();
-        }
+        //     component.OnUpdate();
+        // }
 
-        private static void cpp_DestroyComponent(CsRef compRef) {
-            var component = GetObjectByRef(compRef) as Component;
+        // private static void cpp_DestroyComponent(CsRef compRef) {
+        //     var component = GetObjectByRef(compRef) as Component;
             
-            component.OnDestroy();
+        //     component.OnDestroy();
 
-            RemoveObjectByRef(compRef);
-        }
+        //     RemoveCsRef(compRef);
+        // }
 
         #endregion
     }

@@ -27,6 +27,7 @@ public:
 	bool drawDebug = true;
 	bool callPixelShader = true;
 	bool setShaderMap = true;
+	bool isPlayerCamera = false;
 
 private:
 
@@ -52,6 +53,7 @@ public:
 	void Attach();
 	void Deattach();
 	bool IsAttached();
+	bool IsMainCamera();
 
 	void UpdateProjectionMatrix();
 

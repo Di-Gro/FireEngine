@@ -236,13 +236,12 @@ SceneWindow* UserInterface::GetSceneWindow(const std::string& sceneId) {
 	return nullptr;
 }
 
-SceneWindow* UserInterface::CreateSceneWindow(const std::string& sceneId, const std::string& name) {
+SceneWindow* UserInterface::CreateSceneWindow(const std::string& sceneId) {
 	auto hash = m_StringHash(sceneId);
 
 	if (!m_sceneWindows.contains(hash)) {
 		auto window = new SceneEditorWindow(sceneId);
 		window->Init(_game);
-		window->name = name;
 
 		m_sceneWindows.insert(std::make_pair(hash, window));
 	}

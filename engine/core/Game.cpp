@@ -48,6 +48,8 @@
 #include "TestLightComponent.h"
 #include "Material.h"
 
+#include "ContextMenu.h"
+
 #include "UI\SceneEditorWindow.h"
 
 
@@ -116,15 +118,17 @@ void Game::Init(MonoInst* imono) {
 	m_InitImGui();
 	m_ui->Init(this);
 
-	m_editorScene = CreateScene(true);
+	auto assetStoreRef = CppRefs::Create((void*)m_assetStore).cppRef();
+	callbacks().setAssetStoreRef(RefCpp(assetStoreRef));
+	callbacks().loadAssetStore();
 
-	auto editorWindow = ui()->CreateSceneWindow("Editor", "Editor");
-	editorWindow->visible = true;
-	editorWindow->scene(m_editorScene);
+	m_editorWindow = ui()->CreateSceneWindow("Editor");
+	m_editorWindow->visible = true;
 	
-	auto gameWindow = ui()->CreateSceneWindow("Game", "Game");
-	gameWindow->visible = true;
+	m_gameWindow = ui()->CreateSceneWindow("Game");
+	m_gameWindow->visible = false;
 
+	tmpSceneAssetId = assets()->CreateTmpAssetId();
 }
 
 void Game::m_InitMono(MonoInst* imono) {
@@ -137,41 +141,40 @@ void Game::m_InitMono(MonoInst* imono) {
 	method_Init(CppRef::Create(gameRef.cppRef()));
 }
 
+bool Game::LoadScene(Scene* targetScene, const char* assetId) {
+	bool loaded = false;
+	auto sceneRef = CppRefs::GetRef(targetScene);
+
+	if (targetScene->IsAsset()) {
+		bool hasAsset = callbacks().hasAssetInStore(targetScene->assetIdHash());
+		if (hasAsset) 
+			loaded = assets()->Load(targetScene->assetIdHash(), sceneRef);
+	}
+	else if(assetId != nullptr) {
+		loaded = m_callbacks.loadScene(sceneRef, (size_t)assetId);
+	}
+	return loaded;
+}
+
 void Game::Run() {
 	m_render->Start();
 	m_meshAsset->Start();
-	
-	tmpSceneAssetId = assets()->CreateAssetId();
-	///
-	auto cppObj = CppClass();
-	auto csLink = CSLinked<CppClass>(mono());
 
-	
-	
-	//isExitRequested = true; // return;
-	///
-	PushScene(m_editorScene);
+	m_editorScene = CreateScene(true, editorSettings.startupScene);
+	if (!LoadScene(m_editorScene)) {
+		PushScene(m_editorScene);
+		SceneMenu::AddLight(m_editorScene);
+		PopScene();
+	}
+	m_editorWindow->scene(m_editorScene);
 
-	//csLink.Link(cppObj, "EngineMono", "CSClass");
-	
-	auto light = currentScene()->CreateActor("Light");
-	light->localPosition({ 0, 0, 300 });
-	light->localRotation({ rad(-45), rad(45 + 180), 0 });
-	light->AddComponent<DirectionLight>();
-	light->AddComponent<AmbientLight>();
+	//PushScene(m_editorScene);
 
-	//currentScene()->CreateActor("GameController")->AddComponent<GameController>();
+	//auto meshcomp = currentScene()->CreateActor("Cpp actor")->AddComponent<MeshComponent>();
+	//meshcomp->mesh(meshAsset()->GetMesh("../../data/assets/levels/farm/meshes/Fountain.obj"));
 
-	auto material = meshAsset()->CreateDynamicMaterial("World Gride", Assets::ShaderWorldGride);
-
-	auto testScene = currentScene()->CreateActor("test scene")->AddComponent<MeshComponent>();
-	testScene->mesh(meshAsset()->GetMesh("../../data/assets/models/test_navmesh.obj"));
-	testScene->SetMaterial(0, material);
-
-	//inFocus = false;
-	//m_lastGameCamera = scene()->mainCamera();
-	//m_editorCamera->Attach();
-	PopScene();
+	////currentScene()->CreateActor("GameController")->AddComponent<GameController>();
+	//PopScene();
 		
 	MSG msg = {};
 
@@ -239,11 +242,9 @@ void Game::m_Update() {
 	while (it != m_scenes.end()) {
 
 		auto scene = (*it);
-		if (scene->f_isDestroyed) {
-			it = m_EraseScene(it);
-			continue;
-		}
 		scene->f_Update();
+		assert(m_sceneStack.size() == 0);
+
 		it++;
 	}
 
@@ -260,23 +261,23 @@ void Game::m_Update() {
 
 	m_hotkeys->LateUpdate();
 
-	if (m_hotkeys->GetButtonDown(Keys::Tilda)) {
-		inFocus = !inFocus;
-		if (!inFocus) {
-			m_editorScene->mainCamera(nullptr);
-		}
-		else {
-			ui()->SelectedActor(nullptr);
-			m_editorScene->AttachGameCamera();
-		}
-	}
+	bool Ctrl = m_hotkeys->GetButtonDown(Keys::Ctrl);
+	bool Tilda = m_hotkeys->GetButtonDown(Keys::Tilda);
+	bool S = m_hotkeys->GetButtonDown(Keys::S);
+	bool R = m_hotkeys->GetButtonDown(Keys::S);
 
-	if (m_hotkeys->GetButtonDown(Keys::R) && m_hotkeys->GetButton(Keys::Ctrl)) {
+	if (m_hotkeys->GetButtonDown(Keys::Tilda))
+		ToggleGameFocus();
+
+	if (m_hotkeys->GetButtonDown(Keys::R, Keys::Ctrl)) {
 		shaderAsset()->RecompileShaders();
 		meshAsset()->ReloadMaterials();
 		std::cout << std::endl;
 	}
 
+	if (m_hotkeys->GetButtonDown(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
+		/// TODO: Сохранить все ассеты
+	}
 }
 
 void Game::m_Destroy() {
@@ -308,8 +309,23 @@ Scene* Game::CreateScene(bool isEditor) {
 	auto* scene = new Scene();
 	m_scenes.push_back(scene);
 
-	scene->f_sceneIter = --m_scenes.end();
 	scene->f_ref = CppRefs::Create(scene);
+	scene->f_sceneIter = --m_scenes.end();
+	scene->Init(this, isEditor);
+
+	return scene;
+}
+
+Scene* Game::CreateScene(bool isEditor, const std::string& assetId) {
+	auto gameRef = CppRefs::GetRef(this);
+	auto assetIdHash = assets()->GetCsHash(assetId);
+
+	auto sceneRef = Scene_PushAsset(gameRef, assetId.c_str(), assetIdHash);
+	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);
+
+	m_scenes.push_back(scene);
+
+	scene->f_sceneIter = --m_scenes.end();
 	scene->Init(this, isEditor);
 
 	return scene;
@@ -327,7 +343,11 @@ void Game::DestroyScene(Scene* scene) {
 std::list<Scene*>::iterator Game::m_EraseScene(std::list<Scene*>::iterator iter) {
 	auto scene = *iter;
 
-	CppRefs::Remove(scene->f_ref);
+	if (scene->IsAsset())
+		assets()->Pop(scene->assetIdHash());
+	else
+		CppRefs::Remove(scene->f_ref);
+
 	auto nextIter = m_scenes.erase(scene->f_sceneIter);
 	delete scene;
 
@@ -379,7 +399,7 @@ void Game::DeleteMaterialFromAllScenes(const Material* material) {
 }
 
 void Game::TogglePlayMode() {
-	auto tmpScenePath = "../../Example/Editor/tmp/EditorScene.yml";
+	auto tmpScenePath = assetStore()->editorPath() + "/tmp/EditorScene.yml";
 	auto assetId = tmpSceneAssetId.c_str();
 	
 	if (m_gameScene == nullptr) {
@@ -388,16 +408,26 @@ void Game::TogglePlayMode() {
 		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
 		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
 		
-		m_callbacks.saveScene(editorSceneRef, (size_t)assetId, (size_t)tmpScenePath);
-		m_callbacks.loadScene(gameSceneRef, (size_t)assetId);
+		bool wasSaved = m_callbacks.saveScene(editorSceneRef, (size_t)assetId, (size_t)tmpScenePath.c_str());
+		bool wasLoaded = false;
 
-		auto gameWindow = ui()->GetSceneWindow("Game");
-		if (gameWindow == nullptr)
-			gameWindow = ui()->CreateSceneWindow("Game", "Game");
+		if (wasSaved) {
+			wasLoaded = LoadScene(m_gameScene, assetId);
+			if (wasLoaded) {
+				m_gameScene->name(m_editorScene->name() + " (Game)");
 
-		gameWindow->scene(m_gameScene);
-		gameWindow->visible = true;
-		gameWindow->focus();
+				m_gameWindow->scene(m_gameScene);
+				m_gameWindow->visible = true;
+				m_gameWindow->focus();
+
+				ui()->SelectedActor(nullptr);
+
+				if (!inFocus)
+					ToggleGameFocus();
+			}
+		}
+		if (!wasSaved || !wasLoaded)
+			DestroyScene(m_gameScene);
 	}
 	else {
 		if (ui()->selectedScene() == m_gameScene)
@@ -409,12 +439,27 @@ void Game::TogglePlayMode() {
 		DestroyScene(m_gameScene);
 		m_gameScene = nullptr;
 
-		auto gameWindow = ui()->GetSceneWindow("Game");
-		if (gameWindow != nullptr)
-			gameWindow->scene(nullptr);
+		m_gameWindow->scene(nullptr);
+		m_gameWindow->visible = false;
 
-		auto editorWindow = ui()->GetSceneWindow("Editor");
-		editorWindow->focus();
+		m_editorWindow->focus();
+		m_editorWindow->visible = true;
+
+		if (inFocus)
+			ToggleGameFocus();
+	}
+}
+
+void Game::ToggleGameFocus() {
+	inFocus = !inFocus;
+	if (ui()->selectedScene() != nullptr) {
+		if (!inFocus) {
+			ui()->selectedScene()->mainCamera(nullptr);
+		}
+		else {
+			ui()->SelectedActor(nullptr);
+			m_editorScene->AttachPlayerCamera();
+		}
 	}
 }
 

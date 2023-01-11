@@ -20,6 +20,11 @@ enum class ReorderEnum
 
 class UI_Hierarchy
 {
+public:
+	static const char* ActorDragType;
+
+	static void PushPopupStyles();
+	static void PopPopupStyles();
 
 private:
 	Game* m_game;
@@ -31,6 +36,7 @@ private:
 
 	bool m_isMouseReleaseOnDragActor = false;
 	Actor* m_dragTargetActor = nullptr;
+	Actor* m_clickedActor = nullptr;
 
 public:
 	void Draw_UI_Hierarchy();
@@ -39,7 +45,7 @@ public:
 	void DrawTreeNode(Actor* actor);
 	void HandleDrag(Actor* actor);
 	void HandleDrop(Actor* actor, bool selectedTree, float height, ImVec2 size, ImVec2 cursor);
-	void HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, float height);
+	bool HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, float height);
 
 private:
 	void m_InitIcons();
@@ -47,8 +53,6 @@ private:
 	void m_DrawSceneContextMenu();
 	void m_DrawActorContextMenu(Actor* actor);
 	void m_DrawItemSeparator(ShaderResource* icon, bool isBeforeItem, ImVec2 size, ImVec2 cursor);
-	void m_PushPopupStyles();
-	void m_PopPopupStyles();
-
+	
 	bool m_FindTargetInActorParent(Actor* actor, Actor* target);
 };

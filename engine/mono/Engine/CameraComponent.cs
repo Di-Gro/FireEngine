@@ -17,7 +17,9 @@ namespace Engine {
         private Prop<float> prop_farPlane = new Prop<float>(5);
 
         private Prop<bool> prop_drawDebug = new Prop<bool>(6);
+        private Prop<bool> prop_isPlayerCamera = new Prop<bool>(7);
 
+        public bool IsPlayerCamera { get => prop_isPlayerCamera.value; set => prop_isPlayerCamera.value = value; }
 
         public float OrthoWidth { get => prop_orthoWidth.value; set => prop_orthoWidth.value = value; }
         public float OrthoHeight { get => prop_orthoHeight.value; set => prop_orthoHeight.value = value; }
@@ -28,7 +30,7 @@ namespace Engine {
         public float FarPlane { get => prop_farPlane.value; set => prop_farPlane.value = value; }
 
         public bool DrawDebug { get => prop_drawDebug.value; set => prop_drawDebug.value = value; }
-
+        
         public bool IsAttached => Dll.CameraComponent.IsAttached_get(cppRef);
 
         public bool Orthographic { 

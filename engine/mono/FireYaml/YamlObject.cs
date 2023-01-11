@@ -101,11 +101,11 @@ namespace FireYaml {
             text += IsComposite && isOneLine ? (IsList ? "[" : "{") : "";
 
             if (scriptId != null) {
-                text += $"{newLine}{childIndent}{FireYaml.Serializer.TagMeta} scriptId: {{assetId: {scriptId.assetId}}}";
+                text += $"{newLine}{childIndent}{FireYaml.FireWriter.TagMeta} scriptId: {{assetId: {scriptId.assetId}}}";
                 text += isOneLine ? ", " : "";
             }
             if (baseRef != null) {
-                text += $"{newLine}{childIndent}{FireYaml.Serializer.TagMeta} baseRef: {{lref: {baseRef.lref}}}";
+                text += $"{newLine}{childIndent}{FireYaml.FireWriter.TagMeta} baseRef: {{lref: {baseRef.lref}}}";
                 text += isOneLine ? ", " : "";
             }
             if (docRef != null) {

@@ -27,7 +27,7 @@
 #include "Forms.h"
 #include "Random.h"
 
-std::string MeshAsset::materialDefault = "Defaulf";
+std::string MeshAsset::materialDefault = "M_Default";
 
 std::string MeshAsset::formBox = "runtime:/form/Box";
 std::string MeshAsset::formBoxLined = "runtime:/form/BoxLined";
@@ -99,10 +99,11 @@ Texture* MeshAsset::m_NewTextureAsset(const std::string& assetId) {
 }
 
 Mesh4* MeshAsset::m_NewMeshAsset(const std::string& assetId) {
+	auto gameRef = CppRefs::GetRef(m_game);
 	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
-	auto cppRef = Mesh4_PushAsset(CppRefs::GetRef(m_game), assetId.c_str(), assetIdHash);
+	auto meshRef = Mesh4_PushAsset(gameRef, assetId.c_str(), assetIdHash);
 
-	return CppRefs::ThrowPointer<Mesh4>(cppRef);
+	return CppRefs::ThrowPointer<Mesh4>(meshRef);
 }
 
 void MeshAsset::Load(fs::path path) {
@@ -166,7 +167,8 @@ void MeshAsset::InitMesh(Mesh4* mesh, const fs::path& path) {
 	std::vector<tinyobj::material_t> materials;
 
 	std::string warn, err;
-	assert(tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.string().c_str(), dir.c_str()));
+	bool res = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.string().c_str(), dir.c_str());
+	assert(res);
 
 	m_InitMesh(mesh, attrib, shapes);
 
@@ -185,7 +187,8 @@ Mesh4* MeshAsset::m_CreateMeshAsset(int hash, fs::path path) {
 	std::vector<tinyobj::material_t> materials;
 
 	std::string warn, err;
-	assert(tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.string().c_str(), dir.c_str()));
+	bool res = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.string().c_str(), dir.c_str());
+	assert(res);
 
 	auto assetId = path.string();
 	auto mesh = m_NewMeshAsset(assetId);
@@ -255,7 +258,7 @@ Material* MeshAsset::CreateDynamicMaterial(const Material* other) {
 	auto* render = m_game->render();
 	auto* images = m_game->imageAsset();
 
-	auto mat = m_NewMaterialAsset(m_game->assets()->CreateAssetId());
+	auto mat = m_NewMaterialAsset(m_game->assets()->CreateTmpAssetId());
 	mat->priority = other->priority;
 	mat->isDynamic = true;
 	mat->name(other->name());
@@ -370,7 +373,7 @@ void MeshAsset::m_InitDefaultMaterials() {
 	auto hash = std::hash<std::string>()(materialDefault);
 
 	if (m_materials.count(hash) == 0) {
-		auto* mat = m_NewMaterialAsset(m_game->assets()->CreateAssetId());
+		auto* mat = m_NewMaterialAsset(m_game->assets()->CreateTmpAssetId());
 		m_materials.insert({ hash, mat });
 
 		mat->name(materialDefault);
@@ -459,7 +462,7 @@ Material* MeshAsset::m_LoadMaterial(
 	auto* images = m_game->imageAsset();
 	const auto* shader = m_game->shaderAsset()->GetShader(m_game->shaderAsset()->GetShaderHash(Assets::ShaderDefault));
 
-	auto material = m_NewMaterialAsset(m_game->assets()->CreateAssetId());
+	auto material = m_NewMaterialAsset(m_game->assets()->CreateTmpAssetId());
 	m_materials.insert({ hash, material });
 
 	auto& mat = *material;

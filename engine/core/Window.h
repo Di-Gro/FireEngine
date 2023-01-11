@@ -28,7 +28,7 @@ private:
     IWin32InputHandler* m_inputHandler = nullptr;
     bool m_showCursor = true;
 
-    RECT m_rcOldClip; // previous area for ClipCursor
+    //RECT m_rcOldClip; // previous area for ClipCursor
 
 public:
 

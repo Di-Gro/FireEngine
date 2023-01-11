@@ -11,18 +11,29 @@
 #include "../Assets.h"
 
 
+const std::string& SceneWindow::name() { 
+	if (scene() != nullptr)
+		return  scene()->name();
+	return sceneId; 
+}
+
 void SceneWindow::Draw() {
 	if (!visible)
 		return;
-
+	
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
-	if (ImGui::Begin(windowId().c_str(), &visible)) {
+	auto flags = 0;
+	if (scene() != nullptr && game()->assets()->IsDirty(scene()->assetIdHash()))
+		flags = ImGuiWindowFlags_UnsavedDocument;
+
+	if (ImGui::Begin(windowId().c_str(), &visible, flags)) {
 		m_game->ui()->selectedScene(scene());
 
 		m_UpdateViewportInfo();
 
 		if (scene() != nullptr) {
+			m_game->mainCamera(scene()->mainCamera());
 			m_game->PushScene(scene());
 
 			m_DrawRender();

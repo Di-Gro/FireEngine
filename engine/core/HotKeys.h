@@ -32,6 +32,8 @@ public:
 	bool Is(Keys key);
 
 	bool GetButtonDown(Keys key);
+	bool GetButtonDown(Keys key, Keys modifier);
+	bool GetButtonDown(Keys key, Keys modifier1, Keys modifier2);
 	bool GetButtonUp(Keys key);
 	bool GetButton(Keys key);
 

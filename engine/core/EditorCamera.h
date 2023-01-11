@@ -13,13 +13,14 @@ using namespace DirectX::SimpleMath;
 class EditorCamera : public CameraComponent {
 	PURE_COMPONENT(EditorCamera)
 
+public:
+	float speed = 100.0f;
+
 private:
 
 	bool m_updateRotation = false;
-
 	Vector3 m_rotationDelta;
 
-	float m_speed = 100.0f;
 	float m_mouseSense = 1.0f;
 
 	bool printTransform = false;

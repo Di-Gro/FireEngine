@@ -10,14 +10,18 @@
 
 #include "../Game.h"
 #include "../Actor.h"
+#include "../Assets.h"
 #include "UserInterface.h"
+#include "UI_Hierarchy.h"
 #include "ComponentPicker.h"
 #include "../Render.h"
 #include "../HotKeys.h"
 #include "../AssetStore.h"
 
 #include "../CameraComponent.h"
+#include "../ContextMenu.h"
 
+const char* UI_Inspector::ComponentDragType = "Inspector.Actor";
 char UI_Inspector::textBuffer[1024] = { 0 };
 
 
@@ -91,7 +95,7 @@ void UI_Inspector::m_DrawAddComponent() {
 	ImGui::PopStyleColor(1);
 
 	auto actor = _game->ui()->GetActor();
-	if (ImGui::GetMousePos().y >= ImGui::GetCursorPosY() + 20) {
+	if (ImGui::GetMousePos().y >= ImGui::GetCursorPosY() + 20 || m_componentPicker.isOpen()) {
 
 		m_componentPicker.header = "AddComponent";
 		m_componentPicker.flags = ImGuiPopupFlags_MouseButtonRight;
@@ -100,6 +104,7 @@ void UI_Inspector::m_DrawAddComponent() {
 			std::cout << m_componentPicker.selected << "\n";
 
 			actor->AddComponent<Component>(m_componentPicker.selected);
+			_game->assets()->MakeDirty(actor->scene()->assetIdHash());
 		}
 	}
 
@@ -114,14 +119,19 @@ void UI_Inspector::m_DrawTransformContent()
 	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 	ImGuizmo::DecomposeMatrixToComponents(matrix.m16, matrixTranslation, matrixRotation, matrixScale);
 
-	ShowVector3((Vector3*)matrixTranslation, "Position");
+	bool changed = false;
+
+	changed |= ShowVector3((Vector3*)matrixTranslation, "Position");
 	Space();
-	ShowVector3((Vector3*)matrixRotation, "Rotation");
+	changed |= ShowVector3((Vector3*)matrixRotation, "Rotation");
 	Space();
-	ShowVector3((Vector3*)matrixScale, "Scale");
+	changed |= ShowVector3((Vector3*)matrixScale, "Scale");
 
 	ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix.m16);
 	actor->SetLocalMatrix((Matrix)matrix);
+
+	if (changed)
+		_game->assets()->MakeDirty(actor->scene()->assetIdHash());
 }
 
 void UI_Inspector::m_DrawHeader() {
@@ -150,8 +160,10 @@ void UI_Inspector::m_DrawHeader() {
 
 	if (ImGui::IsItemDeactivatedAfterEdit()) {
 		std::string newName = nameBuffer;
-		if (newName.size() != 0)
-			actor->name(nameBuffer);
+		if (newName.size() != 0) {
+			actor->name(newName);
+			_game->assets()->MakeDirty(actor->scene()->assetIdHash());
+		}
 	}
 	ImGui::PopStyleVar(1);
 	ImGui::Unindent(10);
@@ -167,6 +179,7 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 		ImGui::PushStyleColor(ImGuiCol_Header, { 0.4f, 0.0f, 0.0f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.5f, 0.0f, 0.0f, 1.0f });
 	}
+
 	ImVec2 lastCursor = ImGui::GetCursorPos();
 	result = ImGui::CollapsingHeader(nodeId.c_str(), collapsingHeaderFlags);
 	ImVec2 nextCursor = ImGui::GetCursorPos();
@@ -176,7 +189,7 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 		return false;
 
 	if (ImGui::BeginDragDropSource()) {
-		ImGui::SetDragDropPayload("Component", &component, sizeof(Component*));
+		ImGui::SetDragDropPayload(UI_Inspector::ComponentDragType, &component, sizeof(Component*));
 		ImGui::EndDragDropSource();
 	}
 
@@ -227,6 +240,7 @@ void UI_Inspector::m_DrawComponents()
 			bool isOpen = CollapsingHeader(component, name);
 			if (isOpen) {
 				widthComponent = ImGui::GetContentRegionAvail().x;
+				m_groupRef = component->csRef();
 				m_DrawComponent(&UI_Inspector::m_DrawComponentContent);
 			}
 		}
@@ -298,7 +312,7 @@ const std::string& UI_Inspector::RequestComponentName(Component* component) {
 }
 
 bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash) {
-	std::string fieldName = label;
+	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
 	std::string assetName = _game->assetStore()->GetAssetName(*assetIdHash);
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
 	std::string buttonText = assetName + " (" + assetType + ") ";
@@ -308,31 +322,32 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 
 	bool assetWasSelected = false;
 
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float iconWidth = ImGui::GetFrameHeight();
+	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
+
 	ImGui::Columns(2, "", false);
-	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
 
 	ImGui::Text(label.c_str());
-
-	float width = widthComponent - 97.0f;
-	float height = ImGui::GetFrameHeight();
-
+		
 	ImGui::NextColumn();
-	ImGui::PushItemWidth(width);
-	ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0, 0, 0, 0 });
-	ImGui::ImageButton(_ui->icPickupActor.get(), { height, height }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
+	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
-	ImGui::PopItemWidth();
 
 	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
-	ImGui::Button(buttonText.c_str(), { width, height });
+	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
-	ImGui::PopItemWidth();
 
 	m_assetPickerPopup.flags = ImGuiPopupFlags_MouseButtonRight;
 	assetWasSelected |= m_assetPickerPopup.Open(_game);
@@ -356,38 +371,53 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 	if (actor == nullptr && cppRef.value != 0)
 		throw std::exception("ShowComponent: Bad actor reference");
 
-	std::string fieldName = label;
-	std::string actorName = actor == nullptr ? "Null" : actor->name();
+	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
+	std::string actorName = csRef->value == 1 ? "Missing" : "Null"; 
+	if(actor != nullptr)
+		actorName = actor->name();
+
 	std::string buttonText = actorName + " (Actor) ";
 
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float iconWidth = ImGui::GetFrameHeight();
+	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
+
 	ImGui::Columns(2, "", false);
-	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
 
 	ImGui::Text(label.c_str());
 
-	float width = widthComponent - 97.0f;
-	float height = ImGui::GetFrameHeight();
-
 	ImGui::NextColumn();
-	ImGui::PushItemWidth(width);
-	ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0, 0, 0, 0 });
-	ImGui::ImageButton(_ui->icPickupActor.get(), { height, height }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
+	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
-	ImGui::PopItemWidth();
 
+	bool hasDraggedActor = HasDraggedActor(csRef);
+	if (hasDraggedActor) 
+		ImGui::PushStyleColor(ImGuiCol_Button, m_dragTargetColor);
+
+	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
-	ImGui::Button(buttonText.c_str(), { width, height });
+	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
-	ImGui::PopItemWidth();
+	ImGui::PopID();
+
+	if (hasDraggedActor)
+		ImGui::PopStyleColor(1);
 
 	ImGui::Columns(1);
 
-	return false;
+	bool changed = AcceptDroppedActor(csRef);
+
+	return changed;
 }
 
 bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef cppRef, int scriptIdHash) {
@@ -397,85 +427,178 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 	if (component == nullptr && cppRef.value != 0)
 		throw std::exception("ShowComponent: Bad component reference");
 
-	std::string fieldName = label;
-	std::string actorName = actor == nullptr ? "Null" : actor->name();
+	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
+	std::string actorName = csRef->value == 1 ? "Missing" : "Null";
+	if(actor != nullptr) 
+		actorName = actor->name();
+
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
 	std::string buttonText = actorName + " (" + assetType + ") ";
 
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float iconWidth = ImGui::GetFrameHeight();
+	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
+
 	ImGui::Columns(2, "", false);
-	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
 
 	ImGui::Text(label.c_str());
 
-	float width = widthComponent - 97.0f;
-	float height = ImGui::GetFrameHeight();
-
 	ImGui::NextColumn();
-	ImGui::PushItemWidth(width);
-	ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
 
 	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0, 0, 0, 0 });
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0, 0, 0, 0 });
-	ImGui::ImageButton(_ui->icPickupActor.get(), { height, height }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
+	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
-	ImGui::PopItemWidth();
 
+	bool hasDraggedComponent = HasDraggedComponent(scriptIdHash, csRef);
+	if (hasDraggedComponent) 
+		ImGui::PushStyleColor(ImGuiCol_Button, m_dragTargetColor);
+	
+	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
-	ImGui::Button(buttonText.c_str(), { width, height });
+	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
-	ImGui::PopItemWidth();
+	ImGui::PopID();
 
-	bool changed = false;
-
-	auto dropComponent = AcceptDroppedComponent(scriptIdHash);
-	if (dropComponent != nullptr) {
-		if (*csRef != dropComponent->csRef()) {
-			*csRef = dropComponent->csRef();
-			changed = true;
-		}
-	}
+	if (hasDraggedComponent)
+		ImGui::PopStyleColor(1);
 
 	ImGui::Columns(1);
+
+	bool changed = AcceptDroppedComponent(scriptIdHash, csRef);
 
 	return changed;
 }
 
-Component* UI_Inspector::AcceptDroppedComponent(int scriptIdHash) {
-	auto dataType = "Component";
+bool UI_Inspector::HasDraggedActor(CsRef* currentRef) {
+	auto dataType = UI_Hierarchy::ActorDragType;
 
-	if (ImGui::BeginDragDropTarget()) {
-		auto payload = ImGui::GetDragDropPayload();
-		if (payload != nullptr && payload->IsDataType(dataType)) {
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
 
-			auto dropComponent = *(Component**)(payload->Data);
-			if (dropComponent != nullptr) {
+		auto draggedActor = *(Actor**)payload->Data;
+		return draggedActor != nullptr;
+	}
+	return false;
+}
 
-				auto csRef = dropComponent->csRef();
-				if (_game->callbacks().isAssignable(csRef, scriptIdHash)) {
-					ImGui::AcceptDragDropPayload(dataType);
+bool UI_Inspector::HasDraggedComponent(int scriptIdHash, CsRef* currentRef) {
+	auto dataType = UI_Inspector::ComponentDragType;
 
-					if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-						return dropComponent;
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+		auto draggedComponent = *(Component**)payload->Data;
+		if (draggedComponent != nullptr) {
+			auto draggedRef = draggedComponent->csRef();
+			bool isAssignable = _game->callbacks().isAssignable(draggedRef, scriptIdHash);
+			return isAssignable;
+		}
+	}
+	return false;
+}
+
+bool UI_Inspector::AcceptDroppedActor(CsRef* currentRef) {
+	auto dataType = UI_Hierarchy::ActorDragType;
+
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+		auto draggedActor = *(Actor**)payload->Data;
+		if (draggedActor != nullptr && ImGui::BeginDragDropTarget()) {
+			ImGui::AcceptDragDropPayload(dataType);
+
+			if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+
+				auto draggedRef = draggedActor->csRef();
+				if (*currentRef != draggedRef) {
+					*currentRef = draggedRef;
+					return true;
+				}
+			}
+		}
+	}	
+	return false;
+}
+
+bool UI_Inspector::AcceptDroppedComponent(int scriptIdHash, CsRef* currentRef) {
+	auto dataType = UI_Inspector::ComponentDragType;
+
+	auto payload = ImGui::GetDragDropPayload();
+	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+		auto draggedComponent = *(Component**)payload->Data;
+		if (draggedComponent != nullptr && ImGui::BeginDragDropTarget()) {
+			auto draggedRef = draggedComponent->csRef();
+
+			if (_game->callbacks().isAssignable(draggedRef, scriptIdHash)) {
+				ImGui::AcceptDragDropPayload(dataType);
+
+				if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+					if (*currentRef != draggedRef) {
+						*currentRef = draggedRef;
+						return true;
 					}
 				}
 			}
 		}
 	}
+	return false;
+
+	//if (ImGui::BeginDragDropTarget()) {
+	//	auto payload = ImGui::GetDragDropPayload();
+	//	if (payload != nullptr && payload->IsDataType(dataType)) {
+
+	//		auto draggedComponent = *(Component**)payload->Data;
+	//		if (draggedComponent != nullptr) {
+
+	//			auto draggedRef = draggedComponent->csRef();
+	//			if (*currentRef != draggedRef) {
+	//				if (_game->callbacks().isAssignable(draggedRef, scriptIdHash)) {
+	//					ImGui::AcceptDragDropPayload(dataType);
+
+	//					if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+	//						*currentRef = draggedRef;
+	//						return true;
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+	//return false;
 }
 
-Actor* UI_Inspector::GetDroppedActor()
+void UI_Inspector::m_DrawComponentContextMenu(Component* component)
 {
-	if (ImGui::BeginDragDropTarget())
-	{
-		auto acceptPayload = ImGui::AcceptDragDropPayload("hierarchy");
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 10.0f, 10.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
 
-		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && acceptPayload != nullptr)
-			return (Actor*)acceptPayload->Data;
-		ImGui::EndDragDropTarget();
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.7f, 0.7f, 0.7f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 0.0f, 0.0f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.8f, 0.8f, 0.9f, 1.0f });
+
+	if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
+	{
+		if (ImGui::Selectable("Remove"))
+			ComponentMenu::Remove(component);
+
+		ImGui::EndPopup();
 	}
-	return nullptr;
+
+	ImGui::PopStyleVar(6);
+	ImGui::PopStyleColor(3);
 }
 
 DEF_FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr)
@@ -513,7 +636,6 @@ DEF_FUNC(UI_Inspector, SetComponentName, void)(CppRef gameRef, const char* value
 	game->ui()->inspector()->SetComponentName(value);
 }
 
-
 DEF_FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
 
@@ -532,25 +654,6 @@ DEF_FUNC(UI_Inspector, ShowComponent, bool)(CppRef gameRef, const char* label, C
 	return game->ui()->inspector()->ShowComponent(label, csRef, cppRef, scriptIdHash);
 }
 
-void UI_Inspector::m_DrawComponentContextMenu(Component* component)
-{
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {10.0f, 10.0f});
-	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, {0.0f, 3.0f});
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, {5.0f, 5.0f});
-
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.7f, 0.7f, 0.7f, 1.0f });
-	ImGui::PushStyleColor(ImGuiCol_Text, {0.0f, 0.0f, 0.0f, 1.0f});
-	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, {0.8f, 0.8f, 0.9f, 1.0f});
-
-	if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
-	{
-		if (ImGui::Selectable("Remove")) component->Destroy();
-		ImGui::EndPopup();
-	}
-
-	ImGui::PopStyleVar(6);
-	ImGui::PopStyleColor(3);
+DEF_FUNC(ImGui, CalcTextWidth, float)(const char* value) {
+	return ImGui::CalcTextSize(value).x;
 }
