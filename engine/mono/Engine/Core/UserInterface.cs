@@ -300,63 +300,68 @@ namespace Engine
         public static void DrawVector3(string label, FireYaml.Field field, RangeAttribute range = null) {
             bool changed = false;
 
-            string nameX = $"##X_{label}_{groupRef}";
-            string nameY = $"##Y_{label}_{groupRef}";
-            string nameZ = $"##Z_{label}_{groupRef}";
-
             var vecValue = (Vector3)field.Value;
-            float min = range != null ? range.fmin : 0;
-            float max = range != null ? range.fmax : 0;        
 
-            float textSize = Dll.ImGui.CalcTextWidth(" X ");
-            float textWidth = (textSize + style.ItemSpacing.X) * 3;
-            float columns2Width = rectWidth - labelWidth - textWidth;
+            var colorAttr = field.GetCustomAttribute<ColorAttribute>();
+            if (colorAttr != null) {
+                changed = Dll.UI_Inspector.ShowColor3(Game.gameRef, label, ref vecValue);
+            } else {
+                string nameX = $"##X_{label}_{groupRef}";
+                string nameY = $"##Y_{label}_{groupRef}";
+                string nameZ = $"##Z_{label}_{groupRef}";
 
-            ImGui.Columns(2, "", hasBorder);
-            ImGui.SetColumnWidth(0, labelWidth);
+                float min = range != null ? range.fmin : 0;
+                float max = range != null ? range.fmax : 0;
 
-            ImGui.Text(label);
-           
-            ImGui.NextColumn();
-            ImGui.PushMultiItemsWidths(3, columns2Width - padding);
+                float textSize = Dll.ImGui.CalcTextWidth(" X ");
+                float textWidth = (textSize + style.ItemSpacing.X) * 3;
+                float columns2Width = rectWidth - labelWidth - textWidth;
 
-            ImGui.PushID(1);
-            ImGui.Text(" X ");
+                ImGui.Columns(2, "", hasBorder);
+                ImGui.SetColumnWidth(0, labelWidth);
 
-            ImGui.SameLine();
-            if (range == null)
-                changed = changed || ImGui.DragFloat($"{nameX}", ref vecValue.X, floatSpeed, min, max);
-            else
-                changed = changed || ImGui.SliderFloat($"{nameX}", ref vecValue.X, min, max);
-            ImGui.PopID();
-            ImGui.PopItemWidth();
+                ImGui.Text(label);
 
-            ImGui.PushID(3);
-            ImGui.SameLine();
-            ImGui.Text(" Y ");
-            
-            ImGui.SameLine();
-            if (range == null)
-                changed = changed || ImGui.DragFloat($"{nameY}", ref vecValue.Y, floatSpeed, min, max);
-            else
-                changed = changed || ImGui.SliderFloat($"{nameY}", ref vecValue.Y, min, max);
-            ImGui.PopID();
-            ImGui.PopItemWidth();
+                ImGui.NextColumn();
+                ImGui.PushMultiItemsWidths(3, columns2Width - padding);
 
-            ImGui.PushID(5);
-            ImGui.SameLine();
-            ImGui.Text(" Z ");
-            
-            ImGui.SameLine();
-            if (range == null)
-                changed = changed || ImGui.DragFloat($"{nameZ}", ref vecValue.Z, floatSpeed, min, max);
-            else
-                changed = changed || ImGui.SliderFloat($"{nameZ}", ref vecValue.Z, min, max);
-            ImGui.PopID();
-            ImGui.PopItemWidth();
+                ImGui.PushID(1);
+                ImGui.Text(" X ");
 
-            ImGui.Columns(1);
+                ImGui.SameLine();
+                if (range == null)
+                    changed = changed || ImGui.DragFloat($"{nameX}", ref vecValue.X, floatSpeed, min, max);
+                else
+                    changed = changed || ImGui.SliderFloat($"{nameX}", ref vecValue.X, min, max);
+                ImGui.PopID();
+                ImGui.PopItemWidth();
 
+                ImGui.PushID(3);
+                ImGui.SameLine();
+                ImGui.Text(" Y ");
+
+                ImGui.SameLine();
+                if (range == null)
+                    changed = changed || ImGui.DragFloat($"{nameY}", ref vecValue.Y, floatSpeed, min, max);
+                else
+                    changed = changed || ImGui.SliderFloat($"{nameY}", ref vecValue.Y, min, max);
+                ImGui.PopID();
+                ImGui.PopItemWidth();
+
+                ImGui.PushID(5);
+                ImGui.SameLine();
+                ImGui.Text(" Z ");
+
+                ImGui.SameLine();
+                if (range == null)
+                    changed = changed || ImGui.DragFloat($"{nameZ}", ref vecValue.Z, floatSpeed, min, max);
+                else
+                    changed = changed || ImGui.SliderFloat($"{nameZ}", ref vecValue.Z, min, max);
+                ImGui.PopID();
+                ImGui.PopItemWidth();
+
+                ImGui.Columns(1);
+            }
             if (changed) {
                 field.SetValue(vecValue);
                 Assets.MakeDirty(groupAssetIdHash);

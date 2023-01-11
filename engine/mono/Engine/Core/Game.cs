@@ -85,13 +85,14 @@ namespace Engine {
             m_gameCallbacks.peekClipboard = new GameCallbacks.ClipboardPeek(Clipboard.Peek);
             m_gameCallbacks.clipboardIsAssignable = new GameCallbacks.ClipboardIsAssignable(Clipboard.IsAssignable);
             m_gameCallbacks.clipboardIsSameType = new GameCallbacks.ClipboardIsAssignable(Clipboard.IsSameType);
+            m_gameCallbacks.clipboardSetActor = new GameCallbacks.TakeCsRef(Clipboard.SetActor);
 
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
 
         private static void LoadAssets() {
-            FireYaml.AssetStore.UpdateTypesInCpp();
-            FireYaml.AssetStore.UpdateAssetsInCpp();
+            FireYaml.AssetStore.Instance = new FireYaml.AssetStore();
+            FireYaml.AssetStore.Instance.Init("../../Example/FireProject");
 
             editorSettings = InstanciateAsset<EditorSettings>("editor_settings");
             editorSettings.UpdateInCpp();
@@ -214,6 +215,7 @@ namespace Engine {
         public ClipboardPeek peekClipboard;
         public ClipboardIsAssignable clipboardIsAssignable;
         public ClipboardIsAssignable clipboardIsSameType;
+        public TakeCsRef clipboardSetActor;
     }
 }
 

@@ -22,5 +22,8 @@ public:
 class ComponentMenu {
 public:
 	static void Remove(Component* component);
+	static void Copy(Component* component);
+	static Component* Paste(Actor* actor);
+	static bool CanPaste(Game* game);
 };
 

@@ -42,6 +42,9 @@ void ActorMenu::AddChild(Actor* actor) {
 }
 
 void ActorMenu::Remove(Actor* actor) {
+	if (actor == nullptr)
+		return;
+
 	auto game = actor->game();
 
 	if (game->ui()->GetActor() == actor)
@@ -75,7 +78,7 @@ Actor* ActorMenu::Paste(Game* game) {
 
 	if (actor != nullptr) {
 		game->ui()->SelectedActor(actor);
-		actor->name(actor->name() + " ("+ std::to_string(actor->Id()) + ")");
+		//actor->name(actor->name() + " ("+ std::to_string(actor->Id()) + ")");
 	}
 
 	return actor;
@@ -86,4 +89,36 @@ void ComponentMenu::Remove(Component* component) {
 	game->assets()->MakeDirty(component->scene()->assetIdHash());
 
 	component->Destroy();
+}
+
+void ComponentMenu::Copy(Component* component) {
+	if (component == nullptr)
+		return;
+
+	auto game = component->game();
+	game->callbacks().pushClipboard(component->csRef());
+}
+
+bool ComponentMenu::CanPaste(Game* game) {
+	auto commponentType = game->assetStore()->componentTypeIdHash;
+	bool isComponent = game->callbacks().clipboardIsAssignable(commponentType);
+
+	return isComponent;
+}
+
+Component* ComponentMenu::Paste(Actor* actor) {
+	if (actor == nullptr)
+		return nullptr;
+
+	auto game = actor->game();
+
+	if (!CanPaste(game))
+		return nullptr;
+
+	game->callbacks().clipboardSetActor(actor->csRef());
+
+	auto cppRef = game->callbacks().peekClipboard();
+	auto commponent = CppRefs::GetPointer<Component>(cppRef);
+
+	return commponent;
 }

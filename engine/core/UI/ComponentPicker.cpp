@@ -7,7 +7,9 @@
 #include "../Math.h"
 #include "../Game.h"
 #include "../AssetStore.h"
+#include "../ContextMenu.h"
 #include "UI_Hierarchy.h"
+#include "UserInterface.h"
 
 #include "../imgui/misc/cpp/imgui_stdlib.h"
 
@@ -30,17 +32,6 @@ void ComponentPicker::PushPopupStyles() {
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
 
-	//ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, { 0.7f, 0.7f ,0.7f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_ChildBg, { 0.7f, 0.7f ,0.7f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.7f, 0.7f ,0.7f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 0.0f ,0.0f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_Header, { 0.8f, 0.8f ,0.9f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.8f, 0.8f ,0.9f ,1.0f });
-
-	//ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.5f, 0.5f, 0.5f, 1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, { 0.5f, 0.5f, 0.5f, 1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_FrameBgActive, { 0.5f, 0.5f, 0.5f, 1.0f });
-
 	ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.2f, 0.2f ,0.2f ,1.0f });
 	ImGui::PushStyleColor(ImGuiCol_Text, { 0.8f, 0.8f ,0.8f ,1.0f });
 	ImGui::PushStyleColor(ImGuiCol_Header, { 0.4f, 0.4f ,0.4f ,1.0f });
@@ -51,7 +42,6 @@ void ComponentPicker::PushPopupStyles() {
 
 void ComponentPicker::PopPopupStyles() {
 	ImGui::PopStyleVar(7);
-	//ImGui::PopStyleColor(9);
 	ImGui::PopStyleColor(6);
 }
 
@@ -94,6 +84,15 @@ bool ComponentPicker::Open(Game* game) {
 
 		ImGui::Separator();
 		ImGui::PopStyleVar(1);
+
+		if (ComponentMenu::CanPaste(game)) {
+
+			if (ImGui::Selectable("Paste")) {
+				ComponentMenu::Paste(game->ui()->GetActor());
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::Separator();
+		}
 
 		for (int i = 0; i < content->size(); i++) {
 			auto name = store->GetScriptName(content->at(i));

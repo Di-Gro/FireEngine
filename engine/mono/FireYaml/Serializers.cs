@@ -19,6 +19,8 @@ namespace Engine {
 
     public class OpenAttribute : Attribute { }
 
+    public class ColorAttribute : Attribute { }
+
     public class RangeAttribute : Attribute {
         public int imin, imax;
         public float fmin, fmax;
@@ -137,8 +139,8 @@ namespace Engine {
             }
         }
 
-        public override void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) {
-            base.OnDeserialize(deserializer, selfPath, type, ref instance);
+        public override void OnDeserialize(FireYaml.FireReader reader, string selfPath, Type type, ref object instance) {
+            base.OnDeserialize(reader, selfPath, type, ref instance);
 
             if (type != typeof(Engine.Actor))
                 return;
@@ -150,62 +152,68 @@ namespace Engine {
             var componentsPath = $"{selfPath}.m_components";
             var childrenPath = $"{selfPath}.m_children";
 
-            m_LoadComponents(deserializer, componentsPath, actor);
-            m_LoadActorChildren(deserializer, childrenPath, actor);
+            m_LoadComponents(reader, componentsPath, actor);
+            m_LoadActorChildren(reader, childrenPath, actor);
         }
 
-        private void m_LoadActorChildren(FireYaml.FireReader deserializer, string childrenPath, Engine.Actor actor) {
-            var children = deserializer.GetField(childrenPath);
+        private void m_LoadActorChildren(FireYaml.FireReader reader, string childrenPath, Engine.Actor actor) {
+            var children = reader.GetField(childrenPath);
 
             var count = children.GetItemsCount(childrenPath);
             for (int i = 0; i < count; i++) {
                 var yamlChild = children.GetValue($"{childrenPath}.{i}");
                 var fullPath = $".{yamlChild.value}";
 
-                if (!deserializer.HasFile(fullPath))
+                if (!reader.HasFile(fullPath))
                     throw new Exception("Missing actor");
 
                 if (yamlChild.type == YamlValue.Type.Null)
                     throw new Exception("Actor component can not be Null");
 
-                var child = deserializer.LoadDocument(fullPath) as Engine.Actor;
-                child.parent = actor;
+                object child = new Actor(actor);
+                reader.LoadDocument(fullPath, ref child);
             }
         }
 
-        private void m_LoadComponents(FireYaml.FireReader deserializer, string componentsPath, Engine.Actor actor) {
-            var components = deserializer.GetField(componentsPath);
+        private void m_LoadComponents(FireYaml.FireReader reader, string componentsPath, Engine.Actor actor) {
+            var components = reader.GetField(componentsPath);
 
             var count = components.GetItemsCount(componentsPath);
             for (int i = 0; i < count; i++) {
                 var yamlChild = components.GetValue($"{componentsPath}.{i}");
-                var fullPath = $".{yamlChild.value}";
+                var filePath = $".{yamlChild.value}";
 
-                if (!deserializer.HasFile(fullPath))
+                if (!reader.HasFile(filePath))
                     throw new Exception("Missing component");
 
-                var componentType = deserializer.GetTypeOf(fullPath);
-
-                /// Create
-                var componentObj = Activator.CreateInstance(componentType);
-                var component = componentObj as Component;
-                var info = component.CppConstructor();
-
-                /// Bind
-                component.CsBindComponent(actor.csRef, info);
-                Dll.Actor.BindComponent(actor.cppRef, component.cppRef);
-
-                /// PostBind
-                deserializer.LoadDocument(fullPath, ref componentObj);
-
-                /// Init (Delayed Init - wait for the end of load all documents)
-                var waited = new WaitedComponent();
-                waited.actor = actor;
-                waited.component = component;
-                waited.node = m_waitedComponents.AddLast(waited);
-
-                deserializer.EndLoadEvent += waited.OnEndLoad;
+                LoadComponent(reader, filePath, actor);
             }
+        }
+
+        public object LoadComponent(FireYaml.FireReader reader, string filePath, Engine.Actor actor) {
+            var componentType = reader.GetTypeOf(filePath);
+
+            /// Create
+            var componentObj = Activator.CreateInstance(componentType);
+            var component = componentObj as Component;
+            var info = component.CppConstructor();
+
+            /// Bind
+            component.CsBindComponent(actor.csRef, info);
+            Dll.Actor.BindComponent(actor.cppRef, component.cppRef);
+
+            /// PostBind
+            reader.LoadDocument(filePath, ref componentObj);
+
+            /// Init (Delayed Init - wait for the end of load all documents)
+            var waited = new WaitedComponent();
+            waited.actor = actor;
+            waited.component = component;
+            waited.node = m_waitedComponents.AddLast(waited);
+
+            reader.EndLoadEvent += waited.OnEndLoad;
+
+            return componentObj;
         }
 
     }

@@ -116,8 +116,14 @@ public:
 
 	//void Stat();
 
-	GameCallbacks callbacks() { return m_callbacks; }
-	void callbacks(const GameCallbacks& _callbacks) { m_callbacks = _callbacks; }
+	const GameCallbacks& callbacks() { 
+		return m_callbacks; 
+	}
+
+	void callbacks(const GameCallbacks& _callbacks) { 
+		m_callbacks = _callbacks; 
+		int i = 9;
+	}
 
 	void PushScene(Scene* value);
 	void PopScene();

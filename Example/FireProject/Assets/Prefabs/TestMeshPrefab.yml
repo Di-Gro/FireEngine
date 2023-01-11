@@ -2,7 +2,7 @@
 .file0.files: {Var: 4}
 
 .file1!script: {Var: Actor}
-.file1!scriptId: {AssetId: 00000010000}
+.file1!scriptId: {AssetId: D00000010000}
 .file1.Name: {Var: Actor}
 .file1.localPosition.X: {Var: 0}
 .file1.localPosition.Y: {Var: 0}
@@ -20,7 +20,7 @@
 .file1.m_components.2: {Ref: file4}
 
 .file2!script: {Var: TestMesh}
-.file2!scriptId: {AssetId: 00000010005}
+.file2!scriptId: {AssetId: D00000010005}
 .file2.userPrefab.assetId: {AssetId: TestPrefab}
 .file2.nullStaticMaterial: {Null: }
 .file2.staticMaterial: {Null: }
@@ -35,7 +35,7 @@
 .file2.vector.X: {Var: 4}
 .file2.vector.Y: {Var: 3}
 .file2.vector.Z: {Var: 2}
-.file2!base!scriptId: {AssetId: 00000010008}
+.file2!base!scriptId: {AssetId: D00000010008}
 .file2!base.floatField: {Var: 48.56}
 .file2.component: {Ref: file3}
 .file2.actorRef: {Ref: file1}
@@ -45,11 +45,11 @@
 .file2.m_meshes.2.assetId: {AssetId: MESH000003}
 
 .file3!script: {Var: MeshComponent}
-.file3!scriptId: {AssetId: 00000010003}
+.file3!scriptId: {AssetId: D00000010003}
 .file3.IsDebug: {Var: False}
 .file3.IsVisible: {Var: True}
 .file3.m_mesh.assetId: {AssetId: MESH000001}
 .file3.m_materials.0.assetId: {AssetId: MAT0000006}
 
 .file4!script: {Var: TestImGui}
-.file4!scriptId: {AssetId: 00000010006}
+.file4!scriptId: {AssetId: D00000010006}

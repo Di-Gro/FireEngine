@@ -2,7 +2,7 @@
 .file0.files: {Var: 2}
 
 .file1!script: {Var: Actor}
-.file1!scriptId: {AssetId: 00000010000}
+.file1!scriptId: {AssetId: D00000010000}
 .file1.Name: {Var: Actor}
 .file1.localPosition.X: {Var: 1}
 .file1.localPosition.Y: {Var: 12}
@@ -18,7 +18,7 @@
 .file1.m_components.0: {Ref: file2}
 
 .file2!script: {Var: TestPrefab}
-.file2!scriptId: {AssetId: 00000010009}
+.file2!scriptId: {AssetId: D00000010009}
 .file2.floatField: {Var: 5.555}
 .file2.texture.assetId: {AssetId: TestTexture1}
 .file2.image.assetId: {AssetId: TestTexture1}

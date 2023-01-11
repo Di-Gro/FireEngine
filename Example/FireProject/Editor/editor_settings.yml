@@ -2,5 +2,5 @@
 .file0.files: {Var: 1}
 
 .file1!script: {Var: EditorSettings}
-.file1!scriptId: {AssetId: 00000010017}
+.file1!scriptId: {AssetId: D00000010017}
 .file1.StartupScene.assetId: {AssetId: scene_1}

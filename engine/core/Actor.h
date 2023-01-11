@@ -39,6 +39,7 @@ public:
 
 private:
 	std::string m_name = "";
+	//std::string m_postfix = "";
 
 	Game* f_game = nullptr;
 	Scene* f_scene = nullptr;
@@ -60,6 +61,11 @@ public:
 
 	const std::string& name() { return m_name; }
 	void name(const std::string& value) { m_name = value; }
+
+	//const std::string& postfix() { return m_postfix; }
+	//void postfix(const std::string& value) { m_postfix = value; }
+
+	//std::string fullname() { return m_name + " " + m_postfix; }
 
 	void MoveChild(Actor* from, Actor* v_to, bool isPastBefore);
 

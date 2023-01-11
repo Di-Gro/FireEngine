@@ -624,6 +624,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowComponent", CharSet = CharSet.Ansi)]
 		    public static extern bool ShowComponent(CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef, int scriptIdHash);
 
+            [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowColor3", CharSet = CharSet.Ansi)]
+		    public static extern bool ShowColor3(CppRef gameRef, string label, ref Vector3 value);
+
 		}
 
 		public static class DirectionalLight {
@@ -719,6 +722,16 @@ namespace EngineDll {
 		    private static extern void actorTypeIdHash_set_inner(CppRef objRef, int value);
 
             public static void actorTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) actorTypeIdHash_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_componentTypeIdHash_get")]
+		    private static extern int componentTypeIdHash_get_inner(CppRef objRef);
+
+            public static int componentTypeIdHash_get(CppRef objRef) => objRef.value != 0 ? componentTypeIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_componentTypeIdHash_set")]
+		    private static extern void componentTypeIdHash_set_inner(CppRef objRef, int value);
+
+            public static void componentTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) componentTypeIdHash_set_inner(objRef, value); }
 
 		}
 

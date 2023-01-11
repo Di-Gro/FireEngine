@@ -48,6 +48,8 @@
 #include "TestLightComponent.h"
 #include "Material.h"
 
+#include "SimpleMath.h"
+
 #include "ContextMenu.h"
 
 #include "UI\SceneEditorWindow.h"
@@ -151,7 +153,7 @@ bool Game::LoadScene(Scene* targetScene, const char* assetId) {
 			loaded = assets()->Load(targetScene->assetIdHash(), sceneRef);
 	}
 	else if(assetId != nullptr) {
-		loaded = m_callbacks.loadScene(sceneRef, (size_t)assetId);
+		loaded = callbacks().loadScene(sceneRef, (size_t)assetId);
 	}
 	return loaded;
 }
@@ -175,7 +177,7 @@ void Game::Run() {
 
 	////currentScene()->CreateActor("GameController")->AddComponent<GameController>();
 	//PopScene();
-		
+			
 	MSG msg = {};
 
 	float targetFrameTime = 1.0f / 60.0f;
@@ -231,7 +233,7 @@ void Game::m_Update() {
 	/// Pre Update
 	GameUpdateData updateData;
 	updateData.deltaTime = deltaTime();
-	m_callbacks.setUpdateData(updateData);
+	callbacks().setUpdateData(updateData);
 	
 	m_BeginUpdateImGui();
 
@@ -294,7 +296,7 @@ void Game::m_Destroy() {
 
 void Game::PushScene(Scene* value) {
 	m_sceneStack.push_back(value);
-	m_callbacks.setSceneRef(CppRefs::GetRef(value));
+	callbacks().setSceneRef(CppRefs::GetRef(value));
 
 	if(!value->m_isStarted)
 		value->Start();
@@ -302,7 +304,7 @@ void Game::PushScene(Scene* value) {
 
 void Game::PopScene() {
 	m_sceneStack.pop_back();
-	m_callbacks.setSceneRef(RefCpp(0));
+	callbacks().setSceneRef(RefCpp(0));
 }
 
 Scene* Game::CreateScene(bool isEditor) {
@@ -408,7 +410,7 @@ void Game::TogglePlayMode() {
 		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
 		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
 		
-		bool wasSaved = m_callbacks.saveScene(editorSceneRef, (size_t)assetId, (size_t)tmpScenePath.c_str());
+		bool wasSaved = callbacks().saveScene(editorSceneRef, (size_t)assetId, (size_t)tmpScenePath.c_str());
 		bool wasLoaded = false;
 
 		if (wasSaved) {

@@ -80,7 +80,7 @@ void UserInterface::m_InitStyles() {
 	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
 	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
 	style.Colors[ImGuiCol_CheckMark] = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
-	style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
+	style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.6f, 0.6f, 0.6f, 0.60f); //ImVec4(0.11f, 0.64f, 0.92f, 1.00f);
 	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.08f, 0.50f, 0.72f, 1.00f);
 	style.Colors[ImGuiCol_Button] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
 	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
@@ -159,22 +159,9 @@ void UserInterface::Draw()
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 	}
 
-	// Begin Menu Bar
 	uiBarMenu.Draw_UI_BarMenu();
-	// Upper Menu
-	//uiUpperMenu.Draw_UI_UpperMenu();
-	// Hierarchy
 	uiHierarchy.Draw_UI_Hierarchy();
-	//// Play Game
-	//uiPlayGame.Draw_UI_PlayGame();
-	// Editor
-	//uiEditor.Draw_UI_Editor();
-	//// Inspector
 	uiInspector.Draw_UI_Inspector();
-	//// Content Browser
-	//uiContentBrowser.Draw_UI_ContentBrowser();
-	//// Console
-	//uiConsole.Draw_UI_Console();
 
 	auto dockSpaceId = ImGui::GetID("MyDockSpace");
 	auto node = ImGui::DockBuilderGetNode(dockSpaceId);

@@ -14,12 +14,18 @@ namespace Engine {
         private static YamlValues m_values = null;
         private static Type m_sourceType;
 
+        private static CsRef m_targetActorRef = CsRef.NullRef;
+
+        public static void SetActor(CsRef csRef) {
+            m_targetActorRef = csRef;
+        }
+
         public static void Push(CsRef csRef) {
             var source = CppLinked.GetObjectByRef(csRef);
             if(source == null)
                 return;
 
-            var serializer = new FireYaml.FireWriter(ignoreExistingIds: true, writeNewIds: false);
+            var serializer = new FireYaml.FireWriter(ignoreExistingIds: true, writeNewIds: false, useCsRefs: true);
             serializer.Serialize(source);
 
             if (!serializer.Result)
@@ -43,14 +49,28 @@ namespace Engine {
                 return CppRef.NullRef;
 
             try {
-                var target = new FireReader(m_values).Instanciate();
+                ICppLinked cppLinked = null;
 
-                var ICppLinkedType = target.GetType().GetInterface(nameof(ICppLinked));
-                if (ICppLinkedType == null)
-                    throw new Exception("Clipboard target not implement ICppLinked interface.");
+                if(FireWriter.IsComponent(m_sourceType)) {
+                    var actor = CppLinked.GetObjectByRef(m_targetActorRef) as Actor;
+                    if(actor == null)
+                        throw new Exception("Clipboard target actor is not valid.");
 
-                var cppLinked = target as ICppLinked;
-                return cppLinked.cppRef;
+                    cppLinked = new FireReader(m_values, writeIDs: false).InstanciateComponent(actor);
+
+                    m_targetActorRef = CsRef.NullRef;
+
+                } else {
+                    var target = new FireReader(m_values, writeIDs: false).Instanciate();
+
+                    var ICppLinkedType = target.GetType().GetInterface(nameof(ICppLinked));
+                    if (ICppLinkedType == null)
+                        throw new Exception("Clipboard target not implement ICppLinked interface.");
+
+                    cppLinked = target as ICppLinked;
+                }
+
+                return cppLinked != null ? cppLinked.cppRef : CppRef.NullRef;
 
             } catch (Exception e) {
                 WriteException(e);

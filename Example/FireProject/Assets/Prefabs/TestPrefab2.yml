@@ -2,7 +2,7 @@
 .file0.files: {Var: 2}
 
 .file1!script: {Var: Actor}
-.file1!scriptId: {AssetId: 00000010000}
+.file1!scriptId: {AssetId: D00000010000}
 .file1.Name: {Var: Actor}
 .file1.localPosition.X: {Var: 0}
 .file1.localPosition.Y: {Var: 0}
@@ -18,7 +18,7 @@
 .file1.m_components.0: {Ref: file2}
 
 .file2!script: {Var: MeshComponent}
-.file2!scriptId: {AssetId: 00000010003}
+.file2!scriptId: {AssetId: D00000010003}
 .file2.IsDebug: {Var: False}
 .file2.IsVisible: {Var: True}
 .file2.m_mesh.assetId: {AssetId: TestMesh1}

@@ -2,6 +2,6 @@
 .file0.files: {Var: 1}
 
 .file1!script: {Var: StaticMesh}
-.file1!scriptId: {AssetId: 00000010013}
+.file1!scriptId: {AssetId: D00000010013}
 .file1.ext: {Var: obj}
 .file1.m_materials.0.assetId: {AssetId: M_WorldGride}

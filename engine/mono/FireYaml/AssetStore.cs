@@ -13,7 +13,7 @@ namespace FireYaml {
 
     public class AssetStore {
 
-        public static AssetStore Instance { get; set; } = new AssetStore();
+        public static AssetStore Instance { get; set; }
         public static string M_Default = "M_Default";
 
         private Dictionary<int, string> m_scriptIdHash_scriptName = new Dictionary<int, string>();
@@ -30,8 +30,9 @@ namespace FireYaml {
 
         private HashSet<int> m_tmpAssetIdHashes = new HashSet<int>();
 
-        public string ProjectPath = "../../Example/FireProject";
+        public string ProjectPath;
         public string AssetsPath => $"{ProjectPath}/Assets";
+        public string EngineAssetsPath => $"{ProjectPath}/Engine/Assets";
         public string EditorPath => $"{ProjectPath}/Editor";
 
         private uint m_nextAssetId = 1;
@@ -39,52 +40,30 @@ namespace FireYaml {
 
         public AssetStore(bool addDefaultAssets = true) {
 
-            AddScriptId("00000010000", typeof(Engine.Actor).FullName);
-            AddScriptId("00000010003", typeof(Engine.MeshComponent).FullName);
-            AddScriptId("00000010004", typeof(Engine.CameraComponent).FullName);
-            AddScriptId("00000010005", typeof(Engine.TestMesh).FullName);
-            AddScriptId("00000010006", typeof(UI.TestImGui).FullName);
-            AddScriptId("00000010007", typeof(Engine.CSComponent).FullName);
-            AddScriptId("00000010008", typeof(Engine.TestMeshBase).FullName);
-            AddScriptId("00000010009", typeof(Engine.TestPrefab).FullName);
-            AddScriptId("00000010010", typeof(Engine.Texture).FullName);
-            AddScriptId("00000010011", typeof(Engine.Image).FullName);
-            AddScriptId("00000010012", typeof(Engine.StaticMaterial).FullName);
-            AddScriptId("00000010013", typeof(Engine.StaticMesh).FullName);
-            AddScriptId("00000010014", typeof(Engine.Scene).FullName);
-            AddScriptId("00000010015", typeof(Engine.Prefab).FullName);
-            AddScriptId("00000010016", typeof(Engine.Component).FullName);
-            AddScriptId("00000010017", typeof(Engine.EditorSettings).FullName);
-            m_nextAssetId = 10018;
-
             if (addDefaultAssets) {
                 var project = ProjectPath;
 
-                AddAssetId("editor_settings", $"{EditorPath}/editor_settings.yml");
+                // AddAssetId("MESH000001", $"{AssetsPath}/Meshes/Farm/House_Red.yml");
+                // AddAssetId("MESH000002", $"{AssetsPath}/Meshes/Farm/House_Purple.yml");
+                // AddAssetId("MESH000003", $"{AssetsPath}/Meshes/Farm/House_Blue.yml");
+                // AddAssetId("TestMesh1", $"{AssetsPath}/Meshes/TestMesh1.yml");
+                // AddAssetId("test_navmesh", $"{AssetsPath}/Meshes/test_navmesh.yml");
 
-                AddAssetId("MESH000001", $"{AssetsPath}/Meshes/Farm/House_Red.yml");
-                AddAssetId("MESH000002", $"{AssetsPath}/Meshes/Farm/House_Purple.yml");
-                AddAssetId("MESH000003", $"{AssetsPath}/Meshes/Farm/House_Blue.yml");
-                AddAssetId("TestMesh1", $"{AssetsPath}/Meshes/TestMesh1.yml");
-                AddAssetId("test_navmesh", $"{AssetsPath}/Meshes/test_navmesh.yml");
+                // AddAssetId("IMG0000004", $"{AssetsPath}/Images/Gradients.yml");
+                // AddAssetId("TestImage1", $"{AssetsPath}/Images/TestImage1.yml");
 
-                AddAssetId("IMG0000004", $"{AssetsPath}/Images/Gradients.yml");
-                AddAssetId("TestImage1", $"{AssetsPath}/Images/TestImage1.yml");
+                // AddAssetId("TEX0000005", $"{AssetsPath}/Textures/Texture.yml");
+                // AddAssetId("TestTexture1", $"{AssetsPath}/Textures/TestTexture1.yml");
 
-                AddAssetId("TEX0000005", $"{AssetsPath}/Textures/Texture.yml");
-                AddAssetId("TestTexture1", $"{AssetsPath}/Textures/TestTexture1.yml");
+                // AddAssetId("MAT0000006", $"{AssetsPath}/Materials/Material.yml");
+                // AddAssetId("TestMaterial1", $"{AssetsPath}/Materials/TestMaterial1.yml");
 
-                AddAssetId("M_Default", $"{AssetsPath}/Materials/M_Default.yml");
-                AddAssetId("M_WorldGride", $"{AssetsPath}/Materials/M_WorldGride.yml");
-                AddAssetId("MAT0000006", $"{AssetsPath}/Materials/Material.yml");
-                AddAssetId("TestMaterial1", $"{AssetsPath}/Materials/TestMaterial1.yml");
-
-                AddAssetId("TestMesh", $"{AssetsPath}/Prefabs/TestMesh.yml");
-                AddAssetId("TestMeshPrefab", $"{AssetsPath}/Prefabs/TestMeshPrefab.yml");
-                AddAssetId("TestPrefab", $"{AssetsPath}/Prefabs/TestPrefab.yml");
-                AddAssetId("TestPrefab2", $"{AssetsPath}/Prefabs/TestPrefab2.yml");
+                // AddAssetId("TestMesh", $"{AssetsPath}/Prefabs/TestMesh.yml");
+                // AddAssetId("TestMeshPrefab", $"{AssetsPath}/Prefabs/TestMeshPrefab.yml");
+                // AddAssetId("TestPrefab", $"{AssetsPath}/Prefabs/TestPrefab.yml");
+                // AddAssetId("TestPrefab2", $"{AssetsPath}/Prefabs/TestPrefab2.yml");
                 
-                AddAssetId("scene_1", $"{AssetsPath}/Scenes/scene_1.yml");
+                // AddAssetId("scene_1", $"{AssetsPath}/Scenes/scene_1.yml");
             }
         }
 
@@ -209,7 +188,31 @@ namespace FireYaml {
             return "";
         }
 
+        public void ResetAssetPath(int assetIdHash, string path) {
+            if (m_assetIdHash_assetPath.ContainsKey(assetIdHash))
+                m_assetIdHash_assetPath[assetIdHash] = path;
+        }
+
         public AssetInfo GetAssetInfo(string assetId) {
+            var values = GetAssetValues(assetId);
+
+            var assetIdPath = ".file0.assetId";
+            var filesPath = ".file0.files";
+
+            var hasAssetId = values.HasValue(assetIdPath);
+            var hasfiles = values.HasValue(filesPath);
+
+            if (!hasAssetId || !hasfiles)
+                throw new Exception("Asset not contains AssetInfo in file0");
+
+            var info = new AssetInfo();
+            info.assetId = values.GetValue(assetIdPath).value;
+            info.files = int.Parse(values.GetValue(filesPath).value);
+
+            return info;
+        }
+
+        public AssetInfo ReadAssetInfo(string assetId) {
             var values = GetAssetValues(assetId);
 
             var assetIdPath = ".file0.assetId";
@@ -364,10 +367,12 @@ namespace FireYaml {
             var store = Instance;
 
             var actorId = Instance.GetScriptIdByTypeName(typeof(Engine.Actor).FullName);
+            var componentId = Instance.GetScriptIdByTypeName(typeof(Engine.Component).FullName);
             var prefabId = Instance.GetScriptIdByTypeName(typeof(Engine.Prefab).FullName);
 
             Dll.AssetStore.ClearAssets(Game.gameRef);
             Dll.AssetStore.actorTypeIdHash_set(Game.assetStoreRef, actorId.GetHashCode());
+            Dll.AssetStore.componentTypeIdHash_set(Game.assetStoreRef, componentId.GetHashCode());
 
             foreach(var assetIdHash in Instance.m_assetIdHash_assetId.Keys) {
                 var assetId = Instance.GetAssetId(assetIdHash);
@@ -406,6 +411,189 @@ namespace FireYaml {
             var fileName = Path.GetFileNameWithoutExtension(path);
             return fileName;
         }
+
+        
+        public void Init(string projectPath) {
+            ProjectPath = projectPath;
+
+            var typeTablePath = $"{EditorPath}/TypeTable.yml";
+            var assetTablePath = $"{EditorPath}/AssetTable.yml";
+
+            if (!File.Exists(typeTablePath))
+                m_InitTypeTable(typeTablePath);
+
+            if (!File.Exists(assetTablePath))
+                m_InitAssetTable(assetTablePath);
+
+            m_ReadTypes(typeTablePath);
+            m_ReadAssets(assetTablePath);
+
+            m_AddAssemblyTypes();
+            m_UpdateAssets(AssetsPath);
+
+            // TODO: Продолжить
+            // m_CheckAssets
+
+            UpdateTypesInCpp();
+            UpdateAssetsInCpp();
+        }
+
+        private void m_InitTypeTable(string path) {
+            var list = new List<string>();
+            var types = m_GetDefaultTypes();
+
+            foreach (var name_typeId in types)
+                list.Add($"{name_typeId.Key}: {name_typeId.Value}");
+
+            File.WriteAllLines(path, list);
+        }
+
+        public void m_InitAssetTable(string path) {
+            var list = new List<string>();
+            var assets = m_GetDefaultAssets();
+
+            foreach (var assetId_path in assets) {
+                var assetPath = Path.GetRelativePath(ProjectPath, assetId_path.Value);
+                list.Add($"{assetId_path.Key}: {assetPath}");
+            }
+            File.WriteAllLines(path, list);
+        }
+
+        public void m_ReadTypes(string path) {
+            var lines = File.ReadAllLines(path);
+
+            foreach(var line in lines) {
+                string id, value;
+                if(YamlTable.ReadLine(line, out id, out value))
+                    AddScriptId(id, value);
+            }
+        }
+
+        public void m_ReadAssets(string path) {
+            var lines = File.ReadAllLines(path);
+
+            foreach (var line in lines) {
+                string id, value;
+                if (YamlTable.ReadLine(line, out id, out value))
+                    AddAssetId(id, value);
+            }
+        }
+
+        public void m_AddAssemblyTypes() {
+            var assembly = Assembly.GetAssembly(typeof(AssetStore));
+            var types = assembly.GetTypes();
+
+            foreach (var type in types) {
+                if (FireWriter.IsComponent(type) || FireWriter.IsAsset(type) || FireWriter.IsFile(type)) {
+                    if (!HasTypeName(type.FullName))
+                        AddScriptId(CreateAssetId(), type.FullName); //TODO: записать в файл
+                }
+            }
+        }
+
+        public void m_CheckAssets() {
+            // TODO: Продолжить 
+            // Проверить есть ли известные ассеты на диске
+        } 
+
+        public void m_UpdateAssets(string path) {
+            var fullPath = Path.GetFullPath(path);
+
+            Console.WriteLine(fullPath);
+
+            foreach (string fileName in Directory.EnumerateFiles(fullPath, "*.yml")) {
+                Console.WriteLine(fileName);
+
+                var name = Path.GetFileNameWithoutExtension(fileName);
+
+                foreach (var line in File.ReadLines(fileName)) {
+                    var values = new YamlValues().LoadFromText(line);
+
+                    var assetId = values.GetValue(".file0.assetId", "");
+                    if (assetId != "") {
+                        var assetIdHash = assetId.GetHashCode();
+                        var filePath = Path.GetRelativePath(ProjectPath, fileName);
+
+                        if (!HasAsset(assetIdHash)) {
+                            AddAssetId(assetId, filePath);
+                            break;
+                        }
+                        var assetPath = GetAssetPath(assetId);
+                        if (assetPath != filePath && !m_AssetExist(filePath, assetId)) {
+                            ResetAssetPath(assetIdHash, filePath); 
+                            //TODO: записать в файл  
+                        }
+                    }
+                    break;
+                }
+            }
+
+            foreach (string fileName in Directory.EnumerateDirectories(fullPath))
+                m_UpdateAssets(fileName);
+        }
+
+        private bool m_AssetExist(string path, string expectedAssetId) {
+            var fullPath = Path.GetFullPath(path);
+
+            if(!File.Exists(fullPath))
+                return false;
+
+            foreach (var line in File.ReadLines(fullPath)) {
+                var values = new YamlValues().LoadFromText(line);
+
+                var assetId = values.GetValue(".file0.assetId", "");
+                if (assetId != "")
+                    return assetId == expectedAssetId;
+                
+                break;
+            }
+            return false;
+        }
+
+        private List<KeyValuePair<string, string>> m_GetDefaultTypes() {
+            var list = new List<KeyValuePair<string, string>>();
+
+            Func<string, string, KeyValuePair<string, string>> MakePair =
+            (key, value) => new KeyValuePair<string, string>(key, value);
+
+            list.Add(MakePair("D00000010000", typeof(Engine.Actor).FullName));
+            list.Add(MakePair("D00000010003", typeof(Engine.MeshComponent).FullName));
+            list.Add(MakePair("D00000010004", typeof(Engine.CameraComponent).FullName));
+            list.Add(MakePair("D00000010005", typeof(Engine.TestMesh).FullName));
+            list.Add(MakePair("D00000010006", typeof(UI.TestImGui).FullName));
+            list.Add(MakePair("D00000010007", typeof(Engine.CSComponent).FullName));
+            list.Add(MakePair("D00000010008", typeof(Engine.TestMeshBase).FullName));
+            list.Add(MakePair("D00000010009", typeof(Engine.TestPrefab).FullName));
+            list.Add(MakePair("D00000010010", typeof(Engine.Texture).FullName));
+            list.Add(MakePair("D00000010011", typeof(Engine.Image).FullName));
+            list.Add(MakePair("D00000010012", typeof(Engine.StaticMaterial).FullName));
+            list.Add(MakePair("D00000010013", typeof(Engine.StaticMesh).FullName));
+            list.Add(MakePair("D00000010014", typeof(Engine.Scene).FullName));
+            list.Add(MakePair("D00000010015", typeof(Engine.Prefab).FullName));
+            list.Add(MakePair("D00000010016", typeof(Engine.Component).FullName));
+            list.Add(MakePair("D00000010017", typeof(Engine.EditorSettings).FullName));
+            list.Add(MakePair("D00000010018", typeof(Engine.AmbientLight).FullName));
+            list.Add(MakePair("D00000010019", typeof(Engine.DirectionalLight).FullName));
+            list.Add(MakePair("D00000010020", typeof(Engine.PointLight).FullName));
+            list.Add(MakePair("D00000010021", typeof(Engine.SpotLight).FullName));
+
+            return list;
+        }
+
+        private List<KeyValuePair<string, string>> m_GetDefaultAssets() {
+            var list = new List<KeyValuePair<string, string>>();
+
+            Func<string, string, KeyValuePair<string, string>> MakePair =
+            (key, value) => new KeyValuePair<string, string>(key, value);
+
+            list.Add(MakePair("editor_settings", $"{EditorPath}/editor_settings.yml"));
+
+            list.Add(MakePair("M_Default", $"{AssetsPath}/Materials/M_Default.yml"));
+            list.Add(MakePair("M_WorldGride", $"{AssetsPath}/Materials/M_WorldGride.yml"));
+
+            return list;
+        }
+
 
         /// <param name="objRef">From object</param>
         /// <param name="typeIdHash">To type</param>

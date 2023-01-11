@@ -23,9 +23,9 @@ namespace Engine {
         public static CsRef NullRef = 0;
         public static CsRef MissingRef = 1;
 
-        public UInt64 value;
+        public ulong value;
 
-        CsRef(UInt64 v) => value = v;
+        public CsRef(ulong v) => value = v;
 
         public static implicit operator CsRef(ulong v) => new CsRef { value = v };
 

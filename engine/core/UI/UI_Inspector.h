@@ -74,6 +74,8 @@ public:
 	bool ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash);
 	bool ShowActor(const std::string& label, CsRef* csRef, CppRef cppRef);
 	bool ShowComponent(const std::string& label, CsRef* csRef, CppRef cppRef, int scriptIdHash);
+	bool ShowColor3(const std::string& label, Vector3* value);
+	bool ShowColor4(const std::string& label, Vector4* value);
 
 	void BigSpace();
 	void Space();
@@ -111,3 +113,6 @@ FUNC(UI_Inspector, ShowActor, bool)(CppRef gameRef, const char* label, CsRef* cs
 FUNC(UI_Inspector, ShowComponent, bool)(CppRef gameRef, const char* label, CsRef* csRef, CppRef cppRef, int scriptIdHash);
 
 FUNC(ImGui, CalcTextWidth, float)(const char* value);
+
+FUNC(UI_Inspector, ShowColor3, bool)(CppRef gameRef, const char* label, Vector3* value);
+FUNC(UI_Inspector, ShowColor4, bool)(CppRef gameRef, const char* label, Vector4* value);

@@ -85,3 +85,4 @@ DEF_PROP_GETSET_STR(AssetStore, assetsPath);
 DEF_PROP_GETSET_STR(AssetStore, editorPath);
 
 DEF_PROP_GETSET_F(AssetStore, int, actorTypeIdHash, actorTypeIdHash);
+DEF_PROP_GETSET_F(AssetStore, int, componentTypeIdHash, componentTypeIdHash);

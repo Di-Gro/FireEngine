@@ -5,6 +5,27 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace FireYaml {
+
+    public class YamlTable {
+
+        public static bool ReadLine(string text, out string key, out string value) {
+            key = "";
+            value = "";
+
+            var document = new YamlDocumentReader().ReadOne(text);
+
+            foreach (var docPair in document.objects) {
+                var yamlDoc = docPair.Value;
+
+                key = yamlDoc.name;
+                value = yamlDoc.value;
+
+                return true;
+            }
+            return false;
+        }
+    }
+
     public class YamlValues {
 
         private Dictionary<string, YamlValue> m_values;

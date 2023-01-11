@@ -124,6 +124,7 @@ namespace FireYaml {
         private int m_nextDocIndex = 1;
         private bool m_ignoreExistingIds = false;
         private bool m_writeNewIds = false;
+        private bool m_useCsRefs = false;
 
         public bool Result { get; private set; }
 
@@ -138,10 +139,17 @@ namespace FireYaml {
                BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty |
                BindingFlags.SetProperty;
 
-        public FireWriter(int startId = 1, bool ignoreExistingIds = false, bool writeNewIds = true) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="startId">Начальный ID файла.</param>
+        /// <param name="ignoreExistingIds">Игнорирует ID файлов, с которыми был загружен объект.</param>
+        /// <param name="writeNewIds">Записывает новые ID файла в объект.</param>
+        public FireWriter(int startId = 1, bool ignoreExistingIds = false, bool writeNewIds = true, bool useCsRefs = false) {
             m_nextDocIndex = startId;
             m_ignoreExistingIds = ignoreExistingIds;
             m_writeNewIds = writeNewIds;
+            m_useCsRefs = useCsRefs;
         }
 
         public void Serialize(object obj) {
@@ -470,17 +478,6 @@ namespace FireYaml {
             m_writedDocs[hash] = docName;
         }
 
-        // private void m_SetAssignedDoc(string docName, string rootPath, Type type, object obj) {
-        //     if (type == null || obj == null)
-        //         throw new ArgumentNullException("obj");
-
-        //     //var str = $"{type.FullName.GetHashCode()}_{obj.GetHashCode()}";
-        //     var str = $"{rootPath}_{type.FullName}_{obj.GetHashCode()}";
-        //     var hash = str.GetHashCode();
-
-        //     m_writedDocs[hash] = docName;
-        // }
-
         private string m_GetAssignedDoc(object obj) {
             if (obj == null)
                 throw new ArgumentNullException();
@@ -492,27 +489,22 @@ namespace FireYaml {
             return "";
         }
 
-        // private string m_GetAssignedDoc(string rootPath, Type type, object obj) {
-        //     if (type == null || obj == null)
-        //         throw new ArgumentNullException();
-
-        //     var str = $"{rootPath}_{type.FullName}_{obj.GetHashCode()}";
-        //     var hash = str.GetHashCode();
-
-        //     if (m_writedDocs.ContainsKey(hash))
-        //         return m_writedDocs[hash];
-        //     return "";
-        // }
-
         private void m_ResolveLinks() {
             foreach (var link in m_links) {
                 var value = new YamlValue();
-                // var docName = m_GetAssignedDoc(link.rootPath, link.type, link.instance);
+
                 var docName = m_GetAssignedDoc(link.instance);
                 if (docName != "") {
                     value.type = YamlValue.Type.Ref;
                     value.value = docName.Substring(1);
+                    
+                } else if (m_useCsRefs) {
+                    var cppLinked = link.instance as Engine.CppLinked;
+
+                    value.type = YamlValue.Type.CsRef;
+                    value.value = $"{cppLinked.csRef.value}";
                 }
+
                 m_values.AddValue(link.fieldPath, value);
             }
         }

@@ -55,4 +55,6 @@ private:
 	void m_DrawItemSeparator(ShaderResource* icon, bool isBeforeItem, ImVec2 size, ImVec2 cursor);
 	
 	bool m_FindTargetInActorParent(Actor* actor, Actor* target);
+
+	void m_HandleInput();
 };

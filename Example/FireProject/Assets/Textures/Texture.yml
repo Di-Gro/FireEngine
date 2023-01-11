@@ -2,7 +2,7 @@
 .file0.files: {Var: 1}
 
 .file1!script: {Var: Texture}
-.file1!scriptId: {AssetId: 00000010010}
+.file1!scriptId: {AssetId: D00000010010}
 .file1.width: {Var: 128}
 .file1.height: {Var: 128}
 .file1.image.assetId: {AssetId: IMG0000004}

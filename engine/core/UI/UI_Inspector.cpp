@@ -477,6 +477,60 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 	return changed;
 }
 
+bool UI_Inspector::ShowColor3(const std::string& label, Vector3* value) {
+
+	std::string itemId = "##_" + label + "_" + std::to_string(m_groupRef.value);
+
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float colorWidth = column2 - style.ItemSpacing.x - 20;
+
+	ImGui::Columns(2, "", false);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
+
+	ImGui::Text(label.c_str());
+
+	ImGui::NextColumn();
+	ImGui::SetNextItemWidth(colorWidth);
+
+	auto color = Vector4(value->x, value->y, value->z, 1);
+	bool changed = ImGui::ColorEdit3(itemId.c_str(), &color.x);
+	*value = Vector3(color.x, color.y, color.z);
+
+	ImGui::Columns(1);
+
+	return changed;
+}
+
+bool UI_Inspector::ShowColor4(const std::string& label, Vector4* value) {
+
+	std::string itemId = "##_" + label + "_" + std::to_string(m_groupRef.value);
+
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 100;
+	float column2 = widthComponent - column1;
+	float colorWidth = column2 - style.ItemSpacing.x - 20;
+
+	ImGui::Columns(2, "", false);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
+
+	ImGui::Text(label.c_str());
+
+	ImGui::NextColumn();
+	ImGui::SetNextItemWidth(colorWidth);
+
+	bool changed = ImGui::ColorEdit4(itemId.c_str(), &value->x);
+
+	ImGui::Columns(1);
+
+	return changed;
+}
+
 bool UI_Inspector::HasDraggedActor(CsRef* currentRef) {
 	auto dataType = UI_Hierarchy::ActorDragType;
 
@@ -591,6 +645,9 @@ void UI_Inspector::m_DrawComponentContextMenu(Component* component)
 
 	if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
 	{
+		if (ImGui::Selectable("Copy"))
+			ComponentMenu::Copy(component);
+
 		if (ImGui::Selectable("Remove"))
 			ComponentMenu::Remove(component);
 
@@ -656,4 +713,16 @@ DEF_FUNC(UI_Inspector, ShowComponent, bool)(CppRef gameRef, const char* label, C
 
 DEF_FUNC(ImGui, CalcTextWidth, float)(const char* value) {
 	return ImGui::CalcTextSize(value).x;
+}
+
+DEF_FUNC(UI_Inspector, ShowColor3, bool)(CppRef gameRef, const char* label, Vector3* value) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	return game->ui()->inspector()->ShowColor3(label, value);
+}
+
+DEF_FUNC(UI_Inspector, ShowColor4, bool)(CppRef gameRef, const char* label, Vector4* value) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	return game->ui()->inspector()->ShowColor4(label, value);
 }

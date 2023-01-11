@@ -245,6 +245,8 @@ namespace EngineDll {
 			ANSI_FUNC("UI_Inspector", "ShowAsset", "bool", "CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash");
 			ANSI_FUNC("UI_Inspector", "ShowActor", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef");
 			ANSI_FUNC("UI_Inspector", "ShowComponent", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef, int scriptIdHash");
+
+			ANSI_FUNC("UI_Inspector", "ShowColor3", "bool", "CppRef gameRef, string label, ref Vector3 value");
 #>
 		}
 
@@ -294,6 +296,7 @@ namespace EngineDll {
 			PROP_GETSET_STR("AssetStore", "editorPath");
 
 			PROP_GETSET("AssetStore", "int", "actorTypeIdHash");
+			PROP_GETSET("AssetStore", "int", "componentTypeIdHash");
 #>
 		}
 

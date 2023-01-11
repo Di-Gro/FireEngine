@@ -84,6 +84,10 @@ namespace Engine {
             return Dll.Assets.IsDirty(Game.gameRef, assetIdHash);
         }
 
+        public static void CreatePrefab(string path, Actor actor = null) {
+
+        }
+
 
         public static string ReadCString(ulong ptr, ulong length) {
             string str = "";

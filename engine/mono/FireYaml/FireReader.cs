@@ -18,10 +18,13 @@ namespace FireYaml {
 
         private class InnerLink {
             // Ссылка на документ
-            public string fileName = "";
+            public string value = "";
 
             // Поле в котором находится внутренняя ссылка
             public Field field;
+
+            // Сообщает, что нужно найти объект по runtime ссылке
+            public bool isCsRef = false;
         }
 
         private YamlValues m_values;
@@ -42,12 +45,25 @@ namespace FireYaml {
 
         public bool showLog = true;
 
-        public FireReader(YamlValues values) {
+        private bool m_writeIDs;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writeIDs">Записывает ID файлов в объекты под которыми они сохранены в документе.</param>
+        public FireReader(YamlValues values, bool writeIDs = true) {
             m_values = values;
+            m_writeIDs = writeIDs;
         }
 
-        public FireReader(string assetId) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writeIDs">Записывает ID файлов в объекты под которыми они сохранены в документе.</param>
+        public FireReader(string assetId, bool writeIDs = true) {
             m_assetId = assetId;
+            m_writeIDs = writeIDs;
+
             m_values = AssetStore.Instance.ThrowAssetValues(m_assetId);
         }
 
@@ -71,20 +87,6 @@ namespace FireYaml {
             return target;
         }
 
-        // public object InstanciateTo(ref object target) {
-        //     var yamlRef = new YamlRef(1);
-
-        //     var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
-        //     if (!hasFile)
-        //         throw new Exception("Prefab must contains root file 'file1'");
-
-        //     var selfPath = GetFullPath(yamlRef.Name);
-        //     LoadDocument(selfPath, ref target, isEntryPoint: true);
-
-        //     m_EndInstanciate();
-        //     return target;
-        // }
-
         public void InstanciateIAssetAsFile(IAsset target) {
             var yamlRef = new YamlRef(1);
 
@@ -99,18 +101,22 @@ namespace FireYaml {
             m_EndInstanciate();
         }
 
-        // public List<T> InstanciateAll<T>() where T: new() {
-        //     var objects = new List<T>();
-        //     var type = typeof(T);
+        public Engine.Component InstanciateComponent(Engine.Actor targetActor) {
+            var yamlRef = new YamlRef(1);
 
-        //     var files = m_values.GetFiles();
-        //     foreach (var file in files) {
-        //         if (file != "file0" && type == GetTypeOf($".{file}"))
-        //             objects.Add((T)LoadDocument(file));
-        //     }
-        //     m_EndInstanciate();
-        //     return objects;
-        // }
+            var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
+            if (!hasFile)
+                throw new Exception("Prefab must contains root file 'file1'");
+
+            m_assetInst = targetActor.assetInstance;
+
+            var selfPath = GetFullPath(yamlRef.Name);
+
+            var component = new Engine.ActorSerializer().LoadComponent(this, selfPath, targetActor);
+
+            m_EndInstanciate();
+            return component as Engine.Component;
+        }
 
         private void m_EndInstanciate() {
             m_ResolveLinks();
@@ -152,8 +158,9 @@ namespace FireYaml {
             m_SetAssignedObject(fullPath, ref target);
 
             IFile.SetAssetInstance(m_assetInst, ref target);
-            IFile.SetFileId(fileId, ref target);
-
+            if (m_writeIDs)
+                IFile.SetFileId(fileId, ref target);
+            
             if(!isIAssetAsFile) {
                 if(isEntryPoint &&  FireWriter.IsAsset(type)) {
                     m_LoadAsset(fullPath, m_assetId, target);
@@ -166,7 +173,7 @@ namespace FireYaml {
             if (prefabId != IFile.NotPrefab)
                 m_LoadPrefab(fullPath, type, ref target, prefabId);
             else
-                m_LoadObject(fullPath, type, ref target, isIAssetAsFile);
+                m_LoadObjectFields(fullPath, type, ref target, isIAssetAsFile);
 
             if (isEntryPoint && m_assetId != "")
                 IFile.SetPrefabId(m_assetId, ref target);
@@ -253,7 +260,7 @@ namespace FireYaml {
             return type;
         }
 
-        private void m_LoadObject(string selfPath, Type type, ref object instance, bool isIAssetAsFile = false) {
+        private void m_LoadObjectFields(string selfPath, Type type, ref object instance, bool isIAssetAsFile = false) {
 
             var serializer = FireWriter.GetSerializer(type);
             var fields = FireWriter.GetFields(type, instance, serializer);
@@ -312,11 +319,13 @@ namespace FireYaml {
                 if (yamlValue.type == YamlValue.Type.Var)
                     value = m_Convert(field.type, yamlValue.value);
 
-                if (yamlValue.type == YamlValue.Type.Ref) {
+                if (yamlValue.type == YamlValue.Type.Ref || yamlValue.type == YamlValue.Type.CsRef) {
                     var link = new InnerLink();
 
-                    link.fileName = yamlValue.value; // $"{m_rootPath}.{yamlValue.value}";
+                    link.value = yamlValue.value;
                     link.field = field;
+
+                    link.isCsRef = yamlValue.type == YamlValue.Type.CsRef;
 
                     m_links.Add(link);
                 }
@@ -350,7 +359,7 @@ namespace FireYaml {
                         field.SetValue(CreateInstance(field.type));
 
                     var fieldValue = field.Value;
-                    m_LoadObject(fieldPath, field.type, ref fieldValue);
+                    m_LoadObjectFields(fieldPath, field.type, ref fieldValue);
                     if (field.type.IsValueType)
                         field.SetValue(fieldValue);
                 }
@@ -409,7 +418,7 @@ namespace FireYaml {
             var basePath = $"{selfPath}!base";
             var baseType = GetTypeOf(basePath);
 
-            m_LoadObject(basePath, baseType, ref target);
+            m_LoadObjectFields(basePath, baseType, ref target);
         }
 
         public static object CreateInstance(Type type) {
@@ -422,7 +431,16 @@ namespace FireYaml {
 
         private void m_ResolveLinks() {
             foreach (var link in m_links) {
-                var objectRef = m_GetAssignedObject($".{link.fileName}");
+                object objectRef = null;
+
+                if(link.isCsRef) {
+                    var csRef = new Engine.CsRef(ulong.Parse(link.value));
+                    
+                    objectRef = Engine.CppLinked.GetObjectByRef(csRef);
+
+                } else {
+                    objectRef = m_GetAssignedObject($".{link.value}");
+                }
                 link.field.SetValue(objectRef);
             }
         }

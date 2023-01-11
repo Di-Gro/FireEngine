@@ -112,5 +112,6 @@ public:
 	CppRef (*peekClipboard)();
 	bool (*clipboardIsAssignable)(int scriptIdHash);
 	bool (*clipboardIsSameType)(int scriptIdHash);
+	void (*clipboardSetActor)(CsRef value);
 };
 

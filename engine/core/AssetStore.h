@@ -21,6 +21,7 @@ public:
 	std::unordered_map<ScriptIdHash, std::vector<AssetIdHash>> assets;
 
 	int actorTypeIdHash;
+	int componentTypeIdHash;
 	
 private:
 	std::string m_emptyValue = "";
@@ -103,3 +104,4 @@ PROP_GETSET_STR(AssetStore, assetsPath);
 PROP_GETSET_STR(AssetStore, editorPath);
 
 PROP_GETSET(AssetStore, int, actorTypeIdHash);
+PROP_GETSET(AssetStore, int, componentTypeIdHash);
