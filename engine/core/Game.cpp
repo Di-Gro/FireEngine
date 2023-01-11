@@ -47,7 +47,7 @@
 #include "SpotLight.h"
 #include "TestLightComponent.h"
 #include "Material.h"
-
+#include "NavMesh.h"
 #include "UI\SceneEditorWindow.h"
 
 
@@ -171,6 +171,17 @@ void Game::Run() {
 	//inFocus = false;
 	//m_lastGameCamera = scene()->mainCamera();
 	//m_editorCamera->Attach();
+	NavMesh nav_mesh(this);
+	auto nav_status = nav_mesh.NavMeshBuild();
+	std::cout << "Navmeshbuild status =" << nav_status << std::endl;
+	auto ret_find = nav_mesh.FindPath(Vector3(-1160, 0.5, 863), Vector3(1725.460, 0.5, -484.768), 0, 0);
+	std::cout << "ret_find " << ret_find << std::endl;
+   auto path = nav_mesh.GetPath(0);
+   std::cout << "path\n";
+   for(const auto& vec: path)
+   {
+   	std::cout << "x="<<vec.x<<"\ty="<<vec.y<<"\tz="<<vec.z<<'\n';
+   }
 	PopScene();
 		
 	MSG msg = {};
@@ -233,6 +244,10 @@ void Game::m_Update() {
 	m_BeginUpdateImGui();
 
 	/// Update
+	if (hotkeys()->GetButtonDown(Keys::R))
+	{
+		MeshComponent::TempVisible = !MeshComponent::TempVisible;
+	}
 	m_hotkeys->Update(input());
 
 	auto it = m_scenes.begin();

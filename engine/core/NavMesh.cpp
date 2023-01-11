@@ -32,7 +32,7 @@ NavMesh::NavMesh(Game* game) :game(game)
     RecastCleanup(); 
    
 
-    m_scale = 1.25;
+    m_scale = 20;
 
 
  
@@ -70,7 +70,7 @@ void NavMesh::LoadStaticMeshes()
     uint64_t vertsIndex = 0;
     uint64_t prevVerticiesCount = 0;
     uint64_t prevIndexCountTotal = 0;
-    auto test_navmesh = game->scene()->CreateActor("nav_test");
+    auto test_navmesh = game->currentScene()->CreateActor("nav_test");
     auto mesh = test_navmesh->AddComponent<MeshComponent>();
     auto mesh_asset = game->meshAsset()->GetMesh("C:/Alex/Repositories/cube.obj");
     mesh->mesh(mesh_asset);
@@ -79,8 +79,8 @@ void NavMesh::LoadStaticMeshes()
 
     mesh->ingnore_TempVisible = true;
 
-
-    auto scene = game->scene();
+    
+    auto scene = game->currentScene();
     for (auto actor_it = scene->GetNextRootActors(scene->BeginActor()); actor_it != scene->EndActor(); ++actor_it) {
         auto actor = *actor_it;
         if (actor->IsDestroyed())
@@ -92,7 +92,7 @@ void NavMesh::LoadStaticMeshes()
                 auto mesh = meshComppnent->mesh();
                 if(mesh == nullptr || mesh->topology!= D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
                     continue;
-                std::cout << actor->GetName()<<std::endl;
+                std::cout << actor->name()<<std::endl;
                 auto world_matrix = Matrix::CreateScale(meshComppnent->meshScale) * meshComppnent->GetWorldMatrix();
                 for (auto shape_i = 0; shape_i < mesh->shapeCount(); shape_i++)
                 {
@@ -161,7 +161,7 @@ void NavMesh::DebugDrawPolyMesh()
             for (int k = 0; k < 2; ++k) {
                 const unsigned short* v = &mesh.verts[vi[k] * 3];
                 const float x = orig[0] + v[0] * cs;
-                const float y = orig[1] + (v[1] + 1) * ch + 2.f*m_scale*3;
+                const float y = orig[1] + (v[1] + 1) * ch + 2.f;
                 const float z = orig[2] + v[2] * cs;
                 points[k] = DirectX::SimpleMath::Vector3(x, y, z);
             }
@@ -191,7 +191,7 @@ void NavMesh::DebugDrawPolyMesh()
             {
                 const unsigned short* v = &mesh.verts[vi[k] * 3];
                 const float x = orig[0] + v[0] * cs;
-                const float y = orig[1] + (v[1] + 1) * ch + 2.f*m_scale*3;
+                const float y = orig[1] + (v[1] + 1) * ch + 2.f;
                 const float z = orig[2] + v[2] * cs;
                 points[k] = DirectX::SimpleMath::Vector3(x, y, z);
             }
@@ -200,7 +200,7 @@ void NavMesh::DebugDrawPolyMesh()
             lines.emplace_back(points[1]);
         }
     }
-    auto actor = game->scene()->CreateActor("PathLine");
+    auto actor = game->currentScene()->CreateActor("PathLine");
     auto line = actor->AddComponent<LineComponent>();
     line->ingnore_TempVisible = true;
     line->SetVector(lines, color);
@@ -596,7 +596,7 @@ std::vector<Vector3>NavMesh::GetPath(int pathSlot)
     for (int i = 0; i < path->MaxVertex; i++) {
         result.push_back(Vector3(path->pX[i], path->pY[i], path->pZ[i]));
     }
-    auto actor = game->scene()->CreateActor("PathLine");
+    auto actor = game->currentScene()->CreateActor("PathLine");
     auto line = actor->AddComponent<LineComponent>();
     Vector4 color(1, 1, 1, 1);
     line->SetVector(result,color);
