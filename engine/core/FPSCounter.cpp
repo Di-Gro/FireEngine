@@ -1,6 +1,6 @@
 #include "FPSCounter.h"
 
-void FPSCounter::Update() {
+void FPSCounter::MakeStep() {
 	auto curTime = std::chrono::steady_clock::now();
 	m_deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(curTime - m_prev).count() / 1000000.0f;
 	m_prev = curTime;

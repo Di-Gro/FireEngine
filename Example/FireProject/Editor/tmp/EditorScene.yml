@@ -1,5 +1,5 @@
 .file0.assetId: {AssetId: tmp_0000000001}
-.file0.files: {Var: 39}
+.file0.files: {Var: 32}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: 00000010014}
@@ -18,10 +18,6 @@
 .file1.m_roots.11: {Ref: file26}
 .file1.m_roots.12: {Ref: file28}
 .file1.m_roots.13: {Ref: file30}
-.file1.m_roots.14: {Ref: file32}
-.file1.m_roots.15: {Ref: file34}
-.file1.m_roots.16: {Ref: file36}
-.file1.m_roots.17: {Ref: file38}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: 00000010000}
@@ -33,9 +29,9 @@
 .file2.localRotationQ.Y: {Var: 0.9997465}
 .file2.localRotationQ.Z: {Var: -0.0002493492}
 .file2.localRotationQ.W: {Var: -0.01671677}
-.file2.localScale.X: {Var: 0.9999977}
-.file2.localScale.Y: {Var: 0.9999999}
-.file2.localScale.Z: {Var: 0.9999971}
+.file2.localScale.X: {Var: 0.9999978}
+.file2.localScale.Y: {Var: 0.9999998}
+.file2.localScale.Z: {Var: 0.9999972}
 .file2.m_children: {Null: }
 .file2.m_components.0: {Ref: file3}
 
@@ -186,16 +182,16 @@
 .file14!script: {Var: Actor}
 .file14!scriptId: {AssetId: 00000010000}
 .file14.Name: {Var: Cpp actor}
-.file14.localPosition.X: {Var: 195.0698}
-.file14.localPosition.Y: {Var: 138.2501}
-.file14.localPosition.Z: {Var: -481.7424}
+.file14.localPosition.X: {Var: 188.2422}
+.file14.localPosition.Y: {Var: 145.9119}
+.file14.localPosition.Z: {Var: -628.7035}
 .file14.localRotationQ.X: {Var: -0.01473845}
 .file14.localRotationQ.Y: {Var: 0.9888933}
 .file14.localRotationQ.Z: {Var: 0.03579473}
 .file14.localRotationQ.W: {Var: 0.1434973}
-.file14.localScale.X: {Var: 0.999989}
+.file14.localScale.X: {Var: 0.9999887}
 .file14.localScale.Y: {Var: 0.9999709}
-.file14.localScale.Z: {Var: 0.9999077}
+.file14.localScale.Z: {Var: 0.9999071}
 .file14.m_children: {Null: }
 .file14.m_components.0: {Ref: file15}
 
@@ -328,7 +324,7 @@
 .file24.localRotationQ.Y: {Var: -0.2935024}
 .file24.localRotationQ.Z: {Var: -0.3401446}
 .file24.localRotationQ.W: {Var: 0.8834035}
-.file24.localScale.X: {Var: 0.9999997}
+.file24.localScale.X: {Var: 0.9999993}
 .file24.localScale.Y: {Var: 0.9999997}
 .file24.localScale.Z: {Var: 1}
 .file24.m_children: {Null: }
@@ -348,9 +344,9 @@
 .file26!script: {Var: Actor}
 .file26!scriptId: {AssetId: 00000010000}
 .file26.Name: {Var: Cpp actor (14)}
-.file26.localPosition.X: {Var: 252.4019}
-.file26.localPosition.Y: {Var: 0.0009797786}
-.file26.localPosition.Z: {Var: -253.4674}
+.file26.localPosition.X: {Var: 234.7368}
+.file26.localPosition.Y: {Var: 0.001441607}
+.file26.localPosition.Z: {Var: -280.4945}
 .file26.localRotationQ.X: {Var: 0}
 .file26.localRotationQ.Y: {Var: 0}
 .file26.localRotationQ.Z: {Var: 0}
@@ -375,9 +371,9 @@
 .file28!script: {Var: Actor}
 .file28!scriptId: {AssetId: 00000010000}
 .file28.Name: {Var: Cpp actor (14) (15)}
-.file28.localPosition.X: {Var: 358.6702}
-.file28.localPosition.Y: {Var: 0.0009801323}
-.file28.localPosition.Z: {Var: -433.0898}
+.file28.localPosition.X: {Var: 385.2064}
+.file28.localPosition.Y: {Var: 0.001951261}
+.file28.localPosition.Z: {Var: -479.312}
 .file28.localRotationQ.X: {Var: 0}
 .file28.localRotationQ.Y: {Var: 0}
 .file28.localRotationQ.Z: {Var: 0}
@@ -401,19 +397,20 @@
 
 .file30!script: {Var: Actor}
 .file30!scriptId: {AssetId: 00000010000}
-.file30.Name: {Var: Cpp actor (14) (16)}
-.file30.localPosition.X: {Var: 489.9283}
-.file30.localPosition.Y: {Var: 0.0005098347}
-.file30.localPosition.Z: {Var: -332.764}
+.file30.Name: {Var: House 2 (16)}
+.file30.localPosition.X: {Var: -131.3564}
+.file30.localPosition.Y: {Var: 9.980925}
+.file30.localPosition.Z: {Var: -257.8472}
 .file30.localRotationQ.X: {Var: 0}
-.file30.localRotationQ.Y: {Var: 0}
+.file30.localRotationQ.Y: {Var: 0.01327283}
 .file30.localRotationQ.Z: {Var: 0}
-.file30.localRotationQ.W: {Var: 1}
-.file30.localScale.X: {Var: 1}
+.file30.localRotationQ.W: {Var: 0.9999119}
+.file30.localScale.X: {Var: 0.9998387}
 .file30.localScale.Y: {Var: 1}
-.file30.localScale.Z: {Var: 1}
+.file30.localScale.Z: {Var: 0.9998387}
 .file30.m_children: {Null: }
 .file30.m_components.0: {Ref: file31}
+.file30.m_components.1: {Ref: file32}
 
 .file31!script: {Var: MeshComponent}
 .file31!scriptId: {AssetId: 00000010003}
@@ -423,114 +420,26 @@
 .file31.IsDebug: {Var: False}
 .file31.CastShadow: {Var: True}
 .file31.IsVisible: {Var: True}
-.file31.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file31.m_materials.0.assetId: {AssetId: M_WorldGride}
+.file31.m_mesh.assetId: {AssetId: MESH000002}
+.file31.m_materials.0.assetId: {AssetId: MAT0000006}
 
-.file32!script: {Var: Actor}
-.file32!scriptId: {AssetId: 00000010000}
-.file32.Name: {Var: Cpp actor (14) (17)}
-.file32.localPosition.X: {Var: 484.9121}
-.file32.localPosition.Y: {Var: 0.0009793624}
-.file32.localPosition.Z: {Var: -224.3915}
-.file32.localRotationQ.X: {Var: 0}
-.file32.localRotationQ.Y: {Var: 0}
-.file32.localRotationQ.Z: {Var: 0}
-.file32.localRotationQ.W: {Var: 1}
-.file32.localScale.X: {Var: 1}
-.file32.localScale.Y: {Var: 1}
-.file32.localScale.Z: {Var: 1}
-.file32.m_children: {Null: }
-.file32.m_components.0: {Ref: file33}
-
-.file33!script: {Var: MeshComponent}
-.file33!scriptId: {AssetId: 00000010003}
-.file33.MeshScale.X: {Var: 1}
-.file33.MeshScale.Y: {Var: 1}
-.file33.MeshScale.Z: {Var: 1}
-.file33.IsDebug: {Var: False}
-.file33.CastShadow: {Var: True}
-.file33.IsVisible: {Var: True}
-.file33.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file33.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file34!script: {Var: Actor}
-.file34!scriptId: {AssetId: 00000010000}
-.file34.Name: {Var: Cpp actor (14) (18)}
-.file34.localPosition.X: {Var: 233.3574}
-.file34.localPosition.Y: {Var: 0.001398877}
-.file34.localPosition.Z: {Var: -83.49091}
-.file34.localRotationQ.X: {Var: 0}
-.file34.localRotationQ.Y: {Var: 0}
-.file34.localRotationQ.Z: {Var: 0}
-.file34.localRotationQ.W: {Var: 1}
-.file34.localScale.X: {Var: 1}
-.file34.localScale.Y: {Var: 1}
-.file34.localScale.Z: {Var: 1}
-.file34.m_children: {Null: }
-.file34.m_components.0: {Ref: file35}
-
-.file35!script: {Var: MeshComponent}
-.file35!scriptId: {AssetId: 00000010003}
-.file35.MeshScale.X: {Var: 1}
-.file35.MeshScale.Y: {Var: 1}
-.file35.MeshScale.Z: {Var: 1}
-.file35.IsDebug: {Var: False}
-.file35.CastShadow: {Var: True}
-.file35.IsVisible: {Var: True}
-.file35.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file35.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file36!script: {Var: Actor}
-.file36!scriptId: {AssetId: 00000010000}
-.file36.Name: {Var: Cpp actor (14) (15) (19)}
-.file36.localPosition.X: {Var: 431.8095}
-.file36.localPosition.Y: {Var: 0.0009807078}
-.file36.localPosition.Z: {Var: -674.305}
-.file36.localRotationQ.X: {Var: 0}
-.file36.localRotationQ.Y: {Var: 0}
-.file36.localRotationQ.Z: {Var: 0}
-.file36.localRotationQ.W: {Var: 1}
-.file36.localScale.X: {Var: 1}
-.file36.localScale.Y: {Var: 1}
-.file36.localScale.Z: {Var: 1}
-.file36.m_children: {Null: }
-.file36.m_components.0: {Ref: file37}
-
-.file37!script: {Var: MeshComponent}
-.file37!scriptId: {AssetId: 00000010003}
-.file37.MeshScale.X: {Var: 1}
-.file37.MeshScale.Y: {Var: 1}
-.file37.MeshScale.Z: {Var: 1}
-.file37.IsDebug: {Var: False}
-.file37.CastShadow: {Var: True}
-.file37.IsVisible: {Var: True}
-.file37.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file37.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file38!script: {Var: Actor}
-.file38!scriptId: {AssetId: 00000010000}
-.file38.Name: {Var: Cpp actor (14) (15) (19) (20)}
-.file38.localPosition.X: {Var: 489.5412}
-.file38.localPosition.Y: {Var: 0.0009813078}
-.file38.localPosition.Z: {Var: -916.4428}
-.file38.localRotationQ.X: {Var: 0}
-.file38.localRotationQ.Y: {Var: 0}
-.file38.localRotationQ.Z: {Var: 0}
-.file38.localRotationQ.W: {Var: 1}
-.file38.localScale.X: {Var: 1}
-.file38.localScale.Y: {Var: 1}
-.file38.localScale.Z: {Var: 1}
-.file38.m_children: {Null: }
-.file38.m_components.0: {Ref: file39}
-
-.file39!script: {Var: MeshComponent}
-.file39!scriptId: {AssetId: 00000010003}
-.file39.MeshScale.X: {Var: 1}
-.file39.MeshScale.Y: {Var: 1}
-.file39.MeshScale.Z: {Var: 1}
-.file39.IsDebug: {Var: False}
-.file39.CastShadow: {Var: True}
-.file39.IsVisible: {Var: True}
-.file39.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file39.m_materials.0.assetId: {AssetId: M_WorldGride}
+.file32!script: {Var: TestMesh}
+.file32!scriptId: {AssetId: 00000010005}
+.file32.actorRef: {Null: }
+.file32.userPrefab.assetId: {AssetId: TestPrefab}
+.file32.sameScene.assetId: {AssetId: scene_1}
+.file32.nullStaticMaterial.assetId: {AssetId: M_Default}
+.file32.staticMaterial.assetId: {AssetId: M_WorldGride}
+.file32.vecList: {Null: }
+.file32.floatField: {Var: 3.224}
+.file32.intField3: {Var: 63}
+.file32.m_floatField4: {Var: 7.27}
+.file32.vector.X: {Var: 4}
+.file32.vector.Y: {Var: 5.2}
+.file32.vector.Z: {Var: 2}
+.file32.m_meshes: {Null: }
+.file32!base!scriptId: {AssetId: 00000010008}
+.file32!base.floatField: {Var: 48.56}
+.file32.component: {Ref: file32}
+.file32.m_meshComp: {Ref: file31}
 

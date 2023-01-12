@@ -1,18 +1,19 @@
 .file1!script: {Var: Actor}
 .file1!scriptId: {AssetId: 00000010000}
-.file1.Name: {Var: Cpp actor (14) (15) (19)}
-.file1.localPosition.X: {Var: 431.8095}
-.file1.localPosition.Y: {Var: 0.0009807078}
-.file1.localPosition.Z: {Var: -674.305}
+.file1.Name: {Var: House 2}
+.file1.localPosition.X: {Var: 14.124}
+.file1.localPosition.Y: {Var: 9.980919}
+.file1.localPosition.Z: {Var: -482.1368}
 .file1.localRotationQ.X: {Var: 0}
-.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0.01327283}
 .file1.localRotationQ.Z: {Var: 0}
-.file1.localRotationQ.W: {Var: 1}
-.file1.localScale.X: {Var: 1}
+.file1.localRotationQ.W: {Var: 0.9999119}
+.file1.localScale.X: {Var: 0.9998387}
 .file1.localScale.Y: {Var: 1}
-.file1.localScale.Z: {Var: 1}
+.file1.localScale.Z: {Var: 0.9998387}
 .file1.m_children: {Null: }
 .file1.m_components.0: {Ref: file2}
+.file1.m_components.1: {Ref: file3}
 
 .file2!script: {Var: MeshComponent}
 .file2!scriptId: {AssetId: 00000010003}
@@ -22,6 +23,26 @@
 .file2.IsDebug: {Var: False}
 .file2.CastShadow: {Var: True}
 .file2.IsVisible: {Var: True}
-.file2.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file2.m_materials.0.assetId: {AssetId: M_WorldGride}
+.file2.m_mesh.assetId: {AssetId: MESH000002}
+.file2.m_materials.0.assetId: {AssetId: MAT0000006}
+
+.file3!script: {Var: TestMesh}
+.file3!scriptId: {AssetId: 00000010005}
+.file3.actorRef: {Null: }
+.file3.userPrefab.assetId: {AssetId: TestPrefab}
+.file3.sameScene.assetId: {AssetId: scene_1}
+.file3.nullStaticMaterial.assetId: {AssetId: M_Default}
+.file3.staticMaterial.assetId: {AssetId: M_WorldGride}
+.file3.vecList: {Null: }
+.file3.floatField: {Var: 3.224}
+.file3.intField3: {Var: 63}
+.file3.m_floatField4: {Var: 7.27}
+.file3.vector.X: {Var: 4}
+.file3.vector.Y: {Var: 5.2}
+.file3.vector.Z: {Var: 2}
+.file3.m_meshes: {Null: }
+.file3!base!scriptId: {AssetId: 00000010008}
+.file3!base.floatField: {Var: 48.56}
+.file3.component: {Ref: file3}
+.file3.m_meshComp: {Ref: file2}
 

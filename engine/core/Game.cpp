@@ -156,6 +156,16 @@ bool Game::LoadScene(Scene* targetScene, const char* assetId) {
 	return loaded;
 }
 
+#define PEEK_MESSAGE(msg, m_onExit, isExitRequested)\
+while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {\
+	TranslateMessage(&msg);\
+	DispatchMessage(&msg);\
+}\
+if (msg.message == WM_QUIT || m_onExit) {\
+	isExitRequested = true;\
+	break;\
+}\
+
 void Game::Run() {
 	m_render->Start();
 	m_meshAsset->Start();
@@ -178,46 +188,45 @@ void Game::Run() {
 		
 	MSG msg = {};
 
-	float targetFrameTime = 1.0f / 60.0f;
-	float accumFrameTime = targetFrameTime;
+	float targetFixedTime = 1.0f / 60.0f;
+	float accumFixedTime = targetFixedTime;
 
 	bool isExitRequested = false;
 	while (!isExitRequested) {
-		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+		PEEK_MESSAGE(msg, m_onExit, isExitRequested);
+
+		m_updateTimer.MakeStep();
+		ShowFPS();
+
+		m_BeginUpdate();
+		m_ForScenes(&Scene::f_Update);
+		m_DrawUI();
+
+		accumFixedTime += m_updateTimer.GetDelta();
+		if (accumFixedTime >= targetFixedTime) {
+			accumFixedTime -= targetFixedTime;
+			m_fixedTimer.MakeStep();
+
+			m_ForScenes(&Scene::f_FixedUpdate);
 		}
 
-		if (msg.message == WM_QUIT || m_onExit) {
-			isExitRequested = true;
-			break;
-		}
-
-		m_Update();
-
-		accumFrameTime += deltaTime();
-		if (accumFrameTime >= targetFrameTime) {
-			accumFrameTime -= targetFrameTime;
-
-			m_render->Draw(&m_scenes);
-			
-			m_updateCounter.Update();
-			if (m_updateCounter.HasChanges()) {
-				WCHAR text[256];
-				swprintf_s(text, TEXT("FPS: %d"), m_updateCounter.FPS());
-				SetWindowText(m_window->GetHWindow(), text);
-			}
-		}
-
-		m_fpsCounter.Update();
-		/*if (m_fpsCounter.HasChanges()) {
-			WCHAR text[256];
-			swprintf_s(text, TEXT("FPS: %d"), m_fpsCounter.FPS());
-			SetWindowText(m_window->GetHWindow(), text);
-		}*/
+		m_EndUpdate();
+		m_render->Draw(&m_scenes);
 	}
 
 	m_Destroy();
+}
+
+void Game::ShowFPS() {
+	if (m_updateTimer.IsRateChanged() || m_fixedTimer.IsRateChanged()) {
+		WCHAR text[256];
+		swprintf_s(text,
+			TEXT("Update Rate: %d\t Fixed Rate: %d"),
+			m_updateTimer.RatePerSecond(),
+			m_fixedTimer.RatePerSecond()
+		);
+		SetWindowText(m_window->GetHWindow(), text);
+	}
 }
 
 void Game::Exit(int code) {
@@ -227,36 +236,46 @@ void Game::Exit(int code) {
 	}
 }
 
-void Game::m_Update() {
-	/// Pre Update
-	GameUpdateData updateData;
-	updateData.deltaTime = deltaTime();
-	m_callbacks.setUpdateData(updateData);
-	
-	m_BeginUpdateImGui();
-
-	/// Update
-	m_hotkeys->Update(input());
+void Game::m_ForScenes(void (Scene::* method)()) {
 
 	auto it = m_scenes.begin();
 	while (it != m_scenes.end()) {
 
 		auto scene = (*it);
-		scene->f_Update();
+		if (scene->IsDestroyed()) {
+			scene->timeToDestroy--;
+			if (scene->timeToDestroy <= 0)
+				it = m_EraseScene(it);
+			continue;
+		}
+		(scene->*method)();
 		assert(m_sceneStack.size() == 0);
 
 		it++;
 	}
+}
+
+void Game::m_DrawUI() {
+	if (ui()->selectedScene() != nullptr && ui()->selectedScene()->IsDestroyed())
+		ui()->selectedScene(nullptr);
+
+	if (ui()->HasActor() && ui()->GetActor()->IsDestroyed())
+		ui()->SelectedActor(nullptr);
 
 	ui()->Draw();
+}
 
-	static bool once = true;
-	if (once) {
-		once = false;
-		ui()->GetSceneWindow("Editor")->focus();
-	}
+void Game::m_BeginUpdate() {
+	GameUpdateData updateData;
+	updateData.deltaTime = deltaTime();
+	m_callbacks.setUpdateData(updateData);
 
-	/// Post Update
+	m_hotkeys->Update(input());
+
+	m_BeginUpdateImGui();
+}
+
+void Game::m_EndUpdate() {
 	m_EndUpdateImGui();
 
 	m_hotkeys->LateUpdate();
@@ -280,10 +299,14 @@ void Game::m_Update() {
 	}
 }
 
+
 void Game::m_Destroy() {
 
-	for (auto it = m_scenes.begin(); it != m_scenes.end(); it = m_EraseScene(it)) 
-		(*it)->f_Destroy();
+	auto it = m_scenes.begin();
+	while (it != m_scenes.end()) {
+		DestroyScene(*it);
+		it = m_EraseScene(it);
+	}
 
 	m_DestroyImGui();
 	m_hotkeys->Destroy();
@@ -332,12 +355,14 @@ Scene* Game::CreateScene(bool isEditor, const std::string& assetId) {
 }
 
 void Game::DestroyScene(Scene* scene) {
-	for (auto sceneInStack : m_sceneStack) {
-		if (sceneInStack == scene)
-			throw std::exception("Can't destroy a scene while it's in use");
+	if (scene->BeginDestroy()) {
+		for (auto sceneInStack : m_sceneStack) {
+			if (sceneInStack == scene)
+				throw std::exception("Can't destroy a scene while it's in use");
+		}
+		scene->Destroy();
+		scene->EndDestroy();
 	}
-	scene->f_Destroy();
-	m_EraseScene(scene->f_sceneIter);
 }
 
 std::list<Scene*>::iterator Game::m_EraseScene(std::list<Scene*>::iterator iter) {

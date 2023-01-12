@@ -5,6 +5,7 @@
 #include "Actor.h"
 #include "SceneRenderer.h"
 #include "Refs.h"
+#include "SafeDestroy.h"
 
 class Game;
 class DirectionLight;
@@ -20,7 +21,7 @@ FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, 
 FUNC(Game, GetRootActorsCount, int)(CppRef gameRef);
 FUNC(Game, WriteRootActorsRefs, void)(CppRef gameRef, CsRef* refs);
 
-class Scene : public IAsset {
+class Scene : public IAsset, public SafeDestroy {
 	FRIEND_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, CppRef parentRef);
 
 	friend class Game;
@@ -97,13 +98,17 @@ public:
 
 private:
 	void f_Update();
-	void f_Destroy();
+	void Destroy() override;
+
+	void f_FixedUpdate();
 
 private:
 	void m_InitMono();
 
-	void m_Update(std::list<Actor*>* list);
-	void m_Destroy(std::list<Actor*>* list);
+	void m_UpdateActors(std::list<Actor*>* list);
+	void m_DestroyActors(std::list<Actor*>* list);
+
+	void m_FixedUpdate(std::list<Actor*>* list);
 
 	void m_MoveToStatic(Actor* actor);
 

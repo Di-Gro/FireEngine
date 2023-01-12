@@ -47,8 +47,8 @@ private:
 	Render* m_render;
 	//Lighting* m_lighting;
 	InputDevice* m_input;
-	FPSCounter m_fpsCounter;
-	FPSCounter m_updateCounter;
+	FPSCounter m_updateTimer;
+	FPSCounter m_fixedTimer;
 	HotKeys* m_hotkeys;
 
 	ShaderAsset* m_shaderAsset;
@@ -89,6 +89,8 @@ public:
 	void Run();
 	void Exit(int code);
 
+	void ShowFPS();
+
 	inline MonoInst* mono() { return m_mono; }
 
 	inline Window* window() { return m_window; }
@@ -110,7 +112,8 @@ public:
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera) {  m_mainCamera = camera; };
 
-	const float& deltaTime() { return m_fpsCounter.GetDeltaTime(); }
+	const float& deltaTime() { return m_updateTimer.GetDelta(); }
+	const float& deltaFixedTime() { return m_fixedTimer.GetDelta(); }
 
 	bool IsPlayMode() { return m_gameScene != nullptr; }
 
@@ -142,8 +145,11 @@ private:
 	void m_InitImGui();
 	void m_DestroyImGui();
 
-	void m_Update();
+	void m_BeginUpdate();
+	void m_EndUpdate();
 	void m_Destroy();
+	void m_DrawUI();
+	void m_ForScenes(void (Scene::* method)());
 
 	std::list<Scene*>::iterator m_EraseScene(std::list<Scene*>::iterator iter);
 

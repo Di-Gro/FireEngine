@@ -17,6 +17,8 @@ static const char* MissingPushPopMsg = "You are trying to manipulate the scene w
 
 
 void Scene::Init(Game* game, bool _isEditor) {
+	pointerForDestroy(this);
+
 	m_game = game;
 	m_isEditor = _isEditor;
 
@@ -68,30 +70,44 @@ void Scene::f_Update() {
 	if (!m_isStarted)
 		throw std::exception("Scene not started");
 
-	m_Update(&m_staticActors);
-	m_Update(&m_actors);
+	m_UpdateActors(&m_staticActors);
+	m_UpdateActors(&m_actors);
 
 	m_game->PopScene();
 }
 
-void Scene::f_Destroy() {
+void Scene::f_FixedUpdate() {
 	m_game->PushScene(this);
 
-	m_Destroy(&m_actors);
-	m_Destroy(&m_staticActors);
+	if (!m_isStarted)
+		throw std::exception("Scene not started");
+
+	m_FixedUpdate(&m_staticActors);
+	m_FixedUpdate(&m_actors);
+
+	m_game->PopScene();
+}
+
+void Scene::Destroy() {
+	assert(!IsDestroyed());
+
+	m_game->PushScene(this);
+
+	m_DestroyActors(&m_actors);
+	m_DestroyActors(&m_staticActors);
 
 	renderer.Destroy();
 	m_game->PopScene();
 }
 
-void Scene::m_Update(std::list<Actor*>* list) {
+void Scene::m_UpdateActors(std::list<Actor*>* list) {
 	auto it = list->begin();
-	while (it != list->end()) {
+	while (!IsDestroyed() && it != list->end()) {
 
 		auto actor = (*it);
 		if (actor->IsDestroyed()) {
-			actor->friend_timeToDestroy--;
-			if (actor->friend_timeToDestroy <= 0)
+			actor->timeToDestroy--;
+			if (actor->timeToDestroy <= 0)
 				it = m_EraseActor(it, list);
 			continue;
 		}
@@ -100,9 +116,16 @@ void Scene::m_Update(std::list<Actor*>* list) {
 	}
 }
 
-void Scene::m_Destroy(std::list<Actor*>* list) {
+void Scene::m_FixedUpdate(std::list<Actor*>* list) {
+	for (auto it = list->begin(); !IsDestroyed() && it != list->end(); it++) {
+		auto actor = (*it);
+		actor->f_FixedUpdate();
+	}
+}
+
+void Scene::m_DestroyActors(std::list<Actor*>* list) {
 	auto it = list->begin();
-	while (it != list->end()) {
+	while (!IsDestroyed() && it != list->end()) {
 		DestroyActor(*it);
 		it = m_EraseActor(it, list);
 	}
@@ -152,8 +175,7 @@ GameObjectInfo Scene::m_CreateActorFromCs(CsRef csRef, CppRef parentRef) {
 }
 
 void Scene::DestroyActor(Actor* actor) {
-	if (actor->ActorBase::friend_CanDestroy()) {
-		actor->ActorBase::friend_StartDestroy();
+	if (actor->ActorBase::BeginDestroy()) {
 
 		actor->f_Destroy();
 
@@ -162,6 +184,8 @@ void Scene::DestroyActor(Actor* actor) {
 
 		if (actor->csRef().value > 0)
 			m_game->callbacks().removeCsRef(actor->csRef());
+
+		actor->ActorBase::EndDestroy();
 	}
 }
 

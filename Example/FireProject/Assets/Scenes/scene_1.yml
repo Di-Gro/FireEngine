@@ -26,9 +26,9 @@
 .file2.localRotationQ.Y: {Var: 0.9997465}
 .file2.localRotationQ.Z: {Var: -0.0002493492}
 .file2.localRotationQ.W: {Var: -0.01671677}
-.file2.localScale.X: {Var: 0.9999977}
-.file2.localScale.Y: {Var: 0.9999999}
-.file2.localScale.Z: {Var: 0.9999971}
+.file2.localScale.X: {Var: 0.9999978}
+.file2.localScale.Y: {Var: 0.9999998}
+.file2.localScale.Z: {Var: 0.9999972}
 .file2.m_children: {Null: }
 .file2.m_components.0: {Ref: file3}
 
@@ -179,16 +179,16 @@
 .file20!script: {Var: Actor}
 .file20!scriptId: {AssetId: 00000010000}
 .file20.Name: {Var: Cpp actor}
-.file20.localPosition.X: {Var: 195.0698}
-.file20.localPosition.Y: {Var: 138.2501}
-.file20.localPosition.Z: {Var: -481.7424}
+.file20.localPosition.X: {Var: 188.2422}
+.file20.localPosition.Y: {Var: 145.9119}
+.file20.localPosition.Z: {Var: -628.7035}
 .file20.localRotationQ.X: {Var: -0.01473845}
 .file20.localRotationQ.Y: {Var: 0.9888933}
 .file20.localRotationQ.Z: {Var: 0.03579473}
 .file20.localRotationQ.W: {Var: 0.1434973}
-.file20.localScale.X: {Var: 0.999989}
+.file20.localScale.X: {Var: 0.9999887}
 .file20.localScale.Y: {Var: 0.9999709}
-.file20.localScale.Z: {Var: 0.9999077}
+.file20.localScale.Z: {Var: 0.9999071}
 .file20.m_children: {Null: }
 .file20.m_components.0: {Ref: file21}
 
@@ -321,7 +321,7 @@
 .file30.localRotationQ.Y: {Var: -0.2935024}
 .file30.localRotationQ.Z: {Var: -0.3401446}
 .file30.localRotationQ.W: {Var: 0.8834035}
-.file30.localScale.X: {Var: 0.9999997}
+.file30.localScale.X: {Var: 0.9999993}
 .file30.localScale.Y: {Var: 0.9999997}
 .file30.localScale.Z: {Var: 1}
 .file30.m_children: {Null: }

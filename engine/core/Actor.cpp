@@ -57,10 +57,11 @@ void Actor::MoveChild(Actor* from, Actor* to, bool isPastBefore) {
 }
 
 void Actor::f_Init(Game* game, Scene* scene) {
+	pointerForDestroy(this);
+
 	f_game = game;
 	f_scene = scene;
-	friend_gameObject = this;
-
+	
 	m_InitMono();
 	m_CreateTransform();
 };
@@ -83,8 +84,8 @@ void Actor::f_Update() {
 
 		auto component = (*it);
 		if (component->IsDestroyed()) {
-			component->friend_timeToDestroy--;
-			if (component->friend_timeToDestroy <= 0)
+			component->timeToDestroy--;
+			if (component->timeToDestroy <= 0)
 				it = m_EraseComponent(it);
 			continue;
 		}
@@ -98,6 +99,14 @@ void Actor::f_Update() {
 		it++;
 	}
 };
+
+void Actor::f_FixedUpdate() {
+	for (auto it = m_components.begin(); it != m_components.end(); it++) {
+		auto component = (*it);
+		if (m_NeedRunComponent(component) && component->f_isStarted)
+			m_RunOrCrash(component, &Actor::m_OnFixedUpdateComponent);
+	}
+}
 
 void Actor::f_Destroy() {
 	for (int i = m_childs.size() - 1; i >= 0; --i)
@@ -113,7 +122,6 @@ void Actor::f_Destroy() {
 	m_DeleteFromParent();
 
 	f_game = nullptr;
-	friend_gameObject = nullptr;
 }
 
 void Actor::f_Draw() {
@@ -135,7 +143,7 @@ std::list<Component*>::iterator Actor::m_EraseComponent(std::list<Component*>::i
 void Actor::m_BindComponent(Component* component) {
 	auto it = m_components.insert(m_components.end(), component);
 
-	component->ActorBase::friend_gameObject = this;
+	component->ActorBase::pointerForDestroy(this);
 	component->ActorBase::friend_component = component;
 	component->ActorBase::transform = transform;
 }
@@ -146,9 +154,7 @@ void Actor::m_InitComponent(Component* component) {
 }
 
 void Actor::f_DestroyComponent(Component* component) {
-	if (component->ActorBase::friend_CanDestroy()) {
-		component->ActorBase::friend_StartDestroy();
-
+	if (component->ActorBase::BeginDestroy()) {
 		if (m_NeedRunComponent(component))
 			m_RunOrCrash(component, &Actor::m_OnDestroyComponent);
 
@@ -158,8 +164,8 @@ void Actor::f_DestroyComponent(Component* component) {
 		if (component->csRef().value > 0) 
 			game()->callbacks().removeCsRef(component->csRef());
 		
-		component->ActorBase::friend_gameObject = nullptr;
 		component->ActorBase::friend_component = nullptr;
+		component->ActorBase::EndDestroy();
 	}
 }
 
@@ -300,6 +306,19 @@ void Actor::m_OnUpdateComponent(Component* component) {
 	component->OnUpdate();
 	if (component->csRef().value > 0 && component->f_callbacks.onUpdate != nullptr) {
 		auto method = component->f_callbacks.onUpdate;
+		auto runOrCrash = game()->callbacks().runOrCrush;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method);
+	}
+}
+
+inline void Actor::m_OnFixedUpdateComponent(Component* component) {
+	if (!component->f_isStarted)
+		throw std::exception("Component is not started.");
+
+	component->OnFixedUpdate();
+	if (component->csRef().value > 0 && component->f_callbacks.onFixedUpdate != nullptr) {
+		auto method = component->f_callbacks.onFixedUpdate;
 		auto runOrCrash = game()->callbacks().runOrCrush;
 
 		component->f_isCrashed |= runOrCrash(component->csRef(), method);

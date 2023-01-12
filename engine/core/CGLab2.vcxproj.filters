@@ -698,6 +698,9 @@
     <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="SafeDestroy.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Delegates.natvis">

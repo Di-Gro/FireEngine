@@ -162,6 +162,7 @@
     <ClInclude Include="OutlinePass.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderPassUI.h" />
+    <ClInclude Include="SafeDestroy.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ContextMenu.h" />
     <ClInclude Include="SceneRenderer.h" />

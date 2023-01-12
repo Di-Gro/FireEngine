@@ -19,6 +19,8 @@ public:
 	virtual void OnUpdate() { };
 	virtual void OnDestroy() { };
 
+	virtual void OnFixedUpdate() { };
+
 	virtual void OnDraw() { };
 	virtual void OnDrawShape(int index) { };
 	
