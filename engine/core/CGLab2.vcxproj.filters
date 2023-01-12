@@ -740,6 +740,9 @@
     <ClInclude Include="Layers.h">
       <Filter>FirePhysics</Filter>
     </ClInclude>
+    <ClInclude Include="JoltExtantions.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Delegates.natvis">

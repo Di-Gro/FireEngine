@@ -22,6 +22,8 @@ DEF_COMPONENT(BoxCollider, Engine.BoxCollider, 0, RunMode::EditPlay) {
 void BoxCollider::OnInit() {
 	//float tmp_scale = 20;
 
+
+
 	// Next we can create a rigid body to serve as the floor, we make a large box
 	// Create the settings for the collision volume (the shape). 
 	// Note that for simple shapes (like boxes) you can also directly construct a BoxShape.

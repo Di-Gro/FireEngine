@@ -17,6 +17,9 @@ class BoxCollider : public Collider {
 	COMPONENT(BoxCollider);
 
 public:
+	Vector3 halfExtent = {50, 50, 50};
+
+public:
 	void OnInit() override;
 
 };

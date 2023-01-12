@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "Scene.h"
 #include "PhysicsScene.h"
+#include "JoltExtantions.h"
 
 using namespace JPH;
 
@@ -29,8 +30,9 @@ void Rigidbody::OnStart() {
 
 	// Create the actual rigid body
 	// Note that if we run out of bodies this can return nullptr
+	m_collider->settings.mGravityFactor = 20;
 	m_body = bodyInterface->CreateBody(m_collider->settings);
-
+	
 	// Add it to the world
 	bodyInterface->AddBody(m_body->GetID(), EActivation::Activate);
 }
@@ -42,6 +44,8 @@ void Rigidbody::OnDestroy() {
 	bodyInterface->RemoveBody(m_body->GetID());
 	bodyInterface->DestroyBody(m_body->GetID());
 
+	//m_body->GetShape()->ScaleShape({ 2,2,2 });
+
 	physicsScene->rigidbodies.erase(m_rigidbodyIter);
 }
 
@@ -49,26 +53,19 @@ void Rigidbody::OnBeginPhysicsUpdate() {
 	if (m_body->IsStatic())
 		return;
 
-	auto wpos = worldPosition();
-	auto wrot = worldRotationQ();
-
-	auto position = RVec3Arg(wpos.x, wpos.y, wpos.z);
-	auto rotation = QuatArg(wrot.x, wrot.y, wrot.z, wrot.w);
+	auto position = ToJolt(worldPosition()); 
+	auto rotation = ToJolt(worldRotationQ());
 
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
 
 	bodyInterface->SetPositionAndRotationWhenChanged(m_body->GetID(), position, rotation, EActivation::Activate);
-
 }
 
 void Rigidbody::OnFixedUpdate() {
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
 
-	auto wpos = m_body->GetPosition();
-	auto wrot = m_body->GetRotation();
-
-	worldPosition({ wpos.GetX(), wpos.GetY(), wpos.GetZ() });
-	worldRotationQ(Quaternion( wrot.GetX(), wrot.GetY(), wrot.GetZ(), wrot.GetW() ));
+	worldPosition(FromJolt(m_body->GetPosition()));
+	worldRotationQ(FromJolt(m_body->GetRotation()));
 }
 
 

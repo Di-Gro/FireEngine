@@ -150,6 +150,7 @@
     <ClInclude Include="FireActivationListener.h" />
     <ClInclude Include="FireContactListener.h" />
     <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="JoltExtantions.h" />
     <ClInclude Include="Layers.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsScene.h" />
