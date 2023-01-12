@@ -33,6 +33,8 @@
     <ClCompile Include="DepthStencil.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EditorSettings.cpp" />
+    <ClCompile Include="FireActivationListener.cpp" />
+    <ClCompile Include="FireContactListener.cpp" />
     <ClCompile Include="imguizmo\ImGuizmo.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -78,6 +80,8 @@
     <ClCompile Include="MoveController.cpp" />
     <ClCompile Include="OpaquePass.cpp" />
     <ClCompile Include="OutlinePass.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsScene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="PlayerController.cpp" />
@@ -88,6 +92,7 @@
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPassUI.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ContextMenu.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
@@ -142,7 +147,12 @@
     <ClInclude Include="DirectionLight.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="EditorSettings.h" />
+    <ClInclude Include="FireActivationListener.h" />
+    <ClInclude Include="FireContactListener.h" />
     <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="PhysicsScene.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="RunMode.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorCBuffer.h" />

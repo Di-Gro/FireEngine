@@ -46,7 +46,7 @@
 //#include <thread>
 //
 //// Disable common warnings triggered by Jolt, you can use JPH_SUPPRESS_WARNING_PUSH / JPH_SUPPRESS_WARNING_POP to store and restore the warning state
-//JPH_SUPPRESS_WARNINGS
+////JPH_SUPPRESS_WARNINGS
 //
 //// All Jolt symbols are in the JPH namespace
 //using namespace JPH;
@@ -239,12 +239,15 @@
 //	Trace = TraceImpl;
 //	JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
 //
-//		// Create a factory
-//		Factory::sInstance = new Factory();
+//	// Create a factory
+//	Factory::sInstance = new Factory();
 //
 //	// Register all Jolt physics types
 //	RegisterTypes();
 //
+//	/// temp_allocator и job_system €вл€ютс€ раздел€емыми несколькими PhysicsSystem
+//	/// указатели на них передаютс€ в методы PhysicsSystem
+//	/// ->
 //	// We need a temp allocator for temporary allocations during the physics update. We're
 //	// pre-allocating 10 MB to avoid having to do allocations during the physics update. 
 //	// B.t.w. 10 MB is way too much for this example but it is a typical value you can use.
@@ -256,7 +259,11 @@
 //	// you would implement the JobSystem interface yourself and let Jolt Physics run on top
 //	// of your own job scheduler. JobSystemThreadPool is an example implementation.
 //	JobSystemThreadPool job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
+//	/// <-
 //
+//	/// Ёти настройки примен€ютс€ к экземпл€ру PhysicsSystem
+//	/// ѕередаютс€ один раз при инициализации
+//	/// ->
 //	// This is the max amount of rigid bodies that you can add to the physics system. If you try to add more you'll get an error.
 //	// Note: This value is low because this is a simple test. For a real project use something in the order of 65536.
 //	const uint cMaxBodies = 1024;
@@ -286,7 +293,11 @@
 //	// Create class that filters object vs object layers
 //	// Note: As this is an interface, PhysicsSystem will take a reference to this so this instance needs to stay alive!
 //	ObjectLayerPairFilterImpl object_vs_object_layer_filter;
+//	/// <-
 //
+//	/// ћожно создать несколько PhysicsSystem, по одной в каждой сцене
+//	/// Ёти объекты раздел€емые в пределах сцены
+//	/// ->
 //	// Now we can create the actual physics system.
 //	PhysicsSystem physics_system;
 //	physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
@@ -306,6 +317,8 @@
 //	// The main way to interact with the bodies in the physics system is through the body interface. There is a locking and a non-locking
 //	// variant of this. We're going to use the locking version (even though we're not planning to access bodies from multiple threads)
 //	BodyInterface& body_interface = physics_system.GetBodyInterface();
+//	/// <-
+//
 //
 //	// Next we can create a rigid body to serve as the floor, we make a large box
 //	// Create the settings for the collision volume (the shape). 

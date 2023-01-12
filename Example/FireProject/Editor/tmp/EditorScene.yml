@@ -1,5 +1,5 @@
 .file0.assetId: {AssetId: tmp_0000000001}
-.file0.files: {Var: 32}
+.file0.files: {Var: 25}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: 00000010014}
@@ -15,9 +15,6 @@
 .file1.m_roots.8: {Ref: file20}
 .file1.m_roots.9: {Ref: file22}
 .file1.m_roots.10: {Ref: file24}
-.file1.m_roots.11: {Ref: file26}
-.file1.m_roots.12: {Ref: file28}
-.file1.m_roots.13: {Ref: file30}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: 00000010000}
@@ -340,106 +337,4 @@
 .file25.IsVisible: {Var: True}
 .file25.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
 .file25.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file26!script: {Var: Actor}
-.file26!scriptId: {AssetId: 00000010000}
-.file26.Name: {Var: Cpp actor (14)}
-.file26.localPosition.X: {Var: 234.7368}
-.file26.localPosition.Y: {Var: 0.001441607}
-.file26.localPosition.Z: {Var: -280.4945}
-.file26.localRotationQ.X: {Var: 0}
-.file26.localRotationQ.Y: {Var: 0}
-.file26.localRotationQ.Z: {Var: 0}
-.file26.localRotationQ.W: {Var: 1}
-.file26.localScale.X: {Var: 1}
-.file26.localScale.Y: {Var: 1}
-.file26.localScale.Z: {Var: 1}
-.file26.m_children: {Null: }
-.file26.m_components.0: {Ref: file27}
-
-.file27!script: {Var: MeshComponent}
-.file27!scriptId: {AssetId: 00000010003}
-.file27.MeshScale.X: {Var: 1}
-.file27.MeshScale.Y: {Var: 1}
-.file27.MeshScale.Z: {Var: 1}
-.file27.IsDebug: {Var: False}
-.file27.CastShadow: {Var: True}
-.file27.IsVisible: {Var: True}
-.file27.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file27.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file28!script: {Var: Actor}
-.file28!scriptId: {AssetId: 00000010000}
-.file28.Name: {Var: Cpp actor (14) (15)}
-.file28.localPosition.X: {Var: 385.2064}
-.file28.localPosition.Y: {Var: 0.001951261}
-.file28.localPosition.Z: {Var: -479.312}
-.file28.localRotationQ.X: {Var: 0}
-.file28.localRotationQ.Y: {Var: 0}
-.file28.localRotationQ.Z: {Var: 0}
-.file28.localRotationQ.W: {Var: 1}
-.file28.localScale.X: {Var: 1}
-.file28.localScale.Y: {Var: 1}
-.file28.localScale.Z: {Var: 1}
-.file28.m_children: {Null: }
-.file28.m_components.0: {Ref: file29}
-
-.file29!script: {Var: MeshComponent}
-.file29!scriptId: {AssetId: 00000010003}
-.file29.MeshScale.X: {Var: 1}
-.file29.MeshScale.Y: {Var: 1}
-.file29.MeshScale.Z: {Var: 1}
-.file29.IsDebug: {Var: False}
-.file29.CastShadow: {Var: True}
-.file29.IsVisible: {Var: True}
-.file29.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file29.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file30!script: {Var: Actor}
-.file30!scriptId: {AssetId: 00000010000}
-.file30.Name: {Var: House 2 (16)}
-.file30.localPosition.X: {Var: -131.3564}
-.file30.localPosition.Y: {Var: 9.980925}
-.file30.localPosition.Z: {Var: -257.8472}
-.file30.localRotationQ.X: {Var: 0}
-.file30.localRotationQ.Y: {Var: 0.01327283}
-.file30.localRotationQ.Z: {Var: 0}
-.file30.localRotationQ.W: {Var: 0.9999119}
-.file30.localScale.X: {Var: 0.9998387}
-.file30.localScale.Y: {Var: 1}
-.file30.localScale.Z: {Var: 0.9998387}
-.file30.m_children: {Null: }
-.file30.m_components.0: {Ref: file31}
-.file30.m_components.1: {Ref: file32}
-
-.file31!script: {Var: MeshComponent}
-.file31!scriptId: {AssetId: 00000010003}
-.file31.MeshScale.X: {Var: 1}
-.file31.MeshScale.Y: {Var: 1}
-.file31.MeshScale.Z: {Var: 1}
-.file31.IsDebug: {Var: False}
-.file31.CastShadow: {Var: True}
-.file31.IsVisible: {Var: True}
-.file31.m_mesh.assetId: {AssetId: MESH000002}
-.file31.m_materials.0.assetId: {AssetId: MAT0000006}
-
-.file32!script: {Var: TestMesh}
-.file32!scriptId: {AssetId: 00000010005}
-.file32.actorRef: {Null: }
-.file32.userPrefab.assetId: {AssetId: TestPrefab}
-.file32.sameScene.assetId: {AssetId: scene_1}
-.file32.nullStaticMaterial.assetId: {AssetId: M_Default}
-.file32.staticMaterial.assetId: {AssetId: M_WorldGride}
-.file32.vecList: {Null: }
-.file32.floatField: {Var: 3.224}
-.file32.intField3: {Var: 63}
-.file32.m_floatField4: {Var: 7.27}
-.file32.vector.X: {Var: 4}
-.file32.vector.Y: {Var: 5.2}
-.file32.vector.Z: {Var: 2}
-.file32.m_meshes: {Null: }
-.file32!base!scriptId: {AssetId: 00000010008}
-.file32!base.floatField: {Var: 48.56}
-.file32.component: {Ref: file32}
-.file32.m_meshComp: {Ref: file31}
 

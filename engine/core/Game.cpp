@@ -12,6 +12,7 @@
 #include "Window.h"
 #include "Scene.h"
 #include "Render.h"
+#include "Physics.h"
 #include "RenderDevice.h"
 #include "Lighting.h"
 #include "InputDevice.h"
@@ -75,6 +76,7 @@ std::vector<std::string> game_shaderPaths = {
 Game::Game() {
 	m_window = new Window();
 	m_render = new Render();
+	m_physics = new Physics();
 	m_input = new InputDevice();
 	m_hotkeys = new HotKeys();
 	m_shaderAsset = new ShaderAsset();
@@ -88,6 +90,7 @@ Game::Game() {
 Game::~Game() {
 	delete m_window;
 	delete m_render;
+	delete m_physics;
 	delete m_input;
 	delete m_hotkeys;
 	delete m_shaderAsset;
@@ -105,6 +108,7 @@ void Game::Init(MonoInst* imono) {
 	m_window->Create();
 
 	m_render->Init(this, m_window);
+	m_physics->Init(this);
 	m_shaderAsset->Init(m_render);
 	m_meshAsset->Init(this);
 	m_imageAsset->Init();
@@ -188,27 +192,21 @@ void Game::Run() {
 		
 	MSG msg = {};
 
-	float targetFixedTime = 1.0f / 60.0f;
-	float accumFixedTime = targetFixedTime;
-
+	m_fixedTimer.targetRate(60.0f);
+	
 	bool isExitRequested = false;
 	while (!isExitRequested) {
 		PEEK_MESSAGE(msg, m_onExit, isExitRequested);
+		m_ShowFPS();
 
 		m_updateTimer.MakeStep();
-		ShowFPS();
-
+		
 		m_BeginUpdate();
 		m_ForScenes(&Scene::f_Update);
 		m_DrawUI();
 
-		accumFixedTime += m_updateTimer.GetDelta();
-		if (accumFixedTime >= targetFixedTime) {
-			accumFixedTime -= targetFixedTime;
-			m_fixedTimer.MakeStep();
-
+		while (m_fixedTimer.NextStep())
 			m_ForScenes(&Scene::f_FixedUpdate);
-		}
 
 		m_EndUpdate();
 		m_render->Draw(&m_scenes);
@@ -217,7 +215,7 @@ void Game::Run() {
 	m_Destroy();
 }
 
-void Game::ShowFPS() {
+void Game::m_ShowFPS() {
 	if (m_updateTimer.IsRateChanged() || m_fixedTimer.IsRateChanged()) {
 		WCHAR text[256];
 		swprintf_s(text,
@@ -311,6 +309,7 @@ void Game::m_Destroy() {
 	m_DestroyImGui();
 	m_hotkeys->Destroy();
 	m_meshAsset->Destroy();
+	m_physics->Destroy();
 	m_render->Destroy();
 	m_window->Destroy();
 }

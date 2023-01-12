@@ -13,6 +13,7 @@ class AmbientLight;
 class LinedPlain;
 class CameraComponent;
 class EditorCamera;
+class PhysicsScene;
 
 using CameraIter = std::list<CameraComponent*>::iterator;
 using SceneIter = std::list<Scene*>::iterator;
@@ -39,6 +40,7 @@ public:
 	LinedPlain* linedPlain;
 
 	SceneRenderer renderer;
+	PhysicsScene* m_physicsScene;
 
 private: // friend
 	SceneIter f_sceneIter;
@@ -91,6 +93,8 @@ public:
 
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera);
+
+	inline PhysicsScene* physicsScene() { return m_physicsScene; }
 
 	void AttachPlayerCamera();
 

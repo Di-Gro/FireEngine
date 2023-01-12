@@ -175,8 +175,8 @@ void MeshAsset::InitMesh(Mesh4* mesh, const fs::path& path) {
 	if (err != "")
 		std::cout << err << std::endl;
 
-	if (warn != "")
-		std::cout << warn << std::endl;
+	//if (warn != "")
+	//	std::cout << warn << std::endl;
 }
 
 Mesh4* MeshAsset::m_CreateMeshAsset(int hash, fs::path path) {
@@ -199,8 +199,8 @@ Mesh4* MeshAsset::m_CreateMeshAsset(int hash, fs::path path) {
 	if (err != "")
 		std::cout << err << std::endl;
 
-	if (warn != "")
-		std::cout << warn << std::endl;
+	//if (warn != "")
+	//	std::cout << warn << std::endl;
 
 	return mesh;
 }

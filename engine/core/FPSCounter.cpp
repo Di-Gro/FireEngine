@@ -16,3 +16,21 @@ void FPSCounter::MakeStep() {
 		m_frameCount = 0;
 	}
 }
+
+bool FixedTimer::NextStep() {
+	if (m_accumFixedTime >= m_targetFixedTime) {
+		m_accumFixedTime -= m_targetFixedTime;
+		this->MakeStep();
+		return true;
+	}
+	
+	m_globalTimer.MakeStep();
+
+	m_accumFixedTime += m_globalTimer.GetDelta();
+	if (m_accumFixedTime >= m_targetFixedTime) {
+		m_accumFixedTime -= m_targetFixedTime;
+		this->MakeStep();
+		return true;
+	}
+	return false;
+}

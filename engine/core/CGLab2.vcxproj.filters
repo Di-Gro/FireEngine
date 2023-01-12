@@ -58,6 +58,12 @@
     <Filter Include="ContextMenu">
       <UniqueIdentifier>{5a3df525-2064-477c-b6ac-7f471709846a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FirePhysics">
+      <UniqueIdentifier>{ffb34ada-54f3-40f8-bbb5-7db8dd57d769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FirePhysics\Physics">
+      <UniqueIdentifier>{6d775892-106f-4314-90ab-2ef648f66013}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
@@ -121,9 +127,6 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Attachable.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="AxisDrawer.cpp">
@@ -348,6 +351,24 @@
     <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="FireActivationListener.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="FireContactListener.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsScene.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -447,9 +468,6 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Attachable.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
@@ -700,6 +718,24 @@
     </ClInclude>
     <ClInclude Include="SafeDestroy.h">
       <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Rigidbody.h">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="FireActivationListener.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="FireContactListener.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsScene.h">
+      <Filter>FirePhysics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

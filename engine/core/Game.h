@@ -30,6 +30,7 @@ class UserInterface;
 class AssetStore;
 class Material;
 class SceneWindow;
+class Physics;
 
 extern std::vector<std::string> game_shaderPaths;
 
@@ -45,10 +46,11 @@ private:
 
 	Window* m_window;
 	Render* m_render;
+	Physics* m_physics;
 	//Lighting* m_lighting;
 	InputDevice* m_input;
 	FPSCounter m_updateTimer;
-	FPSCounter m_fixedTimer;
+	FixedTimer m_fixedTimer;
 	HotKeys* m_hotkeys;
 
 	ShaderAsset* m_shaderAsset;
@@ -89,12 +91,13 @@ public:
 	void Run();
 	void Exit(int code);
 
-	void ShowFPS();
+	void m_ShowFPS();
 
 	inline MonoInst* mono() { return m_mono; }
 
 	inline Window* window() { return m_window; }
 	inline Render* render() { return m_render; }
+	inline Physics* physics() { return m_physics; }
 	//inline Lighting* lighting() { return m_lighting; }
 	inline InputDevice* input() { return m_input; }
 	inline HotKeys* hotkeys() { return m_hotkeys; }

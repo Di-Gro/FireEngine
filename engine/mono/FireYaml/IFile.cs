@@ -10,7 +10,7 @@ namespace FireYaml {
         private static ulong m_nextId = 1;
 
         public static ulong PopId() {
-            Console.WriteLine($"AssetInstance.PopId{m_nextId + 1}");
+            //Console.WriteLine($"AssetInstance.PopId{m_nextId + 1}");
             return m_nextId++; 
         }
     }

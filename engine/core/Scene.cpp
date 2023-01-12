@@ -2,10 +2,13 @@
 
 #include "Game.h"
 #include "Assets.h"
+#include "Physics.h"
 #include "Actor.h"
 #include "CameraComponent.h"
 #include "EditorCamera.h"
 #include "LinedPlain.h"
+
+#include "PhysicsScene.h"
 
 unsigned int Scene::m_objectCount = 0;
 
@@ -25,6 +28,9 @@ void Scene::Init(Game* game, bool _isEditor) {
 	m_InitMono();
 
 	renderer.Init(game, this);
+
+	m_physicsScene = new PhysicsScene();
+	m_physicsScene->Init();
 }
 
 void Scene::Start() {
@@ -82,6 +88,9 @@ void Scene::f_FixedUpdate() {
 	if (!m_isStarted)
 		throw std::exception("Scene not started");
 
+	if (!m_isEditor)
+		m_game->physics()->Update(this);
+
 	m_FixedUpdate(&m_staticActors);
 	m_FixedUpdate(&m_actors);
 
@@ -97,6 +106,11 @@ void Scene::Destroy() {
 	m_DestroyActors(&m_staticActors);
 
 	renderer.Destroy();
+	m_physicsScene->Destroy();
+
+	delete m_physicsScene;
+	m_physicsScene = nullptr;
+
 	m_game->PopScene();
 }
 
