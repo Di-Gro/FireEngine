@@ -1,0 +1,6 @@
+.file0.assetId: {AssetId: TestImage1}
+.file0.files: {Var: 1}
+
+.file1!script: {Var: Image}
+.file1!scriptId: {AssetId: 00000010011}
+.file1.ext: {Var: png}
