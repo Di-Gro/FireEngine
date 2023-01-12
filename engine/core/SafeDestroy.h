@@ -32,6 +32,6 @@ protected:
 	}
 
 	void EndDestroy() {
-		void* m_pointer = nullptr;
+		m_pointer = nullptr;
 	}
 };

@@ -55,7 +55,14 @@ namespace FireYaml {
             AddScriptId("00000010015", typeof(Engine.Prefab).FullName);
             AddScriptId("00000010016", typeof(Engine.Component).FullName);
             AddScriptId("00000010017", typeof(Engine.EditorSettings).FullName);
-            m_nextAssetId = 10018;
+
+            AddScriptId("0000010018", typeof(Engine.AmbientLight).FullName);
+            AddScriptId("0000010020", typeof(Engine.DirectionalLight).FullName);
+
+            AddScriptId("00000010025", typeof(Engine.Rigidbody).FullName);
+            AddScriptId("00000010026", typeof(Engine.BoxCollider).FullName);
+            AddScriptId("00000010027", typeof(Engine.SphereCollider).FullName);
+            m_nextAssetId = 10028;
 
             if (addDefaultAssets) {
                 var project = ProjectPath;
@@ -88,7 +95,11 @@ namespace FireYaml {
             }
         }
 
-        public string GetTypeFullName(string scriptId) => m_scriptIdHash_scriptName[scriptId.GetHashCode()];
+        public string GetTypeFullName(string scriptId) {
+            Console.WriteLine($"GetTypeFullName: {scriptId}: {scriptId.GetHashCode()}");
+            return m_scriptIdHash_scriptName[scriptId.GetHashCode()];
+        }
+
         public string GetTypeFullName(int scriptIdHash) => m_scriptIdHash_scriptName[scriptIdHash];
         public bool HasTypeName(string typeName) => m_scriptName_scriptId.ContainsKey(typeName);
         public string GetScriptIdByTypeName(string typeName) => m_scriptName_scriptId[typeName];

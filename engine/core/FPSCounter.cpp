@@ -18,6 +18,11 @@ void FPSCounter::MakeStep() {
 }
 
 bool FixedTimer::NextStep() {
+	if (m_globalTimer.GetDelta() > 1) {
+		m_accumFixedTime = m_targetFixedTime;
+		m_globalTimer.MakeStep();
+	}
+
 	if (m_accumFixedTime >= m_targetFixedTime) {
 		m_accumFixedTime -= m_targetFixedTime;
 		this->MakeStep();

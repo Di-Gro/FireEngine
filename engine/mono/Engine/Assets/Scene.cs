@@ -44,7 +44,7 @@ namespace Engine {
         }
 
         public void LoadAsset() {
-            Console.WriteLine("Scene.ReloadAsset()");
+            Console.WriteLine("Scene.LoadAsset()");
             assetIdHash = assetId.GetHashCode();
 
             if (!HasInstance)
@@ -54,7 +54,7 @@ namespace Engine {
         }
 
         public void ReloadAsset() {
-            Console.WriteLine("Scene.ReloadAsset()");
+            Console.WriteLine($"Scene.ReloadAsset({assetId}: {assetIdHash})");
 
             if (!HasInstance)
                 return;

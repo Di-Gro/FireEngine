@@ -319,7 +319,8 @@
 //	BodyInterface& body_interface = physics_system.GetBodyInterface();
 //	/// <-
 //
-//
+//	/// Это должен делать коллайдер
+//	/// ->
 //	// Next we can create a rigid body to serve as the floor, we make a large box
 //	// Create the settings for the collision volume (the shape). 
 //	// Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
@@ -331,12 +332,16 @@
 //
 //	// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
 //	BodyCreationSettings floor_settings(floor_shape, RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+//	/// <-
 //
+//	/// Это должен делать rigidbody
+//	/// ->
 //	// Create the actual rigid body
 //	Body* floor = body_interface.CreateBody(floor_settings); // Note that if we run out of bodies this can return nullptr
 //
 //	// Add it to the world
 //	body_interface.AddBody(floor->GetID(), EActivation::DontActivate);
+//	/// <-
 //
 //	// Now create a dynamic body to bounce on the floor
 //	// Note that this uses the shorthand version of creating and adding a body to the world

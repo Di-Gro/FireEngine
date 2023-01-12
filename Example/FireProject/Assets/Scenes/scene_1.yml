@@ -1,5 +1,5 @@
 .file0.assetId: {AssetId: scene_1}
-.file0.files: {Var: 31}
+.file0.files: {Var: 39}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: 00000010014}
@@ -15,6 +15,8 @@
 .file1.m_roots.8: {Ref: file26}
 .file1.m_roots.9: {Ref: file28}
 .file1.m_roots.10: {Ref: file30}
+.file1.m_roots.11: {Ref: file32}
+.file1.m_roots.12: {Ref: file36}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: 00000010000}
@@ -337,4 +339,74 @@
 .file31.IsVisible: {Var: True}
 .file31.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
 .file31.m_materials.0.assetId: {AssetId: M_WorldGride}
+
+.file32!script: {Var: Actor}
+.file32!scriptId: {AssetId: 00000010000}
+.file32.Name: {Var: Box Collader}
+.file32.localPosition.X: {Var: 0}
+.file32.localPosition.Y: {Var: 0}
+.file32.localPosition.Z: {Var: 0}
+.file32.localRotationQ.X: {Var: 0}
+.file32.localRotationQ.Y: {Var: 0}
+.file32.localRotationQ.Z: {Var: 0}
+.file32.localRotationQ.W: {Var: 1}
+.file32.localScale.X: {Var: 4000}
+.file32.localScale.Y: {Var: 40}
+.file32.localScale.Z: {Var: 4000}
+.file32.m_children: {Null: }
+.file32.m_components.0: {Ref: file33}
+.file32.m_components.1: {Ref: file34}
+.file32.m_components.2: {Ref: file35}
+
+.file33!script: {Var: Rigidbody}
+.file33!scriptId: {AssetId: 00000010025}
+
+.file34!script: {Var: BoxCollider}
+.file34!scriptId: {AssetId: 00000010026}
+
+.file35!script: {Var: MeshComponent}
+.file35!scriptId: {AssetId: 00000010003}
+.file35.MeshScale.X: {Var: 1}
+.file35.MeshScale.Y: {Var: 1}
+.file35.MeshScale.Z: {Var: 1}
+.file35.IsDebug: {Var: False}
+.file35.CastShadow: {Var: True}
+.file35.IsVisible: {Var: True}
+.file35.m_mesh.assetId: {AssetId: runtime:/form/Box}
+.file35.m_materials.0.assetId: {AssetId: M_WorldGride}
+
+.file36!script: {Var: Actor}
+.file36!scriptId: {AssetId: 00000010000}
+.file36.Name: {Var: Sphere Collader}
+.file36.localPosition.X: {Var: 0}
+.file36.localPosition.Y: {Var: 80}
+.file36.localPosition.Z: {Var: 0}
+.file36.localRotationQ.X: {Var: 0}
+.file36.localRotationQ.Y: {Var: 0}
+.file36.localRotationQ.Z: {Var: 0}
+.file36.localRotationQ.W: {Var: 1}
+.file36.localScale.X: {Var: 20}
+.file36.localScale.Y: {Var: 20}
+.file36.localScale.Z: {Var: 20}
+.file36.m_children: {Null: }
+.file36.m_components.0: {Ref: file37}
+.file36.m_components.1: {Ref: file38}
+.file36.m_components.2: {Ref: file39}
+
+.file37!script: {Var: Rigidbody}
+.file37!scriptId: {AssetId: 00000010025}
+
+.file38!script: {Var: SphereCollider}
+.file38!scriptId: {AssetId: 00000010027}
+
+.file39!script: {Var: MeshComponent}
+.file39!scriptId: {AssetId: 00000010003}
+.file39.MeshScale.X: {Var: 1}
+.file39.MeshScale.Y: {Var: 1}
+.file39.MeshScale.Z: {Var: 1}
+.file39.IsDebug: {Var: False}
+.file39.CastShadow: {Var: True}
+.file39.IsVisible: {Var: True}
+.file39.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file39.m_materials.0.assetId: {AssetId: TestMaterial1}
 

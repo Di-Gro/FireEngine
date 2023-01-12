@@ -311,5 +311,28 @@ namespace EngineDll {
 			PROP_GETSET_STR("Scene", "name");
 #>
 		}
+
+		public static class BoxCollider {
+		
+<#
+			DEC_COMPONENT("BoxCollider");
+#>
+		}
+
+		public static class SphereCollider {
+		
+<#
+			DEC_COMPONENT("SphereCollider");
+#>
+		}
+
+		public static class Rigidbody {
+		
+<#
+			DEC_COMPONENT("Rigidbody");
+#>
+		}
+
+		
 	}
 }

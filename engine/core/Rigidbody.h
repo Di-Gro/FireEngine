@@ -2,17 +2,22 @@
 
 #include "Actor.h"
 
-//#include <Jolt/Jolt.h>
-//#include <Jolt/Physics/Body/MotionType.h>
+#include <Jolt/Jolt.h>
 
+//#include <Jolt/Physics/Body/MotionType.h>
+class Collider;
+namespace JPH { class Body; }
 
 class Rigidbody : public Component {
 	COMPONENT(Rigidbody);
-public:
-	//JPH::EMotionType motionType = JPH::EMotionType::Static;
+
+private:
+	Collider* m_collider;
+	JPH::Body* m_body;
 
 public:
 	void OnInit() override;
+	void OnStart() override;
 	void OnDestroy() override;
 	void OnFixedUpdate() override;
 

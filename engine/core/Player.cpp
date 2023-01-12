@@ -7,7 +7,6 @@
 #include "MeshComponent.h"
 #include "LineComponent.h"
 #include "Forms.h"
-#include "Collider.h"
 #include "Attachable.h"
 
 DEF_PURE_COMPONENT(Player, RunMode::PlayOnly);

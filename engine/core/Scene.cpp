@@ -88,12 +88,12 @@ void Scene::f_FixedUpdate() {
 	if (!m_isStarted)
 		throw std::exception("Scene not started");
 
-	if (!m_isEditor)
+	if (!m_isEditor) {
 		m_game->physics()->Update(this);
 
-	m_FixedUpdate(&m_staticActors);
-	m_FixedUpdate(&m_actors);
-
+		m_FixedUpdate(&m_staticActors);
+		m_FixedUpdate(&m_actors);
+	}
 	m_game->PopScene();
 }
 

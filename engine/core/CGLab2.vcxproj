@@ -47,7 +47,7 @@
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ClassInfo.cpp" />
-    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CppClass.cpp" />
     <ClCompile Include="CSBridge.cpp" />
@@ -134,7 +134,7 @@
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ClassInfo.h" />
-    <ClInclude Include="Collider.h" />
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Component.inl" />
     <ClInclude Include="ComponentMeta.h" />
     <ClInclude Include="CppClass.h" />
@@ -150,6 +150,7 @@
     <ClInclude Include="FireActivationListener.h" />
     <ClInclude Include="FireContactListener.h" />
     <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Layers.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsScene.h" />
     <ClInclude Include="Rigidbody.h" />

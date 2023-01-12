@@ -354,7 +354,7 @@
     <ClCompile Include="Rigidbody.cpp">
       <Filter>FirePhysics\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
+    <ClCompile Include="BoxCollider.cpp">
       <Filter>FirePhysics\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Physics.cpp">
@@ -722,7 +722,7 @@
     <ClInclude Include="Rigidbody.h">
       <Filter>FirePhysics\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h">
+    <ClInclude Include="BoxCollider.h">
       <Filter>FirePhysics\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Physics.h">
@@ -735,6 +735,9 @@
       <Filter>FirePhysics</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsScene.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers.h">
       <Filter>FirePhysics</Filter>
     </ClInclude>
   </ItemGroup>

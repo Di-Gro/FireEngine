@@ -103,8 +103,13 @@ void Actor::f_Update() {
 void Actor::f_FixedUpdate() {
 	for (auto it = m_components.begin(); it != m_components.end(); it++) {
 		auto component = (*it);
-		if (m_NeedRunComponent(component) && component->f_isStarted)
-			m_RunOrCrash(component, &Actor::m_OnFixedUpdateComponent);
+
+		if (m_NeedRunComponent(component)) {
+			if (!component->f_isStarted)
+				m_RunOrCrash(component, &Actor::m_OnStartComponent);
+			else
+				m_RunOrCrash(component, &Actor::m_OnFixedUpdateComponent);
+		}
 	}
 }
 
@@ -144,6 +149,7 @@ void Actor::m_BindComponent(Component* component) {
 	auto it = m_components.insert(m_components.end(), component);
 
 	component->ActorBase::pointerForDestroy(this);
+	component->f_selfActor = this;
 	component->ActorBase::friend_component = component;
 	component->ActorBase::transform = transform;
 }
@@ -316,6 +322,7 @@ inline void Actor::m_OnFixedUpdateComponent(Component* component) {
 	if (!component->f_isStarted)
 		throw std::exception("Component is not started.");
 
+	auto id = component->actor()->Id();
 	component->OnFixedUpdate();
 	if (component->csRef().value > 0 && component->f_callbacks.onFixedUpdate != nullptr) {
 		auto method = component->f_callbacks.onFixedUpdate;

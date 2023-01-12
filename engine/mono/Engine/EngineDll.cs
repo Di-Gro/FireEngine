@@ -761,5 +761,28 @@ namespace EngineDll {
             public static void name_set(CppRef objRef, string value) { if(objRef.value != 0) name_set_inner(objRef, value); }
 
 		}
+
+		public static class BoxCollider {
+		
+            [DllImport(Paths.Exe, EntryPoint = "BoxCollider_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class SphereCollider {
+		
+            [DllImport(Paths.Exe, EntryPoint = "SphereCollider_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class Rigidbody {
+		
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		
 	}
 }
