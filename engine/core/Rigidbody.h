@@ -7,7 +7,7 @@
 
 //#include <Jolt/Physics/Body/MotionType.h>
 class Collider;
-namespace JPH { class Body; }
+namespace JPH { class Body;}
 
 class Rigidbody : public Component {
 	COMPONENT(Rigidbody);
@@ -22,8 +22,18 @@ public:
 	void OnStart() override;
 	void OnDestroy() override;
 	void OnFixedUpdate() override;
-
+	void AddForce(Vector3 inForce);
+	void AddForce(Vector3 inForce, Vector3 inPosition);
+	Vector3 GetLinearVelocity() const;
+	void SetLinearVelocityClamped(Vector3 inLinearVelocity);
+	void SetMass(float mass);
+	void AddImpulse(Vector3 inImpulse);
+	void AddImpulse(Vector3 inImpulse, Vector3 inPosition);
+	bool IsKinematic() const;
+	bool IsDynamic() const;
+	bool IsStatic() const;
 	void OnBeginPhysicsUpdate();
-
+	float GetFriction() const;
+	void SetFriction(float inFriction);
 };
 DEC_COMPONENT(Rigidbody);

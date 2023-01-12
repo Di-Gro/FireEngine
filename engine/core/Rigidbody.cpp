@@ -4,6 +4,7 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt\Physics\Body\BodyInterface.h>
 #include <Jolt\Physics\Body\Body.h>
+#include <Jolt/Physics/Body/MotionType.h>
 
 #include "Game.h"
 #include "Scene.h"
@@ -69,3 +70,69 @@ void Rigidbody::OnFixedUpdate() {
 }
 
 
+void Rigidbody::AddForce(Vector3 inForce) {
+
+	if (m_body) {
+		m_body->AddForce(ToJolt(inForce));
+	}
+
+}
+
+void Rigidbody::AddForce(Vector3 inForce, Vector3 inPosition) {
+	if (m_body) {
+		m_body->AddForce(ToJolt(inForce), ToJolt(inPosition));
+	}
+}
+
+Vector3 Rigidbody::GetLinearVelocity() const {
+	if (m_body) {
+		return FromJolt(m_body->GetLinearVelocity());
+	}
+}
+void Rigidbody::SetLinearVelocityClamped(Vector3 inLinearVelocity) {
+	if (m_body) {
+		m_body->SetLinearVelocity(ToJolt(inLinearVelocity));
+	}
+}
+void Rigidbody::SetMass(float mass) { //TODO Хз можно ли так, есть еще метод SetShapeInternal, возможном нужно через него
+	if (m_body) {
+		auto body_shape = m_body->GetShape();
+		auto mass_prop = body_shape->GetMassProperties();
+		mass_prop.mMass = mass;
+	}
+}
+
+
+void Rigidbody::AddImpulse(Vector3 inImpulse) {
+
+	if (m_body) {
+		m_body->AddImpulse(ToJolt(inImpulse));
+	}
+
+}
+
+void Rigidbody::AddImpulse(Vector3 inImpulse, Vector3 inPosition) {
+	if (m_body) {
+		m_body->AddImpulse(ToJolt(inImpulse), ToJolt(inPosition));
+	}
+}
+bool  Rigidbody::IsKinematic() const {
+	if (m_body)
+		return m_body->IsKinematic();
+}
+bool  Rigidbody::IsDynamic() const {
+	if (m_body)
+		return m_body->IsDynamic();
+}
+bool Rigidbody::IsStatic() const {
+	if (m_body)
+		return m_body->IsStatic();
+}
+float Rigidbody::GetFriction() const {
+	if (m_body)
+		return m_body->GetFriction();
+}
+void Rigidbody::SetFriction(float inFriction) {
+	if (m_body)
+		return m_body->SetFriction(inFriction);
+}
