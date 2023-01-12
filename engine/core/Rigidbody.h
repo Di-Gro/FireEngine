@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include "Actor.h"
 
 #include <Jolt/Jolt.h>
@@ -14,12 +15,15 @@ class Rigidbody : public Component {
 private:
 	Collider* m_collider;
 	JPH::Body* m_body;
+	std::list<Rigidbody*>::iterator m_rigidbodyIter;
 
 public:
 	void OnInit() override;
 	void OnStart() override;
 	void OnDestroy() override;
 	void OnFixedUpdate() override;
+
+	void OnBeginPhysicsUpdate();
 
 };
 DEC_COMPONENT(Rigidbody);

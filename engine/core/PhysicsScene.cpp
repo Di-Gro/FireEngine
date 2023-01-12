@@ -1,4 +1,5 @@
 #include "PhysicsScene.h"
+#include "Rigidbody.h"
 
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
@@ -29,4 +30,9 @@ void PhysicsScene::Init() {
 void PhysicsScene::Destroy() {
 	delete m_physicsSystem;
 	m_physicsSystem = nullptr;
+}
+
+void PhysicsScene::BeginUpdate() {
+	for (auto body : rigidbodies)
+		body->OnBeginPhysicsUpdate();
 }

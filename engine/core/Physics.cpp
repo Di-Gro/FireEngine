@@ -60,14 +60,17 @@ void Physics::Destroy() {
 }
 
 void Physics::Update(Scene* scene) {
-	auto physicsSystem = scene->physicsScene()->physicsSystem();
+	auto physicsScene = scene->physicsScene();
+	auto physicsSystem = physicsScene->physicsSystem();
 
 	// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
 	const int cCollisionSteps = 1;
 
 	// If you want more accurate step results you can do multiple sub steps within a collision step. Usually you would set this to 1.
 	const int cIntegrationSubSteps = 1;
-		
+	
+	physicsScene->BeginUpdate();
+
 	// Step the world
 	physicsSystem->Update(m_game->deltaFixedTime(), cCollisionSteps, cIntegrationSubSteps, m_allocator, m_jobSystem);
 }

@@ -5,6 +5,7 @@
 #include <Jolt\Physics\Body\BodyInterface.h>
 #include <Jolt\Physics\Body\Body.h>
 
+#include "Game.h"
 #include "Scene.h"
 #include "PhysicsScene.h"
 
@@ -21,7 +22,10 @@ void Rigidbody::OnInit() {
 }
 
 void Rigidbody::OnStart() {
-	auto bodyInterface = scene()->physicsScene()->bodyInterface();
+	auto physicsScene = scene()->physicsScene();
+	auto bodyInterface = physicsScene->bodyInterface();
+
+	m_rigidbodyIter = physicsScene->rigidbodies.insert(physicsScene->rigidbodies.end(), this);
 
 	// Create the actual rigid body
 	// Note that if we run out of bodies this can return nullptr
@@ -32,10 +36,29 @@ void Rigidbody::OnStart() {
 }
 
 void Rigidbody::OnDestroy() {
-	auto bodyInterface = scene()->physicsScene()->bodyInterface();
+	auto physicsScene = scene()->physicsScene();
+	auto bodyInterface = physicsScene->bodyInterface();
 
 	bodyInterface->RemoveBody(m_body->GetID());
 	bodyInterface->DestroyBody(m_body->GetID());
+
+	physicsScene->rigidbodies.erase(m_rigidbodyIter);
+}
+
+void Rigidbody::OnBeginPhysicsUpdate() {
+	if (m_body->IsStatic())
+		return;
+
+	auto wpos = worldPosition();
+	auto wrot = worldRotationQ();
+
+	auto position = RVec3Arg(wpos.x, wpos.y, wpos.z);
+	auto rotation = QuatArg(wrot.x, wrot.y, wrot.z, wrot.w);
+
+	auto bodyInterface = scene()->physicsScene()->bodyInterface();
+
+	bodyInterface->SetPositionAndRotationWhenChanged(m_body->GetID(), position, rotation, EActivation::Activate);
+
 }
 
 void Rigidbody::OnFixedUpdate() {
@@ -45,6 +68,7 @@ void Rigidbody::OnFixedUpdate() {
 	auto wrot = m_body->GetRotation();
 
 	worldPosition({ wpos.GetX(), wpos.GetY(), wpos.GetZ() });
-	worldRotationQ(Quaternion::CreateFromYawPitchRoll({ wrot.GetX(), wrot.GetY(), wrot.GetZ() }));
-
+	worldRotationQ(Quaternion( wrot.GetX(), wrot.GetY(), wrot.GetZ(), wrot.GetW() ));
 }
+
+

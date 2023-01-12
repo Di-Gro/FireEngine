@@ -1,4 +1,5 @@
 #pragma once
+#include <list>
 
 #include <Jolt/Jolt.h>
 
@@ -96,6 +97,7 @@ namespace JPH {
 	class PhysicsSystem;
 	class BodyInterface;
 }
+class Rigidbody;
 
 class PhysicsScene {
 
@@ -118,13 +120,13 @@ public:
 	// Note: This value is low because this is a simple test. For a real project use something in the order of 10240.
 	const JPH::uint cMaxContactConstraints = 1024;
 
-
-
 public:
+	std::list<Rigidbody*> rigidbodies;
+
+private:
 	JPH::PhysicsSystem* m_physicsSystem;
 	JPH::BodyInterface* m_bodyInterface;
 
-private:
 	FireActivationListener m_activationListener;
 	FireContactListener m_contactListener;
 	
@@ -140,6 +142,8 @@ private:
 public:
 	void Init();
 	void Destroy();
+
+	void BeginUpdate();
 
 	inline JPH::PhysicsSystem* physicsSystem() { return m_physicsSystem; }
 	inline JPH::BodyInterface* bodyInterface() { return m_bodyInterface; }

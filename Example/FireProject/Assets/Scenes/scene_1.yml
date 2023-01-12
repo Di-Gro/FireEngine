@@ -1,49 +1,18 @@
 .file0.assetId: {AssetId: scene_1}
-.file0.files: {Var: 39}
+.file0.files: {Var: 63}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: 00000010014}
 .file1.Name: {Var: scene_1}
-.file1.m_roots.0: {Ref: file2}
-.file1.m_roots.1: {Ref: file9}
-.file1.m_roots.2: {Ref: file4}
-.file1.m_roots.3: {Ref: file7}
-.file1.m_roots.4: {Ref: file11}
-.file1.m_roots.5: {Ref: file20}
-.file1.m_roots.6: {Ref: file22}
-.file1.m_roots.7: {Ref: file24}
-.file1.m_roots.8: {Ref: file26}
-.file1.m_roots.9: {Ref: file28}
-.file1.m_roots.10: {Ref: file30}
-.file1.m_roots.11: {Ref: file32}
-.file1.m_roots.12: {Ref: file36}
-
-.file2!script: {Var: Actor}
-.file2!scriptId: {AssetId: 00000010000}
-.file2.Name: {Var: Hello Actor}
-.file2.localPosition.X: {Var: -359.6534}
-.file2.localPosition.Y: {Var: 30.73852}
-.file2.localPosition.Z: {Var: -129.0863}
-.file2.localRotationQ.X: {Var: 0.01508317}
-.file2.localRotationQ.Y: {Var: 0.9997465}
-.file2.localRotationQ.Z: {Var: -0.0002493492}
-.file2.localRotationQ.W: {Var: -0.01671677}
-.file2.localScale.X: {Var: 0.9999978}
-.file2.localScale.Y: {Var: 0.9999998}
-.file2.localScale.Z: {Var: 0.9999972}
-.file2.m_children: {Null: }
-.file2.m_components.0: {Ref: file3}
-
-.file3!script: {Var: MeshComponent}
-.file3!scriptId: {AssetId: 00000010003}
-.file3.MeshScale.X: {Var: 1}
-.file3.MeshScale.Y: {Var: 1}
-.file3.MeshScale.Z: {Var: 1}
-.file3.IsDebug: {Var: False}
-.file3.CastShadow: {Var: True}
-.file3.IsVisible: {Var: True}
-.file3.m_mesh.assetId: {AssetId: MESH000001}
-.file3.m_materials.0.assetId: {AssetId: MAT0000006}
+.file1.m_roots.0: {Ref: file4}
+.file1.m_roots.1: {Ref: file32}
+.file1.m_roots.2: {Ref: file36}
+.file1.m_roots.3: {Ref: file40}
+.file1.m_roots.4: {Ref: file44}
+.file1.m_roots.5: {Ref: file48}
+.file1.m_roots.6: {Ref: file52}
+.file1.m_roots.7: {Ref: file56}
+.file1.m_roots.8: {Ref: file60}
 
 .file4!script: {Var: Actor}
 .file4!scriptId: {AssetId: 00000010000}
@@ -51,13 +20,13 @@
 .file4.localPosition.X: {Var: 0}
 .file4.localPosition.Y: {Var: 0}
 .file4.localPosition.Z: {Var: 300}
-.file4.localRotationQ.X: {Var: 0.1464458}
+.file4.localRotationQ.X: {Var: 0.1464459}
 .file4.localRotationQ.Y: {Var: 0.8535535}
-.file4.localRotationQ.Z: {Var: 0.3535532}
-.file4.localRotationQ.W: {Var: -0.3535536}
-.file4.localScale.X: {Var: 0.9999997}
-.file4.localScale.Y: {Var: 0.9999996}
-.file4.localScale.Z: {Var: 0.9999996}
+.file4.localRotationQ.Z: {Var: 0.3535533}
+.file4.localRotationQ.W: {Var: -0.3535535}
+.file4.localScale.X: {Var: 0.9999993}
+.file4.localScale.Y: {Var: 0.9999993}
+.file4.localScale.Z: {Var: 0.9999993}
 .file4.m_children: {Null: }
 .file4.m_components.0: {Ref: file5}
 .file4.m_components.1: {Ref: file6}
@@ -76,270 +45,6 @@
 .file6.Color.Z: {Var: 1}
 .file6.Intensity: {Var: 0.125}
 
-.file7!script: {Var: Actor}
-.file7!scriptId: {AssetId: 00000010000}
-.file7.Name: {Var: Actor 2}
-.file7.localPosition.X: {Var: 0}
-.file7.localPosition.Y: {Var: 0}
-.file7.localPosition.Z: {Var: 0}
-.file7.localRotationQ.X: {Var: 0}
-.file7.localRotationQ.Y: {Var: 0}
-.file7.localRotationQ.Z: {Var: 0}
-.file7.localRotationQ.W: {Var: 1}
-.file7.localScale.X: {Var: 1}
-.file7.localScale.Y: {Var: 1}
-.file7.localScale.Z: {Var: 1}
-.file7.m_children: {Null: }
-.file7.m_components.0: {Ref: file8}
-
-.file8!script: {Var: MeshComponent}
-.file8!scriptId: {AssetId: 00000010003}
-.file8.MeshScale.X: {Var: 1}
-.file8.MeshScale.Y: {Var: 1}
-.file8.MeshScale.Z: {Var: 1}
-.file8.IsDebug: {Var: False}
-.file8.CastShadow: {Var: True}
-.file8.IsVisible: {Var: True}
-.file8.m_mesh.assetId: {AssetId: test_navmesh}
-.file8.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file9!script: {Var: Actor}
-.file9!scriptId: {AssetId: 00000010000}
-.file9.Name: {Var: House 2}
-.file9.localPosition.X: {Var: 14.124}
-.file9.localPosition.Y: {Var: 9.980919}
-.file9.localPosition.Z: {Var: -482.1368}
-.file9.localRotationQ.X: {Var: 0}
-.file9.localRotationQ.Y: {Var: 0.01327283}
-.file9.localRotationQ.Z: {Var: 0}
-.file9.localRotationQ.W: {Var: 0.9999119}
-.file9.localScale.X: {Var: 0.9998387}
-.file9.localScale.Y: {Var: 1}
-.file9.localScale.Z: {Var: 0.9998387}
-.file9.m_children: {Null: }
-.file9.m_components.0: {Ref: file10}
-.file9.m_components.1: {Ref: file13}
-
-.file10!script: {Var: MeshComponent}
-.file10!scriptId: {AssetId: 00000010003}
-.file10.MeshScale.X: {Var: 1}
-.file10.MeshScale.Y: {Var: 1}
-.file10.MeshScale.Z: {Var: 1}
-.file10.IsDebug: {Var: False}
-.file10.CastShadow: {Var: True}
-.file10.IsVisible: {Var: True}
-.file10.m_mesh.assetId: {AssetId: MESH000002}
-.file10.m_materials.0.assetId: {AssetId: MAT0000006}
-
-.file11!script: {Var: Actor}
-.file11!scriptId: {AssetId: 00000010000}
-.file11.Name: {Var: House 3}
-.file11.localPosition.X: {Var: -354.0063}
-.file11.localPosition.Y: {Var: -0.005449866}
-.file11.localPosition.Z: {Var: -484.24}
-.file11.localRotationQ.X: {Var: -3.969565E-06}
-.file11.localRotationQ.Y: {Var: 0.428067}
-.file11.localRotationQ.Z: {Var: -1.399862E-06}
-.file11.localRotationQ.W: {Var: 0.903747}
-.file11.localScale.X: {Var: 0.9998523}
-.file11.localScale.Y: {Var: 1}
-.file11.localScale.Z: {Var: 0.9998523}
-.file11.m_children: {Null: }
-.file11.m_components.0: {Ref: file12}
-
-.file12!script: {Var: MeshComponent}
-.file12!scriptId: {AssetId: 00000010003}
-.file12.MeshScale.X: {Var: 1}
-.file12.MeshScale.Y: {Var: 1}
-.file12.MeshScale.Z: {Var: 1}
-.file12.IsDebug: {Var: False}
-.file12.CastShadow: {Var: True}
-.file12.IsVisible: {Var: True}
-.file12.m_mesh.assetId: {AssetId: MESH000003}
-.file12.m_materials.0.assetId: {AssetId: TestMaterial1}
-
-.file13!script: {Var: TestMesh}
-.file13!scriptId: {AssetId: 00000010005}
-.file13.actorRef: {Null: }
-.file13.userPrefab.assetId: {AssetId: TestPrefab}
-.file13.sameScene.assetId: {AssetId: scene_1}
-.file13.nullStaticMaterial.assetId: {AssetId: M_Default}
-.file13.staticMaterial.assetId: {AssetId: M_WorldGride}
-.file13.vecList: {Null: }
-.file13.floatField: {Var: 3.224}
-.file13.intField3: {Var: 63}
-.file13.m_floatField4: {Var: 7.27}
-.file13.vector.X: {Var: 4}
-.file13.vector.Y: {Var: 5.2}
-.file13.vector.Z: {Var: 2}
-.file13.m_meshes: {Null: }
-.file13!base!scriptId: {AssetId: 00000010008}
-.file13!base.floatField: {Var: 48.56}
-.file13.component: {Ref: file13}
-.file13.m_meshComp: {Ref: file10}
-
-.file20!script: {Var: Actor}
-.file20!scriptId: {AssetId: 00000010000}
-.file20.Name: {Var: Cpp actor}
-.file20.localPosition.X: {Var: 188.2422}
-.file20.localPosition.Y: {Var: 145.9119}
-.file20.localPosition.Z: {Var: -628.7035}
-.file20.localRotationQ.X: {Var: -0.01473845}
-.file20.localRotationQ.Y: {Var: 0.9888933}
-.file20.localRotationQ.Z: {Var: 0.03579473}
-.file20.localRotationQ.W: {Var: 0.1434973}
-.file20.localScale.X: {Var: 0.9999887}
-.file20.localScale.Y: {Var: 0.9999709}
-.file20.localScale.Z: {Var: 0.9999071}
-.file20.m_children: {Null: }
-.file20.m_components.0: {Ref: file21}
-
-.file21!script: {Var: MeshComponent}
-.file21!scriptId: {AssetId: 00000010003}
-.file21.MeshScale.X: {Var: 1}
-.file21.MeshScale.Y: {Var: 1}
-.file21.MeshScale.Z: {Var: 1}
-.file21.IsDebug: {Var: False}
-.file21.CastShadow: {Var: True}
-.file21.IsVisible: {Var: True}
-.file21.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file21.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file22!script: {Var: Actor}
-.file22!scriptId: {AssetId: 00000010000}
-.file22.Name: {Var: Cpp actor}
-.file22.localPosition.X: {Var: 33.34696}
-.file22.localPosition.Y: {Var: 0.000491943}
-.file22.localPosition.Z: {Var: -134.0405}
-.file22.localRotationQ.X: {Var: 0}
-.file22.localRotationQ.Y: {Var: 0}
-.file22.localRotationQ.Z: {Var: 0}
-.file22.localRotationQ.W: {Var: 1}
-.file22.localScale.X: {Var: 1}
-.file22.localScale.Y: {Var: 1}
-.file22.localScale.Z: {Var: 1}
-.file22.m_children: {Null: }
-.file22.m_components.0: {Ref: file23}
-
-.file23!script: {Var: MeshComponent}
-.file23!scriptId: {AssetId: 00000010003}
-.file23.MeshScale.X: {Var: 1}
-.file23.MeshScale.Y: {Var: 1}
-.file23.MeshScale.Z: {Var: 1}
-.file23.IsDebug: {Var: False}
-.file23.CastShadow: {Var: True}
-.file23.IsVisible: {Var: True}
-.file23.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file23.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file24!script: {Var: Actor}
-.file24!scriptId: {AssetId: 00000010000}
-.file24.Name: {Var: Cpp actor}
-.file24.localPosition.X: {Var: 188.5481}
-.file24.localPosition.Y: {Var: 0}
-.file24.localPosition.Z: {Var: -480.0234}
-.file24.localRotationQ.X: {Var: 0}
-.file24.localRotationQ.Y: {Var: 0}
-.file24.localRotationQ.Z: {Var: 0}
-.file24.localRotationQ.W: {Var: 1}
-.file24.localScale.X: {Var: 1}
-.file24.localScale.Y: {Var: 1}
-.file24.localScale.Z: {Var: 1}
-.file24.m_children: {Null: }
-.file24.m_components.0: {Ref: file25}
-
-.file25!script: {Var: MeshComponent}
-.file25!scriptId: {AssetId: 00000010003}
-.file25.MeshScale.X: {Var: 1}
-.file25.MeshScale.Y: {Var: 1}
-.file25.MeshScale.Z: {Var: 1}
-.file25.IsDebug: {Var: False}
-.file25.CastShadow: {Var: True}
-.file25.IsVisible: {Var: True}
-.file25.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file25.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file26!script: {Var: Actor}
-.file26!scriptId: {AssetId: 00000010000}
-.file26.Name: {Var: Cpp actor}
-.file26.localPosition.X: {Var: 141.5867}
-.file26.localPosition.Y: {Var: 2.026267E-06}
-.file26.localPosition.Z: {Var: 312.4954}
-.file26.localRotationQ.X: {Var: 0}
-.file26.localRotationQ.Y: {Var: 0}
-.file26.localRotationQ.Z: {Var: 0}
-.file26.localRotationQ.W: {Var: 1}
-.file26.localScale.X: {Var: 1}
-.file26.localScale.Y: {Var: 1}
-.file26.localScale.Z: {Var: 1}
-.file26.m_children: {Null: }
-.file26.m_components.0: {Ref: file27}
-
-.file27!script: {Var: MeshComponent}
-.file27!scriptId: {AssetId: 00000010003}
-.file27.MeshScale.X: {Var: 1}
-.file27.MeshScale.Y: {Var: 1}
-.file27.MeshScale.Z: {Var: 1}
-.file27.IsDebug: {Var: False}
-.file27.CastShadow: {Var: True}
-.file27.IsVisible: {Var: True}
-.file27.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file27.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file28!script: {Var: Actor}
-.file28!scriptId: {AssetId: 00000010000}
-.file28.Name: {Var: Cpp actor}
-.file28.localPosition.X: {Var: 348.1404}
-.file28.localPosition.Y: {Var: 190.1633}
-.file28.localPosition.Z: {Var: -471.9093}
-.file28.localRotationQ.X: {Var: 0}
-.file28.localRotationQ.Y: {Var: 0}
-.file28.localRotationQ.Z: {Var: 0.2960391}
-.file28.localRotationQ.W: {Var: 0.9551758}
-.file28.localScale.X: {Var: 0.9999998}
-.file28.localScale.Y: {Var: 0.9999998}
-.file28.localScale.Z: {Var: 1}
-.file28.m_children: {Null: }
-.file28.m_components.0: {Ref: file29}
-
-.file29!script: {Var: MeshComponent}
-.file29!scriptId: {AssetId: 00000010003}
-.file29.MeshScale.X: {Var: 1}
-.file29.MeshScale.Y: {Var: 1}
-.file29.MeshScale.Z: {Var: 1}
-.file29.IsDebug: {Var: False}
-.file29.CastShadow: {Var: True}
-.file29.IsVisible: {Var: True}
-.file29.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file29.m_materials.0.assetId: {AssetId: M_WorldGride}
-
-.file30!script: {Var: Actor}
-.file30!scriptId: {AssetId: 00000010000}
-.file30.Name: {Var: Cpp actor}
-.file30.localPosition.X: {Var: 32.30463}
-.file30.localPosition.Y: {Var: 182.5504}
-.file30.localPosition.Z: {Var: -488.6266}
-.file30.localRotationQ.X: {Var: -0.1332523}
-.file30.localRotationQ.Y: {Var: -0.2935024}
-.file30.localRotationQ.Z: {Var: -0.3401446}
-.file30.localRotationQ.W: {Var: 0.8834035}
-.file30.localScale.X: {Var: 0.9999993}
-.file30.localScale.Y: {Var: 0.9999997}
-.file30.localScale.Z: {Var: 1}
-.file30.m_children: {Null: }
-.file30.m_components.0: {Ref: file31}
-
-.file31!script: {Var: MeshComponent}
-.file31!scriptId: {AssetId: 00000010003}
-.file31.MeshScale.X: {Var: 1}
-.file31.MeshScale.Y: {Var: 1}
-.file31.MeshScale.Z: {Var: 1}
-.file31.IsDebug: {Var: False}
-.file31.CastShadow: {Var: True}
-.file31.IsVisible: {Var: True}
-.file31.m_mesh.assetId: {AssetId: ../../data/assets/levels/farm/meshes/Fountain.obj}
-.file31.m_materials.0.assetId: {AssetId: M_WorldGride}
-
 .file32!script: {Var: Actor}
 .file32!scriptId: {AssetId: 00000010000}
 .file32.Name: {Var: Box Collader}
@@ -350,9 +55,9 @@
 .file32.localRotationQ.Y: {Var: 0}
 .file32.localRotationQ.Z: {Var: 0}
 .file32.localRotationQ.W: {Var: 1}
-.file32.localScale.X: {Var: 4000}
-.file32.localScale.Y: {Var: 40}
-.file32.localScale.Z: {Var: 4000}
+.file32.localScale.X: {Var: 300}
+.file32.localScale.Y: {Var: 2}
+.file32.localScale.Z: {Var: 300}
 .file32.m_children: {Null: }
 .file32.m_components.0: {Ref: file33}
 .file32.m_components.1: {Ref: file34}
@@ -379,7 +84,7 @@
 .file36!scriptId: {AssetId: 00000010000}
 .file36.Name: {Var: Sphere Collader}
 .file36.localPosition.X: {Var: 0}
-.file36.localPosition.Y: {Var: 80}
+.file36.localPosition.Y: {Var: 61.37233}
 .file36.localPosition.Z: {Var: 0}
 .file36.localRotationQ.X: {Var: 0}
 .file36.localRotationQ.Y: {Var: 0}
@@ -409,4 +114,214 @@
 .file39.IsVisible: {Var: True}
 .file39.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
 .file39.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file40!script: {Var: Actor}
+.file40!scriptId: {AssetId: 00000010000}
+.file40.Name: {Var: Sphere Collader (6)}
+.file40.localPosition.X: {Var: -17.07576}
+.file40.localPosition.Y: {Var: 80.00052}
+.file40.localPosition.Z: {Var: -5.565323}
+.file40.localRotationQ.X: {Var: 0}
+.file40.localRotationQ.Y: {Var: 0}
+.file40.localRotationQ.Z: {Var: 0}
+.file40.localRotationQ.W: {Var: 1}
+.file40.localScale.X: {Var: 20}
+.file40.localScale.Y: {Var: 20}
+.file40.localScale.Z: {Var: 20}
+.file40.m_children: {Null: }
+.file40.m_components.0: {Ref: file41}
+.file40.m_components.1: {Ref: file42}
+.file40.m_components.2: {Ref: file43}
+
+.file41!script: {Var: Rigidbody}
+.file41!scriptId: {AssetId: 00000010025}
+
+.file42!script: {Var: SphereCollider}
+.file42!scriptId: {AssetId: 00000010027}
+
+.file43!script: {Var: MeshComponent}
+.file43!scriptId: {AssetId: 00000010003}
+.file43.MeshScale.X: {Var: 1}
+.file43.MeshScale.Y: {Var: 1}
+.file43.MeshScale.Z: {Var: 1}
+.file43.IsDebug: {Var: False}
+.file43.CastShadow: {Var: True}
+.file43.IsVisible: {Var: True}
+.file43.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file43.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file44!script: {Var: Actor}
+.file44!scriptId: {AssetId: 00000010000}
+.file44.Name: {Var: Sphere Collader (7)}
+.file44.localPosition.X: {Var: -8.695766}
+.file44.localPosition.Y: {Var: 91.7915}
+.file44.localPosition.Z: {Var: 11.67305}
+.file44.localRotationQ.X: {Var: 0}
+.file44.localRotationQ.Y: {Var: 0}
+.file44.localRotationQ.Z: {Var: 0}
+.file44.localRotationQ.W: {Var: 1}
+.file44.localScale.X: {Var: 20}
+.file44.localScale.Y: {Var: 20}
+.file44.localScale.Z: {Var: 20}
+.file44.m_children: {Null: }
+.file44.m_components.0: {Ref: file45}
+.file44.m_components.1: {Ref: file46}
+.file44.m_components.2: {Ref: file47}
+
+.file45!script: {Var: Rigidbody}
+.file45!scriptId: {AssetId: 00000010025}
+
+.file46!script: {Var: SphereCollider}
+.file46!scriptId: {AssetId: 00000010027}
+
+.file47!script: {Var: MeshComponent}
+.file47!scriptId: {AssetId: 00000010003}
+.file47.MeshScale.X: {Var: 1}
+.file47.MeshScale.Y: {Var: 1}
+.file47.MeshScale.Z: {Var: 1}
+.file47.IsDebug: {Var: False}
+.file47.CastShadow: {Var: True}
+.file47.IsVisible: {Var: True}
+.file47.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file47.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file48!script: {Var: Actor}
+.file48!scriptId: {AssetId: 00000010000}
+.file48.Name: {Var: Sphere Collader (7) (8)}
+.file48.localPosition.X: {Var: 0.7128153}
+.file48.localPosition.Y: {Var: 80}
+.file48.localPosition.Z: {Var: -21.63645}
+.file48.localRotationQ.X: {Var: 0}
+.file48.localRotationQ.Y: {Var: 0}
+.file48.localRotationQ.Z: {Var: 0}
+.file48.localRotationQ.W: {Var: 1}
+.file48.localScale.X: {Var: 20}
+.file48.localScale.Y: {Var: 20}
+.file48.localScale.Z: {Var: 20}
+.file48.m_children: {Null: }
+.file48.m_components.0: {Ref: file49}
+.file48.m_components.1: {Ref: file50}
+.file48.m_components.2: {Ref: file51}
+
+.file49!script: {Var: Rigidbody}
+.file49!scriptId: {AssetId: 00000010025}
+
+.file50!script: {Var: SphereCollider}
+.file50!scriptId: {AssetId: 00000010027}
+
+.file51!script: {Var: MeshComponent}
+.file51!scriptId: {AssetId: 00000010003}
+.file51.MeshScale.X: {Var: 1}
+.file51.MeshScale.Y: {Var: 1}
+.file51.MeshScale.Z: {Var: 1}
+.file51.IsDebug: {Var: False}
+.file51.CastShadow: {Var: True}
+.file51.IsVisible: {Var: True}
+.file51.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file51.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file52!script: {Var: Actor}
+.file52!scriptId: {AssetId: 00000010000}
+.file52.Name: {Var: Sphere Collader (7) (8) (9)}
+.file52.localPosition.X: {Var: -1.496063}
+.file52.localPosition.Y: {Var: 116.4025}
+.file52.localPosition.Z: {Var: 9.164798}
+.file52.localRotationQ.X: {Var: 0}
+.file52.localRotationQ.Y: {Var: 0}
+.file52.localRotationQ.Z: {Var: 0}
+.file52.localRotationQ.W: {Var: 1}
+.file52.localScale.X: {Var: 20}
+.file52.localScale.Y: {Var: 20}
+.file52.localScale.Z: {Var: 20}
+.file52.m_children: {Null: }
+.file52.m_components.0: {Ref: file53}
+.file52.m_components.1: {Ref: file54}
+.file52.m_components.2: {Ref: file55}
+
+.file53!script: {Var: Rigidbody}
+.file53!scriptId: {AssetId: 00000010025}
+
+.file54!script: {Var: SphereCollider}
+.file54!scriptId: {AssetId: 00000010027}
+
+.file55!script: {Var: MeshComponent}
+.file55!scriptId: {AssetId: 00000010003}
+.file55.MeshScale.X: {Var: 1}
+.file55.MeshScale.Y: {Var: 1}
+.file55.MeshScale.Z: {Var: 1}
+.file55.IsDebug: {Var: False}
+.file55.CastShadow: {Var: True}
+.file55.IsVisible: {Var: True}
+.file55.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file55.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file56!script: {Var: Actor}
+.file56!scriptId: {AssetId: 00000010000}
+.file56.Name: {Var: Sphere Collader (7) (8) (9) (10)}
+.file56.localPosition.X: {Var: 9.02608}
+.file56.localPosition.Y: {Var: 98.73688}
+.file56.localPosition.Z: {Var: -10.31289}
+.file56.localRotationQ.X: {Var: 0}
+.file56.localRotationQ.Y: {Var: 0}
+.file56.localRotationQ.Z: {Var: 0}
+.file56.localRotationQ.W: {Var: 1}
+.file56.localScale.X: {Var: 20}
+.file56.localScale.Y: {Var: 20}
+.file56.localScale.Z: {Var: 20}
+.file56.m_children: {Null: }
+.file56.m_components.0: {Ref: file57}
+.file56.m_components.1: {Ref: file58}
+.file56.m_components.2: {Ref: file59}
+
+.file57!script: {Var: Rigidbody}
+.file57!scriptId: {AssetId: 00000010025}
+
+.file58!script: {Var: SphereCollider}
+.file58!scriptId: {AssetId: 00000010027}
+
+.file59!script: {Var: MeshComponent}
+.file59!scriptId: {AssetId: 00000010003}
+.file59.MeshScale.X: {Var: 1}
+.file59.MeshScale.Y: {Var: 1}
+.file59.MeshScale.Z: {Var: 1}
+.file59.IsDebug: {Var: False}
+.file59.CastShadow: {Var: True}
+.file59.IsVisible: {Var: True}
+.file59.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file59.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file60!script: {Var: Actor}
+.file60!scriptId: {AssetId: 00000010000}
+.file60.Name: {Var: Sphere Collader (7) (8) (9) (10) (11)}
+.file60.localPosition.X: {Var: -21.60408}
+.file60.localPosition.Y: {Var: 107.8677}
+.file60.localPosition.Z: {Var: -10.37274}
+.file60.localRotationQ.X: {Var: 0}
+.file60.localRotationQ.Y: {Var: 0}
+.file60.localRotationQ.Z: {Var: 0}
+.file60.localRotationQ.W: {Var: 1}
+.file60.localScale.X: {Var: 20}
+.file60.localScale.Y: {Var: 20}
+.file60.localScale.Z: {Var: 20}
+.file60.m_children: {Null: }
+.file60.m_components.0: {Ref: file61}
+.file60.m_components.1: {Ref: file62}
+.file60.m_components.2: {Ref: file63}
+
+.file61!script: {Var: Rigidbody}
+.file61!scriptId: {AssetId: 00000010025}
+
+.file62!script: {Var: SphereCollider}
+.file62!scriptId: {AssetId: 00000010027}
+
+.file63!script: {Var: MeshComponent}
+.file63!scriptId: {AssetId: 00000010003}
+.file63.MeshScale.X: {Var: 1}
+.file63.MeshScale.Y: {Var: 1}
+.file63.MeshScale.Z: {Var: 1}
+.file63.IsDebug: {Var: False}
+.file63.CastShadow: {Var: True}
+.file63.IsVisible: {Var: True}
+.file63.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file63.m_materials.0.assetId: {AssetId: TestMaterial1}
 

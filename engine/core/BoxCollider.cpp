@@ -20,12 +20,12 @@ DEF_COMPONENT(BoxCollider, Engine.BoxCollider, 0, RunMode::EditPlay) {
 }
 
 void BoxCollider::OnInit() {
-	float tmp_scale = 20;
+	//float tmp_scale = 20;
 
 	// Next we can create a rigid body to serve as the floor, we make a large box
 	// Create the settings for the collision volume (the shape). 
 	// Note that for simple shapes (like boxes) you can also directly construct a BoxShape.
-	BoxShapeSettings floor_shape_settings(Vec3(100.0f, 1.0f, 100.0f));
+	BoxShapeSettings floor_shape_settings(Vec3(150.0f, 1.0f, 150.0f)); 
 
 	// Create the shape
 	ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
@@ -35,7 +35,7 @@ void BoxCollider::OnInit() {
 	ShapeRefC floor_shape = floor_shape_result.Get();
 
 	// Create the settings for the body itself. Note that here you can also set other properties like the restitution / friction.
-	settings = BodyCreationSettings(floor_shape, RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+	settings = BodyCreationSettings(floor_shape, RVec3(0.0_r, 0.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
 
 	/// tmp mesh
 	//auto meshComp = AddComponent< MeshComponent>();
@@ -49,11 +49,9 @@ DEF_COMPONENT(SphereCollider, Engine.SphereCollider, 0, RunMode::EditPlay) {
 }
 
 void SphereCollider::OnInit() {
-	//std::cout << "OnInit" << "\n";
-	float tmp_scale = 40;
 
-	settings = BodyCreationSettings(new SphereShape(0.5f * tmp_scale), RVec3(0.0_r, 2.0_r * tmp_scale, 0.0_r), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
-
+	settings = BodyCreationSettings(new SphereShape(10.0f), RVec3(0.0_r, 40.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Dynamic, Layers::MOVING);
+	settings.mGravityFactor = 3.0f;
 	/// tmp mesh
 	//auto meshComp = AddComponent< MeshComponent>();
 	//meshComp->mesh(game()->meshAsset()->GetMesh(MeshAsset::formSphere));
