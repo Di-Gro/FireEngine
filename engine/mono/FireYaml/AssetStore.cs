@@ -30,6 +30,8 @@ namespace FireYaml {
 
         private HashSet<int> m_tmpAssetIdHashes = new HashSet<int>();
 
+        private HashSet<int> m_missingAssetAIdHash = new HashSet<int>();
+
         public string ProjectPath;
         public string AssetsPath => $"{ProjectPath}/Assets";
         public string EngineAssetsPath => $"{ProjectPath}/Engine/Assets";
@@ -82,9 +84,9 @@ namespace FireYaml {
         }
 
         public void AddAssetId(string assetId, string path) {
-            var assetIdInt = assetId.GetHashCode();
-            m_assetIdHash_assetId[assetIdInt] = assetId;
-            m_assetIdHash_assetPath[assetIdInt] = path;
+            var assetIdHash = assetId.GetHashCode();
+            m_assetIdHash_assetId[assetIdHash] = assetId;
+            m_assetIdHash_assetPath[assetIdHash] = path;
         }
 
         public string GetAssetId(int assetId) {
@@ -432,7 +434,9 @@ namespace FireYaml {
             m_UpdateAssets(AssetsPath);
 
             // TODO: Продолжить
-            // m_CheckAssets
+            m_UpdateMissingAssets();
+
+            throw new NotImplementedException();
 
             UpdateTypesInCpp();
             UpdateAssetsInCpp();
@@ -491,18 +495,28 @@ namespace FireYaml {
             }
         }
 
-        public void m_CheckAssets() {
-            // TODO: Продолжить 
-            // Проверить есть ли известные ассеты на диске
+        public void m_UpdateMissingAssets() {
+            foreach(var pair in m_assetIdHash_assetPath) {
+                var assetIdHash = pair.Key;
+                var assetPath = pair.Value;
+
+                var fullPath = Path.Combine(ProjectPath, assetPath);
+
+                if(!File.Exists(fullPath)) {
+                    Console.WriteLine($"Missing asset: {fullPath}");
+
+                    m_missingAssetAIdHash.Add(assetIdHash);
+                }
+            };
         } 
 
         public void m_UpdateAssets(string path) {
             var fullPath = Path.GetFullPath(path);
 
-            Console.WriteLine(fullPath);
+            // Console.WriteLine(fullPath);
 
             foreach (string fileName in Directory.EnumerateFiles(fullPath, "*.yml")) {
-                Console.WriteLine(fileName);
+                //Console.WriteLine(fileName);
 
                 var name = Path.GetFileNameWithoutExtension(fileName);
 
@@ -516,6 +530,7 @@ namespace FireYaml {
 
                         if (!HasAsset(assetIdHash)) {
                             AddAssetId(assetId, filePath);
+                            //TODO: записать в файл  
                             break;
                         }
                         var assetPath = GetAssetPath(assetId);
