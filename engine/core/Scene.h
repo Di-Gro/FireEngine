@@ -47,6 +47,9 @@ private: // friend
 	Ref2 f_ref;
 	bool f_isDestroyed = false;
 
+	Vector3 m_initCameraPos = { 350, 403, -20 };
+	Quaternion m_initCameraRot = Quaternion::CreateFromYawPitchRoll({ -0.803, 1.781, 0 });
+
 private:
 	Game* m_game;
 	std::string m_name = "";
@@ -100,6 +103,12 @@ public:
 
 	void Stat();
 
+	void editorCameraPos(const Vector3& position);
+	void editorCameraRot(const Quaternion& rotation);
+
+	Vector3 editorCameraPos();
+	Quaternion editorCameraRot();
+
 private:
 	void f_Update();
 	void Destroy() override;
@@ -124,3 +133,6 @@ private:
 
 PUSH_ASSET(Scene);
 PROP_GETSET_STR(Scene, name);
+
+PROP_GETSET(Scene, Vector3, editorCameraPos);
+PROP_GETSET(Scene, Quaternion, editorCameraRot);

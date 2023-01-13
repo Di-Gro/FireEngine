@@ -41,6 +41,8 @@ public:
 	ShaderResource icPickupComponent;
 	ShaderResource icPickupAsset;
 
+	bool isSceneHovered = false;
+
 private: /// For friends
 	//Vector2 f_mouseViewportPosition;
 	//Vector2 f_viewportPosition;
@@ -112,6 +114,7 @@ public:
 	SceneWindow* GetSceneWindow(const std::string& sceneId);
 	SceneWindow* CreateSceneWindow(const std::string& sceneId);
 	void RemoveSceneWindow(const std::string& sceneId);
+		
 
 private:
 	void InitMono();

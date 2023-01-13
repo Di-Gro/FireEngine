@@ -43,15 +43,18 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 
 			ImGui::Dummy({ 0, 200.0f });
 
-			auto actor = m_game->ui()->GetActor();
-			if (m_game->hotkeys()->GetButtonDown(Keys::C, Keys::Ctrl)) {
-				ActorMenu::Copy(m_game->ui()->GetActor());
-			}
-			if (m_game->hotkeys()->GetButtonDown(Keys::V, Keys::Ctrl)) {
-				ActorMenu::Paste(m_game);
-			}
-			if (m_game->hotkeys()->GetButtonDown(Keys::Delete)) {
-				//ActorMenu::Remove(m_game->ui()->GetActor());
+			if (ImGui::IsWindowHovered() || m_game->ui()->isSceneHovered) {
+				auto actor = m_game->ui()->GetActor();
+
+				if (m_game->hotkeys()->GetButtonDown(Keys::C, Keys::Ctrl)) {
+					ActorMenu::Copy(m_game->ui()->GetActor());
+				}
+				if (m_game->hotkeys()->GetButtonDown(Keys::V, Keys::Ctrl)) {
+					ActorMenu::Paste(m_game);
+				}
+				if (m_game->hotkeys()->GetButtonDown(Keys::Delete)) {
+					//ActorMenu::Remove(m_game->ui()->GetActor());
+				}
 			}
 
 			m_game->PopScene();

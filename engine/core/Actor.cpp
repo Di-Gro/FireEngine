@@ -104,7 +104,7 @@ void Actor::f_FixedUpdate() {
 	for (auto it = m_components.begin(); it != m_components.end(); it++) {
 		auto component = (*it);
 
-		if (m_NeedRunComponent(component)) {
+		if (!component->IsDestroyed() && m_NeedRunComponent(component)) {
 			if (!component->f_isStarted)
 				m_RunOrCrash(component, &Actor::m_OnStartComponent);
 			else

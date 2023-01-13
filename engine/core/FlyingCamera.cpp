@@ -10,14 +10,14 @@ void FlyingCamera::OnInit() {
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &FlyingCamera::m_OnMouseMove);
 	UpdateProjectionMatrix(/*game()->window()*/);
 
-	game()->hotkeys()->RegisterHotkey(Keys::O);
+	//game()->hotkeys()->RegisterHotkey(Keys::O);
 }
 
 void FlyingCamera::OnDestroy() {
 	CameraComponent::OnDestroy();
 
 	game()->input()->MouseMove.Remove(m_mouseMoveHandle);
-	game()->hotkeys()->UnregisterHotkey(Keys::O);
+	//game()->hotkeys()->UnregisterHotkey(Keys::O);
 }
 
 void FlyingCamera::OnUpdate() {
@@ -26,8 +26,8 @@ void FlyingCamera::OnUpdate() {
 	if (!IsAttached() || !game()->inFocus)
 		return;
 
-	if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
-		orthographic(!orthographic());
+	//if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
+	//	orthographic(!orthographic());
 
 	if (m_updateRotation) {
 		auto rot = localRotation();

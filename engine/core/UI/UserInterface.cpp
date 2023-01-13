@@ -142,6 +142,8 @@ void UserInterface::m_InitIcons() {
 
 void UserInterface::Draw()
 {
+	isSceneHovered = false;
+
 	InitDockSpace();
 
 	ImGui::Begin("DockSpace Demo", NULL, window_flags);
@@ -161,30 +163,19 @@ void UserInterface::Draw()
 
 	// Begin Menu Bar
 	uiBarMenu.Draw_UI_BarMenu();
-	// Upper Menu
-	//uiUpperMenu.Draw_UI_UpperMenu();
-	// Hierarchy
-	uiHierarchy.Draw_UI_Hierarchy();
-	//// Play Game
-	//uiPlayGame.Draw_UI_PlayGame();
-	// Editor
-	//uiEditor.Draw_UI_Editor();
-	//// Inspector
-	uiInspector.Draw_UI_Inspector();
-	//// Content Browser
-	//uiContentBrowser.Draw_UI_ContentBrowser();
-	//// Console
-	//uiConsole.Draw_UI_Console();
 
 	auto dockSpaceId = ImGui::GetID("MyDockSpace");
 	auto node = ImGui::DockBuilderGetNode(dockSpaceId);
 	auto centralNodeId = node->CentralNode->ID;
-	
+
 	for (auto hash_window : m_sceneWindows) {
 		auto window = hash_window.second;
 		ImGui::DockBuilderDockWindow(window->windowId().c_str(), centralNodeId);
 		window->Draw();
 	}
+
+	uiHierarchy.Draw_UI_Hierarchy();
+	uiInspector.Draw_UI_Inspector();
 
 	ImGui::End();
 

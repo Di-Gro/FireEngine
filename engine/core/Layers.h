@@ -2,6 +2,7 @@
 
 #include <Jolt/Jolt.h>
 #include <Jolt\Physics\Collision\BroadPhase\BroadPhaseLayer.h>
+#include <Jolt/Physics/Body/MotionType.h>
 
 // Layer that objects can be in, determines which other objects it can collide with
 // Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
@@ -12,6 +13,8 @@ namespace Layers
 	static constexpr JPH::uint8 NON_MOVING = 0;
 	static constexpr JPH::uint8 MOVING = 1;
 	static constexpr JPH::uint8 NUM_LAYERS = 2;
+
+	JPH::uint8 GetLayerFromMotionType(JPH::EMotionType motionType);
 };
 
 // Each broadphase layer results in a separate bounding volume tree in the broad phase. You at least want to have

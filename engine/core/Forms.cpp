@@ -257,7 +257,6 @@ namespace Forms4 {
 				y = (float)(radius * cos(rad(t)));
 				z = (float)(radius * sin(rad(t)) * cos(rad(u)));
 
-
 				auto& vertex = form.verteces.emplace_back();
 				vertex.position = { x, y, z, 0 };
 				vertex.normal = vertex.position;
@@ -289,12 +288,205 @@ namespace Forms4 {
 		return std::move(form);
 	}
 
+	Form HalfSphere(float radius, int latitudes, int longitudes, Vector4 color, D3D_PRIMITIVE_TOPOLOGY topology) {
+
+		auto to1d = [&](int x, int y) { return x * (longitudes + 1) + y; };
+
+		float dw = 360.0f / latitudes;
+		float dh = 180.0f / longitudes;
+
+		longitudes /= 2;
+
+		Form form;
+		form.topology = topology;
+
+		struct P { int w; int h; };
+		auto delta = {
+			P{0,0}, P{1,0},
+			P{1,0}, P{1,1},
+			P{1,1}, P{0,0},
+
+			P{0,0}, P{1,1},
+			P{1,1}, P{0,1},
+			P{0,1}, P{0,0},
+		};
+		if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+			delta = {
+				P{0,0}, P{1,0}, P{1,1},
+				P{1,1}, P{0,1}, P{0,0},
+			};
+		}
+
+		for (int w = 0; w <= latitudes; ++w) {
+			float u = w * dw;
+
+			for (int h = 0; h <= longitudes; ++h) {
+				float t = h * dh;
+
+				float x, y, z;
+				x = (float)(radius * sin(rad(t)) * sin(rad(u)));
+				y = (float)(radius * cos(rad(t)));
+				z = (float)(radius * sin(rad(t)) * cos(rad(u)));
+
+				float time = h / (float)longitudes;
+
+				auto& vertex = form.verteces.emplace_back();
+				vertex.position = { x, y, z, 0 };
+				vertex.normal = vertex.position;
+				vertex.normal.Normalize();
+				vertex.color = color;
+
+				if (w < latitudes && h < longitudes) {
+					int di = -1;
+					for (P d : delta) {
+						di++;
+						if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_LINELIST) {
+							if (h == 0 && di < 6)
+								continue;
+							//if (h == longitudes - 1 && di >= 6)
+							//	continue;
+						}
+						if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+							if (h == 0 && di < 3)
+								continue;
+							//if (h == longitudes - 1 && di >= 3)
+							//	continue;
+						}
+						form.indexes.push_back(to1d(w + d.w, h + d.h));
+					}
+				}
+			}
+		}
+
+		return std::move(form);
+	}
+
+	Form HalfSphere2(float radius, int latitudes, int longitudes, Vector4 color, D3D_PRIMITIVE_TOPOLOGY topology) {
+
+		auto to1d = [&](int x, int y) { return x * (longitudes + 1) + y; };
+
+		float dw = 360.0f / latitudes;
+		float dh = 180.0f / longitudes;
+
+		longitudes /= 2;
+
+		Form form;
+		form.topology = topology;
+
+		struct P { int w; int h; };
+		auto delta = {
+			P{0,0}, P{1,0},
+			P{1,0}, P{1,1},
+			P{1,1}, P{0,0},
+
+			P{0,0}, P{1,1},
+			P{1,1}, P{0,1},
+			P{0,1}, P{0,0},
+		};
+		if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+			delta = {
+				P{0,0}, P{1,0}, P{1,1},
+				P{1,1}, P{0,1}, P{0,0},
+			};
+		}
+
+		for (int w = 0; w <= latitudes; ++w) {
+			float u = w * dw;
+
+			for (int h = 0; h <= longitudes; ++h) {
+				float t = h * dh;
+
+				float x, y, z;
+				x = (float)(radius * sin(rad(t)) * sin(rad(u)));
+				y = (float)(radius * cos(rad(t)));
+				z = (float)(radius * sin(rad(t)) * cos(rad(u)));
+
+				float time = h / (float)longitudes;
+
+				auto& vertex = form.verteces.emplace_back();
+				vertex.position = { x, y, z, 0 };
+				vertex.normal = vertex.position;
+				vertex.normal.Normalize();
+				vertex.color = color;
+
+				if (w < latitudes && h < longitudes) {
+					int di = -1;
+					for (P d : delta) {
+						di++;
+						if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_LINELIST) {
+							if (h == 0 && di < 6)
+								continue;
+							//if (h == longitudes - 1 && di >= 6)
+							//	continue;
+						}
+						if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+							if (h == 0 && di < 3)
+								continue;
+							//if (h == longitudes - 1 && di >= 3)
+							//	continue;
+						}
+						form.indexes.push_back(to1d(w + d.w, h + d.h));
+					}
+				}
+			}
+		}
+		auto size = form.verteces.size();
+		for (int w = size; w <= size + latitudes; ++w) {
+			float u = (w - size)* dw;
+
+			for (int h = size; h <= size + longitudes; ++h) {
+				float t = (h - size) * dh;
+
+				float x, y, z;
+				x = (float)(radius * sin(rad(u)));
+				y = (float)(radius * rad(t));
+				z = (float)(radius * cos(rad(u)));
+
+				auto& vertex = form.verteces.emplace_back();
+				vertex.position = { x, y, z, 0 };
+				vertex.normal = vertex.position;
+				vertex.normal.Normalize();
+				vertex.color = color;
+
+				if ((w - size) < latitudes && (h - size) < longitudes) {
+					int di = -1;
+					for (P d : delta) {
+						di++;
+						if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_LINELIST) {
+							if ((h - size) == 0 && di < 6)
+								continue;
+							if ((h - size) == longitudes - 1 && di >= 6)
+								continue;
+						}
+						if (form.topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+							if ((h - size) == 0 && di < 3)
+								continue;
+							if ((h - size) == longitudes - 1 && di >= 3)
+								continue;
+						}
+						form.indexes.push_back(to1d(w + d.w, h + d.h));
+					}
+				}
+			}
+		}
+
+		return std::move(form);
+	}
+
 	Form SphereLined(float radius, int latitudes, int longitudes, Vector4 color) {
 		return Sphere(radius, latitudes, longitudes, color, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	}
 
 	Form Sphere(float radius, int latitudes, int longitudes, Vector4 color) {
 		return Sphere(radius, latitudes, longitudes, color, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+
+	Form HalfSphereLined(float radius, int latitudes, int longitudes, Vector4 color) {
+		return HalfSphere(radius, latitudes, longitudes, color, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	}
+
+	Form HalfSphere(float radius, int latitudes, int longitudes, Vector4 color) {
+		return HalfSphere(radius, latitudes, longitudes, color, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	static Form Box(Vector3 size, Vector4 color, D3D_PRIMITIVE_TOPOLOGY topology) {
@@ -321,15 +513,6 @@ namespace Forms4 {
 		};
 
 		if (topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
-			//indexes = {
-			//	3,2,1, 1,0,3, // низ
-			//	4,5,6, 6,7,4, // верх
-			//	0,1,5, 4,0,5, // лево
-			//	2,3,7, 7,6,2, // право
-			//	0,4,7, 7,3,0, // перед
-			//	1,2,6, 6,5,1, // зад
-			//};
-
 			indexes = {
 				1,2,3, 3,0,1, // низ
 				6,5,4, 4,7,6, // верх
@@ -374,12 +557,6 @@ namespace Forms4 {
 			form.indexes.push_back(i);
 		}
 
-		//for (auto& point : points) {
-		//	auto& vertex = form.verteces.emplace_back();
-		//	vertex.position = point;
-		//	vertex.color = color;
-		//}
-
 		return form;
 	}
 
@@ -390,6 +567,5 @@ namespace Forms4 {
 	Form Box(Vector3 size, Vector4 color) {
 		return Box(size, color, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
-
 
 }

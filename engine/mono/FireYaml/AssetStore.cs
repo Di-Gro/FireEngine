@@ -62,7 +62,8 @@ namespace FireYaml {
             AddScriptId("00000010025", typeof(Engine.Rigidbody).FullName);
             AddScriptId("00000010026", typeof(Engine.BoxCollider).FullName);
             AddScriptId("00000010027", typeof(Engine.SphereCollider).FullName);
-            m_nextAssetId = 10028;
+            AddScriptId("00000010028", typeof(Engine.CapsuleCollider).FullName);
+            m_nextAssetId = 10029;
 
             if (addDefaultAssets) {
                 var project = ProjectPath;
@@ -74,6 +75,7 @@ namespace FireYaml {
                 AddAssetId("MESH000003", $"{AssetsPath}/Meshes/Farm/House_Blue.yml");
                 AddAssetId("TestMesh1", $"{AssetsPath}/Meshes/TestMesh1.yml");
                 AddAssetId("test_navmesh", $"{AssetsPath}/Meshes/test_navmesh.yml");
+                AddAssetId("cube", $"{AssetsPath}/Meshes/cube.yml");
 
                 AddAssetId("IMG0000004", $"{AssetsPath}/Images/Gradients.yml");
                 AddAssetId("TestImage1", $"{AssetsPath}/Images/TestImage1.yml");
@@ -92,6 +94,8 @@ namespace FireYaml {
                 AddAssetId("TestPrefab2", $"{AssetsPath}/Prefabs/TestPrefab2.yml");
                 
                 AddAssetId("scene_1", $"{AssetsPath}/Scenes/scene_1.yml");
+                AddAssetId("scene_2", $"{AssetsPath}/Scenes/scene_2.yml");
+                AddAssetId("scene_3", $"{AssetsPath}/Scenes/scene_3.yml");
             }
         }
 

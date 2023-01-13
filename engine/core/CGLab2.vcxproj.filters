@@ -354,7 +354,7 @@
     <ClCompile Include="Rigidbody.cpp">
       <Filter>FirePhysics\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
+    <ClCompile Include="Colliders.cpp">
       <Filter>FirePhysics\Physics</Filter>
     </ClCompile>
     <ClCompile Include="Physics.cpp">
@@ -367,6 +367,12 @@
       <Filter>FirePhysics</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsScene.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="JoltExtantions.cpp">
       <Filter>FirePhysics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -722,7 +728,7 @@
     <ClInclude Include="Rigidbody.h">
       <Filter>FirePhysics\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCollider.h">
+    <ClInclude Include="Colliders.h">
       <Filter>FirePhysics\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Physics.h">

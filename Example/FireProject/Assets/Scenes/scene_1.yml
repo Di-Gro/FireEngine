@@ -1,9 +1,16 @@
 .file0.assetId: {AssetId: scene_1}
-.file0.files: {Var: 63}
+.file0.files: {Var: 93}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: 00000010014}
 .file1.Name: {Var: scene_1}
+.file1.CameraPos.X: {Var: -309.1866}
+.file1.CameraPos.Y: {Var: 166.0002}
+.file1.CameraPos.Z: {Var: 104.3311}
+.file1.CameraRot.X: {Var: -0.0792064}
+.file1.CameraRot.Y: {Var: -0.6589708}
+.file1.CameraRot.Z: {Var: -0.07008807}
+.file1.CameraRot.W: {Var: 0.7446955}
 .file1.m_roots.0: {Ref: file4}
 .file1.m_roots.1: {Ref: file32}
 .file1.m_roots.2: {Ref: file36}
@@ -13,6 +20,13 @@
 .file1.m_roots.6: {Ref: file52}
 .file1.m_roots.7: {Ref: file56}
 .file1.m_roots.8: {Ref: file60}
+.file1.m_roots.9: {Ref: file64}
+.file1.m_roots.10: {Ref: file68}
+.file1.m_roots.11: {Ref: file76}
+.file1.m_roots.12: {Ref: file80}
+.file1.m_roots.13: {Ref: file84}
+.file1.m_roots.14: {Ref: file87}
+.file1.m_roots.15: {Ref: file91}
 
 .file4!script: {Var: Actor}
 .file4!scriptId: {AssetId: 00000010000}
@@ -55,9 +69,9 @@
 .file32.localRotationQ.Y: {Var: 0}
 .file32.localRotationQ.Z: {Var: 0}
 .file32.localRotationQ.W: {Var: 1}
-.file32.localScale.X: {Var: 300}
-.file32.localScale.Y: {Var: 2}
-.file32.localScale.Z: {Var: 300}
+.file32.localScale.X: {Var: 1}
+.file32.localScale.Y: {Var: 1}
+.file32.localScale.Z: {Var: 1}
 .file32.m_children: {Null: }
 .file32.m_components.0: {Ref: file33}
 .file32.m_components.1: {Ref: file34}
@@ -65,15 +79,33 @@
 
 .file33!script: {Var: Rigidbody}
 .file33!scriptId: {AssetId: 00000010025}
+.file33.active: {Var: True}
+.file33.motion: {Var: Static}
+.file33.Mass: {Var: 1}
+.file33.gravity: {Var: 1}
+.file33.MaxLinearVelocity: {Var: 500}
+.file33.LinearDamping: {Var: 0.05}
+.file33.AgularDamping: {Var: 0.05}
+.file33.Friction: {Var: 0.2}
+.file33.Bounciness: {Var: 0.2}
+.file33.AllowSleeping: {Var: True}
+.file33.Quality: {Var: Discrete}
 
 .file34!script: {Var: BoxCollider}
 .file34!scriptId: {AssetId: 00000010026}
+.file34.Center.X: {Var: 0}
+.file34.Center.Y: {Var: 0}
+.file34.Center.Z: {Var: 0}
+.file34.Size.X: {Var: 900}
+.file34.Size.Y: {Var: 2}
+.file34.Size.Z: {Var: 900}
+.file34.DrawDebug: {Var: True}
 
 .file35!script: {Var: MeshComponent}
 .file35!scriptId: {AssetId: 00000010003}
-.file35.MeshScale.X: {Var: 1}
-.file35.MeshScale.Y: {Var: 1}
-.file35.MeshScale.Z: {Var: 1}
+.file35.MeshScale.X: {Var: 900}
+.file35.MeshScale.Y: {Var: 2}
+.file35.MeshScale.Z: {Var: 900}
 .file35.IsDebug: {Var: False}
 .file35.CastShadow: {Var: True}
 .file35.IsVisible: {Var: True}
@@ -84,15 +116,15 @@
 .file36!scriptId: {AssetId: 00000010000}
 .file36.Name: {Var: Sphere Collader}
 .file36.localPosition.X: {Var: 0}
-.file36.localPosition.Y: {Var: 61.37233}
-.file36.localPosition.Z: {Var: 0}
+.file36.localPosition.Y: {Var: 100}
+.file36.localPosition.Z: {Var: -100.0975}
 .file36.localRotationQ.X: {Var: 0}
 .file36.localRotationQ.Y: {Var: 0}
 .file36.localRotationQ.Z: {Var: 0}
 .file36.localRotationQ.W: {Var: 1}
-.file36.localScale.X: {Var: 20}
-.file36.localScale.Y: {Var: 20}
-.file36.localScale.Z: {Var: 20}
+.file36.localScale.X: {Var: 1}
+.file36.localScale.Y: {Var: 1}
+.file36.localScale.Z: {Var: 1}
 .file36.m_children: {Null: }
 .file36.m_components.0: {Ref: file37}
 .file36.m_components.1: {Ref: file38}
@@ -100,15 +132,31 @@
 
 .file37!script: {Var: Rigidbody}
 .file37!scriptId: {AssetId: 00000010025}
+.file37.active: {Var: False}
+.file37.motion: {Var: Dynamic}
+.file37.Mass: {Var: 1}
+.file37.gravity: {Var: 1}
+.file37.MaxLinearVelocity: {Var: 500}
+.file37.LinearDamping: {Var: 0.05}
+.file37.AgularDamping: {Var: 1}
+.file37.Friction: {Var: 0.2}
+.file37.Bounciness: {Var: 0.2}
+.file37.AllowSleeping: {Var: True}
+.file37.Quality: {Var: Discrete}
 
 .file38!script: {Var: SphereCollider}
 .file38!scriptId: {AssetId: 00000010027}
+.file38.Center.X: {Var: 0}
+.file38.Center.Y: {Var: 0}
+.file38.Center.Z: {Var: 0}
+.file38.Radius: {Var: 10}
+.file38.DrawDebug: {Var: True}
 
 .file39!script: {Var: MeshComponent}
 .file39!scriptId: {AssetId: 00000010003}
-.file39.MeshScale.X: {Var: 1}
-.file39.MeshScale.Y: {Var: 1}
-.file39.MeshScale.Z: {Var: 1}
+.file39.MeshScale.X: {Var: 20}
+.file39.MeshScale.Y: {Var: 20}
+.file39.MeshScale.Z: {Var: 20}
 .file39.IsDebug: {Var: False}
 .file39.CastShadow: {Var: True}
 .file39.IsVisible: {Var: True}
@@ -117,17 +165,17 @@
 
 .file40!script: {Var: Actor}
 .file40!scriptId: {AssetId: 00000010000}
-.file40.Name: {Var: Sphere Collader (6)}
-.file40.localPosition.X: {Var: -17.07576}
-.file40.localPosition.Y: {Var: 80.00052}
-.file40.localPosition.Z: {Var: -5.565323}
+.file40.Name: {Var: Sphere Collader 1}
+.file40.localPosition.X: {Var: -3.670996}
+.file40.localPosition.Y: {Var: 100}
+.file40.localPosition.Z: {Var: 20}
 .file40.localRotationQ.X: {Var: 0}
 .file40.localRotationQ.Y: {Var: 0}
 .file40.localRotationQ.Z: {Var: 0}
 .file40.localRotationQ.W: {Var: 1}
-.file40.localScale.X: {Var: 20}
-.file40.localScale.Y: {Var: 20}
-.file40.localScale.Z: {Var: 20}
+.file40.localScale.X: {Var: 1}
+.file40.localScale.Y: {Var: 1}
+.file40.localScale.Z: {Var: 1}
 .file40.m_children: {Null: }
 .file40.m_components.0: {Ref: file41}
 .file40.m_components.1: {Ref: file42}
@@ -135,15 +183,31 @@
 
 .file41!script: {Var: Rigidbody}
 .file41!scriptId: {AssetId: 00000010025}
+.file41.active: {Var: True}
+.file41.motion: {Var: Dynamic}
+.file41.Mass: {Var: 1}
+.file41.gravity: {Var: 1}
+.file41.MaxLinearVelocity: {Var: 500}
+.file41.LinearDamping: {Var: 0.05}
+.file41.AgularDamping: {Var: 1}
+.file41.Friction: {Var: 0.2}
+.file41.Bounciness: {Var: 0.2}
+.file41.AllowSleeping: {Var: True}
+.file41.Quality: {Var: LinearCast}
 
 .file42!script: {Var: SphereCollider}
 .file42!scriptId: {AssetId: 00000010027}
+.file42.Center.X: {Var: 0}
+.file42.Center.Y: {Var: 0}
+.file42.Center.Z: {Var: 0}
+.file42.Radius: {Var: 10}
+.file42.DrawDebug: {Var: True}
 
 .file43!script: {Var: MeshComponent}
 .file43!scriptId: {AssetId: 00000010003}
-.file43.MeshScale.X: {Var: 1}
-.file43.MeshScale.Y: {Var: 1}
-.file43.MeshScale.Z: {Var: 1}
+.file43.MeshScale.X: {Var: 20}
+.file43.MeshScale.Y: {Var: 20}
+.file43.MeshScale.Z: {Var: 20}
 .file43.IsDebug: {Var: False}
 .file43.CastShadow: {Var: True}
 .file43.IsVisible: {Var: True}
@@ -152,17 +216,17 @@
 
 .file44!script: {Var: Actor}
 .file44!scriptId: {AssetId: 00000010000}
-.file44.Name: {Var: Sphere Collader (7)}
-.file44.localPosition.X: {Var: -8.695766}
-.file44.localPosition.Y: {Var: 91.7915}
-.file44.localPosition.Z: {Var: 11.67305}
+.file44.Name: {Var: Sphere Collader 2}
+.file44.localPosition.X: {Var: 0}
+.file44.localPosition.Y: {Var: 100}
+.file44.localPosition.Z: {Var: 50}
 .file44.localRotationQ.X: {Var: 0}
 .file44.localRotationQ.Y: {Var: 0}
 .file44.localRotationQ.Z: {Var: 0}
 .file44.localRotationQ.W: {Var: 1}
-.file44.localScale.X: {Var: 20}
-.file44.localScale.Y: {Var: 20}
-.file44.localScale.Z: {Var: 20}
+.file44.localScale.X: {Var: 1}
+.file44.localScale.Y: {Var: 1}
+.file44.localScale.Z: {Var: 1}
 .file44.m_children: {Null: }
 .file44.m_components.0: {Ref: file45}
 .file44.m_components.1: {Ref: file46}
@@ -170,15 +234,31 @@
 
 .file45!script: {Var: Rigidbody}
 .file45!scriptId: {AssetId: 00000010025}
+.file45.active: {Var: True}
+.file45.motion: {Var: Dynamic}
+.file45.Mass: {Var: 1}
+.file45.gravity: {Var: 1}
+.file45.MaxLinearVelocity: {Var: 500}
+.file45.LinearDamping: {Var: 0.05}
+.file45.AgularDamping: {Var: 1}
+.file45.Friction: {Var: 0.2}
+.file45.Bounciness: {Var: 0.2}
+.file45.AllowSleeping: {Var: True}
+.file45.Quality: {Var: Discrete}
 
 .file46!script: {Var: SphereCollider}
 .file46!scriptId: {AssetId: 00000010027}
+.file46.Center.X: {Var: 0}
+.file46.Center.Y: {Var: 0}
+.file46.Center.Z: {Var: 0}
+.file46.Radius: {Var: 10}
+.file46.DrawDebug: {Var: True}
 
 .file47!script: {Var: MeshComponent}
 .file47!scriptId: {AssetId: 00000010003}
-.file47.MeshScale.X: {Var: 1}
-.file47.MeshScale.Y: {Var: 1}
-.file47.MeshScale.Z: {Var: 1}
+.file47.MeshScale.X: {Var: 20}
+.file47.MeshScale.Y: {Var: 20}
+.file47.MeshScale.Z: {Var: 20}
 .file47.IsDebug: {Var: False}
 .file47.CastShadow: {Var: True}
 .file47.IsVisible: {Var: True}
@@ -187,17 +267,17 @@
 
 .file48!script: {Var: Actor}
 .file48!scriptId: {AssetId: 00000010000}
-.file48.Name: {Var: Sphere Collader (7) (8)}
-.file48.localPosition.X: {Var: 0.7128153}
-.file48.localPosition.Y: {Var: 80}
-.file48.localPosition.Z: {Var: -21.63645}
+.file48.Name: {Var: Sphere Collader 3}
+.file48.localPosition.X: {Var: 0}
+.file48.localPosition.Y: {Var: 100}
+.file48.localPosition.Z: {Var: -70}
 .file48.localRotationQ.X: {Var: 0}
 .file48.localRotationQ.Y: {Var: 0}
 .file48.localRotationQ.Z: {Var: 0}
 .file48.localRotationQ.W: {Var: 1}
-.file48.localScale.X: {Var: 20}
-.file48.localScale.Y: {Var: 20}
-.file48.localScale.Z: {Var: 20}
+.file48.localScale.X: {Var: 1}
+.file48.localScale.Y: {Var: 1}
+.file48.localScale.Z: {Var: 1}
 .file48.m_children: {Null: }
 .file48.m_components.0: {Ref: file49}
 .file48.m_components.1: {Ref: file50}
@@ -205,15 +285,31 @@
 
 .file49!script: {Var: Rigidbody}
 .file49!scriptId: {AssetId: 00000010025}
+.file49.active: {Var: True}
+.file49.motion: {Var: Dynamic}
+.file49.Mass: {Var: 1}
+.file49.gravity: {Var: 1}
+.file49.MaxLinearVelocity: {Var: 500}
+.file49.LinearDamping: {Var: 0.05}
+.file49.AgularDamping: {Var: 1}
+.file49.Friction: {Var: 0.2}
+.file49.Bounciness: {Var: 0.2}
+.file49.AllowSleeping: {Var: True}
+.file49.Quality: {Var: Discrete}
 
 .file50!script: {Var: SphereCollider}
 .file50!scriptId: {AssetId: 00000010027}
+.file50.Center.X: {Var: 0}
+.file50.Center.Y: {Var: 0}
+.file50.Center.Z: {Var: 0}
+.file50.Radius: {Var: 10}
+.file50.DrawDebug: {Var: True}
 
 .file51!script: {Var: MeshComponent}
 .file51!scriptId: {AssetId: 00000010003}
-.file51.MeshScale.X: {Var: 1}
-.file51.MeshScale.Y: {Var: 1}
-.file51.MeshScale.Z: {Var: 1}
+.file51.MeshScale.X: {Var: 20}
+.file51.MeshScale.Y: {Var: 20}
+.file51.MeshScale.Z: {Var: 20}
 .file51.IsDebug: {Var: False}
 .file51.CastShadow: {Var: True}
 .file51.IsVisible: {Var: True}
@@ -222,17 +318,17 @@
 
 .file52!script: {Var: Actor}
 .file52!scriptId: {AssetId: 00000010000}
-.file52.Name: {Var: Sphere Collader (7) (8) (9)}
-.file52.localPosition.X: {Var: -1.496063}
-.file52.localPosition.Y: {Var: 116.4025}
-.file52.localPosition.Z: {Var: 9.164798}
+.file52.Name: {Var: Sphere Collader 4}
+.file52.localPosition.X: {Var: 0}
+.file52.localPosition.Y: {Var: 100}
+.file52.localPosition.Z: {Var: 80}
 .file52.localRotationQ.X: {Var: 0}
 .file52.localRotationQ.Y: {Var: 0}
 .file52.localRotationQ.Z: {Var: 0}
 .file52.localRotationQ.W: {Var: 1}
-.file52.localScale.X: {Var: 20}
-.file52.localScale.Y: {Var: 20}
-.file52.localScale.Z: {Var: 20}
+.file52.localScale.X: {Var: 1}
+.file52.localScale.Y: {Var: 1}
+.file52.localScale.Z: {Var: 1}
 .file52.m_children: {Null: }
 .file52.m_components.0: {Ref: file53}
 .file52.m_components.1: {Ref: file54}
@@ -240,15 +336,31 @@
 
 .file53!script: {Var: Rigidbody}
 .file53!scriptId: {AssetId: 00000010025}
+.file53.active: {Var: True}
+.file53.motion: {Var: Dynamic}
+.file53.Mass: {Var: 1}
+.file53.gravity: {Var: 1}
+.file53.MaxLinearVelocity: {Var: 500}
+.file53.LinearDamping: {Var: 0.05}
+.file53.AgularDamping: {Var: 1}
+.file53.Friction: {Var: 0.2}
+.file53.Bounciness: {Var: 0.2}
+.file53.AllowSleeping: {Var: True}
+.file53.Quality: {Var: Discrete}
 
 .file54!script: {Var: SphereCollider}
 .file54!scriptId: {AssetId: 00000010027}
+.file54.Center.X: {Var: 0}
+.file54.Center.Y: {Var: 0}
+.file54.Center.Z: {Var: 0}
+.file54.Radius: {Var: 15}
+.file54.DrawDebug: {Var: True}
 
 .file55!script: {Var: MeshComponent}
 .file55!scriptId: {AssetId: 00000010003}
-.file55.MeshScale.X: {Var: 1}
-.file55.MeshScale.Y: {Var: 1}
-.file55.MeshScale.Z: {Var: 1}
+.file55.MeshScale.X: {Var: 20}
+.file55.MeshScale.Y: {Var: 20}
+.file55.MeshScale.Z: {Var: 20}
 .file55.IsDebug: {Var: False}
 .file55.CastShadow: {Var: True}
 .file55.IsVisible: {Var: True}
@@ -257,17 +369,17 @@
 
 .file56!script: {Var: Actor}
 .file56!scriptId: {AssetId: 00000010000}
-.file56.Name: {Var: Sphere Collader (7) (8) (9) (10)}
-.file56.localPosition.X: {Var: 9.02608}
-.file56.localPosition.Y: {Var: 98.73688}
-.file56.localPosition.Z: {Var: -10.31289}
+.file56.Name: {Var: Sphere Collader 5}
+.file56.localPosition.X: {Var: 0}
+.file56.localPosition.Y: {Var: 100}
+.file56.localPosition.Z: {Var: -40}
 .file56.localRotationQ.X: {Var: 0}
 .file56.localRotationQ.Y: {Var: 0}
 .file56.localRotationQ.Z: {Var: 0}
 .file56.localRotationQ.W: {Var: 1}
-.file56.localScale.X: {Var: 20}
-.file56.localScale.Y: {Var: 20}
-.file56.localScale.Z: {Var: 20}
+.file56.localScale.X: {Var: 1}
+.file56.localScale.Y: {Var: 1}
+.file56.localScale.Z: {Var: 1}
 .file56.m_children: {Null: }
 .file56.m_components.0: {Ref: file57}
 .file56.m_components.1: {Ref: file58}
@@ -275,15 +387,31 @@
 
 .file57!script: {Var: Rigidbody}
 .file57!scriptId: {AssetId: 00000010025}
+.file57.active: {Var: True}
+.file57.motion: {Var: Static}
+.file57.Mass: {Var: 1}
+.file57.gravity: {Var: 1}
+.file57.MaxLinearVelocity: {Var: 500}
+.file57.LinearDamping: {Var: 0.05}
+.file57.AgularDamping: {Var: 1}
+.file57.Friction: {Var: 0.2}
+.file57.Bounciness: {Var: 0.2}
+.file57.AllowSleeping: {Var: True}
+.file57.Quality: {Var: Discrete}
 
 .file58!script: {Var: SphereCollider}
 .file58!scriptId: {AssetId: 00000010027}
+.file58.Center.X: {Var: 0}
+.file58.Center.Y: {Var: 0}
+.file58.Center.Z: {Var: 0}
+.file58.Radius: {Var: 10}
+.file58.DrawDebug: {Var: True}
 
 .file59!script: {Var: MeshComponent}
 .file59!scriptId: {AssetId: 00000010003}
-.file59.MeshScale.X: {Var: 1}
-.file59.MeshScale.Y: {Var: 1}
-.file59.MeshScale.Z: {Var: 1}
+.file59.MeshScale.X: {Var: 20}
+.file59.MeshScale.Y: {Var: 20}
+.file59.MeshScale.Z: {Var: 20}
 .file59.IsDebug: {Var: False}
 .file59.CastShadow: {Var: True}
 .file59.IsVisible: {Var: True}
@@ -292,17 +420,17 @@
 
 .file60!script: {Var: Actor}
 .file60!scriptId: {AssetId: 00000010000}
-.file60.Name: {Var: Sphere Collader (7) (8) (9) (10) (11)}
-.file60.localPosition.X: {Var: -21.60408}
-.file60.localPosition.Y: {Var: 107.8677}
-.file60.localPosition.Z: {Var: -10.37274}
+.file60.Name: {Var: Sphere Collader 6}
+.file60.localPosition.X: {Var: 0}
+.file60.localPosition.Y: {Var: 100}
+.file60.localPosition.Z: {Var: -10}
 .file60.localRotationQ.X: {Var: 0}
 .file60.localRotationQ.Y: {Var: 0}
 .file60.localRotationQ.Z: {Var: 0}
 .file60.localRotationQ.W: {Var: 1}
-.file60.localScale.X: {Var: 20}
-.file60.localScale.Y: {Var: 20}
-.file60.localScale.Z: {Var: 20}
+.file60.localScale.X: {Var: 1}
+.file60.localScale.Y: {Var: 1}
+.file60.localScale.Z: {Var: 1}
 .file60.m_children: {Null: }
 .file60.m_components.0: {Ref: file61}
 .file60.m_components.1: {Ref: file62}
@@ -310,18 +438,374 @@
 
 .file61!script: {Var: Rigidbody}
 .file61!scriptId: {AssetId: 00000010025}
+.file61.active: {Var: True}
+.file61.motion: {Var: Kinematic}
+.file61.Mass: {Var: 1}
+.file61.gravity: {Var: 1}
+.file61.MaxLinearVelocity: {Var: 500}
+.file61.LinearDamping: {Var: 0.05}
+.file61.AgularDamping: {Var: 1}
+.file61.Friction: {Var: 0.2}
+.file61.Bounciness: {Var: 0.2}
+.file61.AllowSleeping: {Var: True}
+.file61.Quality: {Var: Discrete}
 
 .file62!script: {Var: SphereCollider}
 .file62!scriptId: {AssetId: 00000010027}
+.file62.Center.X: {Var: 0}
+.file62.Center.Y: {Var: 0}
+.file62.Center.Z: {Var: 0}
+.file62.Radius: {Var: 10}
+.file62.DrawDebug: {Var: True}
 
 .file63!script: {Var: MeshComponent}
 .file63!scriptId: {AssetId: 00000010003}
-.file63.MeshScale.X: {Var: 1}
-.file63.MeshScale.Y: {Var: 1}
-.file63.MeshScale.Z: {Var: 1}
+.file63.MeshScale.X: {Var: 20}
+.file63.MeshScale.Y: {Var: 20}
+.file63.MeshScale.Z: {Var: 20}
 .file63.IsDebug: {Var: False}
 .file63.CastShadow: {Var: True}
 .file63.IsVisible: {Var: True}
 .file63.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
 .file63.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file64!script: {Var: Actor}
+.file64!scriptId: {AssetId: 00000010000}
+.file64.Name: {Var: Sphere Collader 7}
+.file64.localPosition.X: {Var: -60}
+.file64.localPosition.Y: {Var: 100}
+.file64.localPosition.Z: {Var: 50}
+.file64.localRotationQ.X: {Var: 0}
+.file64.localRotationQ.Y: {Var: 0}
+.file64.localRotationQ.Z: {Var: 0}
+.file64.localRotationQ.W: {Var: 1}
+.file64.localScale.X: {Var: 1}
+.file64.localScale.Y: {Var: 1}
+.file64.localScale.Z: {Var: 1}
+.file64.m_children: {Null: }
+.file64.m_components.0: {Ref: file65}
+.file64.m_components.1: {Ref: file66}
+.file64.m_components.2: {Ref: file67}
+
+.file65!script: {Var: Rigidbody}
+.file65!scriptId: {AssetId: 00000010025}
+.file65.active: {Var: True}
+.file65.motion: {Var: Dynamic}
+.file65.Mass: {Var: 1}
+.file65.gravity: {Var: 1}
+.file65.MaxLinearVelocity: {Var: 500}
+.file65.LinearDamping: {Var: 0.05}
+.file65.AgularDamping: {Var: 0.05}
+.file65.Friction: {Var: 0.2}
+.file65.Bounciness: {Var: 0.2}
+.file65.AllowSleeping: {Var: True}
+.file65.Quality: {Var: Discrete}
+
+.file66!script: {Var: SphereCollider}
+.file66!scriptId: {AssetId: 00000010027}
+.file66.Center.X: {Var: 0}
+.file66.Center.Y: {Var: 0}
+.file66.Center.Z: {Var: 0}
+.file66.Radius: {Var: 10}
+.file66.DrawDebug: {Var: True}
+
+.file67!script: {Var: MeshComponent}
+.file67!scriptId: {AssetId: 00000010003}
+.file67.MeshScale.X: {Var: 20}
+.file67.MeshScale.Y: {Var: 20}
+.file67.MeshScale.Z: {Var: 20}
+.file67.IsDebug: {Var: False}
+.file67.CastShadow: {Var: True}
+.file67.IsVisible: {Var: True}
+.file67.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file67.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file68!script: {Var: Actor}
+.file68!scriptId: {AssetId: 00000010000}
+.file68.Name: {Var: Sphere Collader 8}
+.file68.localPosition.X: {Var: -60}
+.file68.localPosition.Y: {Var: 100}
+.file68.localPosition.Z: {Var: 19.01675}
+.file68.localRotationQ.X: {Var: 0}
+.file68.localRotationQ.Y: {Var: 0}
+.file68.localRotationQ.Z: {Var: 0}
+.file68.localRotationQ.W: {Var: 1}
+.file68.localScale.X: {Var: 1}
+.file68.localScale.Y: {Var: 1}
+.file68.localScale.Z: {Var: 1}
+.file68.m_children: {Null: }
+.file68.m_components.0: {Ref: file69}
+.file68.m_components.1: {Ref: file70}
+.file68.m_components.2: {Ref: file71}
+
+.file69!script: {Var: Rigidbody}
+.file69!scriptId: {AssetId: 00000010025}
+.file69.active: {Var: True}
+.file69.motion: {Var: Dynamic}
+.file69.Mass: {Var: 1}
+.file69.gravity: {Var: 1}
+.file69.MaxLinearVelocity: {Var: 500}
+.file69.LinearDamping: {Var: 0.05}
+.file69.AgularDamping: {Var: 0.05}
+.file69.Friction: {Var: 0.2}
+.file69.Bounciness: {Var: 0.2}
+.file69.AllowSleeping: {Var: True}
+.file69.Quality: {Var: Discrete}
+
+.file70!script: {Var: SphereCollider}
+.file70!scriptId: {AssetId: 00000010027}
+.file70.Center.X: {Var: 0}
+.file70.Center.Y: {Var: 0}
+.file70.Center.Z: {Var: 0}
+.file70.Radius: {Var: 10}
+.file70.DrawDebug: {Var: True}
+
+.file71!script: {Var: MeshComponent}
+.file71!scriptId: {AssetId: 00000010003}
+.file71.MeshScale.X: {Var: 20}
+.file71.MeshScale.Y: {Var: 20}
+.file71.MeshScale.Z: {Var: 20}
+.file71.IsDebug: {Var: False}
+.file71.CastShadow: {Var: True}
+.file71.IsVisible: {Var: True}
+.file71.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file71.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file76!script: {Var: Actor}
+.file76!scriptId: {AssetId: 00000010000}
+.file76.Name: {Var: Sphere Collader 9}
+.file76.localPosition.X: {Var: 143.3351}
+.file76.localPosition.Y: {Var: 151.5945}
+.file76.localPosition.Z: {Var: -35.58834}
+.file76.localRotationQ.X: {Var: 0}
+.file76.localRotationQ.Y: {Var: 0}
+.file76.localRotationQ.Z: {Var: 0}
+.file76.localRotationQ.W: {Var: 1}
+.file76.localScale.X: {Var: 1}
+.file76.localScale.Y: {Var: 1}
+.file76.localScale.Z: {Var: 1}
+.file76.m_children: {Null: }
+.file76.m_components.0: {Ref: file77}
+.file76.m_components.1: {Ref: file78}
+.file76.m_components.2: {Ref: file79}
+
+.file77!script: {Var: Rigidbody}
+.file77!scriptId: {AssetId: 00000010025}
+.file77.active: {Var: True}
+.file77.motion: {Var: Dynamic}
+.file77.Mass: {Var: 1}
+.file77.gravity: {Var: 1}
+.file77.MaxLinearVelocity: {Var: 500}
+.file77.LinearDamping: {Var: 0.2}
+.file77.AgularDamping: {Var: 0.2}
+.file77.Friction: {Var: 1}
+.file77.Bounciness: {Var: 0.2}
+.file77.AllowSleeping: {Var: True}
+.file77.Quality: {Var: Discrete}
+
+.file78!script: {Var: SphereCollider}
+.file78!scriptId: {AssetId: 00000010027}
+.file78.Center.X: {Var: 0}
+.file78.Center.Y: {Var: 0}
+.file78.Center.Z: {Var: 0}
+.file78.Radius: {Var: 50}
+.file78.DrawDebug: {Var: True}
+
+.file79!script: {Var: MeshComponent}
+.file79!scriptId: {AssetId: 00000010003}
+.file79.MeshScale.X: {Var: 100}
+.file79.MeshScale.Y: {Var: 100}
+.file79.MeshScale.Z: {Var: 100}
+.file79.IsDebug: {Var: False}
+.file79.CastShadow: {Var: True}
+.file79.IsVisible: {Var: True}
+.file79.m_mesh.assetId: {AssetId: runtime:/form/Sphere}
+.file79.m_materials.0.assetId: {AssetId: TestMaterial1}
+
+.file80!script: {Var: Actor}
+.file80!scriptId: {AssetId: 00000010000}
+.file80.Name: {Var: Box Collider 2}
+.file80.localPosition.X: {Var: 103.4299}
+.file80.localPosition.Y: {Var: 155.2182}
+.file80.localPosition.Z: {Var: 123.2293}
+.file80.localRotationQ.X: {Var: 0.4084068}
+.file80.localRotationQ.Y: {Var: 0.03618964}
+.file80.localRotationQ.Z: {Var: 0.2449799}
+.file80.localRotationQ.W: {Var: 0.8785665}
+.file80.localScale.X: {Var: 0.9999986}
+.file80.localScale.Y: {Var: 0.9999985}
+.file80.localScale.Z: {Var: 0.9999992}
+.file80.m_children: {Null: }
+.file80.m_components.0: {Ref: file81}
+.file80.m_components.1: {Ref: file82}
+.file80.m_components.2: {Ref: file83}
+
+.file81!script: {Var: Rigidbody}
+.file81!scriptId: {AssetId: 00000010025}
+.file81.active: {Var: True}
+.file81.motion: {Var: Dynamic}
+.file81.Mass: {Var: 1}
+.file81.gravity: {Var: 1}
+.file81.MaxLinearVelocity: {Var: 500}
+.file81.LinearDamping: {Var: 0.05}
+.file81.AgularDamping: {Var: 0.05}
+.file81.Friction: {Var: 0.2}
+.file81.Bounciness: {Var: 0.2}
+.file81.AllowSleeping: {Var: True}
+.file81.Quality: {Var: Discrete}
+
+.file82!script: {Var: BoxCollider}
+.file82!scriptId: {AssetId: 00000010026}
+.file82.Center.X: {Var: 0}
+.file82.Center.Y: {Var: 0}
+.file82.Center.Z: {Var: 0}
+.file82.Size.X: {Var: 30}
+.file82.Size.Y: {Var: 30}
+.file82.Size.Z: {Var: 30}
+.file82.DrawDebug: {Var: True}
+
+.file83!script: {Var: MeshComponent}
+.file83!scriptId: {AssetId: 00000010003}
+.file83.MeshScale.X: {Var: 15}
+.file83.MeshScale.Y: {Var: 15}
+.file83.MeshScale.Z: {Var: 15}
+.file83.IsDebug: {Var: False}
+.file83.CastShadow: {Var: True}
+.file83.IsVisible: {Var: True}
+.file83.m_mesh.assetId: {AssetId: cube}
+.file83.m_materials.0.assetId: {AssetId: M_WorldGride}
+
+.file84!script: {Var: Actor}
+.file84!scriptId: {AssetId: 00000010000}
+.file84.Name: {Var: Capsule Collider}
+.file84.localPosition.X: {Var: -147.7159}
+.file84.localPosition.Y: {Var: 137.0963}
+.file84.localPosition.Z: {Var: -158.7311}
+.file84.localRotationQ.X: {Var: 0.4559924}
+.file84.localRotationQ.Y: {Var: 0}
+.file84.localRotationQ.Z: {Var: 0}
+.file84.localRotationQ.W: {Var: 0.8899837}
+.file84.localScale.X: {Var: 0.9999992}
+.file84.localScale.Y: {Var: 0.9999998}
+.file84.localScale.Z: {Var: 0.9999998}
+.file84.m_children: {Null: }
+.file84.m_components.0: {Ref: file85}
+.file84.m_components.1: {Ref: file86}
+
+.file85!script: {Var: CapsuleCollider}
+.file85!scriptId: {AssetId: 00000010028}
+.file85.Center.X: {Var: 0}
+.file85.Center.Y: {Var: 0}
+.file85.Center.Z: {Var: 0}
+.file85.Radius: {Var: 10}
+.file85.Height: {Var: 30}
+.file85.DrawDebug: {Var: True}
+
+.file86!script: {Var: Rigidbody}
+.file86!scriptId: {AssetId: 00000010025}
+.file86.active: {Var: True}
+.file86.motion: {Var: Dynamic}
+.file86.Mass: {Var: 1}
+.file86.gravity: {Var: 1}
+.file86.MaxLinearVelocity: {Var: 500}
+.file86.LinearDamping: {Var: 0.05}
+.file86.AgularDamping: {Var: 0.05}
+.file86.Friction: {Var: 0.2}
+.file86.Bounciness: {Var: 0.2}
+.file86.AllowSleeping: {Var: True}
+.file86.Quality: {Var: Discrete}
+
+.file87!script: {Var: Actor}
+.file87!scriptId: {AssetId: 00000010000}
+.file87.Name: {Var: Box Collider 3}
+.file87.localPosition.X: {Var: -147.4081}
+.file87.localPosition.Y: {Var: 90.93415}
+.file87.localPosition.Z: {Var: -141.65}
+.file87.localRotationQ.X: {Var: 0.4668199}
+.file87.localRotationQ.Y: {Var: 0}
+.file87.localRotationQ.Z: {Var: 0}
+.file87.localRotationQ.W: {Var: 0.8843524}
+.file87.localScale.X: {Var: 1}
+.file87.localScale.Y: {Var: 0.9999999}
+.file87.localScale.Z: {Var: 0.9999999}
+.file87.m_children: {Null: }
+.file87.m_components.0: {Ref: file88}
+.file87.m_components.1: {Ref: file89}
+.file87.m_components.2: {Ref: file90}
+
+.file88!script: {Var: Rigidbody}
+.file88!scriptId: {AssetId: 00000010025}
+.file88.active: {Var: True}
+.file88.motion: {Var: Static}
+.file88.Mass: {Var: 1}
+.file88.gravity: {Var: 1}
+.file88.MaxLinearVelocity: {Var: 500}
+.file88.LinearDamping: {Var: 0.05}
+.file88.AgularDamping: {Var: 0.05}
+.file88.Friction: {Var: 0.2}
+.file88.Bounciness: {Var: 0.2}
+.file88.AllowSleeping: {Var: True}
+.file88.Quality: {Var: Discrete}
+
+.file89!script: {Var: BoxCollider}
+.file89!scriptId: {AssetId: 00000010026}
+.file89.Center.X: {Var: 0}
+.file89.Center.Y: {Var: 0}
+.file89.Center.Z: {Var: 0}
+.file89.Size.X: {Var: 30}
+.file89.Size.Y: {Var: 30}
+.file89.Size.Z: {Var: 30}
+.file89.DrawDebug: {Var: False}
+
+.file90!script: {Var: MeshComponent}
+.file90!scriptId: {AssetId: 00000010003}
+.file90.MeshScale.X: {Var: 15}
+.file90.MeshScale.Y: {Var: 15}
+.file90.MeshScale.Z: {Var: 15}
+.file90.IsDebug: {Var: False}
+.file90.CastShadow: {Var: True}
+.file90.IsVisible: {Var: True}
+.file90.m_mesh.assetId: {AssetId: cube}
+.file90.m_materials.0.assetId: {AssetId: MAT0000006}
+
+.file91!script: {Var: Actor}
+.file91!scriptId: {AssetId: 00000010000}
+.file91.Name: {Var: Actor}
+.file91.localPosition.X: {Var: -190.6399}
+.file91.localPosition.Y: {Var: 128.5071}
+.file91.localPosition.Z: {Var: 0}
+.file91.localRotationQ.X: {Var: 0.3327015}
+.file91.localRotationQ.Y: {Var: 0.07965881}
+.file91.localRotationQ.Z: {Var: -0.3573142}
+.file91.localRotationQ.W: {Var: 0.8690746}
+.file91.localScale.X: {Var: 0.9999985}
+.file91.localScale.Y: {Var: 0.9999995}
+.file91.localScale.Z: {Var: 0.9999993}
+.file91.m_children: {Null: }
+.file91.m_components.0: {Ref: file92}
+.file91.m_components.1: {Ref: file93}
+
+.file92!script: {Var: Rigidbody}
+.file92!scriptId: {AssetId: 00000010025}
+.file92.active: {Var: True}
+.file92.motion: {Var: Dynamic}
+.file92.Mass: {Var: 1}
+.file92.gravity: {Var: 1}
+.file92.MaxLinearVelocity: {Var: 500}
+.file92.LinearDamping: {Var: 0.05}
+.file92.AgularDamping: {Var: 0.05}
+.file92.Friction: {Var: 0.2}
+.file92.Bounciness: {Var: 0.2}
+.file92.AllowSleeping: {Var: True}
+.file92.Quality: {Var: Discrete}
+
+.file93!script: {Var: BoxCollider}
+.file93!scriptId: {AssetId: 00000010026}
+.file93.Center.X: {Var: 0}
+.file93.Center.Y: {Var: 0}
+.file93.Center.Z: {Var: 0}
+.file93.Size.X: {Var: 50}
+.file93.Size.Y: {Var: 50}
+.file93.Size.Z: {Var: 50}
+.file93.DrawDebug: {Var: True}
 

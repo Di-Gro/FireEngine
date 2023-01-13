@@ -43,8 +43,8 @@ void Scene::Start() {
 	linedPlain->actor()->isSelectable = false;
 
 	editorCamera = CreateActor("Editor Camera")->AddComponent<EditorCamera>();
-	editorCamera->localPosition({ 350, 403, -20 });
-	editorCamera->localRotation({ -0.803, 1.781, 0 });
+	editorCamera->localPosition(m_initCameraPos);
+	editorCamera->localRotationQ(m_initCameraRot);
 
 	editorCamera->Attach();
 
@@ -133,7 +133,8 @@ void Scene::m_UpdateActors(std::list<Actor*>* list) {
 void Scene::m_FixedUpdate(std::list<Actor*>* list) {
 	for (auto it = list->begin(); !IsDestroyed() && it != list->end(); it++) {
 		auto actor = (*it);
-		actor->f_FixedUpdate();
+		if (!actor->IsDestroyed())
+			actor->f_FixedUpdate();
 	}
 }
 
@@ -341,6 +342,34 @@ void Scene::MoveActor(Actor* from, Actor* to, bool isPastBefore)
 		m_actors.insert(++newIt, from);
 }
 
+void Scene::editorCameraPos(const Vector3& position) {
+	if (editorCamera == nullptr)
+		m_initCameraPos = position;
+	else
+		editorCamera->localPosition(position);
+}
+
+void Scene::editorCameraRot(const Quaternion& rotation) {
+	if (editorCamera == nullptr)
+		m_initCameraRot = rotation;
+	else
+		editorCamera->localRotationQ(rotation);
+}
+
+Vector3 Scene::editorCameraPos() {
+	if (editorCamera == nullptr)
+		return m_initCameraPos;
+
+	return editorCamera->localPosition();
+}
+
+Quaternion Scene::editorCameraRot() {
+	if (editorCamera == nullptr)
+		return m_initCameraRot;
+
+	return editorCamera->localRotationQ();
+}
+
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef sceneRef, CsRef csRef, CppRef parentRef) {
 	return CppRefs::ThrowPointer<Scene>(sceneRef)->m_CreateActorFromCs(csRef, parentRef);
 }
@@ -362,3 +391,6 @@ DEF_FUNC(Game, WriteRootActorsRefs, void)(CppRef sceneRef, CsRef* refs) {
 DEF_PUSH_ASSET(Scene);
 
 DEF_PROP_GETSET_STR(Scene, name);
+
+DEF_PROP_GETSET(Scene, Vector3, editorCameraPos);
+DEF_PROP_GETSET(Scene, Quaternion, editorCameraRot);

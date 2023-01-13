@@ -27,6 +27,16 @@ namespace Engine {
             set => Dll.Scene.name_set(cppRef, value); 
         }
 
+        public Vector3 CameraPos {
+            get => Dll.Scene.editorCameraPos_get(cppRef);
+            set => Dll.Scene.editorCameraPos_set(cppRef, value);
+        }
+
+        public Quaternion CameraRot {
+            get => Dll.Scene.editorCameraRot_get(cppRef);
+            set => Dll.Scene.editorCameraRot_set(cppRef, value);
+        }
+
         private Scene() {
             assetInstance = FireYaml.AssetInstance.PopId();
         }

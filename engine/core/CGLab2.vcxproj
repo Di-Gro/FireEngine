@@ -44,10 +44,12 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\TextEditor\TextEditor.cpp" />
+    <ClCompile Include="JoltExtantions.cpp" />
+    <ClCompile Include="Layers.cpp" />
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ClassInfo.cpp" />
-    <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="Colliders.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CppClass.cpp" />
     <ClCompile Include="CSBridge.cpp" />
@@ -134,7 +136,7 @@
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ClassInfo.h" />
-    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="Colliders.h" />
     <ClInclude Include="Component.inl" />
     <ClInclude Include="ComponentMeta.h" />
     <ClInclude Include="CppClass.h" />

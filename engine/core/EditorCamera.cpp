@@ -11,14 +11,14 @@ void EditorCamera::OnInit() {
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &EditorCamera::m_OnMouseMove);
 	UpdateProjectionMatrix();
 
-	game()->hotkeys()->RegisterHotkey(Keys::O);
+	//game()->hotkeys()->RegisterHotkey(Keys::O);
 }
 
 void EditorCamera::OnDestroy() {
 	CameraComponent::OnDestroy();
 
 	game()->input()->MouseMove.Remove(m_mouseMoveHandle);
-	game()->hotkeys()->UnregisterHotkey(Keys::O);
+	//game()->hotkeys()->UnregisterHotkey(Keys::O);
 }
 
 void EditorCamera::OnUpdate() {
@@ -27,8 +27,8 @@ void EditorCamera::OnUpdate() {
 	if (!IsMainCamera())
 		return;
 
-	if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
-		orthographic(!orthographic());
+	//if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
+	//	orthographic(!orthographic());
 
 	if (m_updateRotation) {
 		auto rot = localRotation();

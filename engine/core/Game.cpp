@@ -184,10 +184,13 @@ void Game::Run() {
 
 	//PushScene(m_editorScene);
 
-	//auto meshcomp = currentScene()->CreateActor("Cpp actor")->AddComponent<MeshComponent>();
-	//meshcomp->mesh(meshAsset()->GetMesh("../../data/assets/levels/farm/meshes/Fountain.obj"));
-
-	////currentScene()->CreateActor("GameController")->AddComponent<GameController>();
+	//auto meshcomp = currentScene()->CreateActor("Half Sphere")->AddComponent<MeshComponent>(true);
+	//auto form = Forms4::HalfSphereLined(0.5f, 12, 12);
+	//meshcomp->AddShape(&form.verteces, &form.indexes);
+	//meshcomp->mesh()->topology = form.topology;
+	//meshcomp->meshScale = {10,10,10};
+	// 
+	//currentScene()->CreateActor("GameController")->AddComponent<GameController>();
 	//PopScene();
 		
 	MSG msg = {};

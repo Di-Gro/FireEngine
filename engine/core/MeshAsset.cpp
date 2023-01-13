@@ -34,6 +34,7 @@ std::string MeshAsset::formBoxLined = "runtime:/form/BoxLined";
 std::string MeshAsset::formSphere = "runtime:/form/Sphere";
 std::string MeshAsset::formSphereLined = "runtime:/form/SphereLined";
 std::string MeshAsset::formCone = "../../data/engine/models/cone.obj";
+//std::string MeshAsset::formCapsule = "../../data/engine/models/capsule.obj";
 
 
 

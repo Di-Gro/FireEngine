@@ -120,6 +120,8 @@ public:
 	// Note: This value is low because this is a simple test. For a real project use something in the order of 10240.
 	const JPH::uint cMaxContactConstraints = 1024;
 
+	const float cWorldScale = 20.0f;
+
 public:
 	std::list<Rigidbody*> rigidbodies;
 
