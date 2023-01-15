@@ -451,8 +451,9 @@ namespace Engine
 
             if (ImGui.BeginCombo($"##{label}_{groupRef}", value)) {
                 foreach (var item in values) {
-                    if (ImGui.Selectable($"##{item}_{groupRef}", item == value))
+                    if (ImGui.Selectable($"{item}##_{groupRef}", item == value))
                         newValue = item;
+                    Space();
                 }
                 ImGui.EndCombo();
             }

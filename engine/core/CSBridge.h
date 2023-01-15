@@ -34,6 +34,10 @@ namespace CSBridge {
 	PROP_GET(ClassName, propType, propName)\
 	PROP_SET(ClassName, propType, propName)\
 
+#define PROP_GETSET_E(ClassName, propType, propName)\
+	PROP_GET(ClassName, int, propName)\
+	PROP_SET(ClassName, int, propName)\
+
 #define PROP_GETSET_STR(ClassName, propName)\
 	PROP_GET_STR(ClassName, propName)\
 	PROP_SET_STR(ClassName, propName)\
@@ -45,6 +49,10 @@ namespace CSBridge {
 #define DEF_PROP_GETSET(ClassName, propType, propName)\
 	DEF_PROP_GET(ClassName, propType, propName)\
 	DEF_PROP_SET(ClassName, propType, propName)\
+
+#define DEF_PROP_GETSET_E(ClassName, propType, propName)\
+	DEF_PROP_GET_E(ClassName, propType, propName)\
+	DEF_PROP_SET_E(ClassName, propType, propName)\
 
 #define DEF_PROP_GETSET_F(ClassName, propType, propName, field)\
 	DEF_PROP_GET_F(ClassName, propType, propName, field)\
@@ -75,6 +83,27 @@ namespace CSBridge {
 		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
 		if (a != nullptr)\
 			a->propName(value);\
+		else\
+			std::cout << "+: prop_set::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
+\
+	}\
+
+#define DEF_PROP_GET_E(ClassName, propType, propName)\
+	int ClassName##_##propName##_get(CppRef objRef) {\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
+		if (a != nullptr)\
+			return (int)a->propName();\
+		else\
+			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
+\
+		return 0;\
+	}\
+
+#define DEF_PROP_SET_E(ClassName, propType, propName)\
+	void ClassName##_##propName##_set(CppRef objRef, int value) {\
+		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
+		if (a != nullptr)\
+			a->propName((propType)value);\
 		else\
 			std::cout << "+: prop_set::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
 \

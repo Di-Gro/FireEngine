@@ -14,6 +14,7 @@ namespace Engine {
         public ComponentCallback onInit;
         public ComponentCallback onStart;
         public ComponentCallback onUpdate;
+        public ComponentCallback onFixedUpdate;
         public ComponentCallback onDestroy;
 
     }
@@ -47,6 +48,7 @@ namespace Engine {
         public virtual void OnInit() { }
         public virtual void OnStart() { }
         public virtual void OnUpdate() { }
+        public virtual void OnFixedUpdate() { }
         public virtual void OnDestroy() { }
 
 
@@ -64,6 +66,7 @@ namespace Engine {
             m_callbacks.onInit = new ComponentCallbacks.ComponentCallback(OnInit);
             m_callbacks.onStart = new ComponentCallbacks.ComponentCallback(OnStart);
             m_callbacks.onUpdate = new ComponentCallbacks.ComponentCallback(OnUpdate);
+            m_callbacks.onFixedUpdate = new ComponentCallbacks.ComponentCallback(OnFixedUpdate);
             m_callbacks.onDestroy = new ComponentCallbacks.ComponentCallback(OnDestroy);
 
             dll_SetComponentCallbacks(cppRef, m_callbacks);

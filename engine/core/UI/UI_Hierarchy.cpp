@@ -53,16 +53,18 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 }
 
 void UI_Hierarchy::m_HandleInput() {
-	auto actor = m_game->ui()->GetActor();
+	if (ImGui::IsWindowHovered() || m_game->ui()->isSceneHovered) {
+		auto actor = m_game->ui()->GetActor();
 
-	if (m_game->hotkeys()->GetButtonDown(Keys::C, Keys::Ctrl))
-		ActorMenu::Copy(actor);
-	
-	if (m_game->hotkeys()->GetButtonDown(Keys::V, Keys::Ctrl))
-		ActorMenu::Paste(m_game);
-	
-	if (m_game->hotkeys()->GetButtonDown(Keys::Delete))
-		ActorMenu::Remove(actor);
+		if (m_game->hotkeys()->GetButtonDown(Keys::C, Keys::Ctrl))
+			ActorMenu::Copy(actor);
+
+		if (m_game->hotkeys()->GetButtonDown(Keys::V, Keys::Ctrl))
+			ActorMenu::Paste(m_game);
+
+		if (m_game->hotkeys()->GetButtonDown(Keys::Delete))
+			ActorMenu::Remove(actor);
+	}
 }
 
 void UI_Hierarchy::PushPopupStyles() {
@@ -94,8 +96,8 @@ void UI_Hierarchy::m_DrawSceneContextMenu() {
 		if (ImGui::Selectable("Add Actor"))
 			SceneMenu::AddActor(scene);
 
-		bool canAddLight = 
-			scene->directionLight == nullptr || 
+		bool canAddLight =
+			scene->directionLight == nullptr ||
 			scene->ambientLight == nullptr;
 
 		auto lightFlags = !canAddLight ? ImGuiSelectableFlags_Disabled : 0;
@@ -117,9 +119,9 @@ void UI_Hierarchy::m_DrawActorContextMenu(Actor* actor) {
 		if (ImGui::Selectable("Add Child"))
 			ActorMenu::AddChild(actor);
 
-		if (ImGui::Selectable("Remove")) 
+		if (ImGui::Selectable("Remove"))
 			ActorMenu::Remove(actor);
-		
+
 		ImGui::EndPopup();
 	}
 	PopPopupStyles();
@@ -158,7 +160,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	HandleDrop(actor, selectedTree, height, imGuiItemSize, currentCursor);
 
 	ImGui::PopStyleVar(2);
-	
+
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsItemHovered())
 		m_clickedActor = actor;
 
@@ -166,7 +168,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 		if (ImGui::IsItemHovered() && m_clickedActor == actor)
 			m_ui->SelectedActor(actor);
 	}
-			
+
 	if (selectedTree)
 	{
 		for (int i = 0; i < actor->GetChildrenCount(); ++i)
@@ -263,7 +265,7 @@ bool UI_Hierarchy::HandeDragDrop(Actor* drag, Actor* drop, bool isDropOpen, floa
 			isInsert = false;
 			changed = true;
 		}
-	} 
+	}
 	if (isMove && !isInsert) {
 		if(!drop->HasParent())
 			m_ui->selectedScene()->MoveActor(drag, drop, isUpSide);

@@ -4,27 +4,20 @@
 
 #include "Transform.h"
 #include "ActorConcepts.h"
+#include "SafeDestroy.h"
 
 class Component;
 class Game;
 class Scene;
+class Actor;
 
-class ActorBase : public CsLink, public ActorTransform {
+class ActorBase : public CsLink, public ActorTransform, public SafeDestroy {
 	friend class Scene;
 	friend class Actor;
 
 private:
-	//Transform* transform;
 
-private:
-
-	Actor* friend_gameObject = nullptr;
 	Component* friend_component = nullptr;
-	int friend_timeToDestroy = 1;
-	//bool friend_isStarted = false;
-
-	bool m_onPreDestroy = false;
-	
 
 public:
 	ActorBase() {}
@@ -37,10 +30,8 @@ public:
 	Actor* parent();
 	void parent(ActorBase* parent);
 
-	bool IsDestroyed();
-
 	Actor* CreateActor(std::string name = "");
-	void Destroy();
+	void Destroy() override;
 
 
 	template<IsCppAddableComponent TComponent, typename = std::enable_if_t<std::is_base_of_v<Component, TComponent>>>
@@ -54,7 +45,4 @@ public:
 
 	virtual void RecieveGameMessage(const std::string& msg) {}
 
-private:
-	bool friend_CanDestroy() { return !IsDestroyed() && !m_onPreDestroy; }
-	void friend_StartDestroy() { m_onPreDestroy = true; }
 };

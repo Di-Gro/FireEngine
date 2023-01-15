@@ -76,3 +76,11 @@ inline void FixNaN(Matrix& value) {
 inline bool IsNaN(Matrix& value) {
 	return IsAllNaN(value);
 }
+
+float VecMin(const DirectX::SimpleMath::Vector3& vec) {
+	return min(min(vec.x, vec.y), vec.z);
+}
+
+float VecMax(const DirectX::SimpleMath::Vector3& vec) {
+	return max(max(vec.x, vec.y), vec.z);
+}

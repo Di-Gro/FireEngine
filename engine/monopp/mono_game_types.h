@@ -79,6 +79,7 @@ public:
 	void(*onInit)();
 	void(*onStart)();
 	void(*onUpdate)();
+	void(*onFixedUpdate)();
 	void(*onDestroy)();
 };
 

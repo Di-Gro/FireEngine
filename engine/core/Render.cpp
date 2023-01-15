@@ -173,12 +173,14 @@ void Render::Draw(std::list<Scene*>* scenes) {
 	/// Begin Render
 	for (auto scene : *scenes) {
 		m_scene = scene;
-		m_renderer = &scene->renderer;
+		if (!m_scene->IsDestroyed()) {
+			m_renderer = &scene->renderer;
 
-		scene->renderer.Draw();
+			scene->renderer.Draw();
 
-		m_scene = nullptr;
-		m_renderer = nullptr;
+			m_scene = nullptr;
+			m_renderer = nullptr;
+		}
 	}
 
 	//m_Clear();

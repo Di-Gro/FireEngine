@@ -5,6 +5,7 @@
 #include "Actor.h"
 #include "SceneRenderer.h"
 #include "Refs.h"
+#include "SafeDestroy.h"
 
 class Game;
 class DirectionLight;
@@ -12,6 +13,7 @@ class AmbientLight;
 class LinedPlain;
 class CameraComponent;
 class EditorCamera;
+class PhysicsScene;
 
 using CameraIter = std::list<CameraComponent*>::iterator;
 using SceneIter = std::list<Scene*>::iterator;
@@ -20,7 +22,7 @@ FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, 
 FUNC(Game, GetRootActorsCount, int)(CppRef gameRef);
 FUNC(Game, WriteRootActorsRefs, void)(CppRef gameRef, CsRef* refs);
 
-class Scene : public IAsset {
+class Scene : public IAsset, public SafeDestroy {
 	FRIEND_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, CppRef parentRef);
 
 	friend class Game;
@@ -38,11 +40,15 @@ public:
 	LinedPlain* linedPlain;
 
 	SceneRenderer renderer;
+	PhysicsScene* m_physicsScene;
 
 private: // friend
 	SceneIter f_sceneIter;
 	Ref2 f_ref;
 	bool f_isDestroyed = false;
+
+	Vector3 m_initCameraPos = { 350, 403, -20 };
+	Quaternion m_initCameraRot = Quaternion::CreateFromYawPitchRoll({ -0.803, 1.781, 0 });
 
 private:
 	Game* m_game;
@@ -91,19 +97,31 @@ public:
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera);
 
+	inline PhysicsScene* physicsScene() { return m_physicsScene; }
+
 	void AttachPlayerCamera();
 
 	void Stat();
 
+	void editorCameraPos(const Vector3& position);
+	void editorCameraRot(const Quaternion& rotation);
+
+	Vector3 editorCameraPos();
+	Quaternion editorCameraRot();
+
 private:
 	void f_Update();
-	void f_Destroy();
+	void Destroy() override;
+
+	void f_FixedUpdate();
 
 private:
 	void m_InitMono();
 
-	void m_Update(std::list<Actor*>* list);
-	void m_Destroy(std::list<Actor*>* list);
+	void m_UpdateActors(std::list<Actor*>* list);
+	void m_DestroyActors(std::list<Actor*>* list);
+
+	void m_FixedUpdate(std::list<Actor*>* list);
 
 	void m_MoveToStatic(Actor* actor);
 
@@ -115,3 +133,6 @@ private:
 
 PUSH_ASSET(Scene);
 PROP_GETSET_STR(Scene, name);
+
+PROP_GETSET(Scene, Vector3, editorCameraPos);
+PROP_GETSET(Scene, Quaternion, editorCameraRot);

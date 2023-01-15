@@ -23,7 +23,7 @@ namespace FireYaml {
         }
 
         public static AssetStore Instance { get; set; }
-        
+
         private static Dictionary<int, Type> m_guidHash_type = new Dictionary<int, Type>();
         private Dictionary<int, AssetData> m_assetGuidHash_assetData = new Dictionary<int, AssetData>();
         private Dictionary<int, YamlValues> m_assetGuidHash_assetValues = new Dictionary<int, YamlValues>();
@@ -42,31 +42,6 @@ namespace FireYaml {
 
         public AssetStore(bool addDefaultAssets = true) {
 
-            if (addDefaultAssets) {
-                var project = ProjectPath;
-
-                // AddAssetId("MESH000001", $"{AssetsPath}/Meshes/Farm/House_Red.yml");
-                // AddAssetId("MESH000002", $"{AssetsPath}/Meshes/Farm/House_Purple.yml");
-                // AddAssetId("MESH000003", $"{AssetsPath}/Meshes/Farm/House_Blue.yml");
-                // AddAssetId("TestMesh1", $"{AssetsPath}/Meshes/TestMesh1.yml");
-                // AddAssetId("test_navmesh", $"{AssetsPath}/Meshes/test_navmesh.yml");
-
-                // AddAssetId("IMG0000004", $"{AssetsPath}/Images/Gradients.yml");
-                // AddAssetId("TestImage1", $"{AssetsPath}/Images/TestImage1.yml");
-
-                // AddAssetId("TEX0000005", $"{AssetsPath}/Textures/Texture.yml");
-                // AddAssetId("TestTexture1", $"{AssetsPath}/Textures/TestTexture1.yml");
-
-                // AddAssetId("MAT0000006", $"{AssetsPath}/Materials/Material.yml");
-                // AddAssetId("TestMaterial1", $"{AssetsPath}/Materials/TestMaterial1.yml");
-
-                // AddAssetId("TestMesh", $"{AssetsPath}/Prefabs/TestMesh.yml");
-                // AddAssetId("TestMeshPrefab", $"{AssetsPath}/Prefabs/TestMeshPrefab.yml");
-                // AddAssetId("TestPrefab", $"{AssetsPath}/Prefabs/TestPrefab.yml");
-                // AddAssetId("TestPrefab2", $"{AssetsPath}/Prefabs/TestPrefab2.yml");
-
-                // AddAssetId("scene_1", $"{AssetsPath}/Scenes/scene_1.yml");
-            }
         }
 
         public void Init(string projectPath) {
@@ -77,7 +52,7 @@ namespace FireYaml {
             Dll.AssetStore.editorPath_set(Game.assetStoreRef, EditorPath);
 
             m_CollectTypes();
-            
+
             m_UpdateAssets(EditorPath, in DateTime.UnixEpoch);
             m_UpdateAssets(AssetsPath, in DateTime.UnixEpoch);
 
@@ -165,7 +140,7 @@ namespace FireYaml {
 
             return "";
         }
-    
+
         public AssetInfo GetAssetInfo(string assetId) {
             var values = GetAssetValues(assetId);
 
@@ -250,7 +225,7 @@ namespace FireYaml {
             ReloadAssetValues(assetGuid);
         }
 
-        /// Временные ассеты 
+        /// Временные ассеты
         // Не добавляются в загруженные ассеты
         // Не сохраняются в файл при сериализации
         // Функции обычно вызываются из С++
@@ -265,9 +240,9 @@ namespace FireYaml {
         }
 
         public static bool IsTmpAssetId(int tmpAssetIdHash) => Instance.m_tmpAssetIdHashes.Contains(tmpAssetIdHash);
-        
+
         private bool m_IsAssetExt(string ext) {
-            return 
+            return
                 ext == ".yml";
         }
 
@@ -309,18 +284,18 @@ namespace FireYaml {
 
                 Dll.AssetStore.SetType(Game.gameRef, typeGuidHash, type.FullName, type.Name);
 
-                if (FireWriter.IsUserComponent(type)) 
+                if (FireWriter.IsUserComponent(type))
                     Dll.AssetStore.AddComponent(Game.gameRef, typeGuidHash);
-                
-                if (FireWriter.IsAsset(type)) 
+
+                if (FireWriter.IsAsset(type))
                     Dll.AssetStore.AddAssetType(Game.gameRef, typeGuidHash);
-                
+
             }
         }
 
         public void SendAssetsInCpp() {
-            var actorId = GUIDAttribute.GetGuidHash(typeof(Engine.Actor)); 
-            var componentId = GUIDAttribute.GetGuidHash(typeof(Engine.Component)); 
+            var actorId = GUIDAttribute.GetGuidHash(typeof(Engine.Actor));
+            var componentId = GUIDAttribute.GetGuidHash(typeof(Engine.Component));
             var prefabGuidHash = GUIDAttribute.GetGuidHash(typeof(Engine.Prefab));
 
             Dll.AssetStore.ClearAssets(Game.gameRef);

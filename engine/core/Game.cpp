@@ -12,6 +12,7 @@
 #include "Window.h"
 #include "Scene.h"
 #include "Render.h"
+#include "Physics.h"
 #include "RenderDevice.h"
 #include "Lighting.h"
 #include "InputDevice.h"
@@ -77,6 +78,7 @@ std::vector<std::string> game_shaderPaths = {
 Game::Game() {
 	m_window = new Window();
 	m_render = new Render();
+	m_physics = new Physics();
 	m_input = new InputDevice();
 	m_hotkeys = new HotKeys();
 	m_shaderAsset = new ShaderAsset();
@@ -90,6 +92,7 @@ Game::Game() {
 Game::~Game() {
 	delete m_window;
 	delete m_render;
+	delete m_physics;
 	delete m_input;
 	delete m_hotkeys;
 	delete m_shaderAsset;
@@ -107,6 +110,7 @@ void Game::Init(MonoInst* imono) {
 	m_window->Create();
 
 	m_render->Init(this, m_window);
+	m_physics->Init(this);
 	m_shaderAsset->Init(m_render);
 	m_meshAsset->Init(this);
 	m_imageAsset->Init();
@@ -126,7 +130,7 @@ void Game::Init(MonoInst* imono) {
 
 	m_editorWindow = ui()->CreateSceneWindow("Editor");
 	m_editorWindow->visible = true;
-	
+
 	m_gameWindow = ui()->CreateSceneWindow("Game");
 	m_gameWindow->visible = false;
 
@@ -149,7 +153,7 @@ bool Game::LoadScene(Scene* targetScene, int assetGuidHash) {
 
 	if (targetScene->IsAsset()) {
 		bool hasAsset = callbacks().hasAssetInStore(targetScene->assetIdHash());
-		if (hasAsset) 
+		if (hasAsset)
 			loaded = assets()->Load(targetScene->assetIdHash(), sceneRef);
 	}
 	else if(assetGuidHash != 0) {
@@ -157,6 +161,16 @@ bool Game::LoadScene(Scene* targetScene, int assetGuidHash) {
 	}
 	return loaded;
 }
+
+#define PEEK_MESSAGE(msg, m_onExit, isExitRequested)\
+while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {\
+	TranslateMessage(&msg);\
+	DispatchMessage(&msg);\
+}\
+if (msg.message == WM_QUIT || m_onExit) {\
+	isExitRequested = true;\
+	break;\
+}\
 
 void Game::Run() {
 	m_render->Start();
@@ -172,54 +186,50 @@ void Game::Run() {
 
 	//PushScene(m_editorScene);
 
-	//auto meshcomp = currentScene()->CreateActor("Cpp actor")->AddComponent<MeshComponent>();
-	//meshcomp->mesh(meshAsset()->GetMesh("../../data/assets/levels/farm/meshes/Fountain.obj"));
-
-	////currentScene()->CreateActor("GameController")->AddComponent<GameController>();
+	//auto meshcomp = currentScene()->CreateActor("Half Sphere")->AddComponent<MeshComponent>(true);
+	//auto form = Forms4::HalfSphereLined(0.5f, 12, 12);
+	//meshcomp->AddShape(&form.verteces, &form.indexes);
+	//meshcomp->mesh()->topology = form.topology;
+	//meshcomp->meshScale = {10,10,10};
+	//
+	//currentScene()->CreateActor("GameController")->AddComponent<GameController>();
 	//PopScene();
-			
+
 	MSG msg = {};
 
-	float targetFrameTime = 1.0f / 60.0f;
-	float accumFrameTime = targetFrameTime;
+	m_fixedTimer.targetRate(60.0f);
 
 	bool isExitRequested = false;
 	while (!isExitRequested) {
-		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+		PEEK_MESSAGE(msg, m_onExit, isExitRequested);
+		m_ShowFPS();
 
-		if (msg.message == WM_QUIT || m_onExit) {
-			isExitRequested = true;
-			break;
-		}
+		m_updateTimer.MakeStep();
 
-		m_Update();
+		m_BeginUpdate();
+		m_ForScenes(&Scene::f_Update);
+		m_DrawUI();
 
-		accumFrameTime += deltaTime();
-		if (accumFrameTime >= targetFrameTime) {
-			accumFrameTime -= targetFrameTime;
+		while (m_fixedTimer.NextStep())
+			m_ForScenes(&Scene::f_FixedUpdate);
 
-			m_render->Draw(&m_scenes);
-			
-			m_updateCounter.Update();
-			if (m_updateCounter.HasChanges()) {
-				WCHAR text[256];
-				swprintf_s(text, TEXT("FPS: %d"), m_updateCounter.FPS());
-				SetWindowText(m_window->GetHWindow(), text);
-			}
-		}
-
-		m_fpsCounter.Update();
-		/*if (m_fpsCounter.HasChanges()) {
-			WCHAR text[256];
-			swprintf_s(text, TEXT("FPS: %d"), m_fpsCounter.FPS());
-			SetWindowText(m_window->GetHWindow(), text);
-		}*/
+		m_EndUpdate();
+		m_render->Draw(&m_scenes);
 	}
 
 	m_Destroy();
+}
+
+void Game::m_ShowFPS() {
+	if (m_updateTimer.IsRateChanged() || m_fixedTimer.IsRateChanged()) {
+		WCHAR text[256];
+		swprintf_s(text,
+			TEXT("Update Rate: %d\t Fixed Rate: %d"),
+			m_updateTimer.RatePerSecond(),
+			m_fixedTimer.RatePerSecond()
+		);
+		SetWindowText(m_window->GetHWindow(), text);
+	}
 }
 
 void Game::Exit(int code) {
@@ -229,38 +239,46 @@ void Game::Exit(int code) {
 	}
 }
 
-void Game::m_Update() {
-	/// Pre Update
-	GameUpdateData updateData;
-	updateData.deltaTime = deltaTime();
-	callbacks().setUpdateData(updateData);
-	
-	m_BeginUpdateImGui();
-
-	/// Update
-	m_hotkeys->Update(input());
+void Game::m_ForScenes(void (Scene::* method)()) {
 
 	auto it = m_scenes.begin();
 	while (it != m_scenes.end()) {
 
 		auto scene = (*it);
-
-		assert(m_sceneStack.size() == 0);
-		scene->f_Update();
+		if (scene->IsDestroyed()) {
+			scene->timeToDestroy--;
+			if (scene->timeToDestroy <= 0)
+				it = m_EraseScene(it);
+			continue;
+		}
+		(scene->*method)();
 		assert(m_sceneStack.size() == 0);
 
 		it++;
 	}
+}
+
+void Game::m_DrawUI() {
+	if (ui()->selectedScene() != nullptr && ui()->selectedScene()->IsDestroyed())
+		ui()->selectedScene(nullptr);
+
+	if (ui()->HasActor() && ui()->GetActor()->IsDestroyed())
+		ui()->SelectedActor(nullptr);
 
 	ui()->Draw();
+}
 
-	static bool once = true;
-	if (once) {
-		once = false;
-		ui()->GetSceneWindow("Editor")->focus();
-	}
+void Game::m_BeginUpdate() {
+	GameUpdateData updateData;
+	updateData.deltaTime = deltaTime();
+	m_callbacks.setUpdateData(updateData);
 
-	/// Post Update
+	m_hotkeys->Update(input());
+
+	m_BeginUpdateImGui();
+}
+
+void Game::m_EndUpdate() {
 	m_EndUpdateImGui();
 
 	m_hotkeys->LateUpdate();
@@ -284,14 +302,19 @@ void Game::m_Update() {
 	}
 }
 
+
 void Game::m_Destroy() {
 
-	for (auto it = m_scenes.begin(); it != m_scenes.end(); it = m_EraseScene(it)) 
-		(*it)->f_Destroy();
+	auto it = m_scenes.begin();
+	while (it != m_scenes.end()) {
+		DestroyScene(*it);
+		it = m_EraseScene(it);
+	}
 
 	m_DestroyImGui();
 	m_hotkeys->Destroy();
 	m_meshAsset->Destroy();
+	m_physics->Destroy();
 	m_render->Destroy();
 	m_window->Destroy();
 }
@@ -336,12 +359,14 @@ Scene* Game::CreateScene(bool isEditor, const std::string& assetId) {
 }
 
 void Game::DestroyScene(Scene* scene) {
-	for (auto sceneInStack : m_sceneStack) {
-		if (sceneInStack == scene)
-			throw std::exception("Can't destroy a scene while it's in use");
+	if (scene->BeginDestroy()) {
+		for (auto sceneInStack : m_sceneStack) {
+			if (sceneInStack == scene)
+				throw std::exception("Can't destroy a scene while it's in use");
+		}
+		scene->Destroy();
+		scene->EndDestroy();
 	}
-	scene->f_Destroy();
-	m_EraseScene(scene->f_sceneIter);
 }
 
 std::list<Scene*>::iterator Game::m_EraseScene(std::list<Scene*>::iterator iter) {
@@ -405,13 +430,13 @@ void Game::DeleteMaterialFromAllScenes(const Material* material) {
 void Game::TogglePlayMode() {
 	auto tmpScenePath = assetStore()->editorPath() + "/Ignore/editor_scene.yml";
 	//auto assetId = tmpSceneAssetId.c_str();
-	
+
 	if (m_gameScene == nullptr) {
 		m_gameScene = CreateScene(false);
 
 		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
 		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
-		
+
 		int assetGuidHash = callbacks().saveScene(editorSceneRef, (size_t)tmpScenePath.c_str());
 		bool wasLoaded = false;
 

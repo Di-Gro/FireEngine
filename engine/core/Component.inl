@@ -19,6 +19,8 @@ public:
 	virtual void OnUpdate() { };
 	virtual void OnDestroy() { };
 
+	virtual void OnFixedUpdate() { };
+
 	virtual void OnDraw() { };
 	virtual void OnDrawShape(int index) { };
 	
@@ -32,7 +34,7 @@ private:
 	ComponentCallbacks f_callbacks = { };
 	bool f_isInited = false;
 	bool f_isStarted = false;
-	
+	Actor* f_selfActor;
 
 };
 

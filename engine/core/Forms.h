@@ -79,6 +79,9 @@ namespace Forms4 {
 
 	Form SphereLined(float radius, int latitudes, int longitudes, Vector4 color = { 1, 1, 1, 1 });
 	Form Sphere(float radius, int latitudes, int longitudes, Vector4 color = { 1, 1, 1, 1 });
+	
+	Form HalfSphereLined(float radius, int latitudes, int longitudes, Vector4 color = { 1, 1, 1, 1 });
+	Form HalfSphere(float radius, int latitudes, int longitudes, Vector4 color = { 1, 1, 1, 1 });
 
 	Form Box(Vector3 size, Vector4 color = { 1, 1, 1, 1 });
 	Form BoxLined(Vector3 size, Vector4 color = { 1, 1, 1, 1 });

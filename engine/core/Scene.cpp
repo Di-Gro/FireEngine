@@ -2,10 +2,13 @@
 
 #include "Game.h"
 #include "Assets.h"
+#include "Physics.h"
 #include "Actor.h"
 #include "CameraComponent.h"
 #include "EditorCamera.h"
 #include "LinedPlain.h"
+
+#include "PhysicsScene.h"
 
 unsigned int Scene::m_objectCount = 0;
 
@@ -17,12 +20,17 @@ static const char* MissingPushPopMsg = "You are trying to manipulate the scene w
 
 
 void Scene::Init(Game* game, bool _isEditor) {
+	pointerForDestroy(this);
+
 	m_game = game;
 	m_isEditor = _isEditor;
 
 	m_InitMono();
 
 	renderer.Init(game, this);
+
+	m_physicsScene = new PhysicsScene();
+	m_physicsScene->Init();
 }
 
 void Scene::Start() {
@@ -35,8 +43,8 @@ void Scene::Start() {
 	linedPlain->actor()->isSelectable = false;
 
 	editorCamera = CreateActor("Editor Camera")->AddComponent<EditorCamera>();
-	editorCamera->localPosition({ 350, 403, -20 });
-	editorCamera->localRotation({ -0.803, 1.781, 0 });
+	editorCamera->localPosition(m_initCameraPos);
+	editorCamera->localRotationQ(m_initCameraRot);
 
 	editorCamera->Attach();
 
@@ -68,30 +76,52 @@ void Scene::f_Update() {
 	if (!m_isStarted)
 		throw std::exception("Scene not started");
 
-	m_Update(&m_staticActors);
-	m_Update(&m_actors);
+	m_UpdateActors(&m_staticActors);
+	m_UpdateActors(&m_actors);
 
 	m_game->PopScene();
 }
 
-void Scene::f_Destroy() {
+void Scene::f_FixedUpdate() {
 	m_game->PushScene(this);
 
-	m_Destroy(&m_actors);
-	m_Destroy(&m_staticActors);
+	if (!m_isStarted)
+		throw std::exception("Scene not started");
 
-	renderer.Destroy();
+	if (!m_isEditor) {
+		m_game->physics()->Update(this);
+
+		m_FixedUpdate(&m_staticActors);
+		m_FixedUpdate(&m_actors);
+	}
 	m_game->PopScene();
 }
 
-void Scene::m_Update(std::list<Actor*>* list) {
+void Scene::Destroy() {
+	assert(!IsDestroyed());
+
+	m_game->PushScene(this);
+
+	m_DestroyActors(&m_actors);
+	m_DestroyActors(&m_staticActors);
+
+	renderer.Destroy();
+	m_physicsScene->Destroy();
+
+	delete m_physicsScene;
+	m_physicsScene = nullptr;
+
+	m_game->PopScene();
+}
+
+void Scene::m_UpdateActors(std::list<Actor*>* list) {
 	auto it = list->begin();
-	while (it != list->end()) {
+	while (!IsDestroyed() && it != list->end()) {
 
 		auto actor = (*it);
 		if (actor->IsDestroyed()) {
-			actor->friend_timeToDestroy--;
-			if (actor->friend_timeToDestroy <= 0)
+			actor->timeToDestroy--;
+			if (actor->timeToDestroy <= 0)
 				it = m_EraseActor(it, list);
 			continue;
 		}
@@ -100,9 +130,17 @@ void Scene::m_Update(std::list<Actor*>* list) {
 	}
 }
 
-void Scene::m_Destroy(std::list<Actor*>* list) {
+void Scene::m_FixedUpdate(std::list<Actor*>* list) {
+	for (auto it = list->begin(); !IsDestroyed() && it != list->end(); it++) {
+		auto actor = (*it);
+		if (!actor->IsDestroyed())
+			actor->f_FixedUpdate();
+	}
+}
+
+void Scene::m_DestroyActors(std::list<Actor*>* list) {
 	auto it = list->begin();
-	while (it != list->end()) {
+	while (!IsDestroyed() && it != list->end()) {
 		DestroyActor(*it);
 		it = m_EraseActor(it, list);
 	}
@@ -152,8 +190,7 @@ GameObjectInfo Scene::m_CreateActorFromCs(CsRef csRef, CppRef parentRef) {
 }
 
 void Scene::DestroyActor(Actor* actor) {
-	if (actor->ActorBase::friend_CanDestroy()) {
-		actor->ActorBase::friend_StartDestroy();
+	if (actor->ActorBase::BeginDestroy()) {
 
 		actor->f_Destroy();
 
@@ -162,6 +199,8 @@ void Scene::DestroyActor(Actor* actor) {
 
 		if (actor->csRef().value > 0)
 			m_game->callbacks().removeCsRef(actor->csRef());
+
+		actor->ActorBase::EndDestroy();
 	}
 }
 
@@ -303,6 +342,34 @@ void Scene::MoveActor(Actor* from, Actor* to, bool isPastBefore)
 		m_actors.insert(++newIt, from);
 }
 
+void Scene::editorCameraPos(const Vector3& position) {
+	if (editorCamera == nullptr)
+		m_initCameraPos = position;
+	else
+		editorCamera->localPosition(position);
+}
+
+void Scene::editorCameraRot(const Quaternion& rotation) {
+	if (editorCamera == nullptr)
+		m_initCameraRot = rotation;
+	else
+		editorCamera->localRotationQ(rotation);
+}
+
+Vector3 Scene::editorCameraPos() {
+	if (editorCamera == nullptr)
+		return m_initCameraPos;
+
+	return editorCamera->localPosition();
+}
+
+Quaternion Scene::editorCameraRot() {
+	if (editorCamera == nullptr)
+		return m_initCameraRot;
+
+	return editorCamera->localRotationQ();
+}
+
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef sceneRef, CsRef csRef, CppRef parentRef) {
 	return CppRefs::ThrowPointer<Scene>(sceneRef)->m_CreateActorFromCs(csRef, parentRef);
 }
@@ -324,3 +391,6 @@ DEF_FUNC(Game, WriteRootActorsRefs, void)(CppRef sceneRef, CsRef* refs) {
 DEF_PUSH_ASSET(Scene);
 
 DEF_PROP_GETSET_STR(Scene, name);
+
+DEF_PROP_GETSET(Scene, Vector3, editorCameraPos);
+DEF_PROP_GETSET(Scene, Quaternion, editorCameraRot);

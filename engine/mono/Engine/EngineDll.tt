@@ -315,7 +315,58 @@ namespace EngineDll {
 <#
 			PUSH_ASSET("Scene");
 			PROP_GETSET_STR("Scene", "name");
+
+			PROP_GETSET("Scene", "Vector3", "editorCameraPos");
+			PROP_GETSET("Scene", "Quaternion", "editorCameraRot");
 #>
 		}
+
+		public static class BoxCollider {
+		
+<#
+			DEC_COMPONENT("BoxCollider");
+#>
+		}
+
+		public static class SphereCollider {
+		
+<#
+			DEC_COMPONENT("SphereCollider");
+#>
+		}
+
+		public static class CapsuleCollider {
+		
+<#
+			DEC_COMPONENT("CapsuleCollider");
+#>
+		}
+
+		public static class Rigidbody {
+		
+<#
+			DEC_COMPONENT("Rigidbody");
+
+			PROP_GETSET("Rigidbody", "bool", "active");
+			PROP_GETSET("Rigidbody", "float", "gravity");
+
+			PROP_GETSET("Rigidbody", "uint", "motion");
+			PROP_GETSET("Rigidbody", "uint", "quality");
+
+			FUNC("Rigidbody", "AddForce", "void", "CppRef bodyRef, Vector3 inForce");
+			FUNC("Rigidbody", "AddForceInPos", "void", "CppRef bodyRef, Vector3 inForce, Vector3 inPosition");
+
+			FUNC("Rigidbody", "GetLinearVelocity", "Vector3", "CppRef bodyRef");
+			FUNC("Rigidbody", "SetLinearVelocityClamped", "void", "CppRef bodyRef, Vector3 inLinearVelocity");
+
+			FUNC("Rigidbody", "AddImpulse", "void", "CppRef bodyRef, Vector3 inImpulse");
+			FUNC("Rigidbody", "AddImpulseInPos", "void", "CppRef bodyRef, Vector3 inImpulse, Vector3 inPosition");
+
+			FUNC("Rigidbody", "GetFriction", "float", "CppRef bodyRef");
+			FUNC("Rigidbody", "SetFriction", "void", "CppRef bodyRef, float inFriction");
+#>
+		}
+
+		
 	}
 }

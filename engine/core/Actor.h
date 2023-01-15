@@ -109,6 +109,7 @@ private:
 
 	void f_Init(Game* game, Scene* scene);
 	void f_Update();
+	void f_FixedUpdate();
 	void f_Draw();
 	//void f_DrawUI();
 	void f_Destroy();
@@ -133,6 +134,7 @@ private:
 	inline void m_OnInitComponent(Component* component);
 	inline void m_OnStartComponent(Component* component);
 	inline void m_OnUpdateComponent(Component* component);
+	inline void m_OnFixedUpdateComponent(Component* component);
 	inline void m_OnDestroyComponent(Component* component);
 
 	inline void m_RunOrCrash(Component* component, void (Actor::* func)(Component*));

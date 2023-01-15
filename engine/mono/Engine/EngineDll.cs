@@ -779,6 +779,120 @@ namespace EngineDll {
 
             public static void name_set(CppRef objRef, string value) { if(objRef.value != 0) name_set_inner(objRef, value); }
 
+            [DllImport(Paths.Exe, EntryPoint = "Scene_editorCameraPos_get")]
+		    private static extern Vector3 editorCameraPos_get_inner(CppRef objRef);
+
+            public static Vector3 editorCameraPos_get(CppRef objRef) => objRef.value != 0 ? editorCameraPos_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_editorCameraPos_set")]
+		    private static extern void editorCameraPos_set_inner(CppRef objRef, Vector3 value);
+
+            public static void editorCameraPos_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) editorCameraPos_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_editorCameraRot_get")]
+		    private static extern Quaternion editorCameraRot_get_inner(CppRef objRef);
+
+            public static Quaternion editorCameraRot_get(CppRef objRef) => objRef.value != 0 ? editorCameraRot_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_editorCameraRot_set")]
+		    private static extern void editorCameraRot_set_inner(CppRef objRef, Quaternion value);
+
+            public static void editorCameraRot_set(CppRef objRef, Quaternion value) { if(objRef.value != 0) editorCameraRot_set_inner(objRef, value); }
+
 		}
+
+		public static class BoxCollider {
+		
+            [DllImport(Paths.Exe, EntryPoint = "BoxCollider_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class SphereCollider {
+		
+            [DllImport(Paths.Exe, EntryPoint = "SphereCollider_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class CapsuleCollider {
+		
+            [DllImport(Paths.Exe, EntryPoint = "CapsuleCollider_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+		}
+
+		public static class Rigidbody {
+		
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_active_get")]
+		    private static extern bool active_get_inner(CppRef objRef);
+
+            public static bool active_get(CppRef objRef) => objRef.value != 0 ? active_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_active_set")]
+		    private static extern void active_set_inner(CppRef objRef, bool value);
+
+            public static void active_set(CppRef objRef, bool value) { if(objRef.value != 0) active_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_gravity_get")]
+		    private static extern float gravity_get_inner(CppRef objRef);
+
+            public static float gravity_get(CppRef objRef) => objRef.value != 0 ? gravity_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_gravity_set")]
+		    private static extern void gravity_set_inner(CppRef objRef, float value);
+
+            public static void gravity_set(CppRef objRef, float value) { if(objRef.value != 0) gravity_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_motion_get")]
+		    private static extern uint motion_get_inner(CppRef objRef);
+
+            public static uint motion_get(CppRef objRef) => objRef.value != 0 ? motion_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_motion_set")]
+		    private static extern void motion_set_inner(CppRef objRef, uint value);
+
+            public static void motion_set(CppRef objRef, uint value) { if(objRef.value != 0) motion_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_quality_get")]
+		    private static extern uint quality_get_inner(CppRef objRef);
+
+            public static uint quality_get(CppRef objRef) => objRef.value != 0 ? quality_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_quality_set")]
+		    private static extern void quality_set_inner(CppRef objRef, uint value);
+
+            public static void quality_set(CppRef objRef, uint value) { if(objRef.value != 0) quality_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_AddForce")]
+		    public static extern void AddForce(CppRef bodyRef, Vector3 inForce);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_AddForceInPos")]
+		    public static extern void AddForceInPos(CppRef bodyRef, Vector3 inForce, Vector3 inPosition);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_GetLinearVelocity")]
+		    public static extern Vector3 GetLinearVelocity(CppRef bodyRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_SetLinearVelocityClamped")]
+		    public static extern void SetLinearVelocityClamped(CppRef bodyRef, Vector3 inLinearVelocity);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_AddImpulse")]
+		    public static extern void AddImpulse(CppRef bodyRef, Vector3 inImpulse);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_AddImpulseInPos")]
+		    public static extern void AddImpulseInPos(CppRef bodyRef, Vector3 inImpulse, Vector3 inPosition);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_GetFriction")]
+		    public static extern float GetFriction(CppRef bodyRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_SetFriction")]
+		    public static extern void SetFriction(CppRef bodyRef, float inFriction);
+
+		}
+
+		
 	}
 }

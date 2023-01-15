@@ -68,6 +68,7 @@ void SceneWindow::m_UpdateViewportInfo() {
 	mousePos = mousePos / m_viewportSize;
 
 	m_mouseViewportPosition = mousePos;
+	game()->ui()->isSceneHovered = ImGui::IsWindowHovered();
 }
 
 void SceneWindow::focus() {

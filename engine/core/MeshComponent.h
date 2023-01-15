@@ -36,6 +36,7 @@ public:
 	bool visible = true;
 
 	Vector3 meshScale = Vector3::One;
+	Vector3 meshOffset = Vector3::Zero;
 
 private:
 	Render* m_render;

@@ -34,6 +34,7 @@ std::string MeshAsset::formBoxLined = "runtime:/form/BoxLined";
 std::string MeshAsset::formSphere = "runtime:/form/Sphere";
 std::string MeshAsset::formSphereLined = "runtime:/form/SphereLined";
 std::string MeshAsset::formCone = "../../data/engine/models/cone.obj";
+//std::string MeshAsset::formCapsule = "../../data/engine/models/capsule.obj";
 
 
 
@@ -175,8 +176,8 @@ void MeshAsset::InitMesh(Mesh4* mesh, const fs::path& path) {
 	if (err != "")
 		std::cout << err << std::endl;
 
-	if (warn != "")
-		std::cout << warn << std::endl;
+	//if (warn != "")
+	//	std::cout << warn << std::endl;
 }
 
 Mesh4* MeshAsset::m_CreateMeshAsset(int hash, fs::path path) {
@@ -199,8 +200,8 @@ Mesh4* MeshAsset::m_CreateMeshAsset(int hash, fs::path path) {
 	if (err != "")
 		std::cout << err << std::endl;
 
-	if (warn != "")
-		std::cout << warn << std::endl;
+	//if (warn != "")
+	//	std::cout << warn << std::endl;
 
 	return mesh;
 }

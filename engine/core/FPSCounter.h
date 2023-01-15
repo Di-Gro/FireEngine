@@ -17,9 +17,34 @@ public:
 
 	FPSCounter() { m_prev = std::chrono::steady_clock::now(); }
 
-	const float& GetDeltaTime() { return m_deltaTime; }
-	bool HasChanges() { return m_hasChanges; }
-	int FPS() { return m_fps; }
+	const float& GetDelta() { return m_deltaTime; }
+	bool IsRateChanged() { return m_hasChanges; }
+	int RatePerSecond() { return m_fps; }
 
-	void Update();
+	void MakeStep();
+};
+
+class FixedTimer : private FPSCounter {
+private:
+	FPSCounter m_globalTimer;
+
+	float m_targetRate = 60.0f;
+	float m_targetFixedTime = 1.0f / m_targetRate;
+	float m_accumFixedTime = m_targetFixedTime;
+
+public:
+	using FPSCounter::IsRateChanged;
+	using FPSCounter::RatePerSecond;
+
+	const float& GetDelta() { return m_targetFixedTime;  }
+
+	float targetRate() { return m_targetRate; }
+
+	void targetRate(float targetRatePerSecond) {
+		m_targetRate = targetRatePerSecond;
+		m_targetFixedTime = 1.0f / targetRatePerSecond;
+		m_accumFixedTime = m_targetFixedTime;
+	}
+
+	bool NextStep();
 };
