@@ -404,3 +404,4 @@ engine/core/imgui.ini
 !engine/DirectXTK/lib/DirectXTK.lib
 !engine/DirectXTK/lib/DirectXTK.pch
 !engine/DirectXTK/lib/DirectXTK.pdb
+Example/FireProject/Editor/Ignore/editor_scene.yml

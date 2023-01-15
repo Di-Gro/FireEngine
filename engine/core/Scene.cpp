@@ -45,6 +45,7 @@ void Scene::Start() {
 	editorCamera = CreateActor("Editor Camera")->AddComponent<EditorCamera>();
 	editorCamera->localPosition(m_initCameraPos);
 	editorCamera->localRotationQ(m_initCameraRot);
+	editorCamera->speed = m_initCameraSpeed;
 
 	editorCamera->Attach();
 
@@ -373,8 +374,8 @@ Quaternion Scene::editorCameraRot() {
 void Scene::editorCameraSpeed(float value) {
 	if (editorCamera == nullptr)
 		m_initCameraSpeed = value;
-
-	editorCamera->speed = value;
+	else
+		editorCamera->speed = value;
 }
 
 float Scene::editorCameraSpeed() {
