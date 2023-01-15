@@ -175,12 +175,16 @@ namespace FireYaml {
         }
 
         public void ResetValue(string path, YamlValue value) {
-
+    
             if (!m_RemoveAncestor(path)) {
+                LinkedList<string> needRemove = new LinkedList<string>();
+
                 foreach (var pair in m_values) {
                     if (pair.Key.StartsWith(path))
-                        m_values.Remove(pair.Key);
+                        needRemove.AddLast(pair.Key);
                 }
+                foreach (var key in needRemove)
+                    m_values.Remove(key);
             }
             m_values.Add(path, value);
         }

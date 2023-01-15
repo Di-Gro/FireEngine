@@ -1,5 +1,5 @@
 .file0.assetId: {AssetId: f69709f7-3150-4308-8cf1-b566c6abb124}
-.file0.files: {Var: 35}
+.file0.files: {Var: 43}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
@@ -12,4 +12,47 @@
 .file1.CameraRot.Z: {Var: -0.01831473}
 .file1.CameraRot.W: {Var: 0.977721}
 .file1.CameraSpeed: {Var: 40}
+.file1.m_roots.0: {Ref: file42}
+.file1.m_roots.1: {Ref: file43}
+
+.file42!script: {Var: Actor}
+.file42!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file42!prefabId: {AssetId: 96b737af-5009-4a0d-bf44-442a49f4737c}
+.file42!.file1.Name: {Var: Actor 1}
+.file42!.file3!script: {Var: TestMesh}
+.file42!.file3!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
+.file42!.file3.component: {Null: }
+.file42!.file3.actorRef: {Null: }
+.file42!.file3.userPrefab: {Null: }
+.file42!.file3.sameScene: {Null: }
+.file42!.file3.m_meshComp: {Null: }
+.file42!.file3.nullStaticMaterial: {Null: }
+.file42!.file3.staticMaterial.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+.file42!.file3.vecList: {Null: }
+.file42!.file3.floatField: {Var: 4.56}
+.file42!.file3.intField3: {Var: 68}
+.file42!.file3.m_floatField4: {Var: 7.56}
+.file42!.file3.vector.X: {Var: 4}
+.file42!.file3.vector.Y: {Var: 3}
+.file42!.file3.vector.Z: {Var: 2}
+.file42!.file3.m_meshes: {Null: }
+.file42!.file3!base!scriptId: {AssetId: 4f1285c1-8ccc-4a8b-b77b-848af7f55e42}
+.file42!.file3!base.floatField: {Var: 48.56}
+.file42!.file1.m_components.0: {Ref: file42!.file3}
+
+.file43!script: {Var: Actor}
+.file43!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file43.Name: {Var: Actor 2}
+.file43.localPosition.X: {Var: 0}
+.file43.localPosition.Y: {Var: 0}
+.file43.localPosition.Z: {Var: 0}
+.file43.localRotationQ.X: {Var: 0}
+.file43.localRotationQ.Y: {Var: 0}
+.file43.localRotationQ.Z: {Var: 0}
+.file43.localRotationQ.W: {Var: 1}
+.file43.localScale.X: {Var: 1}
+.file43.localScale.Y: {Var: 1}
+.file43.localScale.Z: {Var: 1}
+.file43.m_children: {Null: }
+.file43.m_components: {Null: }
 

@@ -194,7 +194,7 @@ namespace FireYaml {
 
         public string CreateDocument(Type type, object instance, bool notSaveAsAsset = false) {
             //var existName = m_GetAssignedDoc(m_rootPath, type, instance);
-            var existName = m_GetAssignedDoc(instance);
+            var existName = m_GetAssignedDoc(instance, m_rootPath);
             if (existName != "")
                 return existName;
 
@@ -216,7 +216,7 @@ namespace FireYaml {
             m_values.AddValue(scriptPath, scriptIdValue);
 
             // m_SetAssignedDoc(fullPath, m_rootPath, type, instance);
-            m_SetAssignedDoc(fullPath, instance);
+            m_SetAssignedDoc(fullPath, m_rootPath, instance);
 
             var prefabId = IFile.GetPrefabId(ref instance);
             if (prefabId != IFile.NotPrefab) {
@@ -244,12 +244,14 @@ namespace FireYaml {
             var lastRoot = m_rootPath;
             var lastNextIndex = m_nextDocIndex;
             var last_m_assetInst = m_assetInst;
+            var lsst_fileId = IFile.GetFileId(ref instance);
 
             /// Устанавливаем новое состояние
             m_assetInst = IFile.GetAssetInstance(ref instance);
             m_rootPath = $"{selfPath}!";
             m_nextDocIndex = prefabInfo.files + 1;
             IFile.SetPrefabId(basePrefabId, ref instance); /// TODO: это просто, чтобы обновить информацию
+            IFile.SetFileId(1, ref instance);
 
             /// Внутри нового состояния
             m_origValues.Append(origValues, m_rootPath);
@@ -264,6 +266,7 @@ namespace FireYaml {
             m_nextDocIndex = lastNextIndex;
             IFile.SetAssetInstance(last_m_assetInst, ref instance);
             IFile.SetPrefabId(prefabId, ref instance);
+            IFile.SetFileId(lsst_fileId, ref instance);
 
         }
 
@@ -481,20 +484,20 @@ namespace FireYaml {
             return notBaseClass && isAssignable;
         }
 
-        private void m_SetAssignedDoc(string docName, object obj) {
+        private void m_SetAssignedDoc(string docName, string rootPath, object obj) {
             if (obj == null)
                 throw new ArgumentNullException("obj");
 
-            var hash = obj.GetHashCode();
+            var hash = $"{obj.GetHashCode()}_{rootPath}";
 
             m_writedDocs[hash] = docName;
         }
 
-        private string m_GetAssignedDoc(object obj) {
+        private string m_GetAssignedDoc(object obj, string rootPath) {
             if (obj == null)
                 throw new ArgumentNullException();
 
-            var hash = obj.GetHashCode();
+            var hash = $"{obj.GetHashCode()}_{rootPath}";
 
             if (m_writedDocs.ContainsKey(hash))
                 return m_writedDocs[hash];
@@ -505,7 +508,7 @@ namespace FireYaml {
             foreach (var link in m_links) {
                 var value = new YamlValue();
 
-                var docName = m_GetAssignedDoc(link.instance);
+                var docName = m_GetAssignedDoc(link.instance, link.rootPath);
                 if (docName != "") {
                     value.type = YamlValue.Type.Ref;
                     value.value = docName.Substring(1);

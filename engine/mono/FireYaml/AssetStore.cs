@@ -160,7 +160,7 @@ namespace FireYaml {
             return info;
         }
 
-        public int WriteAsset(string path, object data) {
+        public int WriteAsset(string path, object data, bool unpuck = false) {
             var fullPath = Path.GetFullPath(path);
             var projectFullPath = Path.GetFullPath(ProjectPath);
 
@@ -189,7 +189,7 @@ namespace FireYaml {
             if (!serializer.Result)
                 throw new Exception($"Can not create asset: Serialization failed.");
 
-            var values = serializer.Values;
+            var values = serializer.Mods; //serializer.Values;
             var assetPath = path;
 
             values.AddValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, assetGuid));
@@ -215,7 +215,7 @@ namespace FireYaml {
             if (!serializer.Result)
                 throw new Exception($"Can not update asset: Serialization failed.");
 
-            var values = serializer.Values;
+            var values = serializer.Mods; //serializer.Values;
 
             values.AddValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, assetInfo.assetId));
             values.AddValue(".file0.files", new YamlValue(YamlValue.Type.Var, $"{serializer.FilesCount}"));
