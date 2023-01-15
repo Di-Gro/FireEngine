@@ -6,7 +6,7 @@ using EngineDll;
 
 namespace Engine {
 
-    [Serializable]
+    [GUID("81b31ac1-86d8-4d99-aff6-324c5f987b15", typeof(Texture))]
     public class Texture : FireYaml.IFile, FireYaml.IAsset {
 
         /// FireYaml.IAsset ->
@@ -23,8 +23,8 @@ namespace Engine {
         /// <- 
 
         public Image image;
-        public uint width;
-        public uint height;
+        public uint width = 128;
+        public uint height = 128;
        
 
         public Texture() { 

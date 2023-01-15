@@ -29,9 +29,9 @@ namespace Engine {
         
         ulong Priority { get; }
 
-    } 
+    }
 
-    [Serializable]
+    [GUID("110065f7-ed95-4fca-8a09-288b7ec17500", typeof(StaticMaterial))]
     class StaticMaterial : IMaterial, FireYaml.IFile, FireYaml.IAsset {
 
         /// IFile ->
@@ -250,15 +250,15 @@ namespace Engine {
         }
 
         private string m_Name = "";
-        private string m_Shader = "";
-        private CullMode m_CullMode;
-        private FillMode m_FillMode;
-        private ulong m_Priority;
-        private Vector3 m_DiffuseColor;
-        private float m_Diffuse;
-        private float m_Ambient;
-        private float m_Specular;
-        private float m_Shininess;
+        private string m_Shader = "../../data/engine/shaders/opaque_defuse_color.hlsl";
+        private CullMode m_CullMode = CullMode.Back;
+        private FillMode m_FillMode = FillMode.Solid;
+        private ulong m_Priority = 2000;
+        private Vector3 m_DiffuseColor = Vector3.One;
+        private float m_Diffuse = 0.8f;
+        private float m_Ambient = 0.5f;
+        private float m_Specular = 0.2f;
+        private float m_Shininess = 250;
 
         public void SetData() {
             if(cppRef.value == 0)

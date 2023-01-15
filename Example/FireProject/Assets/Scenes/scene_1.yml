@@ -1,14 +1,14 @@
-.file0.assetId: {AssetId: tmp_0000000001}
+.file0.assetId: {AssetId: 7ae83fb6-d222-4b70-b032-0e44958209e3}
 .file0.files: {Var: 29}
 
 .file1!script: {Var: Scene}
-.file1!scriptId: {AssetId: D00000010014}
+.file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: scene_1}
 .file1.m_roots.0: {Ref: file27}
 .file1.m_roots.1: {Ref: file22}
 
 .file7!script: {Var: Actor}
-.file7!scriptId: {AssetId: D00000010000}
+.file7!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file7.Name: {Var: Actor 2}
 .file7.localPosition.X: {Var: 0.03057861}
 .file7.localPosition.Y: {Var: 0}
@@ -17,19 +17,19 @@
 .file7.localRotationQ.Y: {Var: 1}
 .file7.localRotationQ.Z: {Var: -9.09963E-07}
 .file7.localRotationQ.W: {Var: -4.371056E-08}
-.file7.localScale.X: {Var: 0.9999928}
+.file7.localScale.X: {Var: 0.9999939}
 .file7.localScale.Y: {Var: 1}
-.file7.localScale.Z: {Var: 0.9999928}
+.file7.localScale.Z: {Var: 0.9999939}
 .file7.m_children: {Null: }
 .file7.m_components.0: {Ref: file8}
 .file7.m_components.1: {Ref: file9}
 
 .file8!script: {Var: TestMesh}
-.file8!scriptId: {AssetId: D00000010005}
+.file8!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
 .file8.component: {Null: }
 .file8.actorRef: {Null: }
-.file8.userPrefab.assetId: {AssetId: TestPrefab}
-.file8.sameScene.assetId: {AssetId: scene_1}
+.file8.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
+.file8.sameScene.assetId: {AssetId: 7ae83fb6-d222-4b70-b032-0e44958209e3}
 .file8.nullStaticMaterial: {Null: }
 .file8.staticMaterial: {Null: }
 .file8.vecList: {Null: }
@@ -40,44 +40,44 @@
 .file8.vector.Y: {Var: 3}
 .file8.vector.Z: {Var: 2}
 .file8.m_meshes: {Null: }
-.file8!base!scriptId: {AssetId: D00000010008}
+.file8!base!scriptId: {AssetId: 4f1285c1-8ccc-4a8b-b77b-848af7f55e42}
 .file8!base.floatField: {Var: 48.56}
 .file8.m_meshComp: {Ref: file9}
 
 .file9!script: {Var: MeshComponent}
-.file9!scriptId: {AssetId: D00000010003}
+.file9!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
 .file9.MeshScale.X: {Var: 1}
 .file9.MeshScale.Y: {Var: 1}
 .file9.MeshScale.Z: {Var: 1}
 .file9.IsDebug: {Var: False}
 .file9.CastShadow: {Var: True}
 .file9.IsVisible: {Var: True}
-.file9.m_mesh.assetId: {AssetId: MESH000002}
-.file9.m_materials.0.assetId: {AssetId: MAT0000006}
+.file9.m_mesh.assetId: {AssetId: 5f423441-611b-4816-92a0-523c8d943057}
+.file9.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 
 .file10!script: {Var: Actor}
-.file10!scriptId: {AssetId: D00000010000}
+.file10!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file10.Name: {Var: Actor 3}
-.file10.localPosition.X: {Var: 900.0227}
+.file10.localPosition.X: {Var: 900.0237}
 .file10.localPosition.Y: {Var: 4.380518E-05}
 .file10.localPosition.Z: {Var: 0}
-.file10.localRotationQ.X: {Var: -5.616834E-12}
+.file10.localRotationQ.X: {Var: -5.616833E-12}
 .file10.localRotationQ.Y: {Var: 1.199054E-21}
 .file10.localRotationQ.Z: {Var: -2.134752E-10}
 .file10.localRotationQ.W: {Var: 1}
-.file10.localScale.X: {Var: 0.9999602}
+.file10.localScale.X: {Var: 0.9999611}
 .file10.localScale.Y: {Var: 1.000018}
-.file10.localScale.Z: {Var: 0.9999602}
+.file10.localScale.Z: {Var: 0.9999611}
 .file10.m_children: {Null: }
 .file10.m_components.0: {Ref: file11}
 .file10.m_components.1: {Ref: file12}
 
 .file11!script: {Var: TestMesh}
-.file11!scriptId: {AssetId: D00000010005}
+.file11!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
 .file11.component: {Null: }
 .file11.actorRef: {Null: }
-.file11.userPrefab.assetId: {AssetId: TestPrefab}
-.file11.sameScene.assetId: {AssetId: scene_1}
+.file11.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
+.file11.sameScene.assetId: {AssetId: 7ae83fb6-d222-4b70-b032-0e44958209e3}
 .file11.nullStaticMaterial: {Null: }
 .file11.staticMaterial: {Null: }
 .file11.vecList: {Null: }
@@ -88,44 +88,44 @@
 .file11.vector.Y: {Var: 3}
 .file11.vector.Z: {Var: 2}
 .file11.m_meshes: {Null: }
-.file11!base!scriptId: {AssetId: D00000010008}
+.file11!base!scriptId: {AssetId: 4f1285c1-8ccc-4a8b-b77b-848af7f55e42}
 .file11!base.floatField: {Var: 48.56}
 .file11.m_meshComp: {Ref: file12}
 
 .file12!script: {Var: MeshComponent}
-.file12!scriptId: {AssetId: D00000010003}
+.file12!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
 .file12.MeshScale.X: {Var: 1}
 .file12.MeshScale.Y: {Var: 1}
 .file12.MeshScale.Z: {Var: 1}
 .file12.IsDebug: {Var: False}
 .file12.CastShadow: {Var: True}
 .file12.IsVisible: {Var: True}
-.file12.m_mesh.assetId: {AssetId: MESH000002}
-.file12.m_materials.0.assetId: {AssetId: MAT0000006}
+.file12.m_mesh.assetId: {AssetId: 5f423441-611b-4816-92a0-523c8d943057}
+.file12.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 
 .file13!script: {Var: Actor}
-.file13!scriptId: {AssetId: D00000010000}
+.file13!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file13.Name: {Var: Actor 4}
 .file13.localPosition.X: {Var: 600.0033}
 .file13.localPosition.Y: {Var: 0}
-.file13.localPosition.Z: {Var: 1.525834E-05}
+.file13.localPosition.Z: {Var: 1.525837E-05}
 .file13.localRotationQ.X: {Var: 0}
 .file13.localRotationQ.Y: {Var: 0}
 .file13.localRotationQ.Z: {Var: 0}
 .file13.localRotationQ.W: {Var: 1}
-.file13.localScale.X: {Var: 0.9999746}
+.file13.localScale.X: {Var: 0.9999767}
 .file13.localScale.Y: {Var: 1}
-.file13.localScale.Z: {Var: 0.9999746}
+.file13.localScale.Z: {Var: 0.9999767}
 .file13.m_children.0: {Ref: file7}
 .file13.m_components.0: {Ref: file14}
 .file13.m_components.1: {Ref: file15}
 
 .file14!script: {Var: TestMesh}
-.file14!scriptId: {AssetId: D00000010005}
+.file14!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
 .file14.component: {Null: }
 .file14.actorRef: {Null: }
-.file14.userPrefab.assetId: {AssetId: TestPrefab}
-.file14.sameScene.assetId: {AssetId: scene_1}
+.file14.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
+.file14.sameScene.assetId: {AssetId: 7ae83fb6-d222-4b70-b032-0e44958209e3}
 .file14.nullStaticMaterial: {Null: }
 .file14.staticMaterial: {Null: }
 .file14.vecList: {Null: }
@@ -136,44 +136,44 @@
 .file14.vector.Y: {Var: 3}
 .file14.vector.Z: {Var: 2}
 .file14.m_meshes: {Null: }
-.file14!base!scriptId: {AssetId: D00000010008}
+.file14!base!scriptId: {AssetId: 4f1285c1-8ccc-4a8b-b77b-848af7f55e42}
 .file14!base.floatField: {Var: 48.56}
 .file14.m_meshComp: {Ref: file15}
 
 .file15!script: {Var: MeshComponent}
-.file15!scriptId: {AssetId: D00000010003}
+.file15!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
 .file15.MeshScale.X: {Var: 1}
 .file15.MeshScale.Y: {Var: 1}
 .file15.MeshScale.Z: {Var: 1}
 .file15.IsDebug: {Var: False}
 .file15.CastShadow: {Var: True}
 .file15.IsVisible: {Var: True}
-.file15.m_mesh.assetId: {AssetId: MESH000002}
-.file15.m_materials.0.assetId: {AssetId: MAT0000006}
+.file15.m_mesh.assetId: {AssetId: 5f423441-611b-4816-92a0-523c8d943057}
+.file15.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 
 .file19!script: {Var: Actor}
-.file19!scriptId: {AssetId: D00000010000}
+.file19!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file19.Name: {Var: Actor 6}
 .file19.localPosition.X: {Var: 300.0041}
 .file19.localPosition.Y: {Var: 0}
-.file19.localPosition.Z: {Var: 7.62904E-06}
+.file19.localPosition.Z: {Var: 7.629395E-06}
 .file19.localRotationQ.X: {Var: 0}
 .file19.localRotationQ.Y: {Var: 0}
 .file19.localRotationQ.Z: {Var: 0}
 .file19.localRotationQ.W: {Var: 1}
-.file19.localScale.X: {Var: 0.9999609}
-.file19.localScale.Y: {Var: 1}
-.file19.localScale.Z: {Var: 0.9999609}
+.file19.localScale.X: {Var: 2}
+.file19.localScale.Y: {Var: 2}
+.file19.localScale.Z: {Var: 2}
 .file19.m_children: {Null: }
 .file19.m_components.0: {Ref: file20}
 .file19.m_components.1: {Ref: file21}
 
 .file20!script: {Var: TestMesh}
-.file20!scriptId: {AssetId: D00000010005}
+.file20!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
 .file20.component: {Null: }
 .file20.actorRef: {Null: }
-.file20.userPrefab.assetId: {AssetId: TestPrefab}
-.file20.sameScene.assetId: {AssetId: scene_1}
+.file20.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
+.file20.sameScene.assetId: {AssetId: 7ae83fb6-d222-4b70-b032-0e44958209e3}
 .file20.nullStaticMaterial: {Null: }
 .file20.staticMaterial: {Null: }
 .file20.vecList: {Null: }
@@ -184,23 +184,23 @@
 .file20.vector.Y: {Var: 3}
 .file20.vector.Z: {Var: 2}
 .file20.m_meshes: {Null: }
-.file20!base!scriptId: {AssetId: D00000010008}
+.file20!base!scriptId: {AssetId: 4f1285c1-8ccc-4a8b-b77b-848af7f55e42}
 .file20!base.floatField: {Var: 48.56}
 .file20.m_meshComp: {Ref: file21}
 
 .file21!script: {Var: MeshComponent}
-.file21!scriptId: {AssetId: D00000010003}
+.file21!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
 .file21.MeshScale.X: {Var: 1}
 .file21.MeshScale.Y: {Var: 1}
 .file21.MeshScale.Z: {Var: 1}
 .file21.IsDebug: {Var: False}
 .file21.CastShadow: {Var: True}
 .file21.IsVisible: {Var: True}
-.file21.m_mesh.assetId: {AssetId: MESH000002}
-.file21.m_materials.0.assetId: {AssetId: MAT0000006}
+.file21.m_mesh.assetId: {AssetId: 5f423441-611b-4816-92a0-523c8d943057}
+.file21.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 
 .file22!script: {Var: Actor}
-.file22!scriptId: {AssetId: D00000010000}
+.file22!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file22.Name: {Var: Actor 5}
 .file22.localPosition.X: {Var: 0}
 .file22.localPosition.Y: {Var: 0}
@@ -209,9 +209,9 @@
 .file22.localRotationQ.Y: {Var: 0}
 .file22.localRotationQ.Z: {Var: 0}
 .file22.localRotationQ.W: {Var: 1}
-.file22.localScale.X: {Var: 0.9999998}
-.file22.localScale.Y: {Var: 0.9999824}
-.file22.localScale.Z: {Var: 0.9999998}
+.file22.localScale.X: {Var: 0.5}
+.file22.localScale.Y: {Var: 0.5}
+.file22.localScale.Z: {Var: 0.5}
 .file22.m_children.0: {Ref: file19}
 .file22.m_children.1: {Ref: file13}
 .file22.m_children.2: {Ref: file10}
@@ -219,11 +219,11 @@
 .file22.m_components.1: {Ref: file24}
 
 .file23!script: {Var: TestMesh}
-.file23!scriptId: {AssetId: D00000010005}
+.file23!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
 .file23.component: {Null: }
 .file23.actorRef: {Null: }
-.file23.userPrefab.assetId: {AssetId: TestPrefab}
-.file23.sameScene.assetId: {AssetId: scene_1}
+.file23.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
+.file23.sameScene.assetId: {AssetId: 7ae83fb6-d222-4b70-b032-0e44958209e3}
 .file23.nullStaticMaterial: {Null: }
 .file23.staticMaterial: {Null: }
 .file23.vecList: {Null: }
@@ -234,23 +234,23 @@
 .file23.vector.Y: {Var: 3}
 .file23.vector.Z: {Var: 2}
 .file23.m_meshes: {Null: }
-.file23!base!scriptId: {AssetId: D00000010008}
+.file23!base!scriptId: {AssetId: 4f1285c1-8ccc-4a8b-b77b-848af7f55e42}
 .file23!base.floatField: {Var: 48.56}
 .file23.m_meshComp: {Ref: file24}
 
 .file24!script: {Var: MeshComponent}
-.file24!scriptId: {AssetId: D00000010003}
+.file24!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
 .file24.MeshScale.X: {Var: 1}
 .file24.MeshScale.Y: {Var: 1}
 .file24.MeshScale.Z: {Var: 1}
 .file24.IsDebug: {Var: False}
 .file24.CastShadow: {Var: True}
 .file24.IsVisible: {Var: True}
-.file24.m_mesh.assetId: {AssetId: MESH000002}
-.file24.m_materials.0.assetId: {AssetId: MAT0000006}
+.file24.m_mesh.assetId: {AssetId: 5f423441-611b-4816-92a0-523c8d943057}
+.file24.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 
 .file27!script: {Var: Actor}
-.file27!scriptId: {AssetId: D00000010000}
+.file27!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file27.Name: {Var: Light}
 .file27.localPosition.X: {Var: 0}
 .file27.localPosition.Y: {Var: 0}
@@ -267,14 +267,14 @@
 .file27.m_components.1: {Ref: file29}
 
 .file28!script: {Var: DirectionalLight}
-.file28!scriptId: {AssetId: D00000010019}
+.file28!scriptId: {AssetId: a6e37381-5a85-4cd0-b421-77f5f6365495}
 .file28.Color.X: {Var: 1}
 .file28.Color.Y: {Var: 1}
 .file28.Color.Z: {Var: 1}
 .file28.Intensity: {Var: 0.6}
 
 .file29!script: {Var: AmbientLight}
-.file29!scriptId: {AssetId: D00000010018}
+.file29!scriptId: {AssetId: ddad5ce5-4472-41f9-a8ce-d8da895d2e56}
 .file29.Color.X: {Var: 1}
 .file29.Color.Y: {Var: 1}
 .file29.Color.Z: {Var: 1}

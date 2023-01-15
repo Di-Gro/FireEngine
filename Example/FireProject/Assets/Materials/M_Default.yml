@@ -1,8 +1,8 @@
-.file0.assetId: {AssetId: M_Default}
+.file0.assetId: {AssetId: cd882168-97ef-4799-98a2-c48a0955ba32}
 .file0.files: {Var: 1}
 
 .file1!script: {Var: StaticMaterial}
-.file1!scriptId: {AssetId: D00000010012}
+.file1!scriptId: {AssetId: 110065f7-ed95-4fca-8a09-288b7ec17500}
 .file1.Name: {Var: M_Default}
 .file1.Shader: {Var: ../../data/engine/shaders/opaque_defuse_color.hlsl}
 .file1.CullMode: {Var: Back}

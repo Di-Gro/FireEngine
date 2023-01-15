@@ -1,8 +1,8 @@
-.file0.assetId: {AssetId: TestMesh}
+.file0.assetId: {AssetId: 9fc14355-7575-46ce-b1ba-df2fa1da92ff}
 .file0.files: {Var: 4}
 
 .file1!script: {Var: Actor}
-.file1!scriptId: {AssetId: D00000010000}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file1.Name: {Var: Actor}
 .file1.localPosition.X: {Var: 0}
 .file1.localPosition.Y: {Var: 0}
@@ -20,8 +20,8 @@
 .file1.m_components.2: {Ref: file4}
 
 .file2!script: {Var: TestMesh}
-.file2!scriptId: {AssetId: D00000010005}
-.file2.userPrefab.assetId: {AssetId: TestPrefab}
+.file2!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
+.file2.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
 .file2.nullStaticMaterial: {Null: }
 .file2.staticMaterial.assetId: {AssetId: 0000000000}
 .file2.vecList.0.X: {Var: 1}
@@ -35,21 +35,21 @@
 .file2.vector.X: {Var: 4}
 .file2.vector.Y: {Var: 3}
 .file2.vector.Z: {Var: 2}
-.file2!base!scriptId: {AssetId: D00000010008}
+.file2!base!scriptId: {AssetId: 4f1285c1-8ccc-4a8b-b77b-848af7f55e42}
 .file2!base.floatField: {Var: 48.56}
 .file2.component: {Ref: file3}
 .file2.actorRef: {Ref: file1}
 .file2.m_meshComp: {Ref: file3}
-.file2.m_meshes.0.assetId: {AssetId: MESH000001}
-.file2.m_meshes.1.assetId: {AssetId: MESH000002}
-.file2.m_meshes.2.assetId: {AssetId: MESH000003}
+.file2.m_meshes.0.assetId: {AssetId: e9cbeb2a-26fe-4a14-8c46-e414a0dfc2fc}
+.file2.m_meshes.1.assetId: {AssetId: 5f423441-611b-4816-92a0-523c8d943057}
+.file2.m_meshes.2.assetId: {AssetId: 0042967d-7ebe-469d-94f0-91ed12834a15}
 
 .file3!script: {Var: MeshComponent}
-.file3!scriptId: {AssetId: D00000010003}
+.file3!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
 .file3.IsDebug: {Var: False}
 .file3.IsVisible: {Var: True}
-.file3.m_mesh.assetId: {AssetId: MESH000001}
+.file3.m_mesh.assetId: {AssetId: e9cbeb2a-26fe-4a14-8c46-e414a0dfc2fc}
 .file3.m_materials.0: {Null: }
 
 .file4!script: {Var: TestImGui}
-.file4!scriptId: {AssetId: D00000010006}
+.file4!scriptId: {AssetId: 818ced46-104f-48cb-966f-3ff77724f715}

@@ -10,13 +10,13 @@ using System.Diagnostics;
 using System;
 
 namespace Engine {
-    
-    [Serializable]
+
+    [GUID("eec5f7b8-5d7b-4d78-b1a8-d69f21459e73", typeof(Prefab))]
     sealed class Prefab : FireYaml.IAsset {
 
         /// FireYaml.IAsset
         [Open] public string assetId { get; private set; } = "0000000000";
-        public int assetIdHash { get; private set; }
+        public int assetIdHash { get; private set; } = 0;
         [Close] public CppRef cppRef { get; private set; } = CppRef.NullRef;
         /// <-
 
@@ -31,7 +31,9 @@ namespace Engine {
             return new FireYaml.FireReader(assetId).Instanciate<Actor>();
         }
 
-        public void LoadAsset() { }
+        public void LoadAsset() {
+            assetIdHash = assetId.GetHashCode();
+        }
 
         public void ReloadAsset() { }
 

@@ -471,8 +471,8 @@ namespace Engine
             var iasset = field.Value as FireYaml.IAsset;
 
             var assetIdHash = 0;
-            var scriptId = store.GetScriptIdByTypeName(field.type.FullName);
-            var scriptIdHash = scriptId.GetHashCode();
+            var scriptId = GUIDAttribute.GetGuid(field.type); // store.GetScriptIdByTypeName(field.type.FullName);
+            var scriptIdHash = GUIDAttribute.GetGuidHash(field.type); // scriptId.GetHashCode();
 
             if (instance != null)
                 assetIdHash = iasset.assetIdHash;
@@ -484,7 +484,7 @@ namespace Engine
                 iasset = instance as FireYaml.IAsset;
                 field.SetValue(instance);
 
-                var assetId = store.GetAssetId(assetIdHash);
+                var assetId = store.GetAssetGuid(assetIdHash);
 
                 FireYaml.FireReader.InitIAsset(ref instance, assetId, 0);
 
@@ -498,8 +498,8 @@ namespace Engine
 
             changedAsset = null;
             
-            var scriptId = store.GetScriptIdByTypeName(type.FullName);
-            var scriptIdHash = scriptId.GetHashCode();          
+            var scriptId = GUIDAttribute.GetGuid(type); // store.GetScriptIdByTypeName(type.FullName);
+            var scriptIdHash = GUIDAttribute.GetGuidHash(type); // scriptId.GetHashCode();          
 
             bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash);
 
@@ -507,7 +507,7 @@ namespace Engine
                 changedAsset = FireYaml.FireReader.CreateInstance(type);
                 var iasset = changedAsset as FireYaml.IAsset;
 
-                var assetId = store.GetAssetId(assetIdHash);
+                var assetId = store.GetAssetGuid(assetIdHash);
 
                 FireYaml.FireReader.InitIAsset(ref changedAsset, assetId, 0);
 
@@ -546,8 +546,8 @@ namespace Engine
 
             var csRef = CsRef.NullRef;
             var cppRef = CppRef.NullRef;
-            var scriptId = store.GetScriptIdByTypeName(field.type.FullName);
-            var scriptIdHash = scriptId.GetHashCode();
+            var scriptId = GUIDAttribute.GetGuid(field.type); //store.GetScriptIdByTypeName(field.type.FullName);
+            var scriptIdHash = GUIDAttribute.GetGuidHash(field.type); // scriptId.GetHashCode();
 
             if (component != null) {
                 if(component.IsDestroyed) {

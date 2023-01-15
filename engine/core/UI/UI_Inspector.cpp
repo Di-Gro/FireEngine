@@ -320,8 +320,6 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 	m_assetPickerPopup.header = assetType;
 	m_assetPickerPopup.scriptIdHash = scriptIdHash;
 
-	bool assetWasSelected = false;
-
 	auto& style = ImGui::GetStyle();
 
 	float column1 = 100;
@@ -349,8 +347,11 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
 
+	if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonRight) && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
+		int h = 0;
+
 	m_assetPickerPopup.flags = ImGuiPopupFlags_MouseButtonRight;
-	assetWasSelected |= m_assetPickerPopup.Open(_game);
+	bool assetWasSelected = m_assetPickerPopup.Open(_game);
 	ImGui::PopID();
 
 	ImGui::Columns(1);

@@ -6,7 +6,7 @@ using FireYaml;
 
 namespace Engine {
 
-    [Serializable]
+    [GUID("c24339ac-ed91-44f9-bab5-600fe45a9806", typeof(Scene))]
     public class Scene : FireYaml.IFile, FireYaml.IAsset {
 
         /// FireYaml.IAsset

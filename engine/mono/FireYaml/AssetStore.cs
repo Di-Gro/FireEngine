@@ -13,24 +13,22 @@ namespace FireYaml {
 
     public class AssetStore {
 
+        public class AssetData {
+            public string path;
+            public DateTime time;
+            public string guid;
+            public int guidHash;
+            public Type type;
+            public string sourceExt = "";
+        }
+
         public static AssetStore Instance { get; set; }
-        public static string M_Default = "M_Default";
-
-        private Dictionary<int, string> m_scriptIdHash_scriptName = new Dictionary<int, string>();
-        private Dictionary<string, string> m_scriptName_scriptId = new Dictionary<string, string>();
-        private Dictionary<int, string> m_scriptIdHash_scriptId = new Dictionary<int, string>();
-        private Dictionary<string, int> m_scriptName_scriptIdHash = new Dictionary<string, int>();
-
-
-        private Dictionary<string, YamlValues> tmp_assetValues = new Dictionary<string, YamlValues>();
-
-        private Dictionary<int, string> m_assetIdHash_assetId = new Dictionary<int, string>();
-        private Dictionary<int, string> m_assetIdHash_assetPath = new Dictionary<int, string>();
-        private Dictionary<int, int> m_assetIdHash_scriptIdHash = new Dictionary<int, int>();
+        
+        private static Dictionary<int, Type> m_guidHash_type = new Dictionary<int, Type>();
+        private Dictionary<int, AssetData> m_assetGuidHash_assetData = new Dictionary<int, AssetData>();
+        private Dictionary<int, YamlValues> m_assetGuidHash_assetValues = new Dictionary<int, YamlValues>();
 
         private HashSet<int> m_tmpAssetIdHashes = new HashSet<int>();
-
-        private HashSet<int> m_missingAssetAIdHash = new HashSet<int>();
 
         public string ProjectPath;
         public string AssetsPath => $"{ProjectPath}/Assets";
@@ -39,6 +37,8 @@ namespace FireYaml {
 
         private uint m_nextAssetId = 1;
         private uint m_nextTmpAssetId = 1;
+
+        private DateTime m_lastChangeTime = DateTime.UnixEpoch;
 
         public AssetStore(bool addDefaultAssets = true) {
 
@@ -64,137 +64,108 @@ namespace FireYaml {
                 // AddAssetId("TestMeshPrefab", $"{AssetsPath}/Prefabs/TestMeshPrefab.yml");
                 // AddAssetId("TestPrefab", $"{AssetsPath}/Prefabs/TestPrefab.yml");
                 // AddAssetId("TestPrefab2", $"{AssetsPath}/Prefabs/TestPrefab2.yml");
-                
+
                 // AddAssetId("scene_1", $"{AssetsPath}/Scenes/scene_1.yml");
             }
         }
 
-        public string GetTypeFullName(string scriptId) => m_scriptIdHash_scriptName[scriptId.GetHashCode()];
-        public string GetTypeFullName(int scriptIdHash) => m_scriptIdHash_scriptName[scriptIdHash];
-        public bool HasTypeName(string typeName) => m_scriptName_scriptId.ContainsKey(typeName);
-        public string GetScriptIdByTypeName(string typeName) => m_scriptName_scriptId[typeName];
-        
-        public void AddScriptId(string scriptId, string scriptName) {
-            var scriptIdHash = scriptId.GetHashCode();
+        public void Init(string projectPath) {
+            ProjectPath = projectPath;
 
-            m_scriptIdHash_scriptId[scriptIdHash] = scriptId;
-            m_scriptIdHash_scriptName[scriptIdHash] = scriptName;
-            m_scriptName_scriptId[scriptName] = scriptId;
-            m_scriptName_scriptIdHash[scriptName] = scriptIdHash;
+            Dll.AssetStore.projectPath_set(Game.assetStoreRef, ProjectPath);
+            Dll.AssetStore.assetsPath_set(Game.assetStoreRef, AssetsPath);
+            Dll.AssetStore.editorPath_set(Game.assetStoreRef, EditorPath);
+
+            m_CollectTypes();
+            
+            m_UpdateAssets(EditorPath, in DateTime.UnixEpoch);
+            m_UpdateAssets(AssetsPath, in DateTime.UnixEpoch);
+
+            SendTypesToCpp();
+            SendAssetsInCpp();
         }
 
-        public void AddAssetId(string assetId, string path) {
-            var assetIdHash = assetId.GetHashCode();
-            m_assetIdHash_assetId[assetIdHash] = assetId;
-            m_assetIdHash_assetPath[assetIdHash] = path;
-        }
-
-        public string GetAssetId(int assetId) {
-            return m_assetIdHash_assetId[assetId];
+        public string GetAssetGuid(int assetGuidHash) {
+            return m_assetGuidHash_assetData[assetGuidHash].guid;
         }
 
         public bool HasAssetPath(string assetId) {
             return GetAssetPath(assetId) != "";
         }
 
-        public static bool HasAsset(int assetIdHash) {
-            return Instance.m_assetIdHash_assetPath.ContainsKey(assetIdHash);
+        public static bool HasAsset(int assetGuidHash) {
+            return Instance.m_assetGuidHash_assetData.ContainsKey(assetGuidHash);
         }
 
-        public bool TryGetAssetIdByType(string typeName, out string assetId) {
-            assetId = "";
-            if (m_scriptName_scriptId.ContainsKey(typeName)) {
-                assetId = m_scriptName_scriptId[typeName];
-                return true;
-            }
-            return false;
+        public Type GetAssetType(int assetGuidHash) {
+            return m_assetGuidHash_assetData[assetGuidHash].type;
+
+            // var scritpIdHash = m_assetIdHash_scriptIdHash[assetGuidHash];
+            // var scriptId = m_scriptIdHash_scriptId[scritpIdHash];
+            // return scriptId;
         }
 
-        public bool TryGetAssetIdByType(string typeName, out int assetId) {
-            assetId = 0;
-            if (m_scriptName_scriptId.ContainsKey(typeName)) {
-                assetId = m_scriptName_scriptIdHash[typeName];
-                return true;
-            }
-            return false;
-        }
+        public YamlValues? GetAssetValues(string assetGuid) {
 
-        public string GetAssetScriptId(int assetIdHash) {
-            var scritpIdHash = m_assetIdHash_scriptIdHash[assetIdHash];
-            var scriptId = m_scriptIdHash_scriptId[scritpIdHash];
-            return scriptId;
+            if (!GUIDAttribute.IsGuid(assetGuid))
+                throw new Exception($"ThrowAssetValues: AssetGuid is not valid: {assetGuid}");
 
-            // var assetId = GetAssetId(assetIdHash);
-            // var values = GetAssetValues(assetId);
+            var asetGuidHash = assetGuid.GetHashCode();
 
-            // var scriptIdPath = ".file1!scriptId";
-            // var hasScriptId = values.HasValue(scriptIdPath);
-            // if (!hasScriptId )
-            //     throw new Exception("Asset not contains .file1!scriptId");
+            LoadAssetValues(assetGuid);
 
-            // var typeId = values.GetValue(scriptIdPath).value;
-
-            // return typeId;
-        }
-
-        public YamlValues? GetAssetValues(string assetId) {
-            LoadAsset(assetId);
-
-            if (!tmp_assetValues.ContainsKey(assetId))
+            if (!m_assetGuidHash_assetValues.ContainsKey(asetGuidHash))
                 return null;
 
-            return tmp_assetValues[assetId];
+            return m_assetGuidHash_assetValues[asetGuidHash];
         }
 
-        public YamlValues ThrowAssetValues(string assetId) {
-            LoadAsset(assetId);
+        public YamlValues ThrowAssetValues(string assetGuid) {
 
-            if (!tmp_assetValues.ContainsKey(assetId))
-                throw new Exception($"Asset with assetId:{assetId} not exist");
+            if (!GUIDAttribute.IsGuid(assetGuid))
+                throw new Exception($"ThrowAssetValues: AssetGuid is not valid: {assetGuid}");
 
-            return tmp_assetValues[assetId];
+            var asetGuidHash = assetGuid.GetHashCode();
+            LoadAssetValues(assetGuid);
+
+            if (!m_assetGuidHash_assetValues.ContainsKey(asetGuidHash))
+                throw new Exception($"Asset with assetId:{assetGuid} not exist");
+
+            return m_assetGuidHash_assetValues[asetGuidHash];
         }
 
-        public void LoadAsset(string assetId) {
-            if (tmp_assetValues.ContainsKey(assetId))
+        public void LoadAssetValues(string assetGuid) {
+            var assetGuidHash = assetGuid.GetHashCode();
+            if (m_assetGuidHash_assetValues.ContainsKey(assetGuidHash))
                 return;
 
-            var path = GetAssetPath(assetId);
+            var path = GetAssetPath(assetGuid);
             if (path == "")
                 return;
 
             var text = File.ReadAllText(path);
             var values = new YamlValues().LoadFromText(text);
-            
-            var scriptIdPath = ".file1!scriptId";
-            var scriptId = values.GetValue(scriptIdPath).value;
-            var scriptIdHash = scriptId.GetHashCode();
-            var assetIdHash = assetId.GetHashCode();
 
-            tmp_assetValues[assetId] = values;
-            m_assetIdHash_scriptIdHash[assetIdHash] = scriptIdHash;
+            m_assetGuidHash_assetValues[assetGuidHash] = values;
         }
 
-        public void ReloadAsset(string prefabId) {
-            if (tmp_assetValues.ContainsKey(prefabId)) {
-                tmp_assetValues.Remove(prefabId);
-                LoadAsset(prefabId);
+        public void ReloadAssetValues(string assetGuid) {
+            var assetGuidHash = assetGuid.GetHashCode();
+
+            if (m_assetGuidHash_assetValues.ContainsKey(assetGuidHash)) {
+                m_assetGuidHash_assetValues.Remove(assetGuidHash);
+                LoadAssetValues(assetGuid);
             }
         }
 
-        public string GetAssetPath(string assetId) {
-            var assetIdInt = assetId.GetHashCode();
-            if (m_assetIdHash_assetPath.ContainsKey(assetIdInt))
-                return m_assetIdHash_assetPath[assetIdInt];
-            
+        public string GetAssetPath(string assetGuid) {
+            var assetGuidHash = assetGuid.GetHashCode();
+            if(m_assetGuidHash_assetData.ContainsKey(assetGuidHash))
+                return m_assetGuidHash_assetData[assetGuidHash].path;
+
             return "";
         }
-
-        public void ResetAssetPath(int assetIdHash, string path) {
-            if (m_assetIdHash_assetPath.ContainsKey(assetIdHash))
-                m_assetIdHash_assetPath[assetIdHash] = path;
-        }
-
+    
         public AssetInfo GetAssetInfo(string assetId) {
             var values = GetAssetValues(assetId);
 
@@ -214,28 +185,28 @@ namespace FireYaml {
             return info;
         }
 
-        public AssetInfo ReadAssetInfo(string assetId) {
-            var values = GetAssetValues(assetId);
+        public int WriteAsset(string path, object data) {
+            var fullPath = Path.GetFullPath(path);
+            var projectFullPath = Path.GetFullPath(ProjectPath);
 
-            var assetIdPath = ".file0.assetId";
-            var filesPath = ".file0.files";
-
-            var hasAssetId = values.HasValue(assetIdPath);
-            var hasfiles = values.HasValue(filesPath);
-
-            if (!hasAssetId || !hasfiles)
-                throw new Exception("Asset not contains AssetInfo in file0");
-
-            var info = new AssetInfo();
-            info.assetId = values.GetValue(assetIdPath).value;
-            info.files = int.Parse(values.GetValue(filesPath).value);
-
-            return info;
-        }
-
-        public void CreateAsset(string path, object data, string tmp_id) {
-            if(!path.Contains(ProjectPath))
+            if (!fullPath.Contains(projectFullPath))
                 throw new Exception($"Asset Path not contains project path");
+
+            AssetData assetData = null;
+
+            if (!File.Exists(fullPath)) {
+                File.WriteAllText(fullPath, "");
+
+                assetData = CreateNewAsset(data.GetType(), fullPath);
+                if (assetData == null)
+                    throw new Exception($"WriteAsset: Can not create asset by path: '{fullPath}'");
+            }
+            else {
+                assetData = UpdateAssetData(data.GetType(), fullPath);
+            }
+
+            var assetGuid = assetData.guid;
+            var assetGuidHash = assetData.guidHash;
 
             var serializer = new FireWriter(ignoreExistingIds: true, startId: 1);
             serializer.Serialize(data);
@@ -246,22 +217,22 @@ namespace FireYaml {
             var values = serializer.Values;
             var assetPath = path;
 
-            values.AddValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, tmp_id));
+            values.AddValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, assetGuid));
             values.AddValue(".file0.files", new YamlValue(YamlValue.Type.Var, $"{serializer.FilesCount}"));
-
 
             File.WriteAllText(assetPath, values.ToSortedText());
 
-            AddAssetId(tmp_id, assetPath);
-            ReloadAsset(tmp_id);
+            ReloadAssetValues(assetGuid);
+
+            return assetGuidHash;
         }
 
-        public void UpdateAsset(string assetId, object data) {
-            if (!HasAssetPath(assetId))
-                throw new Exception($"Asset with assetId:{assetId} not exist");
+        public void UpdateAsset(string assetGuid, object data) {
+            if (!HasAssetPath(assetGuid))
+                throw new Exception($"Asset with assetId:{assetGuid} not exist");
 
-            var assetInfo = GetAssetInfo(assetId);
-            var assetPath = GetAssetPath(assetId);
+            var assetInfo = GetAssetInfo(assetGuid);
+            var assetPath = GetAssetPath(assetGuid);
 
             var serializer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
             serializer.Serialize(data);
@@ -276,339 +247,357 @@ namespace FireYaml {
 
             File.WriteAllText(assetPath, values.ToSortedText());
 
-            tmp_assetValues.Remove(assetId);
-            LoadAsset(assetId);
+            ReloadAssetValues(assetGuid);
         }
 
-        public void UpdateAssetValues(string assetId) {
-            if (!HasAssetPath(assetId))
-                throw new Exception($"Asset with assetId:{assetId} not exist");
+        /// Временные ассеты 
+        // Не добавляются в загруженные ассеты
+        // Не сохраняются в файл при сериализации
+        // Функции обычно вызываются из С++
 
-            var assetPath = GetAssetPath(assetId);
-            var values = GetAssetValues(assetId);
-
-            File.WriteAllText(assetPath, values.ToSortedText());
-
-            tmp_assetValues.Remove(assetId);
-            LoadAsset(assetId);
-        }
-
-        public static string CreateAssetId() {
-            var id = CreateAssetIdInt();
-            var idStr = id.ToString();
-            var nullCount = 10 - idStr.Length;
-            var assetId = new string('0', nullCount) + idStr;
-            return assetId;
-        }
-
-        public static string CreateTmpAssetId() {
-            var id = CreateTmpAssetIdInt();
-            var idStr = id.ToString();
-            var nullCount = 10 - idStr.Length;
-            var assetId = new string('0', nullCount) + idStr;
-            assetId = $"tmp_{id.ToString()}";
-
-            AddTmpAssetIdHash(assetId.GetHashCode());
-
-            return assetId;
-        }
-
-        public static uint CreateAssetIdInt() {
-            var id = AssetStore.Instance.m_nextAssetId++;
-            return id;
-        }
-
-        public static uint CreateTmpAssetIdInt() {
+        public static uint CreateTmpAssetIdInt() { // Cpp
             var id = AssetStore.Instance.m_nextTmpAssetId++;
             return id;
         }
 
-        public static void AddTmpAssetIdHash(int tmpAssetIdHash) {
+        public static void AddTmpAssetIdHash(int tmpAssetIdHash) { // Cpp
             Instance.m_tmpAssetIdHashes.Add(tmpAssetIdHash);
         }
 
         public static bool IsTmpAssetId(int tmpAssetIdHash) => Instance.m_tmpAssetIdHashes.Contains(tmpAssetIdHash);
-
-        public static void UpdateTypesInCpp() {
-            Dll.AssetStore.projectPath_set(Game.assetStoreRef, Instance.ProjectPath);
-            Dll.AssetStore.assetsPath_set(Game.assetStoreRef, Instance.AssetsPath);
-            Dll.AssetStore.editorPath_set(Game.assetStoreRef, Instance.EditorPath);
-
-            var typeNames = new List<string>();
-            var assembly = Assembly.GetAssembly(typeof(AssetStore));
-
-            var types = assembly.GetTypes();
-            foreach(var type in types) {
-                if (FireWriter.IsComponent(type) || FireWriter.IsAsset(type) || FireWriter.IsFile(type)) { 
-                    typeNames.Add(type.FullName);
-                    if(!Instance.HasTypeName(type.FullName))
-                        Instance.AddScriptId(CreateAssetId(), type.FullName);
-                }
-            }
-            typeNames.Sort();
-
-            Dll.AssetStore.ClearTypes(Game.gameRef);
-            Dll.AssetStore.ClearAssetTypes(Game.gameRef);
-
-            foreach (var typeName in typeNames) {
-                var type = Type.GetType(typeName);
-                var typeId = Instance.GetScriptIdByTypeName(type.FullName);
-                var typeIdHash = typeId.GetHashCode();
-
-                Dll.AssetStore.SetType(Game.gameRef, typeIdHash, type.FullName, type.Name);
-
-                if(FireWriter.IsUserComponent(type))
-                    Dll.AssetStore.AddComponent(Game.gameRef, typeIdHash);
-                
-                if(FireWriter.IsAsset(type))
-                    Dll.AssetStore.AddAssetType(Game.gameRef, typeIdHash);
-            }
-        }
-
-        public static void UpdateAssetsInCpp() {
-            var store = Instance;
-
-            var actorId = Instance.GetScriptIdByTypeName(typeof(Engine.Actor).FullName);
-            var componentId = Instance.GetScriptIdByTypeName(typeof(Engine.Component).FullName);
-            var prefabId = Instance.GetScriptIdByTypeName(typeof(Engine.Prefab).FullName);
-
-            Dll.AssetStore.ClearAssets(Game.gameRef);
-            Dll.AssetStore.actorTypeIdHash_set(Game.assetStoreRef, actorId.GetHashCode());
-            Dll.AssetStore.componentTypeIdHash_set(Game.assetStoreRef, componentId.GetHashCode());
-
-            foreach(var assetIdHash in Instance.m_assetIdHash_assetId.Keys) {
-                var assetId = Instance.GetAssetId(assetIdHash);
-                var scriptId = m_ReadScriptId(assetIdHash);
-                if (scriptId == actorId)
-                    scriptId = prefabId;
-                
-                var scriptIdHash = scriptId.GetHashCode();
-                var typeFullName = Instance.m_scriptIdHash_scriptName[scriptIdHash];
-                var typeName = Type.GetType(typeFullName).Name;
-                var assetName = m_ReadAssetName(assetIdHash);
-
-                Instance.m_assetIdHash_scriptIdHash[assetIdHash] =  scriptIdHash;
-                Dll.AssetStore.AddAsset(Game.gameRef, scriptIdHash, assetIdHash, assetName);
-            }
-        }
-
-        private static string m_ReadScriptId(int assetIdHash) {
-            var inst = Instance;
-            var path = Instance.m_assetIdHash_assetPath[assetIdHash];
-
-            var lines = File.ReadLines(path);
-            var scriptIdPath = ".file1!scriptId";
-
-            foreach(var line in lines) {
-                if(line.StartsWith(scriptIdPath)) {
-                    var scriptId = new YamlValues().LoadFromText(line).GetValue(scriptIdPath).value;
-                    return scriptId;
-                }
-            }
-            return "";
-        }
-
-        private static string m_ReadAssetName(int assetIdHash) {
-            var path = Instance.m_assetIdHash_assetPath[assetIdHash];
-            var fileName = Path.GetFileNameWithoutExtension(path);
-            return fileName;
-        }
-
         
-        public void Init(string projectPath) {
-            ProjectPath = projectPath;
-
-            var typeTablePath = $"{EditorPath}/TypeTable.yml";
-            var assetTablePath = $"{EditorPath}/AssetTable.yml";
-
-            if (!File.Exists(typeTablePath))
-                m_InitTypeTable(typeTablePath);
-
-            if (!File.Exists(assetTablePath))
-                m_InitAssetTable(assetTablePath);
-
-            m_ReadTypes(typeTablePath);
-            m_ReadAssets(assetTablePath);
-
-            m_AddAssemblyTypes();
-            m_UpdateAssets(AssetsPath);
-
-            // TODO: Продолжить
-            m_UpdateMissingAssets();
-
-            throw new NotImplementedException();
-
-            UpdateTypesInCpp();
-            UpdateAssetsInCpp();
+        private bool m_IsAssetExt(string ext) {
+            return 
+                ext == ".yml";
         }
 
-        private void m_InitTypeTable(string path) {
-            var list = new List<string>();
-            var types = m_GetDefaultTypes();
-
-            foreach (var name_typeId in types)
-                list.Add($"{name_typeId.Key}: {name_typeId.Value}");
-
-            File.WriteAllLines(path, list);
+        private bool m_IsNewAssetExt(string ext) {
+            return
+                ext == ".scene" ||
+                ext == ".tex" ||
+                ext == ".material" ||
+                ext == ".prefab";
         }
 
-        public void m_InitAssetTable(string path) {
-            var list = new List<string>();
-            var assets = m_GetDefaultAssets();
-
-            foreach (var assetId_path in assets) {
-                var assetPath = Path.GetRelativePath(ProjectPath, assetId_path.Value);
-                list.Add($"{assetId_path.Key}: {assetPath}");
-            }
-            File.WriteAllLines(path, list);
+        private bool m_IsSourceExt(string ext) {
+            return
+                ext == ".obj" ||
+                ext == ".png" ||
+                ext == ".jpg";
         }
 
-        public void m_ReadTypes(string path) {
-            var lines = File.ReadAllLines(path);
+        private void m_CollectTypes() {
+            GUIDAttribute.types = m_guidHash_type;
 
-            foreach(var line in lines) {
-                string id, value;
-                if(YamlTable.ReadLine(line, out id, out value))
-                    AddScriptId(id, value);
-            }
-        }
-
-        public void m_ReadAssets(string path) {
-            var lines = File.ReadAllLines(path);
-
-            foreach (var line in lines) {
-                string id, value;
-                if (YamlTable.ReadLine(line, out id, out value))
-                    AddAssetId(id, value);
-            }
-        }
-
-        public void m_AddAssemblyTypes() {
             var assembly = Assembly.GetAssembly(typeof(AssetStore));
             var types = assembly.GetTypes();
 
             foreach (var type in types) {
-                if (FireWriter.IsComponent(type) || FireWriter.IsAsset(type) || FireWriter.IsFile(type)) {
-                    if (!HasTypeName(type.FullName))
-                        AddScriptId(CreateAssetId(), type.FullName); //TODO: записать в файл
-                }
+                if (GUIDAttribute.HasGuid(type))
+                    m_guidHash_type.Add(GUIDAttribute.GetGuidHash(type), type);
             }
         }
 
-        public void m_UpdateMissingAssets() {
-            foreach(var pair in m_assetIdHash_assetPath) {
-                var assetIdHash = pair.Key;
-                var assetPath = pair.Value;
+        public void SendTypesToCpp() {
+            Dll.AssetStore.ClearTypes(Game.gameRef);
+            Dll.AssetStore.ClearAssetTypes(Game.gameRef);
 
-                var fullPath = Path.Combine(ProjectPath, assetPath);
+            foreach (var guidHash_type in m_guidHash_type) {
+                var typeGuidHash = guidHash_type.Key;
+                var type = guidHash_type.Value;
+                var typeGuid = GUIDAttribute.GetGuid(type);
 
-                if(!File.Exists(fullPath)) {
-                    Console.WriteLine($"Missing asset: {fullPath}");
+                Dll.AssetStore.SetType(Game.gameRef, typeGuidHash, type.FullName, type.Name);
 
-                    m_missingAssetAIdHash.Add(assetIdHash);
-                }
-            };
-        } 
-
-        public void m_UpdateAssets(string path) {
-            var fullPath = Path.GetFullPath(path);
-
-            // Console.WriteLine(fullPath);
-
-            foreach (string fileName in Directory.EnumerateFiles(fullPath, "*.yml")) {
-                //Console.WriteLine(fileName);
-
-                var name = Path.GetFileNameWithoutExtension(fileName);
-
-                foreach (var line in File.ReadLines(fileName)) {
-                    var values = new YamlValues().LoadFromText(line);
-
-                    var assetId = values.GetValue(".file0.assetId", "");
-                    if (assetId != "") {
-                        var assetIdHash = assetId.GetHashCode();
-                        var filePath = Path.GetRelativePath(ProjectPath, fileName);
-
-                        if (!HasAsset(assetIdHash)) {
-                            AddAssetId(assetId, filePath);
-                            //TODO: записать в файл  
-                            break;
-                        }
-                        var assetPath = GetAssetPath(assetId);
-                        if (assetPath != filePath && !m_AssetExist(filePath, assetId)) {
-                            ResetAssetPath(assetIdHash, filePath); 
-                            //TODO: записать в файл  
-                        }
-                    }
-                    break;
-                }
-            }
-
-            foreach (string fileName in Directory.EnumerateDirectories(fullPath))
-                m_UpdateAssets(fileName);
-        }
-
-        private bool m_AssetExist(string path, string expectedAssetId) {
-            var fullPath = Path.GetFullPath(path);
-
-            if(!File.Exists(fullPath))
-                return false;
-
-            foreach (var line in File.ReadLines(fullPath)) {
-                var values = new YamlValues().LoadFromText(line);
-
-                var assetId = values.GetValue(".file0.assetId", "");
-                if (assetId != "")
-                    return assetId == expectedAssetId;
+                if (FireWriter.IsUserComponent(type)) 
+                    Dll.AssetStore.AddComponent(Game.gameRef, typeGuidHash);
                 
-                break;
+                if (FireWriter.IsAsset(type)) 
+                    Dll.AssetStore.AddAssetType(Game.gameRef, typeGuidHash);
+                
             }
+        }
+
+        public void SendAssetsInCpp() {
+            var actorId = GUIDAttribute.GetGuidHash(typeof(Engine.Actor)); 
+            var componentId = GUIDAttribute.GetGuidHash(typeof(Engine.Component)); 
+            var prefabGuidHash = GUIDAttribute.GetGuidHash(typeof(Engine.Prefab));
+
+            Dll.AssetStore.ClearAssets(Game.gameRef);
+            Dll.AssetStore.actorTypeIdHash_set(Game.assetStoreRef, actorId);
+            Dll.AssetStore.componentTypeIdHash_set(Game.assetStoreRef, componentId);
+
+            foreach (var assetGuidHash in m_assetGuidHash_assetData.Keys) {
+                var assetData = m_assetGuidHash_assetData[assetGuidHash];
+
+                var assetName = Path.GetFileNameWithoutExtension(assetData.path);
+                var scriptIdHash = GUIDAttribute.GetGuidHash(assetData.type);
+
+                if (assetData.type == typeof(Engine.Actor))
+                    scriptIdHash = prefabGuidHash;
+
+                Dll.AssetStore.AddAsset(Game.gameRef, scriptIdHash, assetGuidHash, assetName);
+            }
+        }
+
+        private DateTime m_UpdateAssets(string path, in DateTime lastTime) {
+            var dirPath = Path.GetFullPath(path);
+            var newTime = lastTime; //Directory.GetLastWriteTime(dirPath);
+
+            // if(newTime <= lastTime)
+            //     return newTime;
+
+            foreach (string filePath in Directory.EnumerateFiles(dirPath)) {
+                var fileTime = File.GetLastWriteTime(filePath);
+
+                if (fileTime > lastTime) {
+                    var ext = Path.GetExtension(filePath);
+                    bool watched = false;
+
+                    if (m_IsNewAssetExt(ext) || m_IsSourceExt(ext)) {
+                        if(AddAsset(filePath) != null)
+                            watched = true;
+                    }
+                    if (m_IsAssetExt(ext)) {
+                        m_UpdateAssetPath(filePath);
+                        watched = true;
+                    }
+                    if (watched && fileTime > newTime)
+                        newTime = fileTime;
+                }
+            }
+            foreach (string nextDirPath in Directory.EnumerateDirectories(dirPath)) {
+                var name = Path.GetFileName(nextDirPath);
+                if (name != "Ignore") {
+                    var dirName = m_UpdateAssets(nextDirPath, lastTime);
+
+                    if(dirName > newTime)
+                        newTime = dirName;
+                }
+            }
+            return newTime;
+        }
+
+        public static bool CreateAsset(ulong pathPtr) {
+            var path = Assets.ReadCString(pathPtr);
+
+            var fileExists = File.Exists(path);
+            if(!fileExists)
+                File.WriteAllText(path, "");
+
+            if(Instance.AddAsset(path) != null)
+                return true;
+
+            if (!fileExists)
+                File.Delete(path);
+
             return false;
         }
 
-        private List<KeyValuePair<string, string>> m_GetDefaultTypes() {
-            var list = new List<KeyValuePair<string, string>>();
-
-            Func<string, string, KeyValuePair<string, string>> MakePair =
-            (key, value) => new KeyValuePair<string, string>(key, value);
-
-            list.Add(MakePair("D00000010000", typeof(Engine.Actor).FullName));
-            list.Add(MakePair("D00000010003", typeof(Engine.MeshComponent).FullName));
-            list.Add(MakePair("D00000010004", typeof(Engine.CameraComponent).FullName));
-            list.Add(MakePair("D00000010005", typeof(Engine.TestMesh).FullName));
-            list.Add(MakePair("D00000010006", typeof(UI.TestImGui).FullName));
-            list.Add(MakePair("D00000010007", typeof(Engine.CSComponent).FullName));
-            list.Add(MakePair("D00000010008", typeof(Engine.TestMeshBase).FullName));
-            list.Add(MakePair("D00000010009", typeof(Engine.TestPrefab).FullName));
-            list.Add(MakePair("D00000010010", typeof(Engine.Texture).FullName));
-            list.Add(MakePair("D00000010011", typeof(Engine.Image).FullName));
-            list.Add(MakePair("D00000010012", typeof(Engine.StaticMaterial).FullName));
-            list.Add(MakePair("D00000010013", typeof(Engine.StaticMesh).FullName));
-            list.Add(MakePair("D00000010014", typeof(Engine.Scene).FullName));
-            list.Add(MakePair("D00000010015", typeof(Engine.Prefab).FullName));
-            list.Add(MakePair("D00000010016", typeof(Engine.Component).FullName));
-            list.Add(MakePair("D00000010017", typeof(Engine.EditorSettings).FullName));
-            list.Add(MakePair("D00000010018", typeof(Engine.AmbientLight).FullName));
-            list.Add(MakePair("D00000010019", typeof(Engine.DirectionalLight).FullName));
-            list.Add(MakePair("D00000010020", typeof(Engine.PointLight).FullName));
-            list.Add(MakePair("D00000010021", typeof(Engine.SpotLight).FullName));
-
-            return list;
+        public static bool SetAssetPath(int assetGuidHash, ulong newPathPtr) {
+            var newPath = Assets.ReadCString(newPathPtr);
+            return Instance.SetAssetPath(assetGuidHash, newPath);
         }
 
-        private List<KeyValuePair<string, string>> m_GetDefaultAssets() {
-            var list = new List<KeyValuePair<string, string>>();
+        /// <summary>
+        /// Создает новый пустой ассет на диске
+        /// </summary>
+        /// <param name="path">Путь с именем ассета и расфирением конкретного типа ассета</param>
+        /// <returns>AssetData != null если ассет был успшно создан</returns>
+        public AssetData AddAsset(string path) {
+            var ext = Path.GetExtension(path);
+            var isSourceFile = m_IsSourceExt(ext);
 
-            Func<string, string, KeyValuePair<string, string>> MakePair =
-            (key, value) => new KeyValuePair<string, string>(key, value);
+            if (!isSourceFile) {
+                long length = new System.IO.FileInfo(path).Length;
+                if (length != 0)
+                    return null;
+            }
 
-            list.Add(MakePair("editor_settings", $"{EditorPath}/editor_settings.yml"));
+            var assetPath = Path.ChangeExtension(path, "yml");
+            if (File.Exists(assetPath))
+                return null;
 
-            list.Add(MakePair("M_Default", $"{AssetsPath}/Materials/M_Default.yml"));
-            list.Add(MakePair("M_WorldGride", $"{AssetsPath}/Materials/M_WorldGride.yml"));
+            var type = Assets.GetAssetTypeByExt(ext);
+            if (type == null)
+                return null;
 
-            return list;
+            if (isSourceFile)
+                File.WriteAllText(assetPath, "");
+            else
+                File.Move(path, assetPath);
+
+            return CreateNewAsset(type, assetPath);
         }
 
+        public AssetData CreateNewAsset(Type type, string assetPath) {
+            var assetGuid = Guid.NewGuid().ToString();
+            var assetGuidHash = assetGuid.GetHashCode();
+            var sourcePath = "";
+
+            if (FireWriter.IsAssetWithSource(type)) {
+                sourcePath = Assets.FindSourceFile(type, assetPath);
+                if (sourcePath == "") {
+                    Console.WriteLine($"Assets.Create: Asset source not found: {assetPath}");
+                    return null;
+                }
+            }
+
+            var assetHeader = new string[] {
+                ".file0.assetId: {AssetId: "+ assetGuid +"}",
+                ".file0.files: {Var: 0}"
+            };
+
+            File.WriteAllLines(assetPath, assetHeader);
+            Assets.InitNewAsset(type, assetPath, assetGuid, sourcePath);
+
+            var data = new AssetData();
+
+            data.path = assetPath;
+            data.time = File.GetLastWriteTime(assetPath);
+            data.guid = assetGuid;
+            data.guidHash = assetGuidHash;
+            data.type = type;
+            data.sourceExt = sourcePath != "" ? Path.GetExtension(sourcePath) : "";
+
+            m_assetGuidHash_assetData[data.guidHash] = data;
+            Console.WriteLine($"CreatAsset: {data.time}: '{assetPath}'");
+
+            return data;
+        }
+
+        public AssetData UpdateAssetData(Type type, string assetPath) {
+            var assetGuid = m_ReadAssetGuid(assetPath);
+            var assetGuidHash = assetGuid.GetHashCode();
+            var sourcePath = "";
+
+            if (FireWriter.IsAssetWithSource(type))
+                sourcePath = Assets.FindSourceFile(type, assetPath);
+
+            var data = new AssetData();
+
+            data.path = assetPath;
+            data.time = File.GetLastWriteTime(assetPath);
+            data.guid = assetGuid;
+            data.guidHash = assetGuidHash;
+            data.type = type;
+            data.sourceExt = sourcePath != "" ? Path.GetExtension(sourcePath) : "";
+
+            m_assetGuidHash_assetData[data.guidHash] = data;
+
+            return data;
+        }
+
+        private void m_UpdateAssetPath(string assetPath) {
+            var assetGuid = m_ReadAssetGuid(assetPath);
+            var scriptGuid = m_ReadScriptGuid(assetPath);
+
+            Guid guid;
+            if (!Guid.TryParse(assetGuid, out guid)) {
+                Console.WriteLine($"Bad AssetID: '{assetGuid}' in path: '{assetPath}'");
+                return;
+            }
+            if (!Guid.TryParse(scriptGuid, out guid)) {
+                Console.WriteLine($"Bad asset ScriptId: '{scriptGuid}' in path: '{assetPath}'");
+                return;
+            }
+
+            var sourcePath = "";
+            var assetType = GUIDAttribute.GetTypeByGuid(scriptGuid);;
+
+            if (FireWriter.IsAssetWithSource(assetType)) {
+                sourcePath = Assets.FindSourceFile(assetType, assetPath);
+                if (sourcePath == "")
+                    Console.WriteLine($"UpdateAsset: Asset source not found: {assetPath}");
+            }
+
+            var data = new AssetData();
+
+            data.path = assetPath;
+            data.time = File.GetLastWriteTime(assetPath);
+            data.guid = assetGuid;
+            data.guidHash = data.guid.GetHashCode();
+            data.type = GUIDAttribute.GetTypeByGuid(scriptGuid);
+            data.sourceExt = sourcePath != "" ? Path.GetExtension(sourcePath) : "";
+
+            if(data.type == null) {
+                Console.WriteLine($"UpdateAssetPath: Misssing ScriptId: '{scriptGuid}' in path: '{assetPath}'");
+                return;
+            }
+
+            m_assetGuidHash_assetData[data.guidHash] = data;
+
+            Console.WriteLine($"UpdateAssetPath: {data.time}: '{assetPath}'");
+        }
+
+        public bool SetAssetPath(int assetGuidHash, string newPath) {
+            if(!m_assetGuidHash_assetData.ContainsKey(assetGuidHash))
+                return false;
+
+            var assetData = m_assetGuidHash_assetData[assetGuidHash];
+            var lastPath = assetData.path;
+
+            if (File.Exists(newPath) || !File.Exists(lastPath))
+                return false;
+
+            if (assetData.sourceExt != "") {
+                var lastSourcePath = Path.ChangeExtension(lastPath, assetData.sourceExt);
+                var newSourcePath = Path.ChangeExtension(newPath, assetData.sourceExt);
+
+                if (File.Exists(newSourcePath) || !File.Exists(lastSourcePath))
+                    return false;
+
+                File.Move(lastSourcePath, newSourcePath);
+            }
+            File.Move(lastPath, newPath);
+            assetData.path = newPath;
+
+            var name = Path.GetFileNameWithoutExtension(newPath);
+            Dll.AssetStore.RenameAsset(Game.gameRef, assetData.guidHash, name);
+
+            return true;
+        }
+
+        public static void RemoveAsset(int assetGuidHash) {
+            if (!Instance.m_assetGuidHash_assetData.ContainsKey(assetGuidHash))
+                return;
+
+            var asset = Instance.m_assetGuidHash_assetData[assetGuidHash];
+
+            if(File.Exists(asset.path))
+                File.Delete(asset.path);
+
+            if(asset.sourceExt != "") {
+                var sourcePath = Path.ChangeExtension(asset.path, asset.sourceExt);
+
+                if (File.Exists(sourcePath))
+                    File.Delete(sourcePath);
+            }
+
+            Instance.m_assetGuidHash_assetData.Remove(asset.guidHash);
+
+            var typeGuidHash = GUIDAttribute.GetGuidHash(asset.type);
+            Dll.AssetStore.RemoveAsset(Game.gameRef, typeGuidHash, asset.guidHash);
+        }
+
+        private string m_ReadAssetGuid(string assetPath) {
+            foreach (var line in File.ReadLines(assetPath)) {
+                var values = new YamlValues().LoadFromText(line);
+                return values.GetValue(".file0.assetId", "");
+            }
+            return "";
+        }
+
+        private string m_ReadScriptGuid(string assetPath) {
+            var scpiptPath = ".file1!scriptId";
+
+            foreach (var line in File.ReadLines(assetPath)) {
+                var values = new YamlValues().LoadFromText(line);
+                if(values.HasValue(scpiptPath))
+                    return values.GetValue(scpiptPath, "");
+            }
+            return "";
+        }
 
         /// <param name="objRef">From object</param>
         /// <param name="typeIdHash">To type</param>
@@ -618,7 +607,7 @@ namespace FireYaml {
             if (obj == null)
                 return false;
 
-            var fullName = Instance.GetTypeFullName(typeIdHash);
+            var fullName = GUIDAttribute.GetTypeByHash(typeIdHash).FullName; //Instance.GetTypeFullName(typeIdHash);
             var type = Type.GetType(fullName);
 
             var result = type.IsAssignableFrom(obj.GetType());

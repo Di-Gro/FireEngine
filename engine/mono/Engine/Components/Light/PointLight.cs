@@ -1,6 +1,8 @@
 using EngineDll;
 
 namespace Engine {
+
+    [GUID("f5bf5659-901d-40b8-9950-28c468110098", typeof(PointLight))]
     public class PointLight : CppComponent {
 
         private Prop<Vector3> prop_Color = new Prop<Vector3>(0);

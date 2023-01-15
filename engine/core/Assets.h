@@ -40,7 +40,7 @@ private:
 	//mono::mono_method_invoker<void(int)> m_method_Load;
 	//mono::mono_method_invoker<void(int)> m_method_Reload;
 	//mono::mono_method_invoker<int(size_t, size_t)> m_method_GetStringHash;
-	mono::mono_method_invoker<unsigned int(void)> m_method_CreateAssetId;
+	//mono::mono_method_invoker<unsigned int(void)> m_method_CreateAssetId;
 	mono::mono_method_invoker<unsigned int(void)> m_method_CreateTmpAssetId;
 	mono::mono_method_invoker<void(unsigned int)> m_method_AddTmpAssetIdHash;
 

@@ -18,6 +18,7 @@ namespace Engine {
 
     }
 
+    [GUID("ce174a6a-575b-4e00-b603-088fa2a337f9", typeof(Component))]
     public abstract class Component : CppLinked {
 
         public bool runtimeOnly {
@@ -101,7 +102,7 @@ namespace Engine {
     /// <summary>
     /// Базовый класс для C# компонента.
     /// </summary>
-    [Serializable]
+    [GUID("0ee2de42-9126-42d6-90cf-e4b65ac7c607", typeof(CSComponent))]
     public abstract class CSComponent : Component, FireYaml.IFile {
         /// FireYaml.IFile ->
         public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
@@ -111,8 +112,8 @@ namespace Engine {
         public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
         /// <- 
 
-        public override CppObjectInfo CppConstructor(/*Actor target*/) {
-            return Dll.CsComponent.Create(/*target.cppRef, */csRef);
+        public override CppObjectInfo CppConstructor() {
+            return Dll.CsComponent.Create(csRef);
         }
 
     }

@@ -1,8 +1,8 @@
-.file0.assetId: {AssetId: M_WorldGride}
+.file0.assetId: {AssetId: bca7088f-eef7-46a3-9803-0a652eedba0e}
 .file0.files: {Var: 1}
 
 .file1!script: {Var: StaticMaterial}
-.file1!scriptId: {AssetId: D00000010012}
+.file1!scriptId: {AssetId: 110065f7-ed95-4fca-8a09-288b7ec17500}
 .file1.Name: {Var: M_WorldGride}
 .file1.Shader: {Var: ../../data/engine/shaders/WorldGride.hlsl}
 .file1.CullMode: {Var: Back}

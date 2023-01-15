@@ -84,27 +84,30 @@ public:
 
 class GameCallbacks {
 public:
-	void(*setSceneRef)(CppRef value);
-	void(*setMeshAssetRef)(CppRef value);
-	void(*setAssetStoreRef)(CppRef value);
-	void(*setUpdateData)(GameUpdateData value);
-	void(*onInputUpdate)();
+	void (*setSceneRef)(CppRef value);
+	void (*setMeshAssetRef)(CppRef value);
+	void (*setAssetStoreRef)(CppRef value);
+	void (*setUpdateData)(GameUpdateData value);
+	void (*onInputUpdate)();
 
-	bool(*saveScene)(CppRef cppSceneRef, size_t assetIdPtr, size_t pathPtr);
-	bool(*loadScene)(CppRef cppSceneRef, size_t assetIdPtr);
+	int (*saveScene)(CppRef cppSceneRef, size_t pathPtr);
+	bool (*loadScene)(CppRef cppSceneRef, int assetGuidHash);
 
-	bool(*runOrCrush)(CsRef componentRef, void(*method)());
+	//bool(*saveScene)(CppRef cppSceneRef, size_t assetIdPtr, size_t pathPtr);
+	//bool(*loadScene)(CppRef cppSceneRef, size_t assetIdPtr);
 
-	bool(*isAssignable)(CsRef objRef, int typeIdHash);
+	bool (*runOrCrush)(CsRef componentRef, void(*method)());
 
-	void(*removeCsRef)(CsRef value);
+	bool (*isAssignable)(CsRef objRef, int typeIdHash);
 
-	void(*loadAssetStore)();
-	bool(*hasAssetInStore)(int assetIdHash);
+	void (*removeCsRef)(CsRef value);
 
-	int(*getStringHash)(size_t stringPtr);
+	void (*loadAssetStore)();
+	bool (*hasAssetInStore)(int assetIdHash);
 
-	bool(*loadAsset)(int assetIdHash, CppRef cppRef);
+	int (*getStringHash)(size_t stringPtr);
+
+	bool (*loadAsset)(int assetIdHash, CppRef cppRef);
 	void (*reloadAsset)(int assetIdHash);
 	void (*saveAsset)(int assetIdHash);
 
@@ -113,5 +116,9 @@ public:
 	bool (*clipboardIsAssignable)(int scriptIdHash);
 	bool (*clipboardIsSameType)(int scriptIdHash);
 	void (*clipboardSetActor)(CsRef value);
+
+	bool (*createAsset)(size_t pathPtr);
+	bool (*renameAsset)(int assetGuidHash, size_t newPathPtr);
+	void (*removeAsset)(int assetGuidHash);
 };
 

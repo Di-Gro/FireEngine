@@ -1,8 +1,8 @@
-.file0.assetId: {AssetId: TestPrefab}
+.file0.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
 .file0.files: {Var: 2}
 
 .file1!script: {Var: Actor}
-.file1!scriptId: {AssetId: D00000010000}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file1.Name: {Var: Actor}
 .file1.localPosition.X: {Var: 1}
 .file1.localPosition.Y: {Var: 12}
@@ -18,7 +18,7 @@
 .file1.m_components.0: {Ref: file2}
 
 .file2!script: {Var: TestPrefab}
-.file2!scriptId: {AssetId: D00000010009}
+.file2!scriptId: {AssetId: 10ea1ff8-d1c6-41d3-b8ac-b3a56ed9db82}
 .file2.floatField: {Var: 5.555}
-.file2.texture.assetId: {AssetId: TestTexture1}
-.file2.image.assetId: {AssetId: TestTexture1}
+.file2.texture.assetId: {AssetId: 6924079b-e5fe-45ad-bc11-81aa99d5c400}
+.file2.image.assetId: {AssetId: 6924079b-e5fe-45ad-bc11-81aa99d5c400}

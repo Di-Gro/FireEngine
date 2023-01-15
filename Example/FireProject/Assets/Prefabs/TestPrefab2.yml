@@ -1,8 +1,8 @@
-.file0.assetId: {AssetId: TestPrefab2}
+.file0.assetId: {AssetId: 4477dd4b-af03-45eb-a80d-db3f98b838fd}
 .file0.files: {Var: 2}
 
 .file1!script: {Var: Actor}
-.file1!scriptId: {AssetId: D00000010000}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file1.Name: {Var: Actor}
 .file1.localPosition.X: {Var: 0}
 .file1.localPosition.Y: {Var: 0}
@@ -18,8 +18,8 @@
 .file1.m_components.0: {Ref: file2}
 
 .file2!script: {Var: MeshComponent}
-.file2!scriptId: {AssetId: D00000010003}
+.file2!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
 .file2.IsDebug: {Var: False}
 .file2.IsVisible: {Var: True}
-.file2.m_mesh.assetId: {AssetId: TestMesh1}
-.file2.m_materials.0.assetId: {AssetId: M_Default}
+.file2.m_mesh.assetId: {AssetId: 8795e75f-3e8f-4b59-88ba-ada2a3fca112}
+.file2.m_materials.0.assetId: {AssetId: cd882168-97ef-4799-98a2-c48a0955ba32}

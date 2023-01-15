@@ -733,6 +733,12 @@ namespace EngineDll {
 
             public static void componentTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) componentTypeIdHash_set_inner(objRef, value); }
 
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_RenameAsset", CharSet = CharSet.Ansi)]
+		    public static extern void RenameAsset(CppRef gameRef, int assetId, string name);
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_RemoveAsset")]
+		    public static extern void RemoveAsset(CppRef gameRef, int typeId, int assetId);
+
 		}
 
 		public static class ImGui {

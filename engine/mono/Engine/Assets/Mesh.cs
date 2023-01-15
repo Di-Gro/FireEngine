@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 
 using EngineDll;
-
+using FireYaml;
 
 namespace Engine {
 
@@ -20,25 +20,27 @@ namespace Engine {
         public Mesh(CppRef cppRef) => this.cppRef = cppRef;
     }
 
-    [Serializable]
-    class StaticMesh : Mesh, FireYaml.IFile, FireYaml.IAsset {
-        /// FireYaml.IAsset ->
+    [GUID("bad8395e-7c27-4697-ba7a-2e7556af5423", typeof(StaticMesh))]
+    class StaticMesh : Mesh, IFile, IAsset, ISourceAsset {
+        /// IAsset ->
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
+        /// ISourceAsset ->
+        public string ext { get; set; } = "";
+        /// <- 
         /// CppRef cppRef -> Mesh
         /// <- 
-        /// FireYaml.IFile ->
+        /// IFile ->
         [Close] public ulong assetInstance { get; set; } = 0;
         [Close] public int fileId { get; set; } = -1;
-        [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
+        [Close] public string prefabId { get; set; } = IFile.NotPrefab;
         /// <- 
 
-        public string ext = "";
         [Open] private List<StaticMaterial> m_materials { get; set; }
 
         public StaticMesh() {
             Assets.AfterReloadEvent += OnAfterReload;
-            assetInstance = FireYaml.AssetInstance.PopId();
+            assetInstance = AssetInstance.PopId();
         }
 
         public StaticMesh(int assetIdHash) {

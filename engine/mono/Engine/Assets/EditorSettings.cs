@@ -3,7 +3,7 @@ using EngineDll;
 
 namespace Engine {
 
-    [Serializable]
+    [GUID("3dfd7ca5-2750-4783-b7ef-9fced505568d", typeof(EditorSettings))]
     public class EditorSettings : FireYaml.IFile {
         /// FireYaml.IFile ->
         [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();

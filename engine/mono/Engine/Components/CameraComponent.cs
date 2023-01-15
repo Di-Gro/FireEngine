@@ -7,6 +7,7 @@ using EngineDll;
 
 namespace Engine {
 
+    [GUID("e7ebcd63-c96c-4cc1-b7c5-e755696c98b1", typeof(CameraComponent))]
     public sealed class CameraComponent : CppComponent {
         private Prop<float> prop_orthoWidth = new Prop<float>(0);
         private Prop<float> prop_orthoHeight = new Prop<float>(1);

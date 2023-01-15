@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Globalization;
 using System.Diagnostics;
 using System.Linq;
+using Engine;
 
 
 namespace FireYaml {
@@ -60,8 +61,8 @@ namespace FireYaml {
         /// 
         /// </summary>
         /// <param name="writeIDs">Записывает ID файлов в объекты под которыми они сохранены в документе.</param>
-        public FireReader(string assetId, bool writeIDs = true) {
-            m_assetId = assetId;
+        public FireReader(string assetGuid, bool writeIDs = true) {
+            m_assetId = assetGuid;
             m_writeIDs = writeIDs;
 
             m_values = AssetStore.Instance.ThrowAssetValues(m_assetId);
@@ -224,6 +225,19 @@ namespace FireYaml {
             refProp.SetValue(asset, cppRef);
         }
 
+        public static void InitISourceAsset(ref object asset, string sourceExt) {
+            var flags =
+               BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
+               BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty |
+               BindingFlags.SetProperty;
+
+            var type = asset.GetType();
+
+            var extProp = type.GetProperty(nameof(ISourceAsset.ext), flags);
+
+            extProp.SetValue(asset, sourceExt);
+        }
+
         private void m_SetAssignedObject(string fullPath, ref object obj) {
             m_loadedDocs[fullPath] = obj;
         }
@@ -249,7 +263,7 @@ namespace FireYaml {
             if (scriptId == "")
                 throw new Exception("Yaml document not contains scriptId");
 
-            var typeName = AssetStore.Instance.GetTypeFullName(scriptId);
+            var typeName = GUIDAttribute.GetTypeByGuid(scriptId).FullName;// AssetStore.Instance.GetTypeFullName(scriptId);
             if (typeName == null)
                 throw new Exception("Component script asset not found");
 

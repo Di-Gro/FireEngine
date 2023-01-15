@@ -166,6 +166,10 @@ namespace FireYaml {
             m_values.Add(path, value);
         }
 
+        public void SetValue(string path, YamlValue value) {
+            m_values[path] = value;
+        }
+
         public void RemoveValue(string path) {
             m_values.Remove(path);
         }

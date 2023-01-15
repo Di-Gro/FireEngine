@@ -4,26 +4,29 @@ using System.Collections.Generic;
 using System.Text;
 
 using EngineDll;
+using FireYaml;
 
 namespace Engine {
 
-    [Serializable]
-    public class Image : FireYaml.IFile, FireYaml.IAsset {
+    [GUID("37da25c5-f1ed-4976-b924-0bb31816735d", typeof(Image))]
+    public class Image : IFile, IAsset, ISourceAsset {
 
-        /// FireYaml.IAsset ->
+        /// IAsset ->
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
         [Close] public CppRef cppRef { get; private set; } = CppRef.NullRef;
         /// <- 
-        /// FireYaml.IFile ->
+        /// ISourceAsset ->
+        public string ext { get; set; } = "";
+        /// <- 
+        /// IFile ->
         [Close] public ulong assetInstance { get; set; } = 0;
 
         [Close] public int fileId { get; set; } = -1;
 
         [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
         /// <- 
-
-        public string ext = "";
+       
 
         [Close] public int width;
         [Close] public int height;

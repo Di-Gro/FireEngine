@@ -34,12 +34,12 @@ namespace Engine {
             m_values = serializer.Values;
 
             var text = m_values.ToSortedText();
-            var path = $"{AssetStore.Instance.EditorPath}/tmp/Clipboard.yml";
+            var path = $"{AssetStore.Instance.EditorPath}/Ignore/clipboard.yml";
 
             File.WriteAllText(path, text);
 
             var scriptId = m_values.GetValue(".file1!scriptId", "");
-            var typeFullName = AssetStore.Instance.GetTypeFullName(scriptId);
+            var typeFullName = GUIDAttribute.GetTypeByGuid(scriptId).FullName;
 
             m_sourceType = Type.GetType(typeFullName);
         }
@@ -91,7 +91,7 @@ namespace Engine {
                 return false;
 
             try {
-                var fullName = AssetStore.Instance.GetTypeFullName(typeIdHash);
+                var fullName = GUIDAttribute.GetTypeByHash(typeIdHash).FullName; //AssetStore.Instance.GetTypeFullName(typeIdHash);
                 var targetType = Type.GetType(fullName);
                 if (targetType == null)
                     throw new Exception($"Clipboard don't known '{fullName}' type.");

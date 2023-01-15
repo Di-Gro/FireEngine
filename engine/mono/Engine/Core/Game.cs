@@ -4,6 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 
 using EngineDll;
+using FireYaml;
 
 namespace Engine {
 
@@ -87,14 +88,18 @@ namespace Engine {
             m_gameCallbacks.clipboardIsSameType = new GameCallbacks.ClipboardIsAssignable(Clipboard.IsSameType);
             m_gameCallbacks.clipboardSetActor = new GameCallbacks.TakeCsRef(Clipboard.SetActor);
 
+            m_gameCallbacks.createAsset = new GameCallbacks.CreateAsset(AssetStore.CreateAsset);
+            m_gameCallbacks.renameAsset = new GameCallbacks.RenameAsset(AssetStore.SetAssetPath);
+            m_gameCallbacks.removeAsset = new GameCallbacks.RemoveAsset(AssetStore.RemoveAsset);
+
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
 
         private static void LoadAssets() {
-            FireYaml.AssetStore.Instance = new FireYaml.AssetStore();
-            FireYaml.AssetStore.Instance.Init("../../Example/FireProject");
+            AssetStore.Instance = new AssetStore();
+            AssetStore.Instance.Init("../../Example/FireProject");
 
-            editorSettings = InstanciateAsset<EditorSettings>("editor_settings");
+            editorSettings = InstanciateAsset<EditorSettings>(Assets.editor_settings);
             editorSettings.UpdateInCpp();
         }
 
@@ -116,14 +121,13 @@ namespace Engine {
             Dll.Game.PopScene(gameRef);
         }
 
-        private static bool SaveScene(CppRef cppSceneRef, ulong assetIdPtr, ulong pathPtr) {
-            var assetId = Assets.ReadCString(assetIdPtr);
+        private static int SaveScene(CppRef cppSceneRef, ulong pathPtr) {
             var path = Assets.ReadCString(pathPtr);
 
             try {
                 object scene = new Scene(cppSceneRef);
-                FireYaml.AssetStore.Instance.CreateAsset(path, scene, assetId);
-                return true;
+                var assetGuidHash = FireYaml.AssetStore.Instance.WriteAsset(path, scene);
+                return assetGuidHash;
 
             } catch (Exception e) {
 
@@ -135,17 +139,17 @@ namespace Engine {
                 }
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
-                return false;
+                return 0;
             }
         }
 
-        private static bool LoadScene(CppRef cppSceneRef, ulong assetIdPtr) {
-            var assetId = Assets.ReadCString(assetIdPtr);
-
+        private static bool LoadScene(CppRef cppSceneRef, int assetGuidHash) {
             try {
+                var assetGuid = FireYaml.AssetStore.Instance.GetAssetGuid(assetGuidHash);
+
                 var scene = new Scene(cppSceneRef);
                 object sceneObj = scene;
-                FireYaml.FireReader.InitIAsset(ref sceneObj, assetId, cppSceneRef);
+                FireYaml.FireReader.InitIAsset(ref sceneObj, assetGuid, cppSceneRef);
 
                 scene.LoadAsset();
                 return true;
@@ -153,7 +157,7 @@ namespace Engine {
             } catch (Exception e) {
                 Console.WriteLine("Exception on LoadScene:");
 
-                if(e.InnerException != null) {
+                if (e.InnerException != null) {
                     Console.WriteLine(e.InnerException.Message);
                     Console.WriteLine(e.InnerException.StackTrace);
                 }
@@ -178,8 +182,8 @@ namespace Engine {
         public delegate CppRef ClipboardPeek();
         public delegate bool ClipboardIsAssignable(int scriptIdHash);
         public delegate void SetUpdateData(GameUpdateData value);
-        public delegate bool SaveScene(CppRef cppSceneRef, ulong assetIdPtr, ulong pathPtr);
-        public delegate bool LoadScene(CppRef cppSceneRef, ulong assetIdPtr);
+        public delegate int SaveScene(CppRef cppSceneRef, ulong pathPtr);
+        public delegate bool LoadScene(CppRef cppSceneRef, int assetGuidHash);
         public delegate bool RunOrCrush(CsRef componentRef, ComponentCallbacks.ComponentCallback method);
         public delegate bool IsAssignable(CsRef csRef, int typeIdHash);
         public delegate bool HasAsset(int typeIdHash);
@@ -187,6 +191,9 @@ namespace Engine {
         public delegate bool LoadAsset(int assetIdHash, CppRef cppRef);
         public delegate void ReloadAsset(int assetIdHash);
         public delegate void SaveAsset(int assetIdHash);
+        public delegate bool CreateAsset(ulong pathPtr);
+        public delegate bool RenameAsset(int assetGuidHash, ulong newPathPtr);
+        public delegate void RemoveAsset(int assetGuidHash);
 
         public TakeCppRef setSceneRef;
         public TakeCppRef setMeshAssetRef;
@@ -216,6 +223,11 @@ namespace Engine {
         public ClipboardIsAssignable clipboardIsAssignable;
         public ClipboardIsAssignable clipboardIsSameType;
         public TakeCsRef clipboardSetActor;
+
+        public CreateAsset createAsset;
+        public RenameAsset renameAsset;
+        public RemoveAsset removeAsset;
+
     }
 }
 

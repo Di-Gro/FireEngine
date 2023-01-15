@@ -297,6 +297,9 @@ namespace EngineDll {
 
 			PROP_GETSET("AssetStore", "int", "actorTypeIdHash");
 			PROP_GETSET("AssetStore", "int", "componentTypeIdHash");
+
+			ANSI_FUNC("AssetStore", "RenameAsset", "void", "CppRef gameRef, int assetId, string name");
+			FUNC("AssetStore", "RemoveAsset", "void", "CppRef gameRef, int typeId, int assetId");
 #>
 		}
 

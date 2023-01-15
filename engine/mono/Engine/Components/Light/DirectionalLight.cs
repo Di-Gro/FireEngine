@@ -2,6 +2,8 @@ using Engine;
 using EngineDll;
 
 namespace Engine {
+
+    [GUID("a6e37381-5a85-4cd0-b421-77f5f6365495", typeof(DirectionalLight))]
     public class DirectionalLight : CppComponent {
 
         private Prop<Vector3> prop_Color = new Prop<Vector3>(0);

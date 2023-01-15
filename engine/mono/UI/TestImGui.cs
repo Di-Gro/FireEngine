@@ -24,6 +24,7 @@ namespace UI {
         }
     }
 
+    [Engine.GUID("818ced46-104f-48cb-966f-3ff77724f715", typeof(TestImGui))]
     class TestImGui : Engine.CSComponent {
 
         private float f = 0.0f;

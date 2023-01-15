@@ -87,6 +87,9 @@ public:
 	void ClearComponents();
 	void ClearAssets();
 	void ClearAssetTypes();
+
+	void RenameAsset(AssetIdHash assetId, const std::string& name);
+	void RemoveAsset(ScriptIdHash typeId, AssetIdHash assetId);
 };
 
 FUNC(AssetStore, ClearTypes, void)(CppRef gameRef);
@@ -105,3 +108,6 @@ PROP_GETSET_STR(AssetStore, editorPath);
 
 PROP_GETSET(AssetStore, int, actorTypeIdHash);
 PROP_GETSET(AssetStore, int, componentTypeIdHash);
+
+FUNC(AssetStore, RenameAsset, void)(CppRef gameRef, int assetId, const char* name);
+FUNC(AssetStore, RemoveAsset, void)(CppRef gameRef, int typeId, int assetId);

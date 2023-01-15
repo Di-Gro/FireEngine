@@ -2,8 +2,8 @@
 .file1!scriptId: {AssetId: 00000010005}
 .file1.component: {Null: }
 .file1.actorRef: {Null: }
-.file1.userPrefab.assetId: {AssetId: TestPrefab}
-.file1.sameScene.assetId: {AssetId: scene_1}
+.file1.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
+.file1.sameScene.assetId: {AssetId: 7ae83fb6-d222-4b70-b032-0e44958209e3}
 .file1.nullStaticMaterial: {Null: }
 .file1.staticMaterial: {Null: }
 .file1.vecList: {Null: }

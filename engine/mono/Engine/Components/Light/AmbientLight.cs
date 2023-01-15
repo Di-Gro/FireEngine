@@ -1,6 +1,8 @@
 using EngineDll;
 
 namespace Engine {
+
+    [GUID("ddad5ce5-4472-41f9-a8ce-d8da895d2e56")]
     public class AmbientLight : CppComponent {
 
         private Prop<Vector3> prop_Color = new Prop<Vector3>(0);

@@ -78,7 +78,7 @@ private:
 	bool m_onExit = false;
 	//bool m_isEditor = false;
 
-	std::string tmpSceneAssetId;
+	//std::string tmpSceneAssetId;
 
 public:
 
@@ -140,7 +140,8 @@ public:
 	void TogglePlayMode();
 	void ToggleGameFocus();
 
-	bool LoadScene(Scene* targetScene, const char* assetId = nullptr);
+	//bool LoadScene(Scene* targetScene, const char* assetId = nullptr);
+	bool LoadScene(Scene* targetScene, int assetGuidHash = 0);
 
 
 private:

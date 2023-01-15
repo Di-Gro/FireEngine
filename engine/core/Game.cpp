@@ -130,7 +130,7 @@ void Game::Init(MonoInst* imono) {
 	m_gameWindow = ui()->CreateSceneWindow("Game");
 	m_gameWindow->visible = false;
 
-	tmpSceneAssetId = assets()->CreateTmpAssetId();
+	//tmpSceneAssetId = assets()->CreateTmpAssetId();
 }
 
 void Game::m_InitMono(MonoInst* imono) {
@@ -143,7 +143,7 @@ void Game::m_InitMono(MonoInst* imono) {
 	method_Init(CppRef::Create(gameRef.cppRef()));
 }
 
-bool Game::LoadScene(Scene* targetScene, const char* assetId) {
+bool Game::LoadScene(Scene* targetScene, int assetGuidHash) {
 	bool loaded = false;
 	auto sceneRef = CppRefs::GetRef(targetScene);
 
@@ -152,8 +152,8 @@ bool Game::LoadScene(Scene* targetScene, const char* assetId) {
 		if (hasAsset) 
 			loaded = assets()->Load(targetScene->assetIdHash(), sceneRef);
 	}
-	else if(assetId != nullptr) {
-		loaded = callbacks().loadScene(sceneRef, (size_t)assetId);
+	else if(assetGuidHash != 0) {
+		loaded = callbacks().loadScene(sceneRef, assetGuidHash);
 	}
 	return loaded;
 }
@@ -244,6 +244,8 @@ void Game::m_Update() {
 	while (it != m_scenes.end()) {
 
 		auto scene = (*it);
+
+		assert(m_sceneStack.size() == 0);
 		scene->f_Update();
 		assert(m_sceneStack.size() == 0);
 
@@ -401,8 +403,8 @@ void Game::DeleteMaterialFromAllScenes(const Material* material) {
 }
 
 void Game::TogglePlayMode() {
-	auto tmpScenePath = assetStore()->editorPath() + "/tmp/EditorScene.yml";
-	auto assetId = tmpSceneAssetId.c_str();
+	auto tmpScenePath = assetStore()->editorPath() + "/Ignore/editor_scene.yml";
+	//auto assetId = tmpSceneAssetId.c_str();
 	
 	if (m_gameScene == nullptr) {
 		m_gameScene = CreateScene(false);
@@ -410,11 +412,11 @@ void Game::TogglePlayMode() {
 		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
 		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
 		
-		bool wasSaved = callbacks().saveScene(editorSceneRef, (size_t)assetId, (size_t)tmpScenePath.c_str());
+		int assetGuidHash = callbacks().saveScene(editorSceneRef, (size_t)tmpScenePath.c_str());
 		bool wasLoaded = false;
 
-		if (wasSaved) {
-			wasLoaded = LoadScene(m_gameScene, assetId);
+		if (assetGuidHash != 0) {
+			wasLoaded = LoadScene(m_gameScene, assetGuidHash);
 			if (wasLoaded) {
 				m_gameScene->name(m_editorScene->name() + " (Game)");
 
@@ -428,7 +430,7 @@ void Game::TogglePlayMode() {
 					ToggleGameFocus();
 			}
 		}
-		if (!wasSaved || !wasLoaded)
+		if (!wasLoaded)
 			DestroyScene(m_gameScene);
 	}
 	else {

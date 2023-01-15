@@ -316,7 +316,7 @@ namespace Engine {
                 return;
 
             var matRefs = new List<ulong>();
-            var defaultMaterial = new StaticMaterial().LoadFromAsset(AssetStore.M_Default);
+            var defaultMaterial = new StaticMaterial().LoadFromAsset(Assets.M_Default);
 
             for (int i = 0; i < count; i++) {
                 var valuePath = $"{materialsPath}.{i}";

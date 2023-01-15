@@ -9,7 +9,7 @@ using EngineDll;
 
 namespace Engine {
 
-    [Serializable]
+    [GUID("b0730a53-16c4-4943-bd7d-666f402617d5", typeof(Actor))]
     public sealed class Actor : CppLinked, FireYaml.IFile {
 
         /// FireYaml.IFile ->

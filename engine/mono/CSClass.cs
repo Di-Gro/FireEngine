@@ -12,6 +12,7 @@ using FireYaml;
 
 namespace Engine {
 
+    [GUID("10ea1ff8-d1c6-41d3-b8ac-b3a56ed9db82", typeof(TestPrefab))]
     class TestPrefab : CSComponent {
         public float floatField = 5.555f;
 
@@ -23,18 +24,20 @@ namespace Engine {
         }
     }
 
+    [GUID("4f1285c1-8ccc-4a8b-b77b-848af7f55e42", typeof(TestMeshBase))]
     class TestMeshBase : CSComponent {
         public float floatField = 48.56f;
-    } 
+    }
 
+    [GUID("a6b0e3a1-0a74-4901-be26-f38ce7ec7b55", typeof(TestMesh))]
     class TestMesh : TestMeshBase {
 
         public Component component;
 
         public Actor actorRef;
 
-        public Prefab userPrefab = new Prefab("TestPrefab");
-        public Scene sameScene = new Scene("scene_1");
+        public Prefab userPrefab;
+        public Scene sameScene;
 
         [Open] private MeshComponent m_meshComp;
         [Open] private DynamicMaterial m_material;

@@ -9,6 +9,8 @@ using System.Globalization;
 using System.Diagnostics;
 using System;
 
+using Engine;
+
 namespace FireYaml {
 
     public class Field {
@@ -196,13 +198,16 @@ namespace FireYaml {
             if (existName != "")
                 return existName;
 
-            var scriptId = m_GetAssetId(type);
+            if(!GUIDAttribute.HasGuid(type))
+                throw new Exception($"FireWriter: Type '{type.FullName}' don't have GUID attribute");
+
+            var typeGuid = GUIDAttribute.GetGuid(type); // m_GetAssetId(type); 
             var yamlRef = m_GetFileRef(ref instance);
             var docName = yamlRef.Name;
             //var docPath = $".{docName}";
             var fullPath = GetFullPath(docName);
             var scriptPath = $"{fullPath}!scriptId";
-            var scriptIdValue = new YamlValue(YamlValue.Type.AssetId, scriptId);
+            var scriptIdValue = new YamlValue(YamlValue.Type.AssetId, typeGuid);
             var scriptValue = new YamlValue(YamlValue.Type.Var, type.Name);
             
             if (showLog) Console.WriteLine($"CreateDocument {fullPath}");
@@ -303,8 +308,11 @@ namespace FireYaml {
         private void m_CreateBaseObject(string selfPath, Type baseType, ref object obj) {
             var basePath = $"{selfPath}!base";
             var scriptPath = $"{basePath}!scriptId";
-            var assetId = m_GetAssetId(baseType);
-            var scriptValue = new YamlValue(YamlValue.Type.AssetId, assetId);
+            var baseTypeGuid = GUIDAttribute.GetGuid(baseType); // m_GetAssetId(baseType); 
+            var scriptValue = new YamlValue(YamlValue.Type.AssetId, baseTypeGuid);
+
+            if(!GUIDAttribute.HasGuid(baseType))
+                throw new Exception($"FireWriter: Base type '{baseType.FullName}' don't have GUID attribute");
 
             m_values.AddValue(scriptPath, scriptValue);
 
@@ -332,6 +340,10 @@ namespace FireYaml {
 
         public static bool IsAsset(Type type){
             return type.GetInterface(nameof(IAsset)) != null;
+        }
+
+        public static bool IsAssetWithSource(Type type) {
+            return type.GetInterface(nameof(ISourceAsset)) != null;
         }
 
         public static bool IsFile(Type type) {
@@ -431,14 +443,14 @@ namespace FireYaml {
             }
         }
 
-        private string m_GetAssetId(Type type) {
-            string assetId;
+        // private string m_GetAssetId(Type type) {
+        //     string assetId = "";
 
-            if (!AssetStore.Instance.TryGetAssetIdByType(type.FullName, out assetId))
-                throw new Exception($"AssetId of {type.FullName} not found");
+        //     if (!AssetStore.Instance.TryGetAssetIdByType(type.FullName, out assetId))
+        //         throw new Exception($"AssetId of {type.FullName} not found");
 
-            return assetId;
-        }
+        //     return assetId;
+        // }
 
         private bool m_NeedSaveAsLink(Type type) {
             if (type == typeof(Engine.Actor))
@@ -558,23 +570,23 @@ namespace FireYaml {
             var isClass = type.IsClass;
             var isValueType = type.IsValueType;
             if (isClass || isValueType) {
-                var serializableAttr = HasSerializableAttr(type);
+                var guidAttr = HasGUIDAttr(type);
                 var hasEmptyConstructor = HasEmptyConstructor(type);
-                return serializableAttr && hasEmptyConstructor;
+                return guidAttr && hasEmptyConstructor;
             }
 
             return false;
         }
 
-        public static bool HasSerializableAttr(Type? type) {
+        public static bool HasGUIDAttr(Type? type) {
             if(type == null || type == typeof(object))
                 return false;
 
-            var serializableAttr = type.GetCustomAttribute<System.SerializableAttribute>();
-            if(serializableAttr != null)
+            var attr = type.GetCustomAttribute<Engine.GUIDAttribute>();
+            if(attr != null)
                 return true;  
             
-            return HasSerializableAttr(type.BaseType);
+            return HasGUIDAttr(type.BaseType);
         }
 
         public static bool HasEmptyConstructor(Type type) {

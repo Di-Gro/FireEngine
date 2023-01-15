@@ -1,8 +1,8 @@
-.file0.assetId: {AssetId: TestTexture1}
+.file0.assetId: {AssetId: 6924079b-e5fe-45ad-bc11-81aa99d5c400}
 .file0.files: {Var: 1}
 
 .file1!script: {Var: Texture}
-.file1!scriptId: {AssetId: D00000010010}
+.file1!scriptId: {AssetId: 81b31ac1-86d8-4d99-aff6-324c5f987b15}
 .file1.width: {Var: 128}
 .file1.height: {Var: 128}
-.file1.image.assetId: {AssetId: TestImage1}
+.file1.image.assetId: {AssetId: c6464db0-2bf4-403f-83f6-6cc7af4d0d60}

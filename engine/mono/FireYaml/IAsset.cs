@@ -17,4 +17,10 @@ namespace FireYaml {
         void SaveAsset();
 
     }
+
+    public interface ISourceAsset {
+
+        string ext { get; }
+
+    }
 }
