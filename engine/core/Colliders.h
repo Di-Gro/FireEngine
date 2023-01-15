@@ -44,7 +44,7 @@ class BoxCollider : public Collider {
 	COMPONENT(BoxCollider);
 
 public:
-	Vector3 size = {50, 50, 50};
+	Vector3 size = {1, 1, 1};
 
 public:
 	JPH::ShapeRefC CreateShapeSettings() override;
@@ -59,7 +59,7 @@ class SphereCollider : public Collider {
 	COMPONENT(SphereCollider);
 
 public:
-	float radius = 50.0f;
+	float radius = 1.0f;
 
 public:
 	JPH::ShapeRefC CreateShapeSettings() override;
@@ -77,8 +77,8 @@ private:
 	static Forms4::Form HalfSphereForm;
 
 public:
-	float radius = 10.0f;
-	float height = 30.0f;
+	float radius = 1.0f;
+	float height = 1.0f;
 
 private:
 	MeshComponent* debugMesh2 = nullptr;

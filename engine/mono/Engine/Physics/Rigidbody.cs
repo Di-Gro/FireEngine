@@ -5,6 +5,8 @@ namespace Engine {
     public enum MotionType { Static, Kinematic, Dynamic }
     public enum MotionQuality { Discrete, LinearCast }
 
+
+    [GUID("6338b2f1-49da-4a86-8c6b-a2a975e644c4")]
     public class Rigidbody : CppComponent {
 
         public bool active {

@@ -23,7 +23,7 @@
 .file2!scriptId: {AssetId: a6b0e3a1-0a74-4901-be26-f38ce7ec7b55}
 .file2.userPrefab.assetId: {AssetId: 96e0a3f5-fc8b-4201-a3d4-ae59f4c56930}
 .file2.nullStaticMaterial: {Null: }
-.file2.staticMaterial.assetId: {AssetId: 0000000000}
+.file2.staticMaterial: {Null: }
 .file2.vecList.0.X: {Var: 1}
 .file2.vecList.0.Y: {Var: 2}
 .file2.vecList.0.Z: {Var: 3}

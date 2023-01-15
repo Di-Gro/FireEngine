@@ -2,6 +2,7 @@ using EngineDll;
 
 namespace Engine {
 
+    [GUID("73d3cbc8-cb32-4e71-a8bb-570b6e71ac45")]
     class BoxCollider : CppComponent {
 
         // public Vector3 Center { get => prop_Center.value; set => prop_Center.value = value; }
@@ -18,6 +19,7 @@ namespace Engine {
         }
     }
 
+    [GUID("aa06e9b3-f75f-4982-976b-a6f57568d6f0")]
     class SphereCollider : CppComponent {
 
         // public Vector3 Center { get => prop_Center.value; set => prop_Center.value = value; }
@@ -35,6 +37,7 @@ namespace Engine {
         }
     };
 
+    [GUID("6124c3d2-97b5-4b8f-882e-7be50df9016b")]
     class CapsuleCollider : CppComponent {
 
         // public Vector3 Center { get => prop_Center.value; set => prop_Center.value = value; }

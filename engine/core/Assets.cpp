@@ -120,6 +120,12 @@ void Assets::Save(int assetIdHash) {
 	if (iasset == nullptr)
 		return;
 
+	bool hasAsset = m_game->callbacks().hasAssetInStore(assetIdHash);
+	if (!hasAsset) {
+		std::cout << "Assets::Save() Asset not exist: assetIdHash:'" << assetIdHash << "'\n";
+		return;
+	}
+
 	m_game->callbacks().saveAsset(iasset->assetIdHash());
 
 	if (m_dirtyAssets.contains(assetIdHash))

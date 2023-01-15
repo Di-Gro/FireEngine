@@ -179,6 +179,7 @@ void Game::Run() {
 	m_editorScene = CreateScene(true, editorSettings.startupScene);
 	if (!LoadScene(m_editorScene)) {
 		PushScene(m_editorScene);
+		m_editorScene->name("!!!This scene can not be saved!!!");
 		SceneMenu::AddLight(m_editorScene);
 		PopScene();
 	}
