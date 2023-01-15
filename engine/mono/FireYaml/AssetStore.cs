@@ -179,7 +179,7 @@ namespace FireYaml {
             else {
                 assetData = UpdateAssetData(data.GetType(), fullPath);
             }
-
+ 
             var assetGuid = assetData.guid;
             var assetGuidHash = assetData.guidHash;
 
@@ -589,6 +589,50 @@ namespace FireYaml {
             return result;
         }
 
+        public static int CreatePrefab(CsRef actorRef, ulong pathPtr) {
+            var path = Assets.ReadCString(pathPtr);
+
+            try {
+                object actor = CppLinked.GetObjectByRef(actorRef);
+
+                var assetGuidHash = FireYaml.AssetStore.Instance.WriteAsset(path, actor);
+                return assetGuidHash;
+
+            } catch (Exception e) {
+
+                Console.WriteLine("Exception on SaveScene:");
+
+                if (e.InnerException != null) {
+                    Console.WriteLine(e.InnerException.Message);
+                    Console.WriteLine(e.InnerException.StackTrace);
+                }
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                return 0;
+            }
+        }
+
+        public static bool UpdatePrefab(CsRef actorRef, int assetGuidHash) {
+            try {
+                object actor = CppLinked.GetObjectByRef(actorRef);
+                var assetGuid = Instance.GetAssetGuid(assetGuidHash);
+
+                FireYaml.AssetStore.Instance.UpdateAsset(assetGuid, actor);
+                return true;
+
+            } catch (Exception e) {
+
+                Console.WriteLine("Exception on SaveScene:");
+
+                if (e.InnerException != null) {
+                    Console.WriteLine(e.InnerException.Message);
+                    Console.WriteLine(e.InnerException.StackTrace);
+                }
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
+        }
 
 
     }

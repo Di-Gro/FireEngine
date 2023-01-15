@@ -88,6 +88,19 @@ namespace FireYaml {
             return target;
         }
 
+        public void InstanciateTo(ref object target) {
+            var yamlRef = new YamlRef(1);
+
+            var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
+            if (!hasFile)
+                throw new Exception("Prefab must contains root file 'file1'");
+
+            var selfPath = GetFullPath(yamlRef.Name);
+            LoadDocument(selfPath, ref target, isEntryPoint: true);
+
+            m_EndInstanciate();
+        }
+
         public void InstanciateIAssetAsFile(IAsset target) {
             var yamlRef = new YamlRef(1);
 

@@ -1,0 +1,15 @@
+.file0.assetId: {AssetId: f69709f7-3150-4308-8cf1-b566c6abb124}
+.file0.files: {Var: 35}
+
+.file1!script: {Var: Scene}
+.file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
+.file1.Name: {Var: scene_1}
+.file1.CameraPos.X: {Var: 88.04057}
+.file1.CameraPos.Y: {Var: 34.20932}
+.file1.CameraPos.Z: {Var: -30.04673}
+.file1.CameraRot.X: {Var: -0.185491}
+.file1.CameraRot.Y: {Var: -0.09653676}
+.file1.CameraRot.Z: {Var: -0.01831473}
+.file1.CameraRot.W: {Var: 0.977721}
+.file1.CameraSpeed: {Var: 40}
+

@@ -1,16 +1,16 @@
 .file1!script: {Var: Actor}
 .file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file1.Name: {Var: Sphere 1}
-.file1.localPosition.X: {Var: 1279.052}
-.file1.localPosition.Y: {Var: 1307.078}
-.file1.localPosition.Z: {Var: -11.01425}
+.file1.Name: {Var: Actor 3}
+.file1.localPosition.X: {Var: 3.433388}
+.file1.localPosition.Y: {Var: 0}
+.file1.localPosition.Z: {Var: 0}
 .file1.localRotationQ.X: {Var: 0}
 .file1.localRotationQ.Y: {Var: 0}
 .file1.localRotationQ.Z: {Var: 0}
 .file1.localRotationQ.W: {Var: 1}
-.file1.localScale.X: {Var: 193.05}
-.file1.localScale.Y: {Var: 193.05}
-.file1.localScale.Z: {Var: 193.05}
+.file1.localScale.X: {Var: 1}
+.file1.localScale.Y: {Var: 1}
+.file1.localScale.Z: {Var: 1}
 .file1.m_children: {Null: }
 .file1.m_components.0: {Ref: file2}
 .file1.m_components.1: {Ref: file3}
@@ -19,20 +19,22 @@
 .file2!script: {Var: Rigidbody}
 .file2!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
 .file2.active: {Var: True}
-.file2.motion: {Var: Dynamic}
-.file2.Mass: {Var: 100}
+.file2.motion: {Var: Static}
+.file2.Mass: {Var: 1}
 .file2.gravity: {Var: 1}
 .file2.MaxLinearVelocity: {Var: 500}
-.file2.LinearDamping: {Var: 0.2}
-.file2.AgularDamping: {Var: 0.2}
-.file2.Friction: {Var: 0.53}
-.file2.Bounciness: {Var: 0.62}
+.file2.LinearDamping: {Var: 0.05}
+.file2.AgularDamping: {Var: 0.05}
+.file2.Friction: {Var: 0.2}
+.file2.Bounciness: {Var: 0.2}
 .file2.AllowSleeping: {Var: True}
 .file2.Quality: {Var: Discrete}
 
-.file3!script: {Var: SphereCollider}
-.file3!scriptId: {AssetId: aa06e9b3-f75f-4982-976b-a6f57568d6f0}
-.file3.Radius: {Var: 0.5}
+.file3!script: {Var: BoxCollider}
+.file3!scriptId: {AssetId: 73d3cbc8-cb32-4e71-a8bb-570b6e71ac45}
+.file3.Size.X: {Var: 1}
+.file3.Size.Y: {Var: 1}
+.file3.Size.Z: {Var: 1}
 .file3.DrawDebug: {Var: False}
 
 .file4!script: {Var: MeshComponent}
@@ -43,6 +45,6 @@
 .file4.IsDebug: {Var: False}
 .file4.CastShadow: {Var: True}
 .file4.IsVisible: {Var: True}
-.file4.m_mesh.assetId: {AssetId: fcebda45-6fae-4d9e-86e2-0e3ac87b879f}
+.file4.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
 .file4.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 

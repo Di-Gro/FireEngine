@@ -187,7 +187,7 @@ namespace FireYaml {
 
             m_ResolveLinks();
 
-            m_mods = YamlValues.Mods(m_origValues, m_values);
+            m_mods = YamlValues.Mods(m_origValues, m_values); //TODO: Mods
 
             Result = true;
         }

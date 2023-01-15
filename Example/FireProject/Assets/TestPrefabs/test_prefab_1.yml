@@ -1,0 +1,19 @@
+.file0.assetId: {AssetId: 96b737af-5009-4a0d-bf44-442a49f4737c}
+.file0.files: {Var: 1}
+
+.file1!script: {Var: Actor}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file1.Name: {Var: Actor}
+.file1.localPosition.X: {Var: 0}
+.file1.localPosition.Y: {Var: 0}
+.file1.localPosition.Z: {Var: 0}
+.file1.localRotationQ.X: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Z: {Var: 0}
+.file1.localRotationQ.W: {Var: 1}
+.file1.localScale.X: {Var: 1}
+.file1.localScale.Y: {Var: 1}
+.file1.localScale.Z: {Var: 1}
+.file1.m_children: {Null: }
+.file1.m_components: {Null: }
+

@@ -92,6 +92,10 @@ namespace Engine {
             m_gameCallbacks.renameAsset = new GameCallbacks.RenameAsset(AssetStore.SetAssetPath);
             m_gameCallbacks.removeAsset = new GameCallbacks.RemoveAsset(AssetStore.RemoveAsset);
 
+            m_gameCallbacks.createPrefab = new GameCallbacks.CreatePrefab(AssetStore.CreatePrefab);
+            m_gameCallbacks.updatePrefab = new GameCallbacks.UpdatePrefab(AssetStore.UpdatePrefab);
+            m_gameCallbacks.instanciatePrefab = new GameCallbacks.InstanciatePrefab(InstanciatePrefab);
+
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
 
@@ -167,6 +171,31 @@ namespace Engine {
             }
         }
 
+        public static CppRef InstanciatePrefab(int assetGuidHash) {
+            try {
+                var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
+                object actorObj = new Actor();
+                
+                new FireYaml.FireReader(assetGuid).InstanciateTo(ref actorObj);
+
+                var actor = actorObj as Actor;
+                return actor.cppRef;
+
+            } catch (Exception e) {
+
+                Console.WriteLine("Exception on SaveScene:");
+
+                if (e.InnerException != null) {
+                    Console.WriteLine(e.InnerException.Message);
+                    Console.WriteLine(e.InnerException.StackTrace);
+                }
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+
+                return CppRef.NullRef;
+            }
+        }
+
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -194,6 +223,9 @@ namespace Engine {
         public delegate bool CreateAsset(ulong pathPtr);
         public delegate bool RenameAsset(int assetGuidHash, ulong newPathPtr);
         public delegate void RemoveAsset(int assetGuidHash);
+        public delegate int CreatePrefab(CsRef actorRef, ulong pathPtr);
+        public delegate bool UpdatePrefab(CsRef actorRef, int assetGuidHash);
+        public delegate CppRef InstanciatePrefab(int assetGuidHash);
 
         public TakeCppRef setSceneRef;
         public TakeCppRef setMeshAssetRef;
@@ -227,6 +259,13 @@ namespace Engine {
         public CreateAsset createAsset;
         public RenameAsset renameAsset;
         public RemoveAsset removeAsset;
+
+        public CreatePrefab createPrefab;
+        public UpdatePrefab updatePrefab;
+        public InstanciatePrefab instanciatePrefab;
+
+
+
 
     }
 }

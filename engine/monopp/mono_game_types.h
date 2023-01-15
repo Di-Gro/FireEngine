@@ -121,5 +121,9 @@ public:
 	bool (*createAsset)(size_t pathPtr);
 	bool (*renameAsset)(int assetGuidHash, size_t newPathPtr);
 	void (*removeAsset)(int assetGuidHash);
+
+	int (*createPrefab)(CsRef actorRef, size_t pathPtr);
+	bool (*updatePrefab)(CsRef actorRef, int assetGuidHash);
+	CppRef (*instanciatePrefab)(int assetGuidHash);
 };
 
