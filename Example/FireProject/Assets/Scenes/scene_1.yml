@@ -1,16 +1,16 @@
 .file0.assetId: {AssetId: f8b2f153-bfc6-48db-89dd-a307a53feef6}
-.file0.files: {Var: 62}
+.file0.files: {Var: 66}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: scene_1}
-.file1.CameraPos.X: {Var: 172.8587}
-.file1.CameraPos.Y: {Var: 618.3765}
-.file1.CameraPos.Z: {Var: -315.9242}
-.file1.CameraRot.X: {Var: -0.07768878}
-.file1.CameraRot.Y: {Var: 0.9053964}
-.file1.CameraRot.Z: {Var: 0.3721541}
-.file1.CameraRot.W: {Var: 0.1890054}
+.file1.CameraPos.X: {Var: -77.93648}
+.file1.CameraPos.Y: {Var: 499.1003}
+.file1.CameraPos.Z: {Var: 259.5728}
+.file1.CameraRot.X: {Var: -0.321785}
+.file1.CameraRot.Y: {Var: -0.06753171}
+.file1.CameraRot.Z: {Var: -0.02301683}
+.file1.CameraRot.W: {Var: 0.9441208}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file7}
 .file1.m_roots.2: {Ref: file11}
@@ -26,6 +26,7 @@
 .file1.m_roots.12: {Ref: file51}
 .file1.m_roots.13: {Ref: file55}
 .file1.m_roots.14: {Ref: file59}
+.file1.m_roots.15: {Ref: file63}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -118,8 +119,8 @@
 .file11.localRotationQ.Y: {Var: 0}
 .file11.localRotationQ.Z: {Var: 0.9723257}
 .file11.localRotationQ.W: {Var: -0.2336297}
-.file11.localScale.X: {Var: 992.304}
-.file11.localScale.Y: {Var: 4.999996}
+.file11.localScale.X: {Var: 992.3042}
+.file11.localScale.Y: {Var: 4.999998}
 .file11.localScale.Z: {Var: 978.7043}
 .file11.m_children: {Null: }
 .file11.m_components.0: {Ref: file12}
@@ -164,9 +165,9 @@
 .file15.localPosition.X: {Var: 0}
 .file15.localPosition.Y: {Var: 223.92}
 .file15.localPosition.Z: {Var: 0}
-.file15.localRotationQ.X: {Var: -0.5198132}
-.file15.localRotationQ.Y: {Var: -0.1701276}
-.file15.localRotationQ.Z: {Var: 0.1065011}
+.file15.localRotationQ.X: {Var: -0.5198133}
+.file15.localRotationQ.Y: {Var: -0.1701273}
+.file15.localRotationQ.Z: {Var: 0.1065012}
 .file15.localRotationQ.W: {Var: 0.8303664}
 .file15.localScale.X: {Var: 30}
 .file15.localScale.Y: {Var: 30.00002}
@@ -214,10 +215,10 @@
 .file19.localPosition.X: {Var: 1.674591}
 .file19.localPosition.Y: {Var: 223.9023}
 .file19.localPosition.Z: {Var: 130.1448}
-.file19.localRotationQ.X: {Var: -0.3577845}
-.file19.localRotationQ.Y: {Var: 0.2918322}
-.file19.localRotationQ.Z: {Var: -0.5606645}
-.file19.localRotationQ.W: {Var: 0.6873714}
+.file19.localRotationQ.X: {Var: -0.3577847}
+.file19.localRotationQ.Y: {Var: 0.291832}
+.file19.localRotationQ.Z: {Var: -0.5606643}
+.file19.localRotationQ.W: {Var: 0.6873716}
 .file19.localScale.X: {Var: 30}
 .file19.localScale.Y: {Var: 30}
 .file19.localScale.Z: {Var: 30.00001}
@@ -264,13 +265,13 @@
 .file23.localPosition.X: {Var: -66.97073}
 .file23.localPosition.Y: {Var: 237.995}
 .file23.localPosition.Z: {Var: 66.52598}
-.file23.localRotationQ.X: {Var: -0.4304117}
-.file23.localRotationQ.Y: {Var: 0.170972}
-.file23.localRotationQ.Z: {Var: -0.3271922}
-.file23.localRotationQ.W: {Var: 0.8236866}
+.file23.localRotationQ.X: {Var: -0.4304111}
+.file23.localRotationQ.Y: {Var: 0.1709717}
+.file23.localRotationQ.Z: {Var: -0.3271921}
+.file23.localRotationQ.W: {Var: 0.823687}
 .file23.localScale.X: {Var: 29.99999}
-.file23.localScale.Y: {Var: 30.00001}
-.file23.localScale.Z: {Var: 30.00001}
+.file23.localScale.Y: {Var: 30}
+.file23.localScale.Z: {Var: 30}
 .file23.m_children: {Null: }
 .file23.m_components.0: {Ref: file24}
 .file23.m_components.1: {Ref: file25}
@@ -281,7 +282,7 @@
 .file24.active: {Var: True}
 .file24.motion: {Var: Dynamic}
 .file24.Mass: {Var: 1}
-.file24.gravity: {Var: 1}
+.file24.gravity: {Var: 0.3}
 .file24.MaxLinearVelocity: {Var: 500}
 .file24.LinearDamping: {Var: 0.05}
 .file24.AgularDamping: {Var: 0.05}
@@ -330,7 +331,7 @@
 .file28!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
 .file28.active: {Var: True}
 .file28.motion: {Var: Dynamic}
-.file28.Mass: {Var: 1}
+.file28.Mass: {Var: 5}
 .file28.gravity: {Var: 1}
 .file28.MaxLinearVelocity: {Var: 500}
 .file28.LinearDamping: {Var: 0.05}
@@ -414,10 +415,10 @@
 .file35.localPosition.X: {Var: 135.8312}
 .file35.localPosition.Y: {Var: 168.2077}
 .file35.localPosition.Z: {Var: -49.25399}
-.file35.localRotationQ.X: {Var: 0.248763}
-.file35.localRotationQ.Y: {Var: -0.0542594}
-.file35.localRotationQ.Z: {Var: 0.2060819}
-.file35.localRotationQ.W: {Var: 0.9448296}
+.file35.localRotationQ.X: {Var: 0.2487628}
+.file35.localRotationQ.Y: {Var: -0.05425932}
+.file35.localRotationQ.Z: {Var: 0.2060818}
+.file35.localRotationQ.W: {Var: 0.9448298}
 .file35.localScale.X: {Var: 29.99999}
 .file35.localScale.Y: {Var: 30}
 .file35.localScale.Z: {Var: 30}
@@ -515,7 +516,7 @@
 .file43.localPosition.Y: {Var: 247.9029}
 .file43.localPosition.Z: {Var: 56.16878}
 .file43.localRotationQ.X: {Var: 0.2887646}
-.file43.localRotationQ.Y: {Var: 0.5234333}
+.file43.localRotationQ.Y: {Var: 0.5234334}
 .file43.localRotationQ.Z: {Var: 0.1943481}
 .file43.localRotationQ.W: {Var: 0.7777284}
 .file43.localScale.X: {Var: 29.99997}
@@ -564,13 +565,13 @@
 .file47.localPosition.X: {Var: 36.78059}
 .file47.localPosition.Y: {Var: 135.9298}
 .file47.localPosition.Z: {Var: 122.4707}
-.file47.localRotationQ.X: {Var: 0.2487628}
-.file47.localRotationQ.Y: {Var: -0.05425932}
-.file47.localRotationQ.Z: {Var: 0.2060818}
+.file47.localRotationQ.X: {Var: 0.2487627}
+.file47.localRotationQ.Y: {Var: -0.05425929}
+.file47.localRotationQ.Z: {Var: 0.2060817}
 .file47.localRotationQ.W: {Var: 0.9448298}
-.file47.localScale.X: {Var: 29.99999}
+.file47.localScale.X: {Var: 29.99998}
 .file47.localScale.Y: {Var: 30}
-.file47.localScale.Z: {Var: 30}
+.file47.localScale.Z: {Var: 29.99999}
 .file47.m_children: {Null: }
 .file47.m_components.0: {Ref: file48}
 .file47.m_components.1: {Ref: file49}
@@ -615,7 +616,7 @@
 .file51.localPosition.Y: {Var: 168.2077}
 .file51.localPosition.Z: {Var: 33.17403}
 .file51.localRotationQ.X: {Var: 0.2487627}
-.file51.localRotationQ.Y: {Var: -0.05425929}
+.file51.localRotationQ.Y: {Var: -0.0542593}
 .file51.localRotationQ.Z: {Var: 0.2060817}
 .file51.localRotationQ.W: {Var: 0.9448298}
 .file51.localScale.X: {Var: 29.99998}
@@ -665,7 +666,7 @@
 .file55.localPosition.Y: {Var: 299.6918}
 .file55.localPosition.Z: {Var: 12.91687}
 .file55.localRotationQ.X: {Var: 0.2487627}
-.file55.localRotationQ.Y: {Var: -0.05425929}
+.file55.localRotationQ.Y: {Var: -0.0542593}
 .file55.localRotationQ.Z: {Var: 0.2060817}
 .file55.localRotationQ.W: {Var: 0.9448298}
 .file55.localScale.X: {Var: 29.99998}
@@ -680,7 +681,7 @@
 .file56!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
 .file56.active: {Var: True}
 .file56.motion: {Var: Dynamic}
-.file56.Mass: {Var: 1}
+.file56.Mass: {Var: 1.89}
 .file56.gravity: {Var: 1}
 .file56.MaxLinearVelocity: {Var: 500}
 .file56.LinearDamping: {Var: 0.05}
@@ -715,7 +716,7 @@
 .file59.localPosition.Y: {Var: 192.7679}
 .file59.localPosition.Z: {Var: 104.5251}
 .file59.localRotationQ.X: {Var: 0.2487627}
-.file59.localRotationQ.Y: {Var: -0.05425929}
+.file59.localRotationQ.Y: {Var: -0.0542593}
 .file59.localRotationQ.Z: {Var: 0.2060817}
 .file59.localRotationQ.W: {Var: 0.9448298}
 .file59.localScale.X: {Var: 29.99998}
@@ -730,7 +731,7 @@
 .file60!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
 .file60.active: {Var: True}
 .file60.motion: {Var: Dynamic}
-.file60.Mass: {Var: 1}
+.file60.Mass: {Var: 2.13}
 .file60.gravity: {Var: 1}
 .file60.MaxLinearVelocity: {Var: 500}
 .file60.LinearDamping: {Var: 0.05}
@@ -757,4 +758,52 @@
 .file62.Size.Y: {Var: 1}
 .file62.Size.Z: {Var: 1}
 .file62.DrawDebug: {Var: False}
+
+.file63!script: {Var: Actor}
+.file63!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file63.Name: {Var: Sphere 1}
+.file63.localPosition.X: {Var: 0}
+.file63.localPosition.Y: {Var: 371.7873}
+.file63.localPosition.Z: {Var: 0}
+.file63.localRotationQ.X: {Var: 0}
+.file63.localRotationQ.Y: {Var: 0}
+.file63.localRotationQ.Z: {Var: 0}
+.file63.localRotationQ.W: {Var: 1}
+.file63.localScale.X: {Var: 40}
+.file63.localScale.Y: {Var: 40}
+.file63.localScale.Z: {Var: 40}
+.file63.m_children: {Null: }
+.file63.m_components.0: {Ref: file64}
+.file63.m_components.1: {Ref: file65}
+.file63.m_components.2: {Ref: file66}
+
+.file64!script: {Var: Rigidbody}
+.file64!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file64.active: {Var: True}
+.file64.motion: {Var: Dynamic}
+.file64.Mass: {Var: 2.13}
+.file64.gravity: {Var: 1}
+.file64.MaxLinearVelocity: {Var: 500}
+.file64.LinearDamping: {Var: 0.2}
+.file64.AgularDamping: {Var: 0.2}
+.file64.Friction: {Var: 1}
+.file64.Bounciness: {Var: 0.2}
+.file64.AllowSleeping: {Var: True}
+.file64.Quality: {Var: Discrete}
+
+.file65!script: {Var: SphereCollider}
+.file65!scriptId: {AssetId: aa06e9b3-f75f-4982-976b-a6f57568d6f0}
+.file65.Radius: {Var: 0.5}
+.file65.DrawDebug: {Var: True}
+
+.file66!script: {Var: MeshComponent}
+.file66!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file66.MeshScale.X: {Var: 1}
+.file66.MeshScale.Y: {Var: 1}
+.file66.MeshScale.Z: {Var: 1}
+.file66.IsDebug: {Var: False}
+.file66.CastShadow: {Var: True}
+.file66.IsVisible: {Var: True}
+.file66.m_mesh.assetId: {AssetId: fcebda45-6fae-4d9e-86e2-0e3ac87b879f}
+.file66.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 

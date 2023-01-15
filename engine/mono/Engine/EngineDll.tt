@@ -318,6 +318,7 @@ namespace EngineDll {
 
 			PROP_GETSET("Scene", "Vector3", "editorCameraPos");
 			PROP_GETSET("Scene", "Quaternion", "editorCameraRot");
+			PROP_GETSET("Scene", "float", "editorCameraSpeed");
 #>
 		}
 

@@ -799,6 +799,16 @@ namespace EngineDll {
 
             public static void editorCameraRot_set(CppRef objRef, Quaternion value) { if(objRef.value != 0) editorCameraRot_set_inner(objRef, value); }
 
+            [DllImport(Paths.Exe, EntryPoint = "Scene_editorCameraSpeed_get")]
+		    private static extern float editorCameraSpeed_get_inner(CppRef objRef);
+
+            public static float editorCameraSpeed_get(CppRef objRef) => objRef.value != 0 ? editorCameraSpeed_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_editorCameraSpeed_set")]
+		    private static extern void editorCameraSpeed_set_inner(CppRef objRef, float value);
+
+            public static void editorCameraSpeed_set(CppRef objRef, float value) { if(objRef.value != 0) editorCameraSpeed_set_inner(objRef, value); }
+
 		}
 
 		public static class BoxCollider {

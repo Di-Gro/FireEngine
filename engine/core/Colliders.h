@@ -59,7 +59,7 @@ class SphereCollider : public Collider {
 	COMPONENT(SphereCollider);
 
 public:
-	float radius = 1.0f;
+	float radius = 0.5f;
 
 public:
 	JPH::ShapeRefC CreateShapeSettings() override;
@@ -77,7 +77,7 @@ private:
 	static Forms4::Form HalfSphereForm;
 
 public:
-	float radius = 1.0f;
+	float radius = 0.5f;
 	float height = 1.0f;
 
 private:

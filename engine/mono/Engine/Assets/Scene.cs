@@ -37,6 +37,11 @@ namespace Engine {
             set => Dll.Scene.editorCameraRot_set(cppRef, value);
         }
 
+        public float CameraSpeed {
+            get => Dll.Scene.editorCameraSpeed_get(cppRef);
+            set => Dll.Scene.editorCameraSpeed_set(cppRef, value);
+        }
+
         private Scene() {
             assetInstance = FireYaml.AssetInstance.PopId();
         }

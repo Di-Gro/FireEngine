@@ -370,6 +370,20 @@ Quaternion Scene::editorCameraRot() {
 	return editorCamera->localRotationQ();
 }
 
+void Scene::editorCameraSpeed(float value) {
+	if (editorCamera == nullptr)
+		m_initCameraSpeed = value;
+
+	editorCamera->speed = value;
+}
+
+float Scene::editorCameraSpeed() {
+	if (editorCamera == nullptr)
+		return m_initCameraSpeed;
+
+	return editorCamera->speed;
+}
+
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef sceneRef, CsRef csRef, CppRef parentRef) {
 	return CppRefs::ThrowPointer<Scene>(sceneRef)->m_CreateActorFromCs(csRef, parentRef);
 }
@@ -394,3 +408,4 @@ DEF_PROP_GETSET_STR(Scene, name);
 
 DEF_PROP_GETSET(Scene, Vector3, editorCameraPos);
 DEF_PROP_GETSET(Scene, Quaternion, editorCameraRot);
+DEF_PROP_GETSET(Scene, float, editorCameraSpeed);
