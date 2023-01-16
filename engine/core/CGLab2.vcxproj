@@ -19,13 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AlphaMemory.cpp" />
     <ClCompile Include="AmbientLight.cpp" />
     <ClCompile Include="Assets.cpp" />
     <ClCompile Include="Attachable.cpp" />
     <ClCompile Include="AxisDrawer.cpp" />
     <ClCompile Include="AxisDrawer.h" />
+    <ClCompile Include="BetaMemory.cpp" />
     <ClCompile Include="Bridge.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="Condition.cpp" />
+    <ClCompile Include="ConstTestNode.cpp" />
     <ClCompile Include="CS.cpp" />
     <ClCompile Include="CSComponent.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
@@ -72,12 +76,15 @@
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="ProductionNode.cpp" />
     <ClCompile Include="Refs.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPassUI.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="Rete.cpp" />
+    <ClCompile Include="Rete_AI.cpp" />
     <ClCompile Include="ShaderAsset.cpp" />
     <ClCompile Include="ShaderResource.cpp" />
     <ClCompile Include="ShadowMapRender.cpp" />
@@ -85,23 +92,30 @@
     <ClCompile Include="ShadowPass.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="SpotLight.cpp" />
+    <ClCompile Include="TestJoin.cpp" />
     <ClCompile Include="TestLightComponent.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Tmp.cpp" />
+    <ClCompile Include="Token.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformTest.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WME.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlphaMemory.h" />
     <ClInclude Include="AmbientLight.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="Attachable.h" />
+    <ClInclude Include="BetaMemory.h" />
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ClassInfo.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Component.inl" />
     <ClInclude Include="ComponentMeta.h" />
+    <ClInclude Include="Condition.h" />
+    <ClInclude Include="ConstTestNode.h" />
     <ClInclude Include="CppClass.h" />
     <ClInclude Include="CS.h" />
     <ClInclude Include="CSBridge.h" />
@@ -123,9 +137,12 @@
     <ClInclude Include="IShadowCaster.h" />
     <ClInclude Include="LightingPass.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="ProductionNode.h" />
     <ClInclude Include="RenderPassUI.h" />
+    <ClInclude Include="Rete.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="TestJoin.h" />
     <ClInclude Include="TestLightComponent.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Tmp.h" />
@@ -177,9 +194,11 @@
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="TestComponent.h" />
     <ClInclude Include="tiny_obj_loader.h" />
+    <ClInclude Include="Token.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformTest.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="WME.h" />
     <ClInclude Include="wrl.h_d3d11_alias.h" />
   </ItemGroup>
   <ItemGroup>

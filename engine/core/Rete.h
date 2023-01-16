@@ -27,6 +27,8 @@ public:
 	void alpha_activation(AlphaMemory* alpha_node, WME* wme);
 	bool const_test_activation(ConstTestNode* const_node, WME* wme);
 	void addWME(WME* wme);
+	void updateWME(WME* wme);
+	void removeWME(WME* wme);
 	void update_new_node_with_matches(BetaMemory* beta);
 	BetaMemory* build_or_share_beta_memory(JoinNode* parent);
 	JoinNode* build_or_share_join_node(BetaMemory* bmem, AlphaMemory* amem, std::vector<TestJoin> tests);

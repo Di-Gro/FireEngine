@@ -267,6 +267,36 @@
     <ClCompile Include="TestLightComponent.cpp">
       <Filter>Render\Lighting</Filter>
     </ClCompile>
+    <ClCompile Include="Rete.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AlphaMemory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BetaMemory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Condition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstTestNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProductionNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rete_AI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJoin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Token.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WME.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -532,6 +562,33 @@
     </ClInclude>
     <ClInclude Include="TestLightComponent.h">
       <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Rete.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AlphaMemory.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="BetaMemory.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Condition.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstTestNode.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ProductionNode.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TestJoin.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Token.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="WME.h">
+      <Filter>Not Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

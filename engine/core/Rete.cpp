@@ -4,8 +4,8 @@
 
 void Rete::alpha_activation(AlphaMemory* alpha_node, WME* wme)
 {
-	alpha_node->items.push_front(wme);
-	for (JoinNode* child : alpha_node->successors) child->alpha_activation(wme);
+    alpha_node->items.push_front(wme);
+    for (JoinNode* child : alpha_node->successors) child->alpha_activation(wme);
 }
 
 bool Rete::const_test_activation(ConstTestNode* const_node, WME* wme)
@@ -30,6 +30,50 @@ void Rete::addWME(WME* wme)
     working_memory.push_back(wme);
     const_test_activation(alpha_top, wme);
 }
+
+void Rete::updateWME(WME* wme)
+{
+    auto id = wme->fields[0];
+    auto attr = wme->fields[1];
+    auto value = wme->fields[2];
+
+    for (auto& w : working_memory)
+    {
+        auto current_id = w->get_field(FieldType::id);
+        auto current_attr = w->get_field(FieldType::attr);
+        if (id == current_id && attr == current_attr)
+        {
+            w->fields[2] = value;
+        }
+    }
+}
+
+
+void Rete::removeWME(WME* wme)
+{
+    auto id = wme->fields[0];
+    auto attr = wme->fields[1];
+    auto value = wme->fields[2];
+
+    auto w_it = std::begin(working_memory);
+
+    while (w_it != std::end(working_memory))
+    {
+        auto curr_id = (*w_it)->get_field(FieldType::id);
+        auto curr_attr = (*w_it)->get_field(FieldType::attr);
+        auto curr_value = (*w_it)->get_field(FieldType::value);
+        if (id == curr_id && attr == curr_attr && value == curr_value) {
+            w_it = working_memory.erase(w_it);
+        }
+        else
+        {
+            w_it++;
+        }
+    }
+    const_test_activation(alpha_top, wme);
+
+}
+
 
 void Rete::update_new_node_with_matches(BetaMemory* beta)
 {
@@ -59,7 +103,7 @@ JoinNode* Rete::build_or_share_join_node(BetaMemory* bmem, AlphaMemory* amem, st
     assert(amem != nullptr);
 
     JoinNode* newjoin = new JoinNode;
-   join_nodes.push_back(newjoin);
+    join_nodes.push_back(newjoin);
     newjoin->beta_mem = bmem;
     newjoin->tests = tests; newjoin->alpha_mem = amem;
     amem->successors.push_front(newjoin);
@@ -87,7 +131,7 @@ void Rete::find_earlier_cond_with_field(const std::vector<Condition>& earlier_co
 
 std::vector<TestJoin> Rete::get_test_join_from_cond(Condition c, std::vector<Condition> earlier_conditions)
 {
-	std::vector<TestJoin> result;
+    std::vector<TestJoin> result;
 
     for (int f = 0; f < (int)FieldType::num_of_fields_type; ++f) {
         if (c.attrs[f].type != ConstOrVar::Var) continue;
@@ -118,7 +162,7 @@ ConstTestNode* Rete::build_or_share_constant_test_node(ConstTestNode* parent, Fi
     }
 
     ConstTestNode* newnode = new ConstTestNode(f, s, nullptr);;
-	const_test_nodes.push_back(newnode);
+    const_test_nodes.push_back(newnode);
     parent->children.push_back(newnode);
     return newnode;
 }
@@ -147,10 +191,10 @@ AlphaMemory* Rete::build_or_share_alpha_memory_dataflow(Condition c)
     }
     assert(currentNode->out_memory == nullptr);
     currentNode->out_memory = new AlphaMemory;
-   alpha_memories.push_back(currentNode->out_memory);
-  
+    alpha_memories.push_back(currentNode->out_memory);
+
     for (WME* w : working_memory) {
-       
+
         if (wme_passes_const_tests(w, c)) {
             alpha_activation(currentNode->out_memory, w);
         }
@@ -160,7 +204,7 @@ AlphaMemory* Rete::build_or_share_alpha_memory_dataflow(Condition c)
 
 ProductionNode* Rete::addProduction(std::vector<Condition> lhs, std::string rhs)
 {
-	std::vector<Condition> earlierConds;
+    std::vector<Condition> earlierConds;
 
     std::vector<TestJoin> tests =
         get_test_join_from_cond(lhs[0], earlierConds);
@@ -178,14 +222,14 @@ ProductionNode* Rete::addProduction(std::vector<Condition> lhs, std::string rhs)
         earlierConds.push_back(lhs[i]);
     }
 
-   
+
     ProductionNode* prod = new ProductionNode;
-	production_nodes.push_back(prod);
-    prod->parent = currentJoin; 
+    production_nodes.push_back(prod);
+    prod->parent = currentJoin;
     printf("%s prod: %p | parent: %p\n", __FUNCTION__, prod, prod->parent);
     prod->rhs = rhs;
     currentJoin->children.push_back(prod);
-  
+
     update_new_node_with_matches(prod);
     return prod;
 }
