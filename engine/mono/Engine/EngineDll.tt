@@ -375,6 +375,24 @@ namespace EngineDll {
 #>
 		}
 
+		public static class Character {
+		
+<#
+			DEC_COMPONENT("FireCharacter");
+
+			PROP_GETSET("FireCharacter", "bool", "active");
+			PROP_GETSET("FireCharacter", "float", "gravity");
+
+			FUNC("FireCharacter", "GetLinearVelocity", "Vector3", "CppRef bodyRef");
+			FUNC("FireCharacter", "SetLinearVelocityClamped", "void", "CppRef bodyRef, Vector3 inLinearVelocity");
+
+			FUNC("FireCharacter", "AddImpulse", "void", "CppRef bodyRef, Vector3 inImpulse");
+
+			FUNC("FireCharacter", "GetFriction", "float", "CppRef bodyRef");
+			FUNC("FireCharacter", "SetFriction", "void", "CppRef bodyRef, float inFriction");
+#>
+		}
+
 		
 	}
 }

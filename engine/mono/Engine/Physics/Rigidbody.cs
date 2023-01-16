@@ -38,17 +38,17 @@ namespace Engine {
             set => Dll.Rigidbody.quality_set(cppRef, (uint)value);
         }
 
-        void AddForce(Vector3 inForce) => Dll.Rigidbody.AddForce(cppRef, inForce);
-        void AddForce(Vector3 inForce, Vector3 inPosition) => Dll.Rigidbody.AddForceInPos(cppRef, inForce, inPosition);
+        public void AddForce(Vector3 inForce) => Dll.Rigidbody.AddForce(cppRef, inForce);
+        public void AddForce(Vector3 inForce, Vector3 inPosition) => Dll.Rigidbody.AddForceInPos(cppRef, inForce, inPosition);
 
-        Vector3 GetLinearVelocity() => Dll.Rigidbody.GetLinearVelocity(cppRef);
-        void SetLinearVelocityClamped(Vector3 inLinearVelocity) => Dll.Rigidbody.SetLinearVelocityClamped(cppRef, inLinearVelocity);
+        public Vector3 GetLinearVelocity() => Dll.Rigidbody.GetLinearVelocity(cppRef);
+        public void SetLinearVelocityClamped(Vector3 inLinearVelocity) => Dll.Rigidbody.SetLinearVelocityClamped(cppRef, inLinearVelocity);
         
-        void AddImpulse(Vector3 inImpulse) => Dll.Rigidbody.AddImpulse(cppRef, inImpulse);
-        void AddImpulse(Vector3 inImpulse, Vector3 inPosition) => Dll.Rigidbody.AddImpulseInPos(cppRef, inImpulse, inPosition);
+        public void AddImpulse(Vector3 inImpulse) => Dll.Rigidbody.AddImpulse(cppRef, inImpulse);
+        public void AddImpulse(Vector3 inImpulse, Vector3 inPosition) => Dll.Rigidbody.AddImpulseInPos(cppRef, inImpulse, inPosition);
       
-        float GetFriction() => Dll.Rigidbody.GetFriction(cppRef);
-        void SetFriction(float inFriction) => Dll.Rigidbody.SetFriction(cppRef, inFriction);
+        public float GetFriction() => Dll.Rigidbody.GetFriction(cppRef);
+        public void SetFriction(float inFriction) => Dll.Rigidbody.SetFriction(cppRef, inFriction);
 
 
         public override CppObjectInfo CppConstructor() => Dll.Rigidbody.Create(csRef);

@@ -2,6 +2,7 @@
 
 #include <list>
 #include "Actor.h"
+#include "PhysicsScene.h"
 
 #include <Jolt/Jolt.h>
 
@@ -11,7 +12,7 @@
 class Collider;
 namespace JPH { class Body;}
 
-class Rigidbody : public Component {
+class Rigidbody : public Component, public IFixedUpdateListener {
 	COMPONENT(Rigidbody);
 
 public:
@@ -36,7 +37,7 @@ private:
 	
 	JPH::BodyCreationSettings m_bodySettings;
 
-	std::list<Rigidbody*>::iterator m_rigidbodyIter;
+	std::list<IFixedUpdateListener*>::iterator m_rigidbodyIter;
 
 	Vector3 m_lastScale;
 	//Vector3 m_center;
@@ -59,7 +60,7 @@ public:
 	void OnUpdate() override;
 	void OnDestroy() override;
 	void OnFixedUpdate() override;
-	void BeforePhysicsUpdate();
+	void BeforePhysicsUpdate() override;
 
 	void AddForce(Vector3 inForce);
 	void AddForce(Vector3 inForce, Vector3 inPosition);

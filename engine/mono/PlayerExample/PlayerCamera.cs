@@ -3,31 +3,27 @@ using System.Collections.Generic;
 
 using Engine;
 
-#if BADCODE
+// #if BADCODE
 
-public class PlayerCamera : CameraComponent {
+[GUID("a49b6d24-fe71-4965-a421-36645951c2c3")]
+public class PlayerCamera : CSComponent {
 
-    private float m_rotationSense = 1.0f;
-    private float m_scrollSense = 1.0f;
+    [Open] private CameraComponent m_camera;
+    [Open] private Actor m_cameraTarget;
 
-    private bool m_updateRotation = false;
-    private bool m_updateDistance = false;
+    public float rotationSense = 1.0f;
+    public float scrollSense = 1.0f;
+    public float distance = 100;
 
-    private Vector3 m_rotationDelta;
-    private float m_distanceDelta;
-
-    private Actor m_cameraRoot = null;
+    [Open] private Vector3 m_angles = Vector3.Zero;
+    
 
     public override void OnInit() {
-        m_cameraRoot = actor.parent;
-        if (m_cameraRoot == null)
-            Console.WriteLine("PlayerCamera haven't got a parent\n");
+        if (m_cameraTarget == null || m_camera == null)
+            throw new Exception($"{GetType().FullName}: Not all fields are valid");
 
         Input.OnMouseMove += m_OnMouseMove;
         Input.OnWheelMove += m_OnWheelMove;
-
-        UpdateProjMatrix();
-        Attach();
     }
 
     public override void OnDestroy() {
@@ -35,52 +31,47 @@ public class PlayerCamera : CameraComponent {
         Input.OnWheelMove -= m_OnWheelMove;
     }
 
-    public override void OnUpdate() {
-        if (!IsAttached)
+    public override void OnStart() {
+        m_camera.UpdateProjMatrix();
+        m_camera.Attach();
+    }
+
+    public override void OnUpdate() { }
+
+    public override void OnFixedUpdate() {
+        if (!m_camera.IsAttached)
             return;
 
-        if (m_updateRotation) {
-            var rot = m_cameraRoot.localRotation;
-            rot += m_rotationDelta;
-            m_cameraRoot.localRotation = rot;
-            m_rotationDelta = Vector3.Zero;
-            m_updateRotation = false;
-        }
-        if (m_updateDistance) {
-            var pos = actor.localPosition;
-            pos.Z += m_distanceDelta;
-            actor.localPosition = pos;
-            m_distanceDelta = 0;
-            m_updateDistance = false;
-        }
-        {
-            var rot = m_cameraRoot.localRotation;
-            var rotator = Matrix4x4.CreateFromYawPitchRoll(rot.Y, rot.X, 0);
 
-            var wpos = actor.worldPosition;
-            var newMatrix = Matrix4x4.CreateLookAt(wpos, wpos + rotator.Forward, rotator.Up);
-            viewMatrix = newMatrix;
-            UpdateProjMatrix();
-        }
+        var rot = Quaternion.CreateFromAxisAngle(Vector3.Up, -m_angles.X) 
+                * Quaternion.CreateFromAxisAngle(Vector3.Right, m_angles.Y);
+
+        var cameraBackward = Vector3.Forward.Rotate(rot);
+        var cameraPos = m_cameraTarget.worldPosition + cameraBackward * distance;
+
+        actor.worldPosition = cameraPos;
+        actor.localRotationQ = -rot;
+        
+        var newMatrix = Matrix4x4.CreateLookAt(cameraPos, m_cameraTarget.worldPosition, Vector3.Up);
+        m_camera.viewMatrix = newMatrix;
     }
 
     private void m_OnMouseMove() {
-        if (!IsAttached)
+        if (!m_camera.IsAttached)
             return;
 
-        m_rotationDelta.Y -= Input.MouseDelta.X * 0.003f * m_rotationSense;
-        m_rotationDelta.X -= Input.MouseDelta.Y * 0.003f * m_rotationSense;
-        m_updateRotation = true;
+        m_angles.X += Input.MouseDelta.X * rotationSense;
+        m_angles.Y += Input.MouseDelta.Y * rotationSense;
+        m_angles.Y = Math.Clamp(m_angles.Y, 20, 80);
     }
 
     public void m_OnWheelMove() {
-        if (!IsAttached)
+        if (!m_camera.IsAttached)
             return;
 
         float dir = Input.WheelDelta > 0 ? -1 : 1;
-        m_distanceDelta += dir * 2 * m_scrollSense;
-        m_updateDistance = true;
+        distance += dir * 2 * scrollSense;
+        distance = Math.Clamp(distance, 1, 10000);
     }
-};
-
-#endif
+}
+// #endif

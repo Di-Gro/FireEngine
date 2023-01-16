@@ -4,13 +4,13 @@
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: scene_jolt}
-.file1.CameraPos.X: {Var: -128.6066}
-.file1.CameraPos.Y: {Var: 816.6422}
-.file1.CameraPos.Z: {Var: 608.3846}
-.file1.CameraRot.X: {Var: -0.3154777}
-.file1.CameraRot.Y: {Var: -0.0005755487}
-.file1.CameraRot.Z: {Var: -0.0001913063}
-.file1.CameraRot.W: {Var: 0.9489328}
+.file1.CameraPos.X: {Var: -390.3525}
+.file1.CameraPos.Y: {Var: 585.4596}
+.file1.CameraPos.Z: {Var: -90.19503}
+.file1.CameraRot.X: {Var: -0.245653}
+.file1.CameraRot.Y: {Var: -0.5915053}
+.file1.CameraRot.Z: {Var: -0.1956641}
+.file1.CameraRot.W: {Var: 0.7426248}
 .file1.CameraSpeed: {Var: 426}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file7}
@@ -30,40 +30,38 @@
 .file1.m_roots.15: {Ref: file63}
 .file1.m_roots.16: {Ref: file71}
 .file1.m_roots.17: {Ref: file75}
-.file1.m_roots.18: {Ref: file83}
-.file1.m_roots.19: {Ref: file87}
-.file1.m_roots.20: {Ref: file91}
-.file1.m_roots.21: {Ref: file95}
-.file1.m_roots.22: {Ref: file99}
-.file1.m_roots.23: {Ref: file103}
-.file1.m_roots.24: {Ref: file107}
-.file1.m_roots.25: {Ref: file111}
-.file1.m_roots.26: {Ref: file115}
-.file1.m_roots.27: {Ref: file119}
-.file1.m_roots.28: {Ref: file123}
-.file1.m_roots.29: {Ref: file127}
-.file1.m_roots.30: {Ref: file131}
-.file1.m_roots.31: {Ref: file135}
-.file1.m_roots.32: {Ref: file139}
-.file1.m_roots.33: {Ref: file143}
-.file1.m_roots.34: {Ref: file147}
-.file1.m_roots.35: {Ref: file151}
-.file1.m_roots.36: {Ref: file155}
-.file1.m_roots.37: {Ref: file159}
-.file1.m_roots.38: {Ref: file163}
-.file1.m_roots.39: {Ref: file167}
-.file1.m_roots.40: {Ref: file171}
-.file1.m_roots.41: {Ref: file175}
-.file1.m_roots.42: {Ref: file179}
-.file1.m_roots.43: {Ref: file183}
-.file1.m_roots.44: {Ref: file187}
-.file1.m_roots.45: {Ref: file191}
-.file1.m_roots.46: {Ref: file195}
-.file1.m_roots.47: {Ref: file199}
-.file1.m_roots.48: {Ref: file203}
+.file1.m_roots.18: {Ref: file95}
+.file1.m_roots.19: {Ref: file99}
+.file1.m_roots.20: {Ref: file103}
+.file1.m_roots.21: {Ref: file107}
+.file1.m_roots.22: {Ref: file111}
+.file1.m_roots.23: {Ref: file115}
+.file1.m_roots.24: {Ref: file119}
+.file1.m_roots.25: {Ref: file123}
+.file1.m_roots.26: {Ref: file127}
+.file1.m_roots.27: {Ref: file131}
+.file1.m_roots.28: {Ref: file135}
+.file1.m_roots.29: {Ref: file139}
+.file1.m_roots.30: {Ref: file143}
+.file1.m_roots.31: {Ref: file147}
+.file1.m_roots.32: {Ref: file151}
+.file1.m_roots.33: {Ref: file155}
+.file1.m_roots.34: {Ref: file159}
+.file1.m_roots.35: {Ref: file163}
+.file1.m_roots.36: {Ref: file167}
+.file1.m_roots.37: {Ref: file171}
+.file1.m_roots.38: {Ref: file175}
+.file1.m_roots.39: {Ref: file179}
+.file1.m_roots.40: {Ref: file183}
+.file1.m_roots.41: {Ref: file187}
+.file1.m_roots.42: {Ref: file191}
+.file1.m_roots.43: {Ref: file195}
+.file1.m_roots.44: {Ref: file199}
+.file1.m_roots.45: {Ref: file203}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file2.prefabId: {Var: }
 .file2.Name: {Var: Light}
 .file2.localPosition.X: {Var: 0}
 .file2.localPosition.Y: {Var: 0}
@@ -95,6 +93,7 @@
 
 .file7!script: {Var: Actor}
 .file7!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file7.prefabId: {Var: }
 .file7.Name: {Var: Floor 1}
 .file7.localPosition.X: {Var: -124.5741}
 .file7.localPosition.Y: {Var: 35.93108}
@@ -145,6 +144,7 @@
 
 .file11!script: {Var: Actor}
 .file11!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file11.prefabId: {Var: }
 .file11.Name: {Var: Floor 2}
 .file11.localPosition.X: {Var: 396.4283}
 .file11.localPosition.Y: {Var: 183.1837}
@@ -195,6 +195,7 @@
 
 .file15!script: {Var: Actor}
 .file15!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file15.prefabId: {Var: }
 .file15.Name: {Var: Actor}
 .file15.localPosition.X: {Var: 0}
 .file15.localPosition.Y: {Var: 223.92}
@@ -245,6 +246,7 @@
 
 .file19!script: {Var: Actor}
 .file19!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file19.prefabId: {Var: }
 .file19.Name: {Var: Actor}
 .file19.localPosition.X: {Var: 1.674591}
 .file19.localPosition.Y: {Var: 223.9023}
@@ -295,6 +297,7 @@
 
 .file23!script: {Var: Actor}
 .file23!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file23.prefabId: {Var: }
 .file23.Name: {Var: Actor}
 .file23.localPosition.X: {Var: -66.97073}
 .file23.localPosition.Y: {Var: 237.995}
@@ -345,6 +348,7 @@
 
 .file27!script: {Var: Actor}
 .file27!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file27.prefabId: {Var: }
 .file27.Name: {Var: Actor}
 .file27.localPosition.X: {Var: 31.97288}
 .file27.localPosition.Y: {Var: 171.4354}
@@ -395,6 +399,7 @@
 
 .file31!script: {Var: Actor}
 .file31!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file31.prefabId: {Var: }
 .file31.Name: {Var: Actor}
 .file31.localPosition.X: {Var: 172.7119}
 .file31.localPosition.Y: {Var: 212.7486}
@@ -445,6 +450,7 @@
 
 .file35!script: {Var: Actor}
 .file35!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file35.prefabId: {Var: }
 .file35.Name: {Var: Actor}
 .file35.localPosition.X: {Var: 135.8312}
 .file35.localPosition.Y: {Var: 168.2077}
@@ -495,6 +501,7 @@
 
 .file39!script: {Var: Actor}
 .file39!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file39.prefabId: {Var: }
 .file39.Name: {Var: Actor}
 .file39.localPosition.X: {Var: 104.0516}
 .file39.localPosition.Y: {Var: 156.1117}
@@ -545,6 +552,7 @@
 
 .file43!script: {Var: Actor}
 .file43!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file43.prefabId: {Var: }
 .file43.Name: {Var: Actor}
 .file43.localPosition.X: {Var: 122.6058}
 .file43.localPosition.Y: {Var: 247.9029}
@@ -552,7 +560,7 @@
 .file43.localRotationQ.X: {Var: 0.2887645}
 .file43.localRotationQ.Y: {Var: 0.5234333}
 .file43.localRotationQ.Z: {Var: 0.1943483}
-.file43.localRotationQ.W: {Var: 0.7777283}
+.file43.localRotationQ.W: {Var: 0.7777284}
 .file43.localScale.X: {Var: 29.99997}
 .file43.localScale.Y: {Var: 29.99997}
 .file43.localScale.Z: {Var: 29.99999}
@@ -595,6 +603,7 @@
 
 .file47!script: {Var: Actor}
 .file47!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file47.prefabId: {Var: }
 .file47.Name: {Var: Actor}
 .file47.localPosition.X: {Var: 36.78059}
 .file47.localPosition.Y: {Var: 135.9298}
@@ -645,6 +654,7 @@
 
 .file51!script: {Var: Actor}
 .file51!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file51.prefabId: {Var: }
 .file51.Name: {Var: Actor}
 .file51.localPosition.X: {Var: 18.62049}
 .file51.localPosition.Y: {Var: 168.2077}
@@ -695,6 +705,7 @@
 
 .file55!script: {Var: Actor}
 .file55!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file55.prefabId: {Var: }
 .file55.Name: {Var: Actor}
 .file55.localPosition.X: {Var: 59.94946}
 .file55.localPosition.Y: {Var: 299.6918}
@@ -745,6 +756,7 @@
 
 .file59!script: {Var: Actor}
 .file59!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file59.prefabId: {Var: }
 .file59.Name: {Var: Actor}
 .file59.localPosition.X: {Var: 72.42989}
 .file59.localPosition.Y: {Var: 192.7679}
@@ -795,6 +807,7 @@
 
 .file63!script: {Var: Actor}
 .file63!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file63.prefabId: {Var: }
 .file63.Name: {Var: Sphere 1}
 .file63.localPosition.X: {Var: 0}
 .file63.localPosition.Y: {Var: 371.7873}
@@ -843,10 +856,11 @@
 
 .file71!script: {Var: Actor}
 .file71!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file71.prefabId: {Var: }
 .file71.Name: {Var: Actor}
-.file71.localPosition.X: {Var: -29.64564}
-.file71.localPosition.Y: {Var: 223.92}
-.file71.localPosition.Z: {Var: -347.6777}
+.file71.localPosition.X: {Var: -39.45078}
+.file71.localPosition.Y: {Var: 223.9195}
+.file71.localPosition.Z: {Var: -203.4697}
 .file71.localRotationQ.X: {Var: -0.5198133}
 .file71.localRotationQ.Y: {Var: -0.1701273}
 .file71.localRotationQ.Z: {Var: 0.1065012}
@@ -893,14 +907,15 @@
 
 .file75!script: {Var: Actor}
 .file75!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file75.prefabId: {Var: }
 .file75.Name: {Var: Actor}
-.file75.localPosition.X: {Var: -123.5365}
+.file75.localPosition.X: {Var: -78.97057}
 .file75.localPosition.Y: {Var: 223.921}
-.file75.localPosition.Z: {Var: -419.9677}
+.file75.localPosition.Z: {Var: -243.0696}
 .file75.localRotationQ.X: {Var: -0.6484519}
-.file75.localRotationQ.Y: {Var: 0.03864678}
+.file75.localRotationQ.Y: {Var: 0.03864677}
 .file75.localRotationQ.Z: {Var: -0.1227097}
-.file75.localRotationQ.W: {Var: 0.7503059}
+.file75.localRotationQ.W: {Var: 0.7503058}
 .file75.localScale.X: {Var: 30}
 .file75.localScale.Y: {Var: 30.00005}
 .file75.localScale.Z: {Var: 30.00001}
@@ -941,162 +956,13 @@
 .file78.Size.Z: {Var: 1}
 .file78.DrawDebug: {Var: False}
 
-.file83!script: {Var: Actor}
-.file83!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file83.Name: {Var: Actor}
-.file83.localPosition.X: {Var: -68.85864}
-.file83.localPosition.Y: {Var: 108.3118}
-.file83.localPosition.Z: {Var: -295.9525}
-.file83.localRotationQ.X: {Var: 0}
-.file83.localRotationQ.Y: {Var: 0}
-.file83.localRotationQ.Z: {Var: 0}
-.file83.localRotationQ.W: {Var: 1}
-.file83.localScale.X: {Var: 198.4865}
-.file83.localScale.Y: {Var: 200.0618}
-.file83.localScale.Z: {Var: 5.086711}
-.file83.m_children: {Null: }
-.file83.m_components.0: {Ref: file84}
-.file83.m_components.1: {Ref: file85}
-.file83.m_components.2: {Ref: file86}
-
-.file84!script: {Var: Rigidbody}
-.file84!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
-.file84.active: {Var: True}
-.file84.motion: {Var: Static}
-.file84.Mass: {Var: 1}
-.file84.gravity: {Var: 1}
-.file84.MaxLinearVelocity: {Var: 500}
-.file84.LinearDamping: {Var: 0.05}
-.file84.AgularDamping: {Var: 0.05}
-.file84.Friction: {Var: 0.2}
-.file84.Bounciness: {Var: 0.1}
-.file84.AllowSleeping: {Var: True}
-.file84.Quality: {Var: Discrete}
-
-.file85!script: {Var: MeshComponent}
-.file85!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file85.MeshScale.X: {Var: 1}
-.file85.MeshScale.Y: {Var: 1}
-.file85.MeshScale.Z: {Var: 1}
-.file85.IsDebug: {Var: False}
-.file85.CastShadow: {Var: True}
-.file85.IsVisible: {Var: True}
-.file85.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file85.m_materials.0.assetId: {AssetId: bca7088f-eef7-46a3-9803-0a652eedba0e}
-
-.file86!script: {Var: BoxCollider}
-.file86!scriptId: {AssetId: 73d3cbc8-cb32-4e71-a8bb-570b6e71ac45}
-.file86.Size.X: {Var: 1}
-.file86.Size.Y: {Var: 1}
-.file86.Size.Z: {Var: 1}
-.file86.DrawDebug: {Var: False}
-
-.file87!script: {Var: Actor}
-.file87!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file87.Name: {Var: Actor}
-.file87.localPosition.X: {Var: -170.7704}
-.file87.localPosition.Y: {Var: 107.9158}
-.file87.localPosition.Z: {Var: -394.0104}
-.file87.localRotationQ.X: {Var: 6.556179E-07}
-.file87.localRotationQ.Y: {Var: 0.7071063}
-.file87.localRotationQ.Z: {Var: -6.556175E-07}
-.file87.localRotationQ.W: {Var: 0.7071072}
-.file87.localScale.X: {Var: 198.4865}
-.file87.localScale.Y: {Var: 200.0615}
-.file87.localScale.Z: {Var: 5.086714}
-.file87.m_children: {Null: }
-.file87.m_components.0: {Ref: file88}
-.file87.m_components.1: {Ref: file89}
-.file87.m_components.2: {Ref: file90}
-
-.file88!script: {Var: Rigidbody}
-.file88!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
-.file88.active: {Var: True}
-.file88.motion: {Var: Static}
-.file88.Mass: {Var: 1}
-.file88.gravity: {Var: 1}
-.file88.MaxLinearVelocity: {Var: 500}
-.file88.LinearDamping: {Var: 0.05}
-.file88.AgularDamping: {Var: 0.05}
-.file88.Friction: {Var: 0.2}
-.file88.Bounciness: {Var: 0.1}
-.file88.AllowSleeping: {Var: True}
-.file88.Quality: {Var: Discrete}
-
-.file89!script: {Var: MeshComponent}
-.file89!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file89.MeshScale.X: {Var: 1}
-.file89.MeshScale.Y: {Var: 1}
-.file89.MeshScale.Z: {Var: 1}
-.file89.IsDebug: {Var: False}
-.file89.CastShadow: {Var: True}
-.file89.IsVisible: {Var: True}
-.file89.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file89.m_materials.0.assetId: {AssetId: bca7088f-eef7-46a3-9803-0a652eedba0e}
-
-.file90!script: {Var: BoxCollider}
-.file90!scriptId: {AssetId: 73d3cbc8-cb32-4e71-a8bb-570b6e71ac45}
-.file90.Size.X: {Var: 1}
-.file90.Size.Y: {Var: 1}
-.file90.Size.Z: {Var: 1}
-.file90.DrawDebug: {Var: False}
-
-.file91!script: {Var: Actor}
-.file91!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file91.Name: {Var: Actor}
-.file91.localPosition.X: {Var: 32.02419}
-.file91.localPosition.Y: {Var: 108.6113}
-.file91.localPosition.Z: {Var: -392.7055}
-.file91.localRotationQ.X: {Var: 6.157079E-07}
-.file91.localRotationQ.Y: {Var: 0.707106}
-.file91.localRotationQ.Z: {Var: -6.157072E-07}
-.file91.localRotationQ.W: {Var: 0.7071075}
-.file91.localScale.X: {Var: 198.4865}
-.file91.localScale.Y: {Var: 200.0615}
-.file91.localScale.Z: {Var: 5.086713}
-.file91.m_children: {Null: }
-.file91.m_components.0: {Ref: file92}
-.file91.m_components.1: {Ref: file93}
-.file91.m_components.2: {Ref: file94}
-
-.file92!script: {Var: Rigidbody}
-.file92!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
-.file92.active: {Var: True}
-.file92.motion: {Var: Static}
-.file92.Mass: {Var: 1}
-.file92.gravity: {Var: 1}
-.file92.MaxLinearVelocity: {Var: 500}
-.file92.LinearDamping: {Var: 0.05}
-.file92.AgularDamping: {Var: 0.05}
-.file92.Friction: {Var: 0.2}
-.file92.Bounciness: {Var: 0.1}
-.file92.AllowSleeping: {Var: True}
-.file92.Quality: {Var: Discrete}
-
-.file93!script: {Var: MeshComponent}
-.file93!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file93.MeshScale.X: {Var: 1}
-.file93.MeshScale.Y: {Var: 1}
-.file93.MeshScale.Z: {Var: 1}
-.file93.IsDebug: {Var: False}
-.file93.CastShadow: {Var: True}
-.file93.IsVisible: {Var: True}
-.file93.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file93.m_materials.0.assetId: {AssetId: bca7088f-eef7-46a3-9803-0a652eedba0e}
-
-.file94!script: {Var: BoxCollider}
-.file94!scriptId: {AssetId: 73d3cbc8-cb32-4e71-a8bb-570b6e71ac45}
-.file94.Size.X: {Var: 1}
-.file94.Size.Y: {Var: 1}
-.file94.Size.Z: {Var: 1}
-.file94.DrawDebug: {Var: False}
-
 .file95!script: {Var: Actor}
 .file95!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file95.prefabId: {Var: }
 .file95.Name: {Var: Sphere 1}
-.file95.localPosition.X: {Var: -132.2914}
+.file95.localPosition.X: {Var: -109.8671}
 .file95.localPosition.Y: {Var: 371.7875}
-.file95.localPosition.Z: {Var: -368.8309}
+.file95.localPosition.Z: {Var: -229.2914}
 .file95.localRotationQ.X: {Var: 0}
 .file95.localRotationQ.Y: {Var: 0}
 .file95.localRotationQ.Z: {Var: 0}
@@ -1141,10 +1007,11 @@
 
 .file99!script: {Var: Actor}
 .file99!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file99.prefabId: {Var: }
 .file99.Name: {Var: Sphere 1}
-.file99.localPosition.X: {Var: -35.69563}
-.file99.localPosition.Y: {Var: 372.7292}
-.file99.localPosition.Z: {Var: -418.2056}
+.file99.localPosition.X: {Var: -141.4858}
+.file99.localPosition.Y: {Var: 372.7291}
+.file99.localPosition.Z: {Var: -190.7868}
 .file99.localRotationQ.X: {Var: 0}
 .file99.localRotationQ.Y: {Var: 0}
 .file99.localRotationQ.Z: {Var: 0}
@@ -1189,10 +1056,11 @@
 
 .file103!script: {Var: Actor}
 .file103!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file103.prefabId: {Var: }
 .file103.Name: {Var: Sphere 1}
-.file103.localPosition.X: {Var: -80.61711}
-.file103.localPosition.Y: {Var: 308.8037}
-.file103.localPosition.Z: {Var: -406.2722}
+.file103.localPosition.X: {Var: -70.77224}
+.file103.localPosition.Y: {Var: 308.8032}
+.file103.localPosition.Z: {Var: -218.3335}
 .file103.localRotationQ.X: {Var: 0}
 .file103.localRotationQ.Y: {Var: 0}
 .file103.localRotationQ.Z: {Var: 0}
@@ -1237,10 +1105,11 @@
 
 .file107!script: {Var: Actor}
 .file107!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file107.prefabId: {Var: }
 .file107.Name: {Var: Sphere 1}
-.file107.localPosition.X: {Var: -116.1867}
+.file107.localPosition.X: {Var: -92.14838}
 .file107.localPosition.Y: {Var: 286.7824}
-.file107.localPosition.Z: {Var: -371.1582}
+.file107.localPosition.Z: {Var: -251.9515}
 .file107.localRotationQ.X: {Var: 0}
 .file107.localRotationQ.Y: {Var: 0}
 .file107.localRotationQ.Z: {Var: 0}
@@ -1285,6 +1154,7 @@
 
 .file111!script: {Var: Actor}
 .file111!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file111.prefabId: {Var: }
 .file111.Name: {Var: Sphere 1}
 .file111.localPosition.X: {Var: 87.65698}
 .file111.localPosition.Y: {Var: 347.8218}
@@ -1333,6 +1203,7 @@
 
 .file115!script: {Var: Actor}
 .file115!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file115.prefabId: {Var: }
 .file115.Name: {Var: Sphere 1}
 .file115.localPosition.X: {Var: -13.59161}
 .file115.localPosition.Y: {Var: 191.455}
@@ -1381,6 +1252,7 @@
 
 .file119!script: {Var: Actor}
 .file119!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file119.prefabId: {Var: }
 .file119.Name: {Var: Sphere 1}
 .file119.localPosition.X: {Var: 47.48341}
 .file119.localPosition.Y: {Var: 371.7878}
@@ -1429,6 +1301,7 @@
 
 .file123!script: {Var: Actor}
 .file123!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file123.prefabId: {Var: }
 .file123.Name: {Var: Sphere 1}
 .file123.localPosition.X: {Var: 104.8623}
 .file123.localPosition.Y: {Var: 451.1143}
@@ -1477,6 +1350,7 @@
 
 .file127!script: {Var: Actor}
 .file127!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file127.prefabId: {Var: }
 .file127.Name: {Var: Sphere 1}
 .file127.localPosition.X: {Var: 399.5692}
 .file127.localPosition.Y: {Var: 577.4837}
@@ -1525,6 +1399,7 @@
 
 .file131!script: {Var: Actor}
 .file131!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file131.prefabId: {Var: }
 .file131.Name: {Var: Sphere 1}
 .file131.localPosition.X: {Var: 399.5692}
 .file131.localPosition.Y: {Var: 485.367}
@@ -1573,6 +1448,7 @@
 
 .file135!script: {Var: Actor}
 .file135!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file135.prefabId: {Var: }
 .file135.Name: {Var: Sphere 1}
 .file135.localPosition.X: {Var: 400.6095}
 .file135.localPosition.Y: {Var: 485.367}
@@ -1621,6 +1497,7 @@
 
 .file139!script: {Var: Actor}
 .file139!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file139.prefabId: {Var: }
 .file139.Name: {Var: Floor 2}
 .file139.localPosition.X: {Var: -619.0862}
 .file139.localPosition.Y: {Var: 108.7312}
@@ -1671,14 +1548,15 @@
 
 .file143!script: {Var: Actor}
 .file143!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file143.prefabId: {Var: }
 .file143.Name: {Var: Floor 2}
 .file143.localPosition.X: {Var: -143.3891}
 .file143.localPosition.Y: {Var: 108.7307}
 .file143.localPosition.Z: {Var: -488.7474}
-.file143.localRotationQ.X: {Var: 0.5000002}
-.file143.localRotationQ.Y: {Var: -0.4999998}
-.file143.localRotationQ.Z: {Var: -0.4999998}
-.file143.localRotationQ.W: {Var: 0.5000003}
+.file143.localRotationQ.X: {Var: 0.5000001}
+.file143.localRotationQ.Y: {Var: -0.4999996}
+.file143.localRotationQ.Z: {Var: -0.5000001}
+.file143.localRotationQ.W: {Var: 0.5000004}
 .file143.localScale.X: {Var: 210.9588}
 .file143.localScale.Y: {Var: 4.99999}
 .file143.localScale.Z: {Var: 978.6035}
@@ -1721,6 +1599,7 @@
 
 .file147!script: {Var: Actor}
 .file147!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file147.prefabId: {Var: }
 .file147.Name: {Var: Actor}
 .file147.localPosition.X: {Var: 660.1456}
 .file147.localPosition.Y: {Var: 490.8823}
@@ -1771,6 +1650,7 @@
 
 .file151!script: {Var: Actor}
 .file151!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file151.prefabId: {Var: }
 .file151.Name: {Var: Actor}
 .file151.localPosition.X: {Var: 579.8828}
 .file151.localPosition.Y: {Var: 510.5668}
@@ -1821,6 +1701,7 @@
 
 .file155!script: {Var: Actor}
 .file155!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file155.prefabId: {Var: }
 .file155.Name: {Var: Actor}
 .file155.localPosition.X: {Var: 558.9786}
 .file155.localPosition.Y: {Var: 435.3693}
@@ -1871,6 +1752,7 @@
 
 .file159!script: {Var: Actor}
 .file159!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file159.prefabId: {Var: }
 .file159.Name: {Var: Actor}
 .file159.localPosition.X: {Var: 660.1456}
 .file159.localPosition.Y: {Var: 543.9843}
@@ -1921,6 +1803,7 @@
 
 .file163!script: {Var: Actor}
 .file163!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file163.prefabId: {Var: }
 .file163.Name: {Var: Actor}
 .file163.localPosition.X: {Var: 566.6516}
 .file163.localPosition.Y: {Var: 548.608}
@@ -1971,6 +1854,7 @@
 
 .file167!script: {Var: Actor}
 .file167!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file167.prefabId: {Var: }
 .file167.Name: {Var: Actor}
 .file167.localPosition.X: {Var: 698.4602}
 .file167.localPosition.Y: {Var: 464.3369}
@@ -2021,6 +1905,7 @@
 
 .file171!script: {Var: Actor}
 .file171!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file171.prefabId: {Var: }
 .file171.Name: {Var: Sphere 1}
 .file171.localPosition.X: {Var: 487.1331}
 .file171.localPosition.Y: {Var: 502.1802}
@@ -2069,6 +1954,7 @@
 
 .file175!script: {Var: Actor}
 .file175!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file175.prefabId: {Var: }
 .file175.Name: {Var: Sphere 1}
 .file175.localPosition.X: {Var: 494.1338}
 .file175.localPosition.Y: {Var: 398.2443}
@@ -2117,6 +2003,7 @@
 
 .file179!script: {Var: Actor}
 .file179!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file179.prefabId: {Var: }
 .file179.Name: {Var: Sphere 1}
 .file179.localPosition.X: {Var: 560.7026}
 .file179.localPosition.Y: {Var: 445.9756}
@@ -2165,6 +2052,7 @@
 
 .file183!script: {Var: Actor}
 .file183!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file183.prefabId: {Var: }
 .file183.Name: {Var: Sphere 1}
 .file183.localPosition.X: {Var: 614.957}
 .file183.localPosition.Y: {Var: 451.5541}
@@ -2213,6 +2101,7 @@
 
 .file187!script: {Var: Actor}
 .file187!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file187.prefabId: {Var: }
 .file187.Name: {Var: Sphere 1}
 .file187.localPosition.X: {Var: 552.9873}
 .file187.localPosition.Y: {Var: 328.4204}
@@ -2261,6 +2150,7 @@
 
 .file191!script: {Var: Actor}
 .file191!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file191.prefabId: {Var: }
 .file191.Name: {Var: Floor 2}
 .file191.localPosition.X: {Var: 1248.428}
 .file191.localPosition.Y: {Var: 617.7066}
@@ -2311,6 +2201,7 @@
 
 .file195!script: {Var: Actor}
 .file195!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file195.prefabId: {Var: }
 .file195.Name: {Var: Sphere 1}
 .file195.localPosition.X: {Var: 1279.052}
 .file195.localPosition.Y: {Var: 1307.078}
@@ -2359,6 +2250,7 @@
 
 .file199!script: {Var: Actor}
 .file199!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file199.prefabId: {Var: }
 .file199.Name: {Var: Floor 2}
 .file199.localPosition.X: {Var: -143.3882}
 .file199.localPosition.Y: {Var: 108.7307}
@@ -2409,6 +2301,7 @@
 
 .file203!script: {Var: Actor}
 .file203!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file203.prefabId: {Var: }
 .file203.Name: {Var: Sphere 1}
 .file203.localPosition.X: {Var: 1279.052}
 .file203.localPosition.Y: {Var: 2663.311}

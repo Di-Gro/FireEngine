@@ -11,6 +11,11 @@
 #include "Layers.h"
 
 
+class IFixedUpdateListener {
+public:
+	virtual void BeforePhysicsUpdate() = 0;
+};
+
 #pragma region Layers
 
 
@@ -123,7 +128,7 @@ public:
 	const float cWorldScale = 20.0f;
 
 public:
-	std::list<Rigidbody*> rigidbodies;
+	std::list<IFixedUpdateListener*> rigidbodies;
 
 private:
 	JPH::PhysicsSystem* m_physicsSystem;

@@ -502,6 +502,8 @@ void Game::TogglePlayMode() {
 		m_editorWindow->focus();
 		m_editorWindow->visible = true;
 
+		m_editorScene->mainCamera(nullptr);
+
 		if (inFocus)
 			ToggleGameFocus();
 	}
@@ -515,7 +517,7 @@ void Game::ToggleGameFocus() {
 		}
 		else {
 			ui()->SelectedActor(nullptr);
-			m_editorScene->AttachPlayerCamera();
+			ui()->selectedScene()->AttachPlayerCamera();
 		}
 	}
 }

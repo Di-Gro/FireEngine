@@ -87,6 +87,9 @@ public:
 	JPH::ShapeRefC CreateShapeSettings() override;
 	const Mesh4* CreateDebugMesh() override;
 
+	float scaledRadius();
+	float scaledHeight();
+
 	void OnUpdate() override;
 
 };

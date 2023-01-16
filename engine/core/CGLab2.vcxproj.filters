@@ -381,6 +381,9 @@
     <ClCompile Include="UI\ScenePickerPopup.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -760,6 +763,9 @@
     </ClInclude>
     <ClInclude Include="UI\ScenePickerPopup.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>FirePhysics\Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

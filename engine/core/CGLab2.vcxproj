@@ -28,6 +28,7 @@
     <ClCompile Include="BlurPass.cpp" />
     <ClCompile Include="Bridge.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="CS.cpp" />
     <ClCompile Include="CSComponent.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="BlurPass.h" />
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="ClassInfo.h" />
     <ClInclude Include="Colliders.h" />
     <ClInclude Include="Component.inl" />

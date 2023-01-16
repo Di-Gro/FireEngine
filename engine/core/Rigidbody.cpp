@@ -45,7 +45,7 @@ void Rigidbody::OnStart() {
 	//m_center = m_collider->center;
 	auto layer = Layers::GetLayerFromMotionType(motion());
 	auto position = worldPosition();
-	auto rotation = worldRotationQ();
+	auto rotation = localRotationQ();
 
 	m_bodySettings = BodyCreationSettings(shapeSettings, ToJolt(position), ToJolt(rotation), motion(), layer);
 	m_bodySettings.mGravityFactor = m_gravity * physicsScene->cWorldScale;
@@ -106,7 +106,7 @@ void Rigidbody::BeforePhysicsUpdate() {
 
 		auto res = m_body->GetShape()->ScaleShape(ToJolt(localScale()));
 	}
-	
+		
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
 
 	bodyInterface->SetPositionAndRotationWhenChanged(m_body->GetID(), ToJolt(position), ToJolt(rotation), EActivation::Activate);

@@ -144,14 +144,17 @@ DEF_COMPONENT(CapsuleCollider, Engine.CapsuleCollider, 3, RunMode::EditPlay) {
 	OFFSET(2, CapsuleCollider, drawDebug);
 }
 
+float CapsuleCollider::scaledRadius() {
+	return VecMin(localScale()) * radius;
+}
+
+float CapsuleCollider::scaledHeight() {
+	return localScale().y * height;
+}
+
 JPH::ShapeRefC CapsuleCollider::CreateShapeSettings() {
 
-	auto scale = localScale();
-	auto minScale = VecMin(scale);
-	auto scaledRadius = minScale * radius;
-	auto scaledHeight = scale.y * height;
-
-	CapsuleShapeSettings shapeSettings(scaledHeight / 2, scaledRadius);
+	CapsuleShapeSettings shapeSettings(scaledHeight() / 2, scaledRadius());
 
 	ShapeSettings::ShapeResult result = shapeSettings.Create();
 	assert(!result.HasError());
@@ -180,13 +183,13 @@ void CapsuleCollider::OnUpdate() {
 		debugMesh2 = nullptr;
 		return;
 	}
-	//if (drawDebug && debugMesh != nullptr) {
-	//	debugMesh->meshScale = Vector3::One * radius * 2;
-		//debugMesh->meshOffset = center + Vector3(0, height / 2, 0);
+	if (drawDebug && debugMesh != nullptr) {
+		debugMesh->meshScale = Vector3::One * radius * 2;
+		debugMesh->meshOffset = Vector3(0, height / 2, 0);
 
-	//	debugMesh2->meshScale = Vector3::One * radius * 2 * Vector3(1, -1, 1);
-	//	debugMesh2->meshOffset = center - Vector3(0, height / 2, 0);
-	//}
+		debugMesh2->meshScale = Vector3::One * radius * 2 * Vector3(1, -1, 1);
+		debugMesh2->meshOffset = -Vector3(0, height / 2, 0);
+	}
 }
 
 #pragma endregion

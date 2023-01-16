@@ -943,6 +943,48 @@ namespace EngineDll {
 
 		}
 
+		public static class Character {
+		
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_active_get")]
+		    private static extern bool active_get_inner(CppRef objRef);
+
+            public static bool active_get(CppRef objRef) => objRef.value != 0 ? active_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_active_set")]
+		    private static extern void active_set_inner(CppRef objRef, bool value);
+
+            public static void active_set(CppRef objRef, bool value) { if(objRef.value != 0) active_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_gravity_get")]
+		    private static extern float gravity_get_inner(CppRef objRef);
+
+            public static float gravity_get(CppRef objRef) => objRef.value != 0 ? gravity_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_gravity_set")]
+		    private static extern void gravity_set_inner(CppRef objRef, float value);
+
+            public static void gravity_set(CppRef objRef, float value) { if(objRef.value != 0) gravity_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_GetLinearVelocity")]
+		    public static extern Vector3 GetLinearVelocity(CppRef bodyRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_SetLinearVelocityClamped")]
+		    public static extern void SetLinearVelocityClamped(CppRef bodyRef, Vector3 inLinearVelocity);
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_AddImpulse")]
+		    public static extern void AddImpulse(CppRef bodyRef, Vector3 inImpulse);
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_GetFriction")]
+		    public static extern float GetFriction(CppRef bodyRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_SetFriction")]
+		    public static extern void SetFriction(CppRef bodyRef, float inFriction);
+
+		}
+
 		
 	}
 }

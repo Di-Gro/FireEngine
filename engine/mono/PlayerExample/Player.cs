@@ -1,7 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-using Engine;
+using Engine; 
+
+[GUID("416a2b38-e34a-44fd-aa1e-429d30c44ba2")]
+public class Player : CSComponent {
+    
+}
 
 #if BADCODE
 
