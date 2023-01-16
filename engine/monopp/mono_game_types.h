@@ -123,7 +123,9 @@ public:
 	void (*removeAsset)(int assetGuidHash);
 
 	int (*createPrefab)(CsRef actorRef, size_t pathPtr);
+	bool (*loadPrefab)(int assetGuidHash, CsRef actorRef);
 	bool (*updatePrefab)(CsRef actorRef, int assetGuidHash);
-	CppRef (*instanciatePrefab)(int assetGuidHash);
+
+	void (*setPrefabId)(CsRef actorRef, int prefabGuidHash);
 };
 

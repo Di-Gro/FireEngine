@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 
 using UI;
 using EngineDll;
+using FireYaml;
 
 using sn = System.Numerics;
 
@@ -35,6 +36,7 @@ namespace Engine
 
         public Callback onDrawComponent;
         public RequestName requestComponentName;
+        public Callback onDrawActorHeader;
     }
 
     class UserInterface
@@ -72,8 +74,27 @@ namespace Engine
             Instance.m_callbacks = new Callbacks();
             Instance.m_callbacks.onDrawComponent = new Callbacks.Callback(Instance.OnDrawComponent);
             Instance.m_callbacks.requestComponentName = new Callbacks.RequestName(Instance.RequestComponentName);
+            Instance.m_callbacks.onDrawActorHeader = new Callbacks.Callback(Instance.OnDrawActorHeader);
 
             dll_SetCallbacks2(cppRef, Instance.m_callbacks);
+        }
+
+        public void OnDrawActorHeader(CsRef csRef, float width) {
+            // var actor = CppLinked.GetObjectByRef(csRef) as Actor;
+
+            // /// Set Context ->
+            // GUI.style = Marshal.PtrToStructure<UI.ImGuiStyle>(ImGui.GetStyle());
+            // GUI.rectWidth = width;
+            // GUI.groupRef = csRef;
+            // GUI.groupAssetIdHash = actor.scene.assetIdHash;
+            // /// <-
+
+            // var prop = typeof(Actor).GetProperty(nameof(IFile.prefabId));
+            // var lastActive = GUI.active;
+
+
+            // GUI.DrawActorPrefab(actor);
+
         }
 
         public void OnDrawComponent(CsRef csRef, float width) {
@@ -149,6 +170,7 @@ namespace Engine
         public static CsRef groupRef;
         public static int groupAssetIdHash;
         public static float rectWidth = 0;
+        public static bool active = true;
         /// <-
         
         public static float labelWidth = 100;
@@ -466,6 +488,23 @@ namespace Engine
             ImGui.Columns(1);
         }
 
+        public static void DrawActorPrefab(Actor actor) {
+            var store = FireYaml.AssetStore.Instance;
+
+            var assetIdHash = actor.prefabId == IFile.NotPrefab ? 0 : actor.prefabId.GetHashCode();
+            var scriptIdHash = GUIDAttribute.GetGuidHash(typeof(Prefab));
+
+            // var isActive = actor.prefabId != IFile.NotPrefab;
+
+            bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, "Prefab", scriptIdHash, ref assetIdHash, GUI.active);
+
+            if (changed) {
+                actor.prefabId = assetIdHash == 0 ? IFile.NotPrefab : store.GetAssetGuid(assetIdHash);
+
+                Assets.MakeDirty(groupAssetIdHash);
+            }
+        }
+
         public static void DrawAsset(string label, FireYaml.Field field, RangeAttribute range = null) {
             var store = FireYaml.AssetStore.Instance;
             var instance = field.Value;
@@ -478,7 +517,7 @@ namespace Engine
             if (instance != null)
                 assetIdHash = iasset.assetIdHash;
 
-            bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash);
+            bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash, GUI.active);
 
             if (changed) {
                 instance = FireYaml.FireReader.CreateInstance(field.type);
@@ -502,7 +541,7 @@ namespace Engine
             var scriptId = GUIDAttribute.GetGuid(type); // store.GetScriptIdByTypeName(type.FullName);
             var scriptIdHash = GUIDAttribute.GetGuidHash(type); // scriptId.GetHashCode();          
 
-            bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash);
+            bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash, GUI.active);
 
             if (changed) {
                 changedAsset = FireYaml.FireReader.CreateInstance(type);

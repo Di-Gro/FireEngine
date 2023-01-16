@@ -145,8 +145,9 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	float cursorHeight = ImGui::GetCursorScreenPos().y;
 	float mousePosY = mouseHeight - cursorHeight;
 
-	std::string actorId = std::to_string(actor->Id());
-	auto treeNodeId = actor->name() + "##" + actorId + "SceneTreeNodeEx";
+	//std::string actorId = std::to_string(actor->Id());
+	auto actorId = "[" + std::to_string(actor->Id()) + "] ";
+	auto treeNodeId = actorId + actor->name() + "##" + actorId + "SceneTreeNodeEx";
 
 	auto currentCursor = ImGui::GetCursorPos();
 	bool selectedTree = ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);

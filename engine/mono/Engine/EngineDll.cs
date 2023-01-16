@@ -198,6 +198,16 @@ namespace EngineDll {
 
             public static void name_set(CppRef objRef, string value) { if(objRef.value != 0) name_set_inner(objRef, value); }
 
+            [DllImport(Paths.Exe, EntryPoint = "Actor_prefabId_get")]
+		    private static extern size_t prefabId_get_ptr(CppRef objRef);
+
+            public static string prefabId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(prefabId_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "Actor_prefabId_set", CharSet = CharSet.Ansi)]
+		    private static extern void prefabId_set_inner(CppRef objRef, string value);
+
+            public static void prefabId_set(CppRef objRef, string value) { if(objRef.value != 0) prefabId_set_inner(objRef, value); }
+
             [DllImport(Paths.Exe, EntryPoint = "Actor_scene_get")]
 		    public static extern CppRef scene_get(CppRef objRef);
 
@@ -616,7 +626,7 @@ namespace EngineDll {
 		    public static extern void SetComponentName(CppRef gameRef, string value);
 
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowAsset", CharSet = CharSet.Ansi)]
-		    public static extern bool ShowAsset(CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash);
+		    public static extern bool ShowAsset(CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash, bool isActive);
 
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowActor", CharSet = CharSet.Ansi)]
 		    public static extern bool ShowActor(CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef);
@@ -722,6 +732,16 @@ namespace EngineDll {
 		    private static extern void actorTypeIdHash_set_inner(CppRef objRef, int value);
 
             public static void actorTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) actorTypeIdHash_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_prefabTypeIdHash_get")]
+		    private static extern int prefabTypeIdHash_get_inner(CppRef objRef);
+
+            public static int prefabTypeIdHash_get(CppRef objRef) => objRef.value != 0 ? prefabTypeIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_prefabTypeIdHash_set")]
+		    private static extern void prefabTypeIdHash_set_inner(CppRef objRef, int value);
+
+            public static void prefabTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) prefabTypeIdHash_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "AssetStore_componentTypeIdHash_get")]
 		    private static extern int componentTypeIdHash_get_inner(CppRef objRef);

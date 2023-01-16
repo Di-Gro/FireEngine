@@ -17,8 +17,10 @@ namespace Engine {
 
         [Close] public int fileId { get; set; } = -1;
 
-        [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
-        /// <- 
+        public string prefabId {
+            get => Dll.Actor.prefabId_get(cppRef);
+            set => Dll.Actor.prefabId_set(cppRef, value);
+        }
 
         public string Name { get => Dll.Actor.name_get(cppRef); set => Dll.Actor.name_set(cppRef, value); }
 
@@ -306,6 +308,16 @@ namespace Engine {
             //Console.WriteLine($"#: -> {csRef}, {cppRef} ");
 
             return cppRef;
+        }
+
+        public static void SetPrefabId(CsRef actorRef, int prefabGuidHash) {
+            var actor = CppLinked.GetObjectByRef(actorRef) as Actor;
+
+            var prefabGuid = "";
+            if(prefabGuidHash != 0)
+                prefabGuid = FireYaml.AssetStore.Instance.GetAssetGuid(prefabGuidHash);
+
+            actor.prefabId = prefabGuid;
         }
 
         //private static void cpp_SetName(CsRef objRef, ulong ptr, ulong length) {

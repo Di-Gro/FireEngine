@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Globalization;
 using System.Diagnostics;
 using System;
+using FireYaml;
 
 namespace Engine {
 
@@ -38,6 +39,86 @@ namespace Engine {
         public void ReloadAsset() { }
 
         public void SaveAsset() { }
+
+
+        public static int CreatePrefab(CsRef actorRef, ulong pathPtr) {
+            var path = Assets.ReadCString(pathPtr);
+
+            try {
+                object actorObj = CppLinked.GetObjectByRef(actorRef);
+                var actor = actorObj as Actor;
+                var lastPrefabId = actor.prefabId;
+                actor.prefabId = "";
+
+                var writer = new FireWriter(ignoreExistingIds: true, writeNewIds: false, startId: 1);
+                var assetGuidHash = FireYaml.AssetStore.Instance.WriteAsset(path, actorObj, writer: writer);
+
+                actor.prefabId = lastPrefabId;
+                return assetGuidHash;
+
+            } catch (Exception e) {
+
+                Console.WriteLine("Exception on SaveScene:");
+
+                if (e.InnerException != null) {
+                    Console.WriteLine(e.InnerException.Message);
+                    Console.WriteLine(e.InnerException.StackTrace);
+                }
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                return 0;
+            }
+        }
+
+        public static bool LoadPrefab(int assetGuidHash, CsRef actorRef) {
+            try {
+                var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
+                object actorObj = CppLinked.GetObjectByRef(actorRef);
+
+                new FireYaml.FireReader(assetGuid, writeIDs: false).InstanciateTo(ref actorObj);
+
+                var actor = actorObj as Actor;
+                actor.prefabId = assetGuid;
+                return true;
+
+            } catch (Exception e) {
+
+                Console.WriteLine("Exception on SaveScene:");
+
+                if (e.InnerException != null) {
+                    Console.WriteLine(e.InnerException.Message);
+                    Console.WriteLine(e.InnerException.StackTrace);
+                }
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+
+                return false;
+            }
+        }       
+
+        public static bool UpdatePrefab(CsRef actorRef, int assetGuidHash) {
+            try {
+                object actor = CppLinked.GetObjectByRef(actorRef);
+                var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
+
+                var writer = new FireWriter(ignoreExistingIds: true, writeNewIds: false, startId: 1);
+                FireYaml.AssetStore.Instance.UpdateAsset(assetGuid, actor, writer: writer);
+
+                return true;
+
+            } catch (Exception e) {
+
+                Console.WriteLine("Exception on SaveScene:");
+
+                if (e.InnerException != null) {
+                    Console.WriteLine(e.InnerException.Message);
+                    Console.WriteLine(e.InnerException.StackTrace);
+                }
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
+        }
 
     }
 }

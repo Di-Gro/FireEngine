@@ -51,7 +51,7 @@ static void InsideMono() {
 }
 
 int main() {	
-	bool useMonoDebug = true;
+	bool useMonoDebug = false;
 
 	if (!mono::init("mono", useMonoDebug))
 		return 1;

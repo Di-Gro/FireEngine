@@ -21,6 +21,7 @@ public:
 	std::unordered_map<ScriptIdHash, std::vector<AssetIdHash>> assets;
 
 	int actorTypeIdHash;
+	int prefabTypeIdHash;
 	int componentTypeIdHash;
 	
 private:
@@ -107,6 +108,7 @@ PROP_GETSET_STR(AssetStore, assetsPath);
 PROP_GETSET_STR(AssetStore, editorPath);
 
 PROP_GETSET(AssetStore, int, actorTypeIdHash);
+PROP_GETSET(AssetStore, int, prefabTypeIdHash);
 PROP_GETSET(AssetStore, int, componentTypeIdHash);
 
 FUNC(AssetStore, RenameAsset, void)(CppRef gameRef, int assetId, const char* name);

@@ -7,6 +7,7 @@
 
 #include "ComponentPicker.h"
 #include "AssetPickerPopup.h"
+#include "PrefabPickerPopup.h"
 
 class Game;
 class Actor;
@@ -52,6 +53,7 @@ private:
 
 	ComponentPicker m_componentPicker;
 	AssetPickerPopup m_assetPickerPopup;
+	PrefabPickerPopup m_prefabPickerPopup;
 
 	std::string m_componentName;
 
@@ -71,7 +73,8 @@ public:
 	bool ButtonCenteredOnLine(const char* label, float alignment = 0.5f);
 
 	bool ShowVector3(Vector3* vec3, const std::string& title);
-	bool ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash);
+	bool ShowActorPrefab(Actor* actor);
+	bool ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash, bool isActive);
 	bool ShowActor(const std::string& label, CsRef* csRef, CppRef cppRef);
 	bool ShowComponent(const std::string& label, CsRef* csRef, CppRef cppRef, int scriptIdHash);
 	bool ShowColor3(const std::string& label, Vector3* value);
@@ -98,6 +101,7 @@ private:
 	void m_DrawComponents();
 	void m_DrawComponent(void(UI_Inspector::* func)());
 	void m_DrawTransformContent();
+	void m_DrawActorHeader();
 	void m_DrawComponentContent();
 	void m_DrawAddComponent();
 
@@ -108,7 +112,7 @@ private:
 FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr);
 FUNC(UI_Inspector, SetComponentName, void)(CppRef gameRef, const char* value);
 
-FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash);
+FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash, bool isActive);
 FUNC(UI_Inspector, ShowActor, bool)(CppRef gameRef, const char* label, CsRef* csRef, CppRef cppRef);
 FUNC(UI_Inspector, ShowComponent, bool)(CppRef gameRef, const char* label, CsRef* csRef, CppRef cppRef, int scriptIdHash);
 

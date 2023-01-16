@@ -98,8 +98,6 @@ namespace Engine {
             values.AddValue(".file1!scriptId", new YamlValue(YamlValue.Type.AssetId, $"{scriptGuid}"));
 
             File.WriteAllText(assetPath, values.ToSortedText());
-
-            AssetStore.Instance.ReloadAssetValues(assetGuid);
         }
 
         public static string FindSourceFile(Type assetType, string assetPath) {

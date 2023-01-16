@@ -112,6 +112,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformTest.cpp" />
     <ClCompile Include="UI\AssetPickerPopup.cpp" />
+    <ClCompile Include="UI\PrefabPickerPopup.cpp" />
     <ClCompile Include="UI\SceneEditorWindow.cpp" />
     <ClCompile Include="UI\SceneWindow.cpp" />
     <ClCompile Include="UI\ComponentPicker.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformTest.h" />
     <ClInclude Include="UI\AssetPickerPopup.h" />
+    <ClInclude Include="UI\PrefabPickerPopup.h" />
     <ClInclude Include="UI\SceneEditorWindow.h" />
     <ClInclude Include="UI\SceneWindow.h" />
     <ClInclude Include="UI\ComponentPicker.h" />

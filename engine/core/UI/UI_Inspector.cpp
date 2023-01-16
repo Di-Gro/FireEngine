@@ -11,6 +11,7 @@
 #include "../Game.h"
 #include "../Actor.h"
 #include "../Assets.h"
+#include "../AssetStore.h"
 #include "UserInterface.h"
 #include "UI_Hierarchy.h"
 #include "ComponentPicker.h"
@@ -166,7 +167,13 @@ void UI_Inspector::m_DrawHeader() {
 		}
 	}
 	ImGui::PopStyleVar(1);
+
 	ImGui::Unindent(10);
+
+	widthComponent = ImGui::GetContentRegionAvail().x;
+	m_DrawComponent(&UI_Inspector::m_DrawActorHeader);
+
+	
 }
 
 bool UI_Inspector::CollapsingHeader(Component* component, const std::string& name) {
@@ -261,6 +268,10 @@ void UI_Inspector::m_DrawComponent(void(UI_Inspector::* itemFunc)()) {
 	ImGui::Separator();
 }
 
+void UI_Inspector::m_DrawActorHeader() {
+	ShowActorPrefab(_game->ui()->GetActor());
+}
+
 void UI_Inspector::m_DrawComponentContent() {
 	_ui->_callbacks.onDrawComponent(csRef, widthComponent);
 }
@@ -311,7 +322,66 @@ const std::string& UI_Inspector::RequestComponentName(Component* component) {
 	return GetComponentName();
 }
 
-bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash) {
+bool UI_Inspector::ShowActorPrefab(Actor* actor) {
+
+	auto& prefabId = actor->prefabId();
+	auto assetIdHash = prefabId == "" ? 0 : _game->assets()->GetCsHash(prefabId);
+	auto scriptIdHash = _game->assetStore()->prefabTypeIdHash;
+		
+	std::string fieldName = "##Prefab" + std::to_string(m_groupRef.value);
+	std::string assetName = _game->assetStore()->GetAssetName(assetIdHash);
+	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
+	std::string buttonText = assetName + " (" + assetType + ") ";
+
+	auto& style = ImGui::GetStyle();
+
+	float column1 = 50;
+	float column2 = widthComponent - column1;
+	float iconWidth = ImGui::GetFrameHeight();
+	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 23;
+
+	ImGui::Columns(2, "Prefab", false);
+	ImGui::SetColumnWidth(0, column1);
+	ImGui::SetColumnWidth(1, column2);
+
+	ImGui::Text("Prefab");
+
+	ImGui::NextColumn();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0, 0, 0, 0 });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0, 0, 0, 0 });
+	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
+	ImGui::PopStyleColor(3);
+
+	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
+	ImGui::SameLine();
+	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
+	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
+	ImGui::PopStyleVar(1);
+
+	if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonRight) && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
+		int h = 0;
+
+	m_prefabPickerPopup.flags = ImGuiPopupFlags_MouseButtonRight;
+	bool assetWasSelected = m_prefabPickerPopup.Open(actor);
+	ImGui::PopID();
+
+	ImGui::Columns(1);
+
+	if (assetWasSelected) {
+		int newAssetIdHash = m_prefabPickerPopup.selected;
+		if (newAssetIdHash != assetIdHash) {
+			_game->callbacks().setPrefabId(actor->csRef(), newAssetIdHash);
+			_game->assets()->MakeDirty(actor->scene()->assetIdHash());
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash, bool isActive) {
 	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
 	std::string assetName = _game->assetStore()->GetAssetName(*assetIdHash);
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
@@ -372,12 +442,15 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 	if (actor == nullptr && cppRef.value != 0)
 		throw std::exception("ShowComponent: Bad actor reference");
 
+	std::string actorId = "";
 	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
 	std::string actorName = csRef->value == 1 ? "Missing" : "Null"; 
-	if(actor != nullptr)
-		actorName = actor->name();
 
-	std::string buttonText = actorName + " (Actor) ";
+	if (actor != nullptr) {
+		actorId = "[" + std::to_string(actor->Id()) + "] ";
+		actorName = actor->name();
+	}
+	std::string buttonText = actorId + actorName + " (Actor) ";
 
 	auto& style = ImGui::GetStyle();
 
@@ -694,10 +767,10 @@ DEF_FUNC(UI_Inspector, SetComponentName, void)(CppRef gameRef, const char* value
 	game->ui()->inspector()->SetComponentName(value);
 }
 
-DEF_FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash) {
+DEF_FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash, bool isActive) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
 
-	return game->ui()->inspector()->ShowAsset(label, scriptIdHash, assetIdHash);
+	return game->ui()->inspector()->ShowAsset(label, scriptIdHash, assetIdHash, isActive);
 }
 
 DEF_FUNC(UI_Inspector, ShowActor, bool)(CppRef gameRef, const char* label, CsRef* csRef, CppRef cppRef) {

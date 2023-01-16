@@ -100,6 +100,7 @@ DEF_PROP_GETSET_STR(AssetStore, assetsPath);
 DEF_PROP_GETSET_STR(AssetStore, editorPath);
 
 DEF_PROP_GETSET_F(AssetStore, int, actorTypeIdHash, actorTypeIdHash);
+DEF_PROP_GETSET_F(AssetStore, int, prefabTypeIdHash, prefabTypeIdHash);
 DEF_PROP_GETSET_F(AssetStore, int, componentTypeIdHash, componentTypeIdHash);
 
 FUNC(AssetStore, RenameAsset, void)(CppRef gameRef, int assetId, const char* name) {

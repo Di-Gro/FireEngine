@@ -73,8 +73,10 @@ namespace EngineDll {
 			PROP_GET("Actor", "Vector3", "right");
 
 			PROP_GETSET_STR("Actor", "name");
+			PROP_GETSET_STR("Actor", "prefabId");
 
 			FUNC("Actor", "scene_get", "CppRef", "CppRef objRef");
+
 #>
 
 		}
@@ -242,7 +244,7 @@ namespace EngineDll {
 <#
 			ANSI_FUNC("UI_Inspector", "ShowText", "bool", "CppRef gameRef, string label, string buffer, int length, ref ulong ptr");
 			ANSI_FUNC("UI_Inspector", "SetComponentName", "void", "CppRef gameRef, string value");
-			ANSI_FUNC("UI_Inspector", "ShowAsset", "bool", "CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash");
+			ANSI_FUNC("UI_Inspector", "ShowAsset", "bool", "CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash, bool isActive");
 			ANSI_FUNC("UI_Inspector", "ShowActor", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef");
 			ANSI_FUNC("UI_Inspector", "ShowComponent", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef, int scriptIdHash");
 
@@ -296,10 +298,12 @@ namespace EngineDll {
 			PROP_GETSET_STR("AssetStore", "editorPath");
 
 			PROP_GETSET("AssetStore", "int", "actorTypeIdHash");
+			PROP_GETSET("AssetStore", "int", "prefabTypeIdHash");
 			PROP_GETSET("AssetStore", "int", "componentTypeIdHash");
 
 			ANSI_FUNC("AssetStore", "RenameAsset", "void", "CppRef gameRef, int assetId, string name");
 			FUNC("AssetStore", "RemoveAsset", "void", "CppRef gameRef, int typeId, int assetId");
+
 #>
 		}
 

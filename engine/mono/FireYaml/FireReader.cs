@@ -182,15 +182,15 @@ namespace FireYaml {
                 }
             }
 
-            IFile.SetPrefabId(prefabId, ref target);  
+            // IFile.SetPrefabId(prefabId, ref target);  
 
-            if (prefabId != IFile.NotPrefab)
-                m_LoadPrefab(fullPath, type, ref target, prefabId);
-            else
+            // if (prefabId != IFile.NotPrefab)
+                // m_LoadPrefab(fullPath, type, ref target, prefabId);
+            // else
                 m_LoadObjectFields(fullPath, type, ref target, isIAssetAsFile);
 
-            if (isEntryPoint && m_assetId != "")
-                IFile.SetPrefabId(m_assetId, ref target);
+            // if (isEntryPoint && m_assetId != "")
+            //     IFile.SetPrefabId(m_assetId, ref target);
         }
 
         public void LoadAsset<TAsset>(string fieldPath, TAsset asset) where TAsset: IAsset {

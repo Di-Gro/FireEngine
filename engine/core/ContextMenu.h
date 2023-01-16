@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class Game;
 class Scene;
 class Actor;
@@ -25,5 +27,16 @@ public:
 	static void Copy(Component* component);
 	static Component* Paste(Actor* actor);
 	static bool CanPaste(Game* game);
+};
+
+class PrefabMenu {
+public:
+	static bool CanCreate(Actor* actor, const std::string& name);
+	static bool CanSave(Actor* actor);
+	static bool CanLoad(Actor* actor);
+
+	static void Create(Actor* actor, const std::string& name);
+	static void Save(Actor* actor);
+	static void Load(Actor* actor);
 };
 

@@ -73,9 +73,9 @@ bool ComponentPicker::Open(Game* game) {
 
 		ImGui::SetCursorPosX((windowWidth - textSize.x) * 0.5f);
 		ImGui::Text(headerText);
-
+		
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
-		ImGui::InputText("##findType", &m_input);
+		ImGui::InputText("##findType", &m_input, ImGuiInputTextFlags_AutoSelectAll);
 
 		if (!ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
 			ImGui::SetKeyboardFocusHere(0);

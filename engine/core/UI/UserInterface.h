@@ -21,8 +21,9 @@ class UserInterface {
 
 public:
 	struct Callbacks {
-		void (*onDrawComponent)(CsRef, float);
+		void (*onDrawComponent)(CsRef, float); 
 		void (*requestComponentName)(CsRef);
+		void (*onDrawActorHeader)(CsRef, float);
 	};
 
 private:

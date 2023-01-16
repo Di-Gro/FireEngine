@@ -160,7 +160,7 @@ namespace FireYaml {
             return info;
         }
 
-        public int WriteAsset(string path, object data, bool unpuck = false) {
+        public int WriteAsset(string path, object data, bool unpuck = false, FireWriter writer = null) {
             var fullPath = Path.GetFullPath(path);
             var projectFullPath = Path.GetFullPath(ProjectPath);
 
@@ -172,7 +172,11 @@ namespace FireYaml {
             if (!File.Exists(fullPath)) {
                 File.WriteAllText(fullPath, "");
 
-                assetData = CreateNewAsset(data.GetType(), fullPath);
+                var type = data.GetType();
+                // if(type == typeof(Actor))
+                //     type = typeof(Prefab);
+                    
+                assetData = CreateNewAsset(type, fullPath);
                 if (assetData == null)
                     throw new Exception($"WriteAsset: Can not create asset by path: '{fullPath}'");
             }
@@ -183,7 +187,10 @@ namespace FireYaml {
             var assetGuid = assetData.guid;
             var assetGuidHash = assetData.guidHash;
 
-            var serializer = new FireWriter(ignoreExistingIds: true, startId: 1);
+            var serializer = writer;
+            if(serializer == null)
+                serializer = new FireWriter(ignoreExistingIds: true, startId: 1);
+
             serializer.Serialize(data);
 
             if (!serializer.Result)
@@ -202,14 +209,17 @@ namespace FireYaml {
             return assetGuidHash;
         }
 
-        public void UpdateAsset(string assetGuid, object data) {
+        public void UpdateAsset(string assetGuid, object data, FireWriter writer = null) {
             if (!HasAssetPath(assetGuid))
                 throw new Exception($"Asset with assetId:{assetGuid} not exist");
 
             var assetInfo = GetAssetInfo(assetGuid);
             var assetPath = GetAssetPath(assetGuid);
 
-            var serializer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
+            var serializer = writer;
+            if (serializer == null)
+                serializer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
+                
             serializer.Serialize(data);
 
             if (!serializer.Result)
@@ -300,6 +310,7 @@ namespace FireYaml {
 
             Dll.AssetStore.ClearAssets(Game.gameRef);
             Dll.AssetStore.actorTypeIdHash_set(Game.assetStoreRef, actorId);
+            Dll.AssetStore.prefabTypeIdHash_set(Game.assetStoreRef, prefabGuidHash);
             Dll.AssetStore.componentTypeIdHash_set(Game.assetStoreRef, componentId);
 
             foreach (var assetGuidHash in m_assetGuidHash_assetData.Keys) {
@@ -432,10 +443,17 @@ namespace FireYaml {
             data.time = File.GetLastWriteTime(assetPath);
             data.guid = assetGuid;
             data.guidHash = assetGuidHash;
-            data.type = type;
+            data.type = type != typeof(Actor) ? type : typeof(Prefab);
             data.sourceExt = sourcePath != "" ? Path.GetExtension(sourcePath) : "";
 
             m_assetGuidHash_assetData[data.guidHash] = data;
+
+            var AssetTypeId = GUIDAttribute.GetGuidHash(data.type);
+            var assetName = Path.GetFileNameWithoutExtension(data.path);
+            Dll.AssetStore.AddAsset(Game.gameRef, AssetTypeId, data.guidHash, assetName);
+
+            AssetStore.Instance.ReloadAssetValues(assetGuid);
+
             Console.WriteLine($"CreatAsset: {data.time}: '{assetPath}'");
 
             return data;
@@ -587,51 +605,6 @@ namespace FireYaml {
 
             var result = type.IsAssignableFrom(obj.GetType());
             return result;
-        }
-
-        public static int CreatePrefab(CsRef actorRef, ulong pathPtr) {
-            var path = Assets.ReadCString(pathPtr);
-
-            try {
-                object actor = CppLinked.GetObjectByRef(actorRef);
-
-                var assetGuidHash = FireYaml.AssetStore.Instance.WriteAsset(path, actor);
-                return assetGuidHash;
-
-            } catch (Exception e) {
-
-                Console.WriteLine("Exception on SaveScene:");
-
-                if (e.InnerException != null) {
-                    Console.WriteLine(e.InnerException.Message);
-                    Console.WriteLine(e.InnerException.StackTrace);
-                }
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                return 0;
-            }
-        }
-
-        public static bool UpdatePrefab(CsRef actorRef, int assetGuidHash) {
-            try {
-                object actor = CppLinked.GetObjectByRef(actorRef);
-                var assetGuid = Instance.GetAssetGuid(assetGuidHash);
-
-                FireYaml.AssetStore.Instance.UpdateAsset(assetGuid, actor);
-                return true;
-
-            } catch (Exception e) {
-
-                Console.WriteLine("Exception on SaveScene:");
-
-                if (e.InnerException != null) {
-                    Console.WriteLine(e.InnerException.Message);
-                    Console.WriteLine(e.InnerException.StackTrace);
-                }
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                return false;
-            }
         }
 
 

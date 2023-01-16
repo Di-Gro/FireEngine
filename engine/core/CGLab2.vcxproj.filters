@@ -375,6 +375,9 @@
     <ClCompile Include="JoltExtantions.cpp">
       <Filter>FirePhysics</Filter>
     </ClCompile>
+    <ClCompile Include="UI\PrefabPickerPopup.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -748,6 +751,9 @@
     </ClInclude>
     <ClInclude Include="JoltExtantions.h">
       <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\PrefabPickerPopup.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

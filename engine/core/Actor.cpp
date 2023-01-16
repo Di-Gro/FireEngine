@@ -113,7 +113,7 @@ void Actor::f_FixedUpdate() {
 	}
 }
 
-void Actor::f_Destroy() {
+void Actor::Clear() {
 	for (int i = m_childs.size() - 1; i >= 0; --i)
 		m_childs[i]->Destroy();
 
@@ -124,6 +124,11 @@ void Actor::f_Destroy() {
 		f_DestroyComponent(*it);
 		it = m_EraseComponent(it);
 	}
+}
+
+void Actor::f_Destroy() {
+	Clear();
+
 	m_DeleteFromParent();
 
 	f_game = nullptr;
@@ -405,6 +410,7 @@ DEF_FUNC(Actor, GetChild, CsRef)(CppRef objRef, int index) {
 }
 
 DEF_PROP_GETSET_STR(Actor, name);
+DEF_PROP_GETSET_STR(Actor, prefabId);
 
 DEF_PROP_GETSET(Actor, Vector3, localPosition)
 DEF_PROP_GETSET(Actor, Vector3, localRotation)

@@ -1,17 +1,20 @@
-#include "AssetPickerPopup.h"
+#include "PrefabPickerPopup.h"
 
 #include <iostream>
 #include <algorithm>
 #include <math.h>
 
 #include "../Game.h"
+#include "../Actor.h"
 #include "../Math.h"
 #include "../AssetStore.h"
+#include "../ContextMenu.h"
 #include "ComponentPicker.h"
 
 #include "../imgui/misc/cpp/imgui_stdlib.h"
 
-bool AssetPickerPopup::IsMatch(std::string source, std::string target) {
+
+bool PrefabPickerPopup::IsMatch(std::string source, std::string target) {
 	std::transform(source.begin(), source.end(), source.begin(), ::tolower);
 	std::transform(target.begin(), target.end(), target.begin(), ::tolower);
 
@@ -20,33 +23,19 @@ bool AssetPickerPopup::IsMatch(std::string source, std::string target) {
 	return res != std::string::npos;
 }
 
-bool AssetPickerPopup::Open(Game* game) {
+bool PrefabPickerPopup::Open(Actor* actor) {
+	auto game = actor->game();
 	auto store = game->assetStore();
 
-	if (scriptIdHash == 0)
+	m_prefabIdHash = store->prefabTypeIdHash;
+
+	if (!store->assets.contains(m_prefabIdHash))
 		return false;
 
-	if (!store->assets.contains(scriptIdHash))
-		return false;
-
-	const auto* content = &store->assets[scriptIdHash];
+	const auto* content = &store->assets[m_prefabIdHash];
 
 	bool hasSelected = false;
 
-	//ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 3.0f, 3.0f });
-	//ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 6.0f);
-	//ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 1.0f);
-	//ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
-	//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
-	//ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
-	//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
-
-	//ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.2f, 0.2f ,0.2f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_Text, { 0.8f, 0.8f ,0.8f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_Header, { 0.4f, 0.4f ,0.4f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.4f, 0.4f ,0.4f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, { 0.2f, 0.2f ,0.2f ,1.0f });
-	//ImGui::PushStyleColor(ImGuiCol_ChildBg, { 0.2f, 0.2f ,0.2f ,1.0f });
 	ComponentPicker::PushPopupStyles();
 
 	auto filtered = std::vector<int>();
@@ -58,7 +47,6 @@ bool AssetPickerPopup::Open(Game* game) {
 	m_isOpen = false;
 	m_selectedIndex = -1;
 
-	//ImGui::PushID(imguiID);
 	if (ImGui::BeginPopupContextItem(0, flags)) {
 
 		m_isOpen = true;
@@ -71,6 +59,7 @@ bool AssetPickerPopup::Open(Game* game) {
 		ImGui::Text(headerText);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 6.0f);
+
 		ImGui::InputText("##findType", &m_input, ImGuiInputTextFlags_AutoSelectAll);
 
 		if (!ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
@@ -81,12 +70,16 @@ bool AssetPickerPopup::Open(Game* game) {
 		ImGui::Separator();
 		ImGui::PopStyleVar(1);
 
+		hasSelected = m_DrawMenu(actor);
+		
 		for (int i = 0; i < content->size(); i++) {
 			if (IsMatch(store->GetAssetName(content->at(i)), m_input))
 				filtered.push_back(i);
 		}
 
-		if (filtered.size() == 1)
+		m_filteredCount = filtered.size();
+
+		if (m_filteredCount == 1)
 			m_selectedIndex = 0;
 
 		if (ImGui::IsKeyPressed(ImGuiKey_Enter) && isInputDeactivated) {
@@ -117,11 +110,56 @@ bool AssetPickerPopup::Open(Game* game) {
 
 		ImGui::EndPopup();
 	}
-	//ImGui::PopID();
-
-	//ImGui::PopStyleVar(7);
-	//ImGui::PopStyleColor(6);
 	ComponentPicker::PopPopupStyles();
 
 	return hasSelected;
+}
+
+
+bool PrefabPickerPopup::m_DrawMenu(Actor* actor) {
+	auto game = actor->game();
+	bool hasItems = false;
+	bool hasUniqueName = m_filteredCount == 0 && m_input.size() > 0;
+	auto filename = m_input + ".yml";
+
+	if (hasUniqueName) {
+		if (PrefabMenu::CanCreate(actor, filename)) {
+
+			if (ImGui::Selectable("Create")) {
+				PrefabMenu::Create(actor, filename);
+				ImGui::CloseCurrentPopup();
+			}
+			hasItems = true;
+		}
+	}
+	else {
+		{
+			if (ImGui::Selectable("Null")) {
+				selected = 0;
+				ImGui::CloseCurrentPopup();
+				return true;
+			}
+			hasItems = true;
+		}
+		if (PrefabMenu::CanSave(actor)) {
+
+			if (ImGui::Selectable("Save")) {
+				PrefabMenu::Save(actor);
+				ImGui::CloseCurrentPopup();
+			}
+			hasItems = true;
+		}
+		if (PrefabMenu::CanLoad(actor)) {
+
+			if (ImGui::Selectable("Load")) {
+				PrefabMenu::Load(actor);
+				ImGui::CloseCurrentPopup();
+			}
+			hasItems = true;
+		}
+	}
+	if(hasItems)
+		ImGui::Separator();
+
+	return false;
 }

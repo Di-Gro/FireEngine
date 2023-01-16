@@ -277,20 +277,6 @@ void Game::m_BeginUpdate() {
 	m_hotkeys->Update(input());
 
 	m_BeginUpdateImGui();
-
-	if (hotkeys()->GetButtonDown(Keys::P) && ui()->HasActor()) {
-		auto path = assetStore()->assetsPath() + "/TestPrefabs/test_prefab_1.yml";
-		callbacks().createPrefab(ui()->GetActor()->csRef(), (size_t)path.c_str());
-	}
-	if (hotkeys()->GetButtonDown(Keys::P) && !ui()->HasActor()) {
-		auto hash = assets()->GetCsHash("96b737af-5009-4a0d-bf44-442a49f4737c");
-
-		PushScene(m_editorScene);
-		auto cppRef = callbacks().instanciatePrefab(hash);
-		PopScene();
-
-		auto actor = CppRefs::GetPointer<Actor>(cppRef);
-	}
 }
 
 void Game::m_EndUpdate() {

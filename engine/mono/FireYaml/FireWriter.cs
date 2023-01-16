@@ -173,17 +173,17 @@ namespace FireYaml {
             if (m_assetInst == 0)
                 m_assetInst = IFile.GetAssetInstance(ref obj);
 
-            var prefabId = IFile.GetPrefabId(ref obj);
-            if (prefabId != IFile.NotPrefab) {
-                var origValues = AssetStore.Instance.ThrowAssetValues(prefabId);
-                var basePrefabId = origValues.GetValue(".file1!prefabId", IFile.NotPrefab);
-                IFile.SetPrefabId(basePrefabId, ref obj);
-            }
+            // var prefabId = IFile.GetPrefabId(ref obj);
+            // if (prefabId != IFile.NotPrefab) {
+            //     var origValues = AssetStore.Instance.ThrowAssetValues(prefabId);
+            //     var basePrefabId = origValues.GetValue(".file1!prefabId", IFile.NotPrefab);
+            //     IFile.SetPrefabId(basePrefabId, ref obj);
+            // }
 
             CreateDocument(type, obj, notSaveAsAsset: true);
 
-            if (prefabId != IFile.NotPrefab)
-                IFile.SetPrefabId(prefabId, ref obj);
+            // if (prefabId != IFile.NotPrefab)
+            //     IFile.SetPrefabId(prefabId, ref obj);
 
             m_ResolveLinks();
 
@@ -218,13 +218,13 @@ namespace FireYaml {
             // m_SetAssignedDoc(fullPath, m_rootPath, type, instance);
             m_SetAssignedDoc(fullPath, m_rootPath, instance);
 
-            var prefabId = IFile.GetPrefabId(ref instance);
-            if (prefabId != IFile.NotPrefab) {
-                m_CreatePrefab(fullPath, type, ref instance, prefabId);
-            }
-            else {
+            // var prefabId = IFile.GetPrefabId(ref instance);
+            // if (prefabId != IFile.NotPrefab) {
+                // m_CreatePrefab(fullPath, type, ref instance, prefabId);
+            // }
+            // else {
                 m_CreateObject(fullPath, type, instance, canSaveAsLink: false, notSaveAsAsset: notSaveAsAsset);
-            }
+            // }
 
             IFile.SetAssetInstance(m_assetInst, ref instance);
 
@@ -232,41 +232,51 @@ namespace FireYaml {
         }
 
         private void m_CreatePrefab(string selfPath, Type type, ref object instance, string prefabId) {
-            var prefabInfo = AssetStore.Instance.GetAssetInfo(prefabId);
-            var origValues = AssetStore.Instance.ThrowAssetValues(prefabId);
-            var basePrefabId = origValues.GetValue(".file1!prefabId", IFile.NotPrefab);
+
+            // IFile.SetPrefabId(prefabId, ref instance);
 
             var prefabPath = $"{selfPath}!prefabId";
             var prefabValue = new YamlValue(YamlValue.Type.AssetId, prefabId);
             m_values.AddValue(prefabPath, prefabValue);
 
-            /// Запоминаем старое состояние
-            var lastRoot = m_rootPath;
-            var lastNextIndex = m_nextDocIndex;
-            var last_m_assetInst = m_assetInst;
-            var lsst_fileId = IFile.GetFileId(ref instance);
+            return;
 
-            /// Устанавливаем новое состояние
-            m_assetInst = IFile.GetAssetInstance(ref instance);
-            m_rootPath = $"{selfPath}!";
-            m_nextDocIndex = prefabInfo.files + 1;
-            IFile.SetPrefabId(basePrefabId, ref instance); /// TODO: это просто, чтобы обновить информацию
-            IFile.SetFileId(1, ref instance);
+            ////
+            // var prefabInfo = AssetStore.Instance.GetAssetInfo(prefabId);
+            // var origValues = AssetStore.Instance.ThrowAssetValues(prefabId);
+            // var basePrefabId = origValues.GetValue(".file1!prefabId", IFile.NotPrefab);
 
-            /// Внутри нового состояния
-            m_origValues.Append(origValues, m_rootPath);
+            // var prefabPath = $"{selfPath}!prefabId";
+            // var prefabValue = new YamlValue(YamlValue.Type.AssetId, prefabId);
+            // m_values.AddValue(prefabPath, prefabValue);
 
-            m_origValues.RemoveValue($"{m_rootPath}.file0.assetId");
-            m_origValues.RemoveValue($"{m_rootPath}.file0.files");
+            // /// Запоминаем старое состояние
+            // var lastRoot = m_rootPath;
+            // var lastNextIndex = m_nextDocIndex;
+            // var last_m_assetInst = m_assetInst;
+            // var lsst_fileId = IFile.GetFileId(ref instance);
 
-            CreateDocument(type, instance);
+            // /// Устанавливаем новое состояние
+            // m_assetInst = IFile.GetAssetInstance(ref instance);
+            // m_rootPath = $"{selfPath}!";
+            // m_nextDocIndex = prefabInfo.files + 1;
+            // IFile.SetPrefabId(basePrefabId, ref instance); /// TODO: это просто, чтобы обновить информацию
+            // IFile.SetFileId(1, ref instance);
 
-            /// Восстанавливаем старое состояние
-            m_rootPath = lastRoot;
-            m_nextDocIndex = lastNextIndex;
-            IFile.SetAssetInstance(last_m_assetInst, ref instance);
-            IFile.SetPrefabId(prefabId, ref instance);
-            IFile.SetFileId(lsst_fileId, ref instance);
+            // /// Внутри нового состояния
+            // m_origValues.Append(origValues, m_rootPath);
+
+            // m_origValues.RemoveValue($"{m_rootPath}.file0.assetId");
+            // m_origValues.RemoveValue($"{m_rootPath}.file0.files");
+
+            // CreateDocument(type, instance);
+
+            // /// Восстанавливаем старое состояние
+            // m_rootPath = lastRoot;
+            // m_nextDocIndex = lastNextIndex;
+            // IFile.SetAssetInstance(last_m_assetInst, ref instance);
+            // IFile.SetPrefabId(prefabId, ref instance);
+            // IFile.SetFileId(lsst_fileId, ref instance);
 
         }
 

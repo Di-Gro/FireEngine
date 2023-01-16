@@ -36,9 +36,11 @@ public:
 	/// TODO: bool isStatic = true;
 	/// TODO: bool isActive = true;
 	bool isSelectable = true;
+	//int prefabIdHash = 0;
 
 private:
 	std::string m_name = "";
+	std::string m_prefabId = "";
 	//std::string m_postfix = "";
 
 	Game* f_game = nullptr;
@@ -61,6 +63,9 @@ public:
 
 	const std::string& name() { return m_name; }
 	void name(const std::string& value) { m_name = value; }
+
+	const std::string& prefabId() { return m_prefabId; }
+	void prefabId(const std::string& value) { m_prefabId = value; }
 
 	//const std::string& postfix() { return m_postfix; }
 	//void postfix(const std::string& value) { m_postfix = value; }
@@ -97,6 +102,8 @@ public:
 
 	void RecieveGameMessage(const std::string& msg) override;
 
+	void Clear();
+
 	~Actor();
 
 private:
@@ -113,7 +120,7 @@ private:
 	void f_Draw();
 	//void f_DrawUI();
 	void f_Destroy();
-
+	
 	void f_SetParent(Actor* actor);
 
 	std::list<Component*>::iterator m_EraseComponent(std::list<Component*>::iterator it);
@@ -158,6 +165,7 @@ FUNC(Actor, GetChildrenCount, int)(CppRef objRef);
 FUNC(Actor, GetChild, CsRef)(CppRef objRef, int index);
 
 PROP_GETSET_STR(Actor, name);
+PROP_GETSET_STR(Actor, prefabId);
 
 PROP_GETSET(Actor, Vector3, localPosition)
 PROP_GETSET(Actor, Vector3, localRotation)

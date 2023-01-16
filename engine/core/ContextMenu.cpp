@@ -122,3 +122,90 @@ Component* ComponentMenu::Paste(Actor* actor) {
 
 	return commponent;
 }
+
+bool PrefabMenu::CanCreate(Actor* actor, const std::string& name) {
+	if (actor == nullptr || name == "")
+		return false;
+
+	auto game = actor->game();
+	auto path = game->assetStore()->assetsPath() + "/" + name;
+
+	if (fs::exists(path))
+		return false;
+
+	return true;
+}
+
+void PrefabMenu::Create(Actor* actor, const std::string& name) {
+	if (!CanCreate(actor, name))
+		return;
+
+	auto game = actor->game();
+	auto path = game->assetStore()->assetsPath() + "/" + name;
+
+	auto prefabIdHash = game->callbacks().createPrefab(actor->csRef(), (size_t)path.c_str());
+
+	game->callbacks().setPrefabId(actor->csRef(), prefabIdHash);
+}
+
+bool PrefabMenu::CanSave(Actor* actor) {
+	if (actor == nullptr || actor->prefabId() == "")
+		return false;
+
+	auto game = actor->game();
+	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+
+	bool hasAsset = game->callbacks().hasAssetInStore(prefabIdHash);
+	if (!hasAsset)
+		return false;
+
+	return true;
+}
+
+void PrefabMenu::Save(Actor* actor) {
+	if (!CanSave(actor))
+		return;
+
+	auto game = actor->game();
+	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+
+	game->callbacks().updatePrefab(actor->csRef(), prefabIdHash);
+}
+
+bool PrefabMenu::CanLoad(Actor* actor) {
+	if (actor == nullptr || actor->prefabId() == "")
+		return false;
+
+	auto game = actor->game();
+	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+
+	bool hasAsset = game->callbacks().hasAssetInStore(prefabIdHash);
+	if (!hasAsset)
+		return false;
+
+	return true;
+}
+
+void PrefabMenu::Load(Actor* actor) {
+	if (!CanLoad(actor))
+		return;
+
+	auto game = actor->game();
+	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+
+	auto position = actor->localPosition();
+	auto rotation = actor->localRotationQ();
+	auto scale = actor->localScale();
+	auto prefabId = actor->prefabId();
+
+	actor->Clear();
+
+	game->PushScene(actor->scene());
+	game->callbacks().loadPrefab(prefabIdHash, actor->csRef());
+	game->PopScene();
+
+	actor->prefabId(prefabId);
+	actor->localPosition(position);
+	actor->localRotationQ(rotation);
+	actor->localScale(scale);
+}
