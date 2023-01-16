@@ -7,18 +7,36 @@
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_dx11.h"
 #include "imgui\imgui_impl_win32.h"
+#include "imguizmo\ImGuizmo.h"
 
 #include "Window.h"
+#include "Scene.h"
+#include "Render.h"
+#include "Physics.h"
+#include "RenderDevice.h"
+#include "Lighting.h"
+#include "InputDevice.h"
+#include "HotKeys.h"
+#include "Assets.h"
+#include "AssetStore.h"
+#include "ShaderAsset.h"
+#include "MeshAsset.h"
+#include "ImageAsset.h"
+#include "UI/UserInterface.h"
+#include "Actor.h"
+
 #include "RenderTarget.h"
 #include "FPSCounter.h"
 #include "GameController.h"
 #include "DirectionLight.h"
 #include "FlyingCamera.h"
+#include "EditorCamera.h"
 #include "ImageComponent.h"
 #include "MeshComponent.h"
 #include "Player.h"
 #include "PlayerCamera.h"
 #include "AmbientLight.h"
+#include "LinedPlain.h"
 
 #include "MonoInst.h"
 #include "ClassInfo.h"
@@ -29,6 +47,13 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 #include "TestLightComponent.h"
+#include "Material.h"
+
+#include "SimpleMath.h"
+
+#include "ContextMenu.h"
+
+#include "UI\SceneEditorWindow.h"
 
 
 std::vector<std::string> game_shaderPaths = {
@@ -40,359 +65,383 @@ std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderPointLight,
 	Assets::ShaderPointLightMesh,
 	Assets::ShaderSpotLight,
+	Assets::ShaderEditorHihglight,
+	Assets::ShaderEditorOutline,
+	Assets::ShaderBlur,
+	Assets::ShaderWorldGride,
 	"../../data/engine/shaders/rp_image.hlsl",
 	"../../data/engine/shaders/shadow_map.hlsl",
 	"../../data/engine/shaders/rp_screen_quad.hlsl",
 	"../../data/engine/shaders/screen.hlsl",
 };
 
+Game::Game() {
+	m_window = new Window();
+	m_render = new Render();
+	m_physics = new Physics();
+	m_input = new InputDevice();
+	m_hotkeys = new HotKeys();
+	m_shaderAsset = new ShaderAsset();
+	m_meshAsset = new MeshAsset();
+	m_imageAsset = new ImageAsset();
+	m_assets = new Assets();
+	m_assetStore = new AssetStore();
+	m_ui = new UserInterface();
+}
+
+Game::~Game() {
+	delete m_window;
+	delete m_render;
+	delete m_physics;
+	delete m_input;
+	delete m_hotkeys;
+	delete m_shaderAsset;
+	delete m_meshAsset;
+	delete m_imageAsset;
+	delete m_assets;
+	delete m_assetStore;
+	delete m_ui;
+}
 
 void Game::Init(MonoInst* imono) {
 	m_InitMono(imono);
-		
-	m_window.Init(L"CGLab6 - Shadow Map", 1920, 1080);
-	m_window.Create();
 
-	m_render.Init(this, &m_window);
-	m_shaderAsset.Init(&m_render);
-	m_meshAsset.Init(this);
-	m_imageAsset.Init();
-	m_input.Init(this);
-	m_hotkeys.Init(this);
+	m_window->Init(this, L"CGLab6 - Shadow Map", 1920, 1080);
+	m_window->Create();
+
+	m_render->Init(this, m_window);
+	m_physics->Init(this);
+	m_shaderAsset->Init(m_render);
+	m_meshAsset->Init(this);
+	m_imageAsset->Init();
+	m_input->Init(this);
+	m_hotkeys->Init(this);
+	m_assets->Init(this);
+	m_assetStore->Init(this);
 
 	for (auto& path : game_shaderPaths)
-		m_shaderAsset.CompileShader(path);
-
-	m_lighting.Init(this);
+		m_shaderAsset->CompileShader(path);
 
 	m_InitImGui();
+	m_ui->Init(this);
+
+	auto assetStoreRef = CppRefs::Create((void*)m_assetStore).cppRef();
+	callbacks().setAssetStoreRef(RefCpp(assetStoreRef));
+	callbacks().loadAssetStore();
+
+	m_editorWindow = ui()->CreateSceneWindow("Editor");
+	m_editorWindow->visible = true;
+
+	m_gameWindow = ui()->CreateSceneWindow("Game");
+	m_gameWindow->visible = false;
+
+	//tmpSceneAssetId = assets()->CreateTmpAssetId();
 }
 
 void Game::m_InitMono(MonoInst* imono) {
 	m_mono = imono;
 
 	auto gameType = m_mono->GetType("Engine", "Game");
-	auto method_SetGameRef = mono::make_method_invoker<void(CppRef)>(gameType, "cpp_SetGameRef");
-	mono_setUpdateData = mono::make_method_invoker<void(GameUpdateData)>(gameType, "cpp_SetUpdateData");
-
-	auto gameObjectType = m_mono->GetType("Engine", "Actor");
-	mono_create = mono::make_method_invoker<CppRef()>(gameObjectType, "cpp_Create");
+	auto method_Init = mono::make_method_invoker<void(CppRef)>(gameType, "cpp_Init");
 
 	auto gameRef = CppRefs::Create(this);
-	method_SetGameRef(CppRef::Create(gameRef.cppRef()));
+	method_Init(CppRef::Create(gameRef.cppRef()));
 }
 
+bool Game::LoadScene(Scene* targetScene, int assetGuidHash) {
+	bool loaded = false;
+	auto sceneRef = CppRefs::GetRef(targetScene);
+
+	if (targetScene->IsAsset()) {
+		bool hasAsset = callbacks().hasAssetInStore(targetScene->assetIdHash());
+		if (hasAsset)
+			loaded = assets()->Load(targetScene->assetIdHash(), sceneRef);
+	}
+	else if(assetGuidHash != 0) {
+		loaded = callbacks().loadScene(sceneRef, assetGuidHash);
+	}
+	return loaded;
+}
+
+#define PEEK_MESSAGE(msg, m_onExit, isExitRequested)\
+while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {\
+	TranslateMessage(&msg);\
+	DispatchMessage(&msg);\
+}\
+if (msg.message == WM_QUIT || m_onExit) {\
+	isExitRequested = true;\
+	break;\
+}\
+
 void Game::Run() {
-	bool isExitRequested = false;
+	m_render->Start();
+	m_meshAsset->Start();
 
-	m_render.Start();
-	m_meshAsset.Start(); 
+	m_editorScene = CreateScene(true, editorSettings.startupScene);
+	if (!LoadScene(m_editorScene)) {
+		PushScene(m_editorScene);
+		m_editorScene->name("!!!This scene can not be saved!!!");
+		SceneMenu::AddLight(m_editorScene);
+		PopScene();
+	}
+	m_editorWindow->scene(m_editorScene);
 
-	CullMode::Back;
+	//PushScene(m_editorScene);
 
-	///
+	//auto meshcomp = currentScene()->CreateActor("Half Sphere")->AddComponent<MeshComponent>(true);
+	//auto form = Forms4::HalfSphereLined(0.5f, 12, 12);
+	//meshcomp->AddShape(&form.verteces, &form.indexes);
+	//meshcomp->mesh()->topology = form.topology;
+	//meshcomp->meshScale = {10,10,10};
+	//
+	//currentScene()->CreateActor("GameController")->AddComponent<GameController>();
+	//PopScene();
 
-	auto cppObj = CppClass();
-	auto csLink = CSLinked<CppClass>(mono());
-
-	//csLink.Link(cppObj, "EngineMono", "CSClass");	
-
-	//auto actor = CreateActor()->AddComponent<CsComponent>("Engine.TestYaml");
-
-
-	//isExitRequested = true; // return;
-	///
-
-	m_defaultCamera = CreateActor("default camera")->AddComponent<FlyingCamera>();
-	m_defaultCamera->localPosition({ 0, 0, 300 });
-	m_defaultCamera->localRotation({ rad(-45), rad(45 + 180), 0 });
-	m_defaultCamera->Attach();
-	m_defaultCamera->drawDebug = false;
-
-	m_lighting.f_directionLight = m_defaultCamera->AddComponent<DirectionLight>();
-	m_lighting.f_directionLight->localRotation({ rad(-45), rad(45 + 180), 0 });
-	m_lighting.f_directionLight->drawDebug(true);
-
-	CreateActor("GameController")->AddComponent<GameController>();
-	CreateActor()->AddComponent<TestLightComponent>();
-	
 	MSG msg = {};
-	
+
+	m_fixedTimer.targetRate(60.0f);
+
+	bool isExitRequested = false;
 	while (!isExitRequested) {
-		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+		PEEK_MESSAGE(msg, m_onExit, isExitRequested);
+		m_ShowFPS();
 
-		if (msg.message == WM_QUIT || m_onExit) {
-			isExitRequested = true;
-			break;
-		}
+		m_updateTimer.MakeStep();
 
-		m_Update();
-		m_render.Draw();
-		
-		m_fpsCounter.Update();
-		if (m_fpsCounter.HasChanges()) {
-			WCHAR text[256];
-			swprintf_s(text, TEXT("FPS: %d"), m_fpsCounter.FPS());
-			SetWindowText(m_window.GetHWindow(), text);
-		}
+		m_BeginUpdate();
+		m_ForScenes(&Scene::f_Update);
+		m_DrawUI();
+
+		while (m_fixedTimer.NextStep())
+			m_ForScenes(&Scene::f_FixedUpdate);
+
+		m_EndUpdate();
+		m_render->Draw(&m_scenes);
 	}
 
 	m_Destroy();
 }
 
+void Game::m_ShowFPS() {
+	if (m_updateTimer.IsRateChanged() || m_fixedTimer.IsRateChanged()) {
+		WCHAR text[256];
+		swprintf_s(text,
+			TEXT("Update Rate: %d\t Fixed Rate: %d"),
+			m_updateTimer.RatePerSecond(),
+			m_fixedTimer.RatePerSecond()
+		);
+		SetWindowText(m_window->GetHWindow(), text);
+	}
+}
+
 void Game::Exit(int code) {
 	if (!m_onExit) {
 		m_onExit = true;
-		m_window.Exit(code);
+		m_window->Exit(code);
 	}
 }
 
-void Game::m_Update() {
-	/// Pre Update
-	GameUpdateData updateData;
-	updateData.deltaTime = deltaTime();
-	mono_setUpdateData(updateData);
-	m_hotkeys.Update(input());
+void Game::m_ForScenes(void (Scene::* method)()) {
 
-	/// ImGui Update
-	m_BeginUpdateImGui();
+	auto it = m_scenes.begin();
+	while (it != m_scenes.end()) {
 
-	/// Update
-	auto it = m_actors.begin();
-	while (it != m_actors.end()) {
-
-		auto actor = (*it);
-		if (actor->IsDestroyed()) {
-			actor->friend_timeToDestroy--;
-			if (actor->friend_timeToDestroy <= 0)
-				it = m_EraseActor(it);
+		auto scene = (*it);
+		if (scene->IsDestroyed()) {
+			scene->timeToDestroy--;
+			if (scene->timeToDestroy <= 0)
+				it = m_EraseScene(it);
 			continue;
 		}
-		actor->f_Update();
+		(scene->*method)();
+		assert(m_sceneStack.size() == 0);
+
 		it++;
 	}
+}
 
-	/// Post Update
-	m_hotkeys.LateUpdate();
+void Game::m_DrawUI() {
+	if (ui()->selectedScene() != nullptr && ui()->selectedScene()->IsDestroyed())
+		ui()->selectedScene(nullptr);
 
-	if (m_hotkeys.GetButtonDown(Keys::Tilda))
-		inFocus = !inFocus;
-	
-	ImGui::Begin("Main Render Target");
+	if (ui()->HasActor() && ui()->GetActor()->IsDestroyed())
+		ui()->SelectedActor(nullptr);
 
-	auto size = ImGui::GetWindowSize();
+	ui()->Draw();
+}
 
-	render()->ResizeViewport(size.x, size.y - 35);
+void Game::m_BeginUpdate() {
+	GameUpdateData updateData;
+	updateData.deltaTime = deltaTime();
+	m_callbacks.setUpdateData(updateData);
 
-	ImGui::Image(render()->screenSRV(), { size.x, size.y - 35 });
-	ImGui::End();
+	m_hotkeys->Update(input());
 
-	if (!inFocus) {
-		auto w = (float)window()->GetWidth();
-		auto h = (float)window()->GetHeight();
+	m_BeginUpdateImGui();
 
-		ImGui::Begin("Direction Light Shadow Map");
-		ImGui::Image(lighting()->directionLight()->depthResource()->get(), { w / 6, h / 6 });
-		ImGui::End();
+	if (m_nextScene != nullptr) {
+		bool isSelected = ui()->selectedScene() == m_editorScene;
+
+		DestroyScene(m_editorScene);
+		m_editorScene = m_nextScene;
+		m_nextScene = nullptr;
+
+		m_editorWindow->scene(m_editorScene);
+
+		if (isSelected)
+			ui()->selectedScene(m_editorScene);
+
+		LoadScene(m_editorScene);
+	}
+}
+
+void Game::m_EndUpdate() {
+	m_EndUpdateImGui();
+
+	m_hotkeys->LateUpdate();
+
+	bool Ctrl = m_hotkeys->GetButtonDown(Keys::Ctrl);
+	bool Tilda = m_hotkeys->GetButtonDown(Keys::Tilda);
+	bool S = m_hotkeys->GetButtonDown(Keys::S);
+	bool R = m_hotkeys->GetButtonDown(Keys::S);
+
+	if (m_hotkeys->GetButtonDown(Keys::Tilda))
+		ToggleGameFocus();
+
+	if (m_hotkeys->GetButtonDown(Keys::R, Keys::Ctrl)) {
+		shaderAsset()->RecompileShaders();
+		meshAsset()->ReloadMaterials();
+		std::cout << std::endl;
 	}
 
-	m_EndUpdateImGui();
+	if (m_hotkeys->GetButtonDown(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
+		/// TODO: Сохранить все ассеты
+	}
 }
+
 
 void Game::m_Destroy() {
 
-	auto it = m_actors.begin();
-	while (it != m_actors.end()) {
-		DestroyActor(*it);
-		it = m_EraseActor(it);
+	auto it = m_scenes.begin();
+	while (it != m_scenes.end()) {
+		DestroyScene(*it);
+		it = m_EraseScene(it);
 	}
 
 	m_DestroyImGui();
-	m_hotkeys.Destroy();
-	m_meshAsset.Destroy();
-	m_render.Destroy();
-	m_window.Destroy();
+	m_hotkeys->Destroy();
+	m_meshAsset->Destroy();
+	m_physics->Destroy();
+	m_render->Destroy();
+	m_window->Destroy();
 }
 
-Actor* Game::CreateActor(Actor* parent, std::string name) {
-	//std::cout << "+: Game.CreateActor()" << std::endl;
+void Game::PushScene(Scene* value) {
+	m_sceneStack.push_back(value);
+	callbacks().setSceneRef(CppRefs::GetRef(value));
 
-	auto cppRef = mono_create();
-	
-	Actor* actor = CppRefs::ThrowPointer<Actor>(cppRef);
-	if (name != "")
-		actor->SetName(name);
-
-	if (parent != nullptr) {
-		actor->parent(parent);
-		actor->localScale({ 1, 1, 1 });
-	}
-	return actor;
+	if(!value->m_isStarted)
+		value->Start();
 }
 
-
-GameObjectInfo Game::m_CreateActorFromCs(CsRef csRef, CppRef parentRef) {
-	//std::cout << "+: Game.CreateGameObjectFromCS(): csRef:" << csRef << std::endl;
-
-	auto classInfoRef = CppRefs::Create(ClassInfo::Get<Actor>());
-
-	Actor* actor = new Actor();
-	m_actors.insert(m_actors.end(), actor);
-
-	actor->f_actorID = ++m_objectCount;
-	actor->f_ref = CppRefs::Create(actor);
-	actor->f_cppRef = actor->f_ref.cppRef();
-	actor->f_csRef = csRef;
-
-	actor->f_Init(this);
-
-	if (parentRef.value != 0) {
-		auto parent = CppRefs::ThrowPointer<Actor>(parentRef);
-		actor->parent(parent);
-		actor->localScale({ 1, 1, 1 });
-	}
-	GameObjectInfo objectInfo;
-	objectInfo.classRef = RefCpp(classInfoRef.cppRef());
-	objectInfo.objectRef = actor->cppRef();
-
-	return objectInfo;
+void Game::PopScene() {
+	m_sceneStack.pop_back();
+	callbacks().setSceneRef(RefCpp(0));
 }
 
-void Game::DestroyActor(Actor* actor) {
-	if (actor->ActorBase::friend_CanDestroy()) {
-		actor->ActorBase::friend_StartDestroy();
+Scene* Game::CreateScene(bool isEditor) {
+	auto* scene = new Scene();
+	m_scenes.push_back(scene);
 
-		actor->f_Destroy();
+	scene->f_ref = CppRefs::Create(scene);
+	scene->f_sceneIter = --m_scenes.end();
+	scene->Init(this, isEditor);
 
-		if (CppRefs::IsValid(actor->f_ref)) {
-			CppRefs::Remove(actor->f_ref);
-			//std::cout << "+: CppRefs.Remove(): " << actor->cppRef() << std::endl;
+	return scene;
+}
+
+Scene* Game::CreateScene(bool isEditor, const std::string& assetId) {
+	auto gameRef = CppRefs::GetRef(this);
+	auto assetIdHash = assets()->GetCsHash(assetId);
+
+	auto sceneRef = Scene_PushAsset(gameRef, assetId.c_str(), assetIdHash);
+	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);
+
+	m_scenes.push_back(scene);
+
+	scene->f_sceneIter = --m_scenes.end();
+	scene->Init(this, isEditor);
+
+	return scene;
+}
+
+void Game::DestroyScene(Scene* scene) {
+	if (scene->BeginDestroy()) {
+		for (auto sceneInStack : m_sceneStack) {
+			if (sceneInStack == scene)
+				throw std::exception("Can't destroy a scene while it's in use");
 		}
+		scene->Destroy();
+		scene->EndDestroy();
 	}
 }
 
-std::list<Actor*>::iterator Game::m_EraseActor(std::list<Actor*>::iterator it) {
-	auto* actor = *it;
-	auto next = m_actors.erase(it);
-	delete actor;
-	return next;
+bool  Game::CanChangeScene() { 
+	return m_nextScene == nullptr; 
 }
 
-void Game::PrintSceneTree() {
-	/*auto it = m_actors.begin();
-	for (int i = 0; it != m_actors.end(); it++, i++) {
-		if (!(*it)->HasParent())
-			m_PrintSceneTree("", *it);
-	}*/
-}
-
-void Game::m_PrintSceneTree(const std::string& prefix, const Actor* node) {
-	/*if (node != nullptr) {
-		std::cout << prefix << "* " << node->name;
-		std::cout << " (" << node->f_actorID << ")" << std::endl;
-
-		for (int i = 0; i < node->m_childs.size(); i++) {
-			auto n = node->m_childs[i];
-			m_PrintSceneTree(prefix + "  ", n);
-		}
-	}*/
-}
-
-void Game::SendGameMessage(const std::string& msg) {
-
-	if (msg == "scene") {
-		PrintSceneTree();
+void Game::ChangeScene(Scene* scene) {
+	if (m_editorScene == scene)
 		return;
-	}
 
-	if (msg == "recompile") {
-		m_shaderAsset.RecompileShaders();
-		meshAsset()->ReloadMaterials();
-		std::cout << std::endl;
-		return;
-	}
-
-	int objId;
-	std::stringstream ss(msg);
-	ss >> objId;
-
-	std::string lostMsg;
-	std::getline(ss, lostMsg);
-	auto s = lostMsg.erase(0, 1);
-
-	for (auto actor : m_actors) {
-		if (actor->f_actorID == objId && !actor->IsDestroyed())
-			actor->RecieveGameMessage(s);
-	}
+	m_nextScene = scene;
 }
 
-void Game::Stat() {
-	int actorsCount = 0;
-	int csComponents = 0;
-	int cppComponents = 0;
+std::list<Scene*>::iterator Game::m_EraseScene(std::list<Scene*>::iterator iter) {
+	auto scene = *iter;
 
-	for (auto* actor : m_actors) {
-		actorsCount++;
+	if (scene->IsAsset())
+		assets()->Pop(scene->assetIdHash());
+	else
+		CppRefs::Remove(scene->f_ref);
 
-		int count = actor->GetComponentsCount();
-		size_t* refs = new size_t[count]();
-		actor->WriteComponentsRefs(refs);
+	auto nextIter = m_scenes.erase(scene->f_sceneIter);
+	delete scene;
 
-		for (int i = 0; i < count; i++) {
-			if (refs[i] == 0)
-				cppComponents++;
-			else
-				csComponents++;
-		}
-
-		delete refs;
-	}
-
-	std::cout << "+ Game.Stat() -> " << std::endl;
-	std::cout << "+ actorsCount: " << actorsCount << std::endl;
-	std::cout << "+ csComponents: " << csComponents << std::endl;
-	std::cout << "+ cppComponents: " << cppComponents << std::endl;
-	std::cout << "+ <- " << std::endl;
+	return nextIter;
 }
-
-/// ImGui 
-/// -> 
 
 void Game::m_InitImGui() {
-	// Application init: create a dear imgui context, setup some options, load fonts
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-
-	// TODO: Set optional io.ConfigFlags values, e.g. 'io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard' to enable keyboard controls.
-	// TODO: Fill optional fields of the io structure later.
-	// TODO: Load TTF/OTF fonts if you don't want to use the default font.
 
 	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
 
 	io.WantCaptureMouse = true;
-			
-	// Initialize helper Platform and Renderer backends (here we are using imgui_impl_win32.cpp and imgui_impl_dx11.cpp)
+	io.WantCaptureKeyboard = true;
+
+	io.KeysDown[io.KeyMap[ImGuiKey_Backspace]];
+	io.KeysDown[io.KeyMap[ImGuiKey_Enter]];
+	io.KeysDown[io.KeyMap[ImGuiKey_UpArrow]];
+	io.KeysDown[io.KeyMap[ImGuiKey_DownArrow]];
+
 	ImGui_ImplWin32_Init(window()->GetHWindow());
 	ImGui_ImplDX11_Init(render()->device(), render()->context());
 }
 
 void Game::m_DestroyImGui() {
-	// Shutdown
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
 
 void Game::m_BeginUpdateImGui() {
-	// Feed inputs to dear imgui, start new frame
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 }
 
 void Game::m_EndUpdateImGui() {
@@ -401,44 +450,112 @@ void Game::m_EndUpdateImGui() {
 	ImGui::UpdatePlatformWindows();
 }
 
-/// <-
-/// ImGui 
-
-int Game::GetRootActorsCount() {
-	int count = 0;
-	for (auto actor : m_actors) {
-		if (!actor->HasParent())
-			count++;
-	}
-	return count;
+void Game::DeleteMaterialFromAllScenes(const Material* material) {
+	for (auto scene : m_scenes)
+		scene->renderer.UnRegisterMaterial(material);
 }
 
-void Game::WriteRootActorsRefs(CsRef* refs) {
-	CsRef* ptr = refs;
-	for (auto actor : m_actors) {
-		if (!actor->HasParent()) {
-			*ptr = actor->csRef();
-			ptr++;
+void Game::TogglePlayMode() {
+	auto tmpScenePath = assetStore()->editorPath() + "/Ignore/editor_scene.yml";
+	//auto assetId = tmpSceneAssetId.c_str();
+
+	if (m_gameScene == nullptr) {
+		m_gameScene = CreateScene(false);
+
+		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
+		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
+
+		int assetGuidHash = callbacks().saveScene(editorSceneRef, (size_t)tmpScenePath.c_str());
+		bool wasLoaded = false;
+
+		if (assetGuidHash != 0) {
+			wasLoaded = LoadScene(m_gameScene, assetGuidHash);
+			if (wasLoaded) {
+				m_gameScene->name(m_editorScene->name() + " (Game)");
+
+				m_gameWindow->scene(m_gameScene);
+				m_gameWindow->visible = true;
+				m_gameWindow->focus();
+
+				ui()->SelectedActor(nullptr);
+
+				if (!inFocus)
+					ToggleGameFocus();
+			}
+		}
+		if (!wasLoaded)
+			DestroyScene(m_gameScene);
+	}
+	else {
+		if (ui()->selectedScene() == m_gameScene)
+			ui()->selectedScene(nullptr);
+
+		if (ui()->HasActor() && ui()->GetActor()->scene() == m_gameScene)
+			ui()->SelectedActor(nullptr);
+
+		DestroyScene(m_gameScene);
+		m_gameScene = nullptr;
+
+		m_gameWindow->scene(nullptr);
+		m_gameWindow->visible = false;
+
+		m_editorWindow->focus();
+		m_editorWindow->visible = true;
+
+		if (inFocus)
+			ToggleGameFocus();
+	}
+}
+
+void Game::ToggleGameFocus() {
+	inFocus = !inFocus;
+	if (ui()->selectedScene() != nullptr) {
+		if (!inFocus) {
+			ui()->selectedScene()->mainCamera(nullptr);
+		}
+		else {
+			ui()->SelectedActor(nullptr);
+			m_editorScene->AttachPlayerCamera();
 		}
 	}
 }
 
-std::list<Actor*>::iterator Game::GetNextRootActor(const std::list<Actor*>::iterator& iter) {
-	for (auto it = iter; it != m_actors.end(); it++) {
-		if ((*it)->HasParent())
-			return it;
-	}
-	return m_actors.end();
+DEF_FUNC(Game, SetGameCallbacks, void)(CppRef gameRef, const GameCallbacks& callbacks) {
+	CppRefs::ThrowPointer<Game>(gameRef)->callbacks(callbacks);
 }
 
-DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef gameRef, CsRef csRef, CppRef parentRef) {
-	return CppRefs::ThrowPointer<Game>(gameRef)->m_CreateActorFromCs(csRef, parentRef);
+DEF_FUNC(Game, mainCamera_get, CsRef)(CppRef gameRef) {
+	auto camera = CppRefs::ThrowPointer<Game>(gameRef)->currentScene()->mainCamera();
+	return camera != nullptr ? camera->csRef() : RefCs(0);
 }
 
-DEF_FUNC(Game, GetRootActorsCount, int)(CppRef gameRef) {
-	return CppRefs::ThrowPointer<Game>(gameRef)->GetRootActorsCount();
+DEF_FUNC(Game, Exit, void)(CppRef gameRef) {
+	CppRefs::ThrowPointer<Game>(gameRef)->Exit(0);
 }
 
-DEF_FUNC(Game, WriteRootActorsRefs, void)(CppRef gameRef, CsRef* refs) {
-	CppRefs::ThrowPointer<Game>(gameRef)->WriteRootActorsRefs(refs);
+DEF_FUNC(Game, PushScene, void)(CppRef gameRef, CppRef sceneRef) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);
+
+	game->PushScene(scene);
+}
+
+DEF_FUNC(Game, PopScene, void)(CppRef gameRef) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	game->PopScene();
+}
+
+DEF_FUNC(Game, CreateScene, CppRef)(CppRef gameRef, bool isEditor) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	auto scene = game->CreateScene(isEditor);
+	return CppRefs::GetRef(scene);
+}
+
+DEF_FUNC(Game, DestroyScene, void)(CppRef gameRef, CppRef sceneRef) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);
+
+	game->DestroyScene(scene);
 }

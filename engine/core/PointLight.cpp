@@ -1,9 +1,13 @@
 #include "PointLight.h"
 
+#include "Game.h"
+#include "Scene.h"
+#include "Render.h"
+#include "RenderPass.h"
+#include "MeshAsset.h"
+
 #include "CameraComponent.h"
 #include "SimpleMath.h"
-
-DEF_PURE_COMPONENT(PointLight);
 
 
 void PointLight::OnInit() {
@@ -14,11 +18,11 @@ void PointLight::OnInit() {
 	m_mesh = meshAsset->GetMesh(MeshAsset::formSphere);
 	m_material = meshAsset->CreateDynamicMaterial("Point Light", Assets::ShaderPointLightMesh);
 
-	m_lightSource = render->AddLightSource(this);
+	m_lightSource = scene()->renderer.AddLightSource(this);
 }
 
 void PointLight::OnDestroy() {
-	game()->render()->RemoveLightSource(m_lightSource);
+	scene()->renderer.RemoveLightSource(m_lightSource);
 }
 
 void PointLight::OnDrawLight(RenderPass* renderPass) {
@@ -29,7 +33,7 @@ void PointLight::OnDrawLight(RenderPass* renderPass) {
 
 	auto position = worldPosition();
 	auto worldMatrix = Matrix::CreateScale(radius * 2) * GetWorldMatrix();
-	auto transMatrix = worldMatrix * render->camera()->cameraMatrix();
+	auto transMatrix = worldMatrix * render->renderer()->camera()->cameraMatrix();
 
 	m_material->cullMode = CullMode::Front;
 
@@ -52,4 +56,10 @@ LightCBuffer PointLight::GetCBuffer() {
 	cbuffer.param2 = radius;
 
 	return cbuffer;
+}
+
+DEF_COMPONENT(PointLight, Engine.PointLight, 3, RunMode::EditPlay) {
+	OFFSET(0, PointLight, color);
+	OFFSET(1, PointLight, intensity);
+	OFFSET(2, PointLight, radius);
 }

@@ -2,7 +2,6 @@
 #include "CSBridge.h"
 #include "ComponentMeta.h"
 
-
 template<typename TComponent, typename>
 TComponent* Actor::inner_CreateComponent(CsRef csRef) {
 	Component* component = new TComponent();
@@ -18,8 +17,9 @@ TComponent* Actor::inner_CreateComponent(CsRef csRef) {
 }
 
 template<IsCppAddableComponent TComponent, typename >
-TComponent* Actor::AddComponent() {
+TComponent* Actor::AddComponent(bool isRuntimeOnly) {
 	Component* component = inner_CreateComponent<TComponent>();
+	component->runtimeOnly = isRuntimeOnly;
 	auto meta = component->GetMeta();
 
 	//std::cout << "+: Actor(" << this->csRef() << ", " << this->cppRef() << ").AddComponent<\"" << meta.name << "\">() ->" << std::endl;
@@ -32,6 +32,7 @@ TComponent* Actor::AddComponent() {
 		auto csCompRef = mono_AddComponent(this->csRef(), (size_t)meta.name, std::strlen(meta.name), info);
 		component->f_csRef = csCompRef;
 	}
+	m_BindComponent(component);
 	m_InitComponent(component);
 
 	//std::cout << "+: -> " << component->csRef() << ", " << component->cppRef() << std::endl;

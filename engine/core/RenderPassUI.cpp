@@ -2,6 +2,13 @@
 
 #include <fstream>
 
+#include "Game.h"
+#include "Render.h"
+#include "ShaderAsset.h"
+#include "Window.h"
+#include "HotKeys.h"
+#include "OpaquePass.h"
+
 #include "imgui\imgui.h"
 #include "DirectionLight.h"
 #include "AmbientLight.h"
@@ -9,7 +16,7 @@
 #include "SpotLight.h"
 
 
-DEF_PURE_COMPONENT(RenderPassUI)
+DEF_PURE_COMPONENT(RenderPassUI, RunMode::EditOnly)
 
 
 void RenderPassUI::OnStart() {
@@ -17,31 +24,39 @@ void RenderPassUI::OnStart() {
 }
 
 void RenderPassUI::OnUpdate() {		
-	auto opaquePass = game()->render()->opaquePass();
+	//auto opaquePass = game()->render()->opaquePass();
 	auto window = game()->window();
 
 	auto w = (float)window->GetWidth();
 	auto h = (float)window->GetHeight();
 
-	ImGui::Begin("target0Tex: diffuse, spec");
-	ImGui::Image(opaquePass->target0Res.get(), { w / 6, h / 6 });
-	ImGui::End();
-		
-	ImGui::Begin("target1Tex: normals");
-	ImGui::Image(opaquePass->target1Res.get(), { w / 6, h / 6 });
-	ImGui::End();
+	//ImGui::Begin("m_highlightPass");
+	//ImGui::Image(game()->render()->m_highlightPass.target0Res.get(), (ImVec2&)(game()->render()->viewportSize() / 1.5));
+	//ImGui::End();
 
-	ImGui::Begin("target2Tex: vertex color");
-	ImGui::Image(opaquePass->target2Res.get(), { w / 6, h / 6 });
-	ImGui::End();
+	//ImGui::Begin("m_blurPass");
+	//ImGui::Image(game()->render()->m_blurPass.target0Res.get(), (ImVec2&)(game()->render()->viewportSize() / 1.5));
+	//ImGui::End();
 
-	ImGui::Begin("target3Tex: world pos");
-	ImGui::Image(opaquePass->target3Res.get(), { w / 6, h / 6 });
-	ImGui::End();
+	//ImGui::Begin("target0Tex: diffuse, spec");
+	//ImGui::Image(opaquePass->target0Res.get(), { w / 6, h / 6 });
+	//ImGui::End();
+	//	
+	//ImGui::Begin("target1Tex: normals");
+	//ImGui::Image(opaquePass->target1Res.get(), { w / 6, h / 6 });
+	//ImGui::End();
 
-	ImGui::Begin("targetDs: Depth");
-	ImGui::Image(game()->render()->depthRes()->get(), { w / 6, h / 6 });
-	ImGui::End();
+	//ImGui::Begin("target2Tex: vertex color");
+	//ImGui::Image(opaquePass->target2Res.get(), { w / 6, h / 6 });
+	//ImGui::End();
+
+	//ImGui::Begin("target3Tex: world pos");
+	//ImGui::Image(opaquePass->target3Res.get(), { w / 6, h / 6 });
+	//ImGui::End();
+
+	//ImGui::Begin("targetDs: Depth");
+	//ImGui::Image(game()->render()->depthRes()->get(), { w / 6, h / 6 });
+	//ImGui::End();
 
 	auto input = game()->hotkeys();
 	if (input->GetButtonDown(Keys::T) && input->GetButton(Keys::Ctrl)) {
@@ -136,7 +151,8 @@ void RenderPassUI::m_DrawTextEditorMenu() {
 		if (m_currentPath != "") {
 			if (ImGui::Button("Compile")) {
 				SaveFile(editor.GetText());
-				game()->SendGameMessage("recompile");
+				game()->shaderAsset()->RecompileShaders();
+				std::cout << std::endl;
 			}
 		}
 

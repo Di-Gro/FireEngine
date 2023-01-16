@@ -1,5 +1,10 @@
 #include "ShadowPass.h"
+
+#include "Game.h"
+#include "Scene.h"
 #include "Render.h"
+#include "Lighting.h"
+
 #include "DirectionLight.h"
 #include "IShadowCaster.h"
 
@@ -22,18 +27,21 @@ void ShadowPass::Init(Game* game) {
 }
 
 void ShadowPass::Resize(float width, float height) {
-	auto* light = m_render->m_game->lighting()->directionLight();
+	auto *light = m_game->currentScene()->directionLight;
+	if (light == nullptr)
+		return;
 
 	light->Resize(width, height);
 }
 
 void ShadowPass::Draw() {
-	auto* prevCamera = m_render->m_camera;
+	auto* light = m_game->currentScene()->directionLight;
+	if (light == nullptr)
+		return;
+
+	auto* prevCamera = m_game->currentScene()->renderer.m_camera;
 	ID3D11RasterizerState* prevRastState[] = { nullptr };
 	m_render->context()->RSGetState(prevRastState);
-
-	// Directional light
-	auto* light = m_render->m_game->lighting()->directionLight();
 
 	// Begin Draw
 	auto rt = light->RT();
@@ -47,16 +55,16 @@ void ShadowPass::Draw() {
 	m_render->context()->RSSetState(m_rastState.Get());
 
 	// Draw
-	m_render->m_camera = light->camera();
+	m_game->currentScene()->renderer.m_camera = light->camera();
 
-	for (auto* shadowCaster : m_render->m_shadowCasters) {
+	for (auto* shadowCaster : m_game->currentScene()->renderer.m_shadowCasters) {
 		if (!shadowCaster->GetComponent()->IsDestroyed()) {
 			shadowCaster->OnDrawShadow(this, shadowMapScale);
 		}
 	}
 
 	// End Draw
-	m_render->m_camera = prevCamera;
+	m_game->currentScene()->renderer.m_camera = prevCamera;
 	m_render->context()->RSSetState(prevRastState[0]);
 }
 

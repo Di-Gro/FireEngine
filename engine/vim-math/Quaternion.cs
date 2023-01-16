@@ -11,6 +11,40 @@ using System.Runtime.CompilerServices;
 
 namespace Engine
 {
+    public static class MathExtantion {
+        static float pi = 3.14159265f;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float rad(this float angle) {
+            return angle * pi / 180;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float deg(this float radians) {
+            return radians * 180 / pi;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 rad(this Vector2 angle) {
+            return new Vector2(angle.X.rad(), angle.Y.rad());
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 deg(this Vector2 radians) {
+            return new Vector2(radians.X.deg(), radians.Y.deg());
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 rad(this Vector3 angle) {
+            return new Vector3(angle.X.rad(), angle.Y.rad(), angle.Z.rad());
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 deg(this Vector3 radians) {
+            return new Vector3(radians.X.deg(), radians.Y.deg(), radians.Z.deg());
+        }
+    }
+
     // TODO: many of these functions are static and should be member functions.
     /// <summary>
     /// A structure encapsulating a four-dimensional vector (x,y,z,w), 
@@ -74,18 +108,20 @@ namespace Engine
             => Conjugate() * LengthSquared().Inverse();
 
         /// <summary>
-        /// Creates a Quaternion from a normalized vector axis and an angle to rotate about the vector.
+        /// Creates a Quaternion from a normalized vector axis and an angle in degrees to rotate about the vector.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Quaternion CreateFromAxisAngle(Vector3 axis, float angle)
-            => new Quaternion(axis * (angle * 0.5f).Sin(), (angle * 0.5f).Cos());
+            => new Quaternion(axis * (angle.rad() * 0.5f).Sin(), (angle.rad() * 0.5f).Cos());
 
         /// <summary>
-        /// Creates a new Quaternion from the given rotation around X, Y, and Z
+        /// Creates a new Quaternion from the given rotation around X, Y, and Z in degrees
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Quaternion CreateFromEulerAngles(Vector3 v)
         {
+            v = v.rad();
+
             var c1 = Math.Cos(v.X / 2);
             var s1 = Math.Sin(v.X / 2);
             var c2 = Math.Cos(v.Y / 2);
@@ -101,25 +137,25 @@ namespace Engine
         }
 
         /// <summary>
-        /// Creates a new Quaternion from the given rotation around the X axis
+        /// Creates a new Quaternion from the given rotation around the X axis in degrees
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Quaternion CreateXRotation(float theta)
-            => new Quaternion((float)Math.Sin(theta * 0.5f), 0.0f, 0.0f, (float)Math.Cos(theta * 0.5f));
+            => new Quaternion((float)Math.Sin(theta.rad() * 0.5f), 0.0f, 0.0f, (float)Math.Cos(theta.rad() * 0.5f));
 
         /// <summary>
-        /// Creates a new Quaternion from the given rotation around the Y axis
+        /// Creates a new Quaternion from the given rotation around the Y axis in degrees
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Quaternion CreateYRotation(float theta)
-            => new Quaternion(0.0f, (float)Math.Sin(theta * 0.5f), 0.0f, (float)Math.Cos(theta * 0.5f));
+            => new Quaternion(0.0f, (float)Math.Sin(theta.rad() * 0.5f), 0.0f, (float)Math.Cos(theta.rad() * 0.5f));
 
         /// <summary>
-        /// Creates a new Quaternion from the given rotation around the Z axis
+        /// Creates a new Quaternion from the given rotation around the Z axis in degrees
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Quaternion CreateZRotation(float theta)
-            => new Quaternion(0.0f, 0.0f, (float)Math.Sin(theta * 0.5f), (float)Math.Cos(theta * 0.5f));
+            => new Quaternion(0.0f, 0.0f, (float)Math.Sin(theta.rad() * 0.5f), (float)Math.Cos(theta.rad() * 0.5f));
 
         /// <summary>
         /// Creates a new look-at Quaternion
@@ -173,22 +209,22 @@ namespace Engine
         ///  pitch upward, then yaw to face into the new heading
         ///  1. Z(roll), 2. X (pitch), 3. Y (yaw)  
         /// </summary>
-        /// <param name="yaw">The yaw angle, in radians, around the Y-axis.</param>
-        /// <param name="pitch">The pitch angle, in radians, around the X-axis.</param>
-        /// <param name="roll">The roll angle, in radians, around the Z-axis.</param>
+        /// <param name="yaw">The yaw angle, in degrees, around the Y-axis.</param>
+        /// <param name="pitch">The pitch angle, in degrees, around the X-axis.</param>
+        /// <param name="roll">The roll angle, in degrees, around the Z-axis.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Quaternion CreateFromYawPitchRoll(float yaw, float pitch, float roll)
         {
 
-            var halfRoll = roll * 0.5f;
+            var halfRoll = roll.rad() * 0.5f;
             var sr = halfRoll.Sin();
             var cr = halfRoll.Cos();
 
-            var halfPitch = pitch * 0.5f;
+            var halfPitch = pitch.rad() * 0.5f;
             var sp = halfPitch.Sin();
             var cp = halfPitch.Cos();
 
-            var halfYaw = yaw * 0.5f;
+            var halfYaw = yaw.rad() * 0.5f;
             var sy = halfYaw.Sin();
             var cy = halfYaw.Cos();
 
@@ -402,7 +438,7 @@ namespace Engine
             => value1 * value2.Inverse();
 
         /// <summary>
-        /// Returns Euler123 angles (rotate around, X, then Y, then Z).
+        /// Returns Euler123 angles in degrees (rotate around, X, then Y, then Z).
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -444,7 +480,7 @@ namespace Engine
             var x = (float)Math.Atan2(-2 * (Y * Z - W * X), W * W - X * X - Y * Y + Z * Z);
             var y = (float)Math.Asin(2 * (X * Z + W * Y));
             var z = (float)Math.Atan2(-2 * (X * Y - W * Z), W * W + X * X - Y * Y - Z * Z);
-            return new Vector3(x, y, z);
+            return new Vector3(x, y, z).deg();
         }
 
         public Vector4 Vector4

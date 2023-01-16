@@ -18,18 +18,23 @@
 
 #define ASSEMBLY_PATH "../../engine/mono/bin/Debug/netstandard2.1/Mono.dll"
 
-
 static void RunGame(MonoInst* imono) {
 	try {
 		Game game;
 		game.Init(imono);
-		game.Run();
+
+		try {
+			game.Run();
+		}
+		catch (std::exception ex) {
+			std::cout << "+: Game Exception: \n" << ex.what() << "'\n";
+		}
+
 	}
 	catch (mono::mono_thunk_exception ex) {
 		std::cout << "+: mono_exception: \n" << ex.what() << "'\n";
 	}
 }
-
 
 static void InsideAssemply(MonoInst* imono) {
 	RunGame(imono);
@@ -45,14 +50,14 @@ static void InsideMono() {
 	InsideAssemply(&imono);
 }
 
+int main() {	
+	bool useMonoDebug = false;
 
-
-int main() {
-		
-	if (!mono::init("mono", true))
+	if (!mono::init("mono", useMonoDebug))
 		return 1;
 
 	InsideMono();
 
 	mono::shutdown();
+	std::cout << "EXIT_OK" << std::endl;
 }

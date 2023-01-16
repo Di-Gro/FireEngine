@@ -1,11 +1,19 @@
 #pragma once
-#include "Game.h"
+
+#include "Actor.h"
+
 #include "RenderTarget.h"
 #include "DepthStencil.h"
 #include "ILightSource.h"
 
+#include "MaterialAlias.h"
+
+class Mesh4;
+class Material;
+class RenderPass;
+
 class SpotLight : public Component, public ILightSource {
-	PURE_COMPONENT(SpotLight);
+	COMPONENT(SpotLight);
 
 public:
 	Vector3 color = Vector3::One;
@@ -38,4 +46,5 @@ public:
 	void OnDrawLight(RenderPass* renderPass) override;
 	LightCBuffer GetCBuffer() override;
 };
+DEC_COMPONENT(SpotLight);
 

@@ -17,9 +17,10 @@ private:
 	};
 
 	std::unordered_map<Keys, MapItem> m_states;
-	Game* m_game;
+	Game* m_game = nullptr;
 	DelegateHandle m_mouseMoveHandle;
 	int m_mouseWheelDelta = 0;
+	Vector2 m_mousePosDelta = Vector2::Zero;
 
 public:
 	void Init(Game* game);
@@ -31,11 +32,14 @@ public:
 	bool Is(Keys key);
 
 	bool GetButtonDown(Keys key);
+	bool GetButtonDown(Keys key, Keys modifier);
+	bool GetButtonDown(Keys key, Keys modifier1, Keys modifier2);
 	bool GetButtonUp(Keys key);
 	bool GetButton(Keys key);
 
 	inline DirectX::SimpleMath::Vector2 GetMousePosition();
 	inline int wheelDelta() { return m_mouseWheelDelta; }
+	inline Vector2 mouseDelta() { return m_mousePosDelta; }
 
 	void RegisterHotkey(Keys key);
 	void UnregisterHotkey(Keys key);
@@ -62,3 +66,4 @@ struct float2 {
 FUNC(HotKeys, MousePosition, CS::float2)(CppRef objRef);
 
 PROP_GET(HotKeys, int, wheelDelta)
+PROP_GET(HotKeys, CS::float2, mouseDelta)

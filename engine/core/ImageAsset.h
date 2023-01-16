@@ -5,8 +5,11 @@
 
 #include "wrl.h_d3d11_alias.h"
 #include "FileSystem.h"
+#include "CSBridge.h"
 
-class Image {
+#include "IAsset.h"
+
+class Image : public IAsset {
 public:
 	size_t width = 0;
 	size_t height = 0;
@@ -16,7 +19,7 @@ public:
 	BYTE* data = nullptr;
 
 	void Init(int width, int height);
-	void Release();
+	void Release() override;
 };
 
 class ImageAsset {
@@ -35,16 +38,20 @@ public:
 	~ImageAsset();
 
 	void Init();
-	void Load(fs::path path);
+	void Load(const fs::path& path);
 	
-	const Image* Get(fs::path path);
+	void InitImage(Image* image, const fs::path& path);
 
-	static size_t GetHash(fs::path path);
+	const Image* Get(const fs::path& path);
+
+	static size_t GetHash(const fs::path& path);
 
 private:
-	void m_Load(size_t hash, fs::path path);
-	Image* m_CreateImage(fs::path path);
+	void m_Load(size_t hash, const fs::path& path);
+	//Image* m_CreateImage(const fs::path& path);
 	void m_GenerateRuntimeImages();
 
 };
 
+PUSH_ASSET(Image);
+FUNC(Image, Init, void)(CppRef gameRef, CppRef imgRef, const char* path, int& width, int& height);

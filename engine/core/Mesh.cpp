@@ -1,5 +1,11 @@
 #include "Mesh.h"
+
+#include "Game.h"
+#include "Assets.h"
+#include "MeshAsset.h"
 #include "Render.h"
+#include "RenderPass.h"
+
 #include "DirectionLight.h"
 #include "CameraComponent.h"
 
@@ -8,8 +14,12 @@
 
 
 Mesh4::Mesh4(const Mesh4& other) {
+	this->operator=(other);
+}
+
+Mesh4& Mesh4::operator=(const Mesh4& other) {
 	if (&other == nullptr || &other == this)
-		return;
+		return *this;
 
 	for (auto& shape : other.m_shapes) {
 		std::vector<Vertex> verteces;
@@ -26,9 +36,14 @@ Mesh4::Mesh4(const Mesh4& other) {
 
 		this->AddShape(&verteces, &indeces, other.m_render, shape.materialIndex);
 	}
+	return *this;
 }
 
 Mesh4::~Mesh4() {
+	Release();
+}
+
+void Mesh4::Release() {
 	for (auto& shape : m_shapes) {
 		if (shape.verteces != nullptr)
 			delete[] shape.verteces;
@@ -36,6 +51,7 @@ Mesh4::~Mesh4() {
 		if (shape.indeces != nullptr)
 			delete[] shape.indeces;
 	}
+	m_shapes.clear();
 }
 
 void Mesh4::AddShape(
@@ -130,6 +146,8 @@ void Mesh4::m_InitShape(Mesh4::Shape& shape) {
 	constBufferDesc.StructureByteStride = 0;
 	constBufferDesc.ByteWidth = sizeof(MeshCBuffer);
 
+	auto device = m_render->device();
+
 	m_render->device()->CreateBuffer(&vertexBufferDesc, &vertexData, shape.vertexBuffer.GetAddressOf());
 	m_render->device()->CreateBuffer(&indexBufferDesc, &indexData, shape.indexBuffer.GetAddressOf());
 	m_render->device()->CreateBuffer(&constBufferDesc, nullptr, shape.meshCBuffer.GetAddressOf());
@@ -166,6 +184,7 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	cbuf->wvpMatrix = *data.transfMatrix;
 	cbuf->worldMatrix = *data.worldMatrix;
 	cbuf->cameraPosition = *data.cameraPosition;
+	//cbuf->absLocalMatrix = *data.absLocalMatrix;
 
 	context->Unmap(shape.meshCBuffer.Get(), 0);
 
@@ -175,7 +194,7 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 
 void ScreenQuad::Init(Render* render, const Shader* shader) {
 	m_render = render;
-	m_shader = shader;
+	this->shader = shader;
 
 	D3D11_SAMPLER_DESC sampleDesc = {};
 	sampleDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -198,9 +217,17 @@ void ScreenQuad::Init(Render* render, const Shader* shader) {
 	m_render->device()->CreateRasterizerState(&rastDesc, rastState.GetAddressOf());
 }
 
+void ScreenQuad::Release() {
+	if (m_sampler.Get() != nullptr)
+		m_sampler.ReleaseAndGetAddressOf();
+
+	if (rastState.Get() != nullptr)
+		m_sampler.ReleaseAndGetAddressOf();
+}
+
 void ScreenQuad::Draw() const {
 	auto* context = m_render->context();
-	auto* camera = m_render->camera();
+	auto* camera = m_render->renderer()->camera();
 
 	/// Material: SetResources
 	ID3D11ShaderResourceView* resources[] = { deffuse != nullptr ? deffuse->get() : nullptr };
@@ -209,8 +236,8 @@ void ScreenQuad::Draw() const {
 
 	/// Material: SetShader
 	context->IASetInputLayout(nullptr);
-	context->VSSetShader(m_shader->vertex.Get(), nullptr, 0);
-	context->PSSetShader(m_shader->pixel.Get(), nullptr, 0);
+	context->VSSetShader(shader->vertex.Get(), nullptr, 0);
+	context->PSSetShader(shader->pixel.Get(), nullptr, 0);
 
 	/// Material: SetMaterialConstBuffer 
 	/// Material: SetRasterizerState
@@ -227,7 +254,7 @@ void ScreenQuad::Draw() const {
 
 void ScreenQuad::Draw2() const {
 	auto* context = m_render->context();
-	auto* camera = m_render->camera();
+	auto* camera = m_render->renderer()->camera();
 
 	/// Mesh: SetTopology
 	context->IASetPrimitiveTopology(topology);
@@ -255,9 +282,44 @@ int Mesh4::maxMaterialIndex() const {
 
 
 DEF_FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref) {
+	if (mesh4Ref == 0)
+		return Mesh4().shapeCount();
+
 	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->shapeCount();
 }
 
 DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
+	if (mesh4Ref == 0)
+		return Mesh4().maxMaterialIndex();
+
 	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
+}
+
+DEF_PUSH_ASSET(Mesh4);
+
+DEF_FUNC(Mesh4, Init, void)(CppRef gameRef, CppRef meshRef, const char* path) {
+	auto* game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+
+	game->meshAsset()->InitMesh(mesh, path);
+	mesh->version++;
+}
+
+DEF_FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count) {
+	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+
+	mesh->f_staticMaterials.clear();
+
+	auto ptr = cppRefs;
+	for (int i = 0; i < count; i++, ptr++) {
+		auto cppRef = RefCpp(*ptr);
+		auto* material = CppRefs::ThrowPointer<Material>(cppRef);
+
+		mesh->f_staticMaterials.push_back(material);
+	}
+}
+
+DEF_FUNC(Mesh4, NextVersion, void)(CppRef meshRef) {
+	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+	mesh->version++;
 }

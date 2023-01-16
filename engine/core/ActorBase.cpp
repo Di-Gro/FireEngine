@@ -1,25 +1,29 @@
 #include "ActorBase.h"
 
 #include "Game.h"
+#include "Scene.h"
+#include "Actor.h"
 
+
+Scene* ActorBase::scene() {
+	if (!IsDestroyed())
+		return pointerForDestroy<Actor>()->f_scene;
+	return nullptr;
+}
 
 Game* ActorBase::game() {
 	if (!IsDestroyed())
-		return friend_gameObject->f_game;
+		return pointerForDestroy<Actor>()->f_game;
 	return nullptr;
 }
 
 Actor* ActorBase::actor() {
-	return friend_gameObject;
-}
-
-bool ActorBase::IsDestroyed() {
-	return friend_gameObject == nullptr;
+	return pointerForDestroy<Actor>();
 }
 
 Actor* ActorBase::CreateActor(std::string name) {
 	if (!IsDestroyed())
-		return game()->CreateActor(name);
+		return game()->currentScene()->CreateActor(name);
 	return nullptr;
 }
 
@@ -28,21 +32,21 @@ void ActorBase::Destroy() {
 		if (friend_component != nullptr)
 			actor()->f_DestroyComponent(friend_component);
 		else
-			game()->DestroyActor(friend_gameObject);
+			scene()->DestroyActor(pointerForDestroy<Actor>());
 	}
 }
 
 bool ActorBase::HasParent() { 
-	return friend_gameObject->f_parent != nullptr; 
+	return pointerForDestroy<Actor>()->f_parent != nullptr;
 }
 
 Actor* ActorBase::parent() { 
-	return friend_gameObject->f_parent; 
+	return pointerForDestroy<Actor>()->f_parent;
 }
 
 void ActorBase::parent(ActorBase* parent) {
 	if (parent == nullptr)
-		friend_gameObject->f_SetParent(nullptr);
+		pointerForDestroy<Actor>()->f_SetParent(nullptr);
 	else
-		friend_gameObject->f_SetParent(parent->friend_gameObject);
+		pointerForDestroy<Actor>()->f_SetParent(parent->pointerForDestroy<Actor>());
 }

@@ -4,6 +4,12 @@
 #include <SimpleMath.h>
 
 #include "Game.h"
+#include "Render.h"
+#include "RenderPass.h"
+#include "MeshAsset.h"
+#include "Actor.h"
+#include "Random.h"
+
 #include "CameraComponent.h"
 #include "LineComponent.h"
 
@@ -12,15 +18,6 @@ using namespace DirectX::SimpleMath;
 
 bool MeshComponent::mono_inited = false;
 mono::mono_method_invoker<void(CsRef, CppRef)> MeshComponent::mono_SetFromCpp;
-
-
-void MeshComponent::OnInit() {
-	m_render = game()->render();
-	m_meshAsset = game()->meshAsset();
-	m_InitMono();
-
-	m_shadowCaster = m_render->AddShadowCaster(this);
-}
 
 void MeshComponent::m_InitMono() {
 	if (mono_inited)
@@ -32,23 +29,46 @@ void MeshComponent::m_InitMono() {
 	mono_inited = true;
 }
 
+void MeshComponent::OnInit() {
+	m_render = game()->render();
+	m_meshAsset = game()->meshAsset();
+	m_InitMono();
+
+	m_shadowCaster = scene()->renderer.AddShadowCaster(this);
+
+	if (m_preinitMesh != nullptr) {
+		mesh(m_preinitMesh);
+		m_preinitMesh = nullptr;
+	}
+	if (m_preinitMaterials.size() > 0) {
+		for (int i = 0; i < m_preinitMaterials.size() || i < m_materials.size(); i++)
+			SetMaterial(i, m_preinitMaterials[i]);
+		m_preinitMaterials.clear();
+	}
+}
+
+void MeshComponent::OnDestroy() {
+	m_preinitMesh = m_mesh;
+	m_preinitMaterials = m_materials;
+
+	m_DeleteResources();
+
+	if (m_castShadow)
+		scene()->renderer.RemoveShadowCaster(m_shadowCaster);
+}
+
 void MeshComponent::m_InitDynamic() {
 	if (IsDynamic())
 		return;
 
-	auto* newMesh = new Mesh4(*m_mesh);
-	newMesh->f_ref = CppRefs::Create(newMesh);
-	newMesh->f_cppRef = newMesh->f_ref.cppRef();
-		
-	mesh(newMesh);
-	m_dynamicMesh = newMesh;
-}
+	auto assetId = "DynamicMesh_" + std::to_string(Random().Int());
+	auto assetIdHash = game()->assets()->GetCsHash(assetId);
+	auto meshCppRef = Mesh4_PushAsset(CppRefs::GetRef(game()), assetId.c_str(), assetIdHash);
+	auto newMesh = CppRefs::ThrowPointer<Mesh4>(meshCppRef);
 
-void MeshComponent::OnDestroy() {
-	m_DeleteResources();
-
-	if(m_castShadow)
-		m_render->RemoveShadowCaster(m_shadowCaster);
+	*newMesh = *m_mesh;
+			
+	m_SetMesh(newMesh, true);
 }
 
 void MeshComponent::RemoveMaterial(size_t index) {
@@ -82,7 +102,7 @@ void MeshComponent::ClearMesh() {
 void MeshComponent::m_DeleteResources() {
 	m_DeleteMaterials();
 	if (IsDynamic()) {
-		CppRefs::Remove(m_dynamicMesh->f_ref);
+		game()->assets()->Pop(m_dynamicMesh->assetIdHash());
 		delete m_dynamicMesh;
 		m_dynamicMesh = nullptr;
 		m_mesh = nullptr;
@@ -197,13 +217,17 @@ void MeshComponent::m_FillByDefaultMaterial(int targetSize) {
 	}
 }
 
-void MeshComponent::mesh(const Mesh4* mesh) {
+void MeshComponent::m_SetMesh(const Mesh4* mesh, bool isDynamic) {
 	m_DeleteResources();
 	m_mesh = mesh;
+	m_meshVersion = m_mesh != nullptr ? m_mesh->version : 0;
 	m_SetMaterialsFromMesh();
 
+	if(isDynamic)
+		m_dynamicMesh = (Mesh4*)mesh;
+
 	if (csRef() > 0) {
-		auto newRef = m_mesh != nullptr ? m_mesh->f_cppRef : RefCpp(0);
+		auto newRef = m_mesh != nullptr ? CppRefs::GetRef((void*)m_mesh) : RefCpp(0);
 		mono_SetFromCpp(csRef(), newRef);
 	}
 }
@@ -219,8 +243,8 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 		return;
 
 	// Ѕерем статик материалы меша
-	auto* staticMaterials = m_meshAsset->GetMaterials(m_mesh);
-	auto newSize = staticMaterials != nullptr ? staticMaterials->size() : 0;
+	auto* staticMaterials = m_mesh->GetMaterials();
+	auto newSize = staticMaterials->size();
 
 	// —оздаем массивы дл€ материалов
 	m_materials.reserve(newSize);
@@ -243,6 +267,11 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 	m_FillByDefaultMaterial(m_mesh->maxMaterialIndex() + 1);
 }
 
+void MeshComponent::m_OnMeshReload() {
+	std::cout << "MeshComponent::m_OnMeshReload() NotImplemented" << std::endl;
+	m_meshVersion = m_mesh->version;
+}
+
 void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
 	auto* material = m_materials[materialIndex];
 
@@ -252,7 +281,7 @@ void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
 		materialIndex == 0;
 
 	if (isNewDynamic) {
-		m_shapeIters[0] = m_render->RegisterShape(material, this, 0);
+		m_shapeIters[0] = scene()->renderer.RegisterShape(material, this, 0);
 		return;
 	}
 
@@ -260,7 +289,7 @@ void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
 		const auto* shape = &m_mesh->m_shapes[shapeIndex];
 
 		if (shape->materialIndex == materialIndex)
-			m_shapeIters[shapeIndex] = m_render->RegisterShape(material, this, shapeIndex);
+			m_shapeIters[shapeIndex] = scene()->renderer.RegisterShape(material, this, shapeIndex);
 	}
 }
 
@@ -271,16 +300,16 @@ void MeshComponent::m_UnRegisterShapesWithMaterial(int materialIndex) {
 		const auto* shape = &m_mesh->m_shapes[shapeIndex];
 
 		if (shape->materialIndex == materialIndex)
-			m_render->UnRegisterShape(material, m_shapeIters[shapeIndex]);
+			scene()->renderer.UnRegisterShape(material, m_shapeIters[shapeIndex]);
 	}
 }
 
 void MeshComponent::castShadow(bool value) {
 	if (m_castShadow && !value)
-		m_render->RemoveShadowCaster(m_shadowCaster);
+		scene()->renderer.RemoveShadowCaster(m_shadowCaster);
 
 	if (!m_castShadow && value)
-		m_shadowCaster = m_render->AddShadowCaster(this);
+		m_shadowCaster = scene()->renderer.AddShadowCaster(this);
 
 	m_castShadow = value;
 }
@@ -291,22 +320,30 @@ void MeshComponent::OnDrawShadow(RenderPass* renderPass, const Vector3& scale) {
 }
 
 void MeshComponent::OnDraw() {
-	if (!isDebug)
+	//if (!isDebug)
 		m_Draw();
 }
 
-void MeshComponent::OnDrawDebug() {
-	if (isDebug)
-		m_Draw();
-}
+//void MeshComponent::OnDrawDebug() {
+//	if (isDebug)
+//		m_Draw();
+//}
 
 void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 	if (!visible || m_mesh == nullptr)
 		return;
 
-	auto camera = m_render->camera();
+	if (m_meshVersion != m_mesh->version)
+		m_OnMeshReload();
+
+	auto camera = m_render->renderer()->camera();
 	auto cameraPosition = camera->worldPosition();
-	auto worldMatrix = Matrix::CreateScale(meshScale * scale) * GetWorldMatrix();
+	auto scaleMatrix = Matrix::CreateScale(meshScale * scale);
+	auto offsetMatrix = Matrix::CreateTranslation(meshOffset);
+
+	auto worldMatrix = GetWorldMatrix();
+		 worldMatrix = scaleMatrix * offsetMatrix * worldMatrix;
+
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
 	Mesh4::DynamicShapeData data;
@@ -322,15 +359,29 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 		}
 		m_mesh->DrawShape(data, i);
 	}
+
+	///TODO: 
+	/// boundMesh.verteces * transMatrix 
+	/// и передать в navmesh 
 }
 
 void MeshComponent::OnDrawShape(int index) {
 	if (!visible || m_mesh == nullptr)
 		return;
 
-	auto camera = m_render->camera();
+	if (m_meshVersion != m_mesh->version)
+		m_OnMeshReload();
+
+	auto id = actor()->Id();
+
+	auto camera = m_render->renderer()->camera();
 	auto cameraPosition = camera->worldPosition();
-	auto worldMatrix = Matrix::CreateScale(meshScale) * GetWorldMatrix();
+	auto scaleMatrix = Matrix::CreateScale(meshScale);
+	auto offsetMatrix = Matrix::CreateTranslation(meshOffset);
+
+	auto worldMatrix = GetWorldMatrix();
+		 worldMatrix = scaleMatrix * offsetMatrix * worldMatrix;
+
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
 	Mesh4::DynamicShapeData data;
@@ -340,17 +391,24 @@ void MeshComponent::OnDrawShape(int index) {
 	data.cameraPosition = &cameraPosition;
 
 	m_mesh->DrawShape(data, index);
+
+	///TODO: 
+	/// если первый раз за update
+	/// boundMesh.verteces * transMatrix 
+	/// и передать в navmesh 
 }
 
 
-DEF_COMPONENT(MeshComponent, Engine.MeshComponent, 2) {
+DEF_COMPONENT(MeshComponent, Engine.MeshComponent, 3, RunMode::EditPlay) {
 	OFFSET(0, MeshComponent, isDebug);
 	OFFSET(1, MeshComponent, visible);
+	OFFSET(2, MeshComponent, meshScale);
 }
 
-DEF_PROP_GET(MeshComponent, bool, IsDynamic)
-DEF_PROP_GET(MeshComponent, bool, IsStatic)
-DEF_PROP_GET(MeshComponent, int, MaterialCount)
+DEF_PROP_GET(MeshComponent, bool, IsDynamic);
+DEF_PROP_GET(MeshComponent, bool, IsStatic);
+DEF_PROP_GET(MeshComponent, int, MaterialCount);
+DEF_PROP_GETSET(MeshComponent, bool, castShadow);
 
 DEF_FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef) {
 	auto component = CppRefs::ThrowPointer<MeshComponent>(compRef);
@@ -393,5 +451,26 @@ DEF_FUNC(MeshComponent, SetMaterial, void)(CppRef compRef, size_t index, CppRef 
 
 DEF_FUNC(MeshComponent, GetMaterial, CppRef)(CppRef compRef, size_t index) {
 	auto material = CppRefs::ThrowPointer<MeshComponent>(compRef)->GetMaterial(index);
-	return material != nullptr ? material->f_cppRef : RefCpp(0);
+	return material != nullptr ? CppRefs::GetRef((void*)material) : RefCpp(0);
+}
+
+DEF_FUNC(MeshComponent, SetPreInitMesh, void)(CppRef compRef, CppRef meshRef) {
+	auto meshComp = CppRefs::ThrowPointer<MeshComponent>(compRef);
+	auto mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+
+	meshComp->m_preinitMesh = mesh;
+}
+
+DEF_FUNC(MeshComponent, SetPreInitMaterials, void)(CppRef compRef, size_t* matRefs, int count) {
+	auto* meshComp = CppRefs::ThrowPointer<MeshComponent>(compRef);
+
+	meshComp->m_preinitMaterials.clear();
+
+	auto ptr = matRefs;
+	for (int i = 0; i < count; i++, ptr++) {
+		auto cppRef = RefCpp(*ptr);
+		auto* material = CppRefs::ThrowPointer<Material>(cppRef);
+
+		meshComp->m_preinitMaterials.push_back(material);
+	}
 }

@@ -22,10 +22,12 @@
     <ClCompile Include="AlphaMemory.cpp" />
     <ClCompile Include="AmbientLight.cpp" />
     <ClCompile Include="Assets.cpp" />
+    <ClCompile Include="AssetStore.cpp" />
     <ClCompile Include="Attachable.cpp" />
     <ClCompile Include="AxisDrawer.cpp" />
     <ClCompile Include="AxisDrawer.h" />
     <ClCompile Include="BetaMemory.cpp" />
+    <ClCompile Include="BlurPass.cpp" />
     <ClCompile Include="Bridge.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Condition.cpp" />
@@ -33,17 +35,25 @@
     <ClCompile Include="CS.cpp" />
     <ClCompile Include="CSComponent.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
+    <ClCompile Include="EditorCamera.cpp" />
+    <ClCompile Include="EditorSettings.cpp" />
+    <ClCompile Include="FireActivationListener.cpp" />
+    <ClCompile Include="FireContactListener.cpp" />
+    <ClCompile Include="imguizmo\ImGuizmo.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\TextEditor\TextEditor.cpp" />
+    <ClCompile Include="JoltExtantions.cpp" />
+    <ClCompile Include="Layers.cpp" />
     <ClCompile Include="LightingPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ClassInfo.cpp" />
-    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Colliders.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="CppClass.cpp" />
     <ClCompile Include="CSBridge.cpp" />
@@ -66,12 +76,18 @@
     <ClCompile Include="LineMath.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshComponent.cpp" />
+    <ClCompile Include="MeshComponent.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="LinedPlain.cpp" />
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MonoInst.cpp" />
     <ClCompile Include="MoveController.cpp" />
     <ClCompile Include="OpaquePass.cpp" />
+    <ClCompile Include="OutlinePass.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsScene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerCamera.cpp" />
     <ClCompile Include="PlayerController.cpp" />
@@ -83,6 +99,11 @@
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderPassUI.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ContextMenu.cpp" />
+    <ClCompile Include="SceneRenderer.cpp" />
+    <ClCompile Include="SelectionPass.cpp" />
     <ClCompile Include="Rete.cpp" />
     <ClCompile Include="Rete_AI.cpp" />
     <ClCompile Include="ShaderAsset.cpp" />
@@ -99,19 +120,37 @@
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformTest.cpp" />
+    <ClCompile Include="UI\AssetPickerPopup.cpp" />
+    <ClCompile Include="UI\PrefabPickerPopup.cpp" />
+    <ClCompile Include="UI\SceneEditorWindow.cpp" />
+    <ClCompile Include="UI\ScenePickerPopup.cpp" />
+    <ClCompile Include="UI\SceneWindow.cpp" />
+    <ClCompile Include="UI\ComponentPicker.cpp" />
+    <ClCompile Include="UI\UI_BarMenu.cpp" />
+    <ClCompile Include="UI\UI_Console.cpp" />
+    <ClCompile Include="UI\UI_ContentBrowser.cpp" />
+    <ClCompile Include="UI\UI_Editor.cpp" />
+    <ClCompile Include="UI\UI_Hierarchy.cpp" />
+    <ClCompile Include="UI\UI_Inspector.cpp" />
+    <ClCompile Include="UI\UI_PlayGame.cpp" />
+    <ClCompile Include="UI\UI_UpperMenu.cpp" />
+    <ClCompile Include="UI\UserInterface.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WME.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActorCBuffer.h" />
     <ClInclude Include="AlphaMemory.h" />
     <ClInclude Include="AmbientLight.h" />
     <ClInclude Include="Assets.h" />
+    <ClInclude Include="AssetStore.h" />
     <ClInclude Include="Attachable.h" />
     <ClInclude Include="BetaMemory.h" />
+    <ClInclude Include="BlurPass.h" />
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ClassInfo.h" />
-    <ClInclude Include="Collider.h" />
+    <ClInclude Include="Colliders.h" />
     <ClInclude Include="Component.inl" />
     <ClInclude Include="ComponentMeta.h" />
     <ClInclude Include="Condition.h" />
@@ -125,6 +164,18 @@
     <ClInclude Include="Delegates.h" />
     <ClInclude Include="DirectionLight.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="EditorSettings.h" />
+    <ClInclude Include="FireActivationListener.h" />
+    <ClInclude Include="FireContactListener.h" />
+    <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="JoltExtantions.h" />
+    <ClInclude Include="Layers.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="PhysicsScene.h" />
+    <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="RunMode.h" />
+    <ClInclude Include="EditorCamera.h" />
+    <ClInclude Include="EditorCBuffer.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="FlyingCamera.h" />
     <ClInclude Include="Forms.h" />
@@ -132,13 +183,21 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="DepthStencil.h" />
+    <ClInclude Include="IAsset.h" />
     <ClInclude Include="ILightSource.h" />
+    <ClInclude Include="imguizmo\ImGuizmo.h" />
     <ClInclude Include="imgui\TextEditor\TextEditor.h" />
     <ClInclude Include="IShadowCaster.h" />
     <ClInclude Include="LightingPass.h" />
+    <ClInclude Include="OutlinePass.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="ProductionNode.h" />
     <ClInclude Include="RenderPassUI.h" />
+    <ClInclude Include="SafeDestroy.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="ContextMenu.h" />
+    <ClInclude Include="SceneRenderer.h" />
+    <ClInclude Include="SelectionPass.h" />
     <ClInclude Include="Rete.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="SpotLight.h" />
@@ -197,6 +256,21 @@
     <ClInclude Include="Token.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformTest.h" />
+    <ClInclude Include="UI\AssetPickerPopup.h" />
+    <ClInclude Include="UI\PrefabPickerPopup.h" />
+    <ClInclude Include="UI\SceneEditorWindow.h" />
+    <ClInclude Include="UI\ScenePickerPopup.h" />
+    <ClInclude Include="UI\SceneWindow.h" />
+    <ClInclude Include="UI\ComponentPicker.h" />
+    <ClInclude Include="UI\UI_BarMenu.h" />
+    <ClInclude Include="UI\UI_Console.h" />
+    <ClInclude Include="UI\UI_ContentBrowser.h" />
+    <ClInclude Include="UI\UI_Editor.h" />
+    <ClInclude Include="UI\UI_Hierarchy.h" />
+    <ClInclude Include="UI\UI_Inspector.h" />
+    <ClInclude Include="UI\UI_PlayGame.h" />
+    <ClInclude Include="UI\UI_UpperMenu.h" />
+    <ClInclude Include="UI\UserInterface.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WME.h" />
     <ClInclude Include="wrl.h_d3d11_alias.h" />
@@ -229,13 +303,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -248,7 +322,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -324,16 +398,21 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32;_WINDOWS;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_SSE4_1;JPH_USE_SSE4_2;JPH_USE_LZCNT;JPH_USE_TZCNT;JPH_USE_F16C;JPH_USE_FMADD;JPH_PROFILE_ENABLED;JPH_DEBUG_RENDERER;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;$(SolutionDir)\engine\Jolt\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4091;4190;4244;4267;4305;4715;5103;5104;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;Jolt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib;$(SolutionDir)\engine\Jolt\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -346,6 +425,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\Mono\include\mono-2.0;$(SolutionDir)\engine\monopp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DisableSpecificWarnings>4091;4190;4244;4267;4305;4715;5103;5104;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

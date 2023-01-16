@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "../core/imgui/imconfig.h"
 #include <string>
 
 namespace ImGui

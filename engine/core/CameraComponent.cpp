@@ -1,15 +1,36 @@
 #include "CameraComponent.h"
+#include "Game.h"
+#include "Scene.h"
+#include "Render.h"
 
 void CameraComponent::Attach() { 
-	game()->mainCamera(this); 
+	scene()->mainCamera(this);
+}
+
+void CameraComponent::Deattach() {
+	if (IsAttached())
+		scene()->mainCamera(nullptr);
+}
+
+void CameraComponent::OnInit() {
+	m_cameraIter = scene()->AddCamera(this);
+}
+
+void CameraComponent::OnDestroy() {
+	scene()->RemoveCamera(m_cameraIter);
+	Deattach();
 }
 
 bool CameraComponent::IsAttached() { 
-	return game()->mainCamera() == this; 
+	return scene()->mainCamera() == this;
+}
+
+bool CameraComponent::IsMainCamera() { 
+	return game()->mainCamera() == this;
 }
 
 void CameraComponent::UpdateProjectionMatrix() {
-	auto size = game()->render()->viewportSize();
+	auto size = scene()->renderer.viewportSize();
 
 	if (m_useOrthographic) {
 		m_projMatrix = Matrix::CreateOrthographic(orthoWidth, orthoHeight, orthoNearPlane, orthoFarPlane);
@@ -23,7 +44,7 @@ void CameraComponent::UpdateProjectionMatrix() {
 	}
 }
 
-DEF_COMPONENT(CameraComponent, Engine.CameraComponent, 7) { 
+DEF_COMPONENT(CameraComponent, Engine.CameraComponent, 8, RunMode::EditPlay) {
 	OFFSET(0, CameraComponent, orthoWidth);
 	OFFSET(1, CameraComponent, orthoHeight);
 	OFFSET(2, CameraComponent, orthoNearPlane);
@@ -31,10 +52,12 @@ DEF_COMPONENT(CameraComponent, Engine.CameraComponent, 7) {
 	OFFSET(4, CameraComponent, nearPlane);
 	OFFSET(5, CameraComponent, farPlane);
 	OFFSET(6, CameraComponent, drawDebug);
+	OFFSET(7, CameraComponent, isPlayerCamera);
 }
 
 DEF_PROP_GET(CameraComponent, bool, IsAttached)
 DEF_PROP_GETSET(CameraComponent, bool, orthographic)
+DEF_PROP_GETSET(CameraComponent, Matrix, viewMatrix)
 
 DEF_FUNC(CameraComponent, Attach, void)(CppRef compRef) {
 	CppRefs::ThrowPointer<CameraComponent>(compRef)->Attach();

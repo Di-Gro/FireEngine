@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Game.h"
 #include "CameraComponent.h"
+#include "InputDevice.h"
 
 class PlayerCamera : public CameraComponent {
 	PURE_COMPONENT(PlayerCamera)
@@ -21,8 +21,6 @@ private:
 	DelegateHandle m_mouseMoveHandle;
 
 public:
-	//PlayerCamera(Actor* gameObject) : CameraComponent(gameObject) { }
-
 	void OnInit() override;
 	void OnDestroy() override;
 	void OnUpdate() override;

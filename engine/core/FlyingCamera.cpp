@@ -1,26 +1,33 @@
 #include "FlyingCamera.h"
 
 #include "Game.h"
+#include "HotKeys.h"
 
 
 void FlyingCamera::OnInit() {
+	CameraComponent::OnInit();
+
 	m_mouseMoveHandle = game()->input()->MouseMove.AddRaw(this, &FlyingCamera::m_OnMouseMove);
 	UpdateProjectionMatrix(/*game()->window()*/);
 
-	game()->hotkeys()->RegisterHotkey(Keys::O);
+	//game()->hotkeys()->RegisterHotkey(Keys::O);
 }
 
 void FlyingCamera::OnDestroy() {
+	CameraComponent::OnDestroy();
+
 	game()->input()->MouseMove.Remove(m_mouseMoveHandle);
-	game()->hotkeys()->UnregisterHotkey(Keys::O);
+	//game()->hotkeys()->UnregisterHotkey(Keys::O);
 }
 
 void FlyingCamera::OnUpdate() {
+	CameraComponent::OnUpdate();
+
 	if (!IsAttached() || !game()->inFocus)
 		return;
 
-	if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
-		orthographic(!orthographic());
+	//if (game()->hotkeys()->Is(Keys::O, KeyState::Press))
+	//	orthographic(!orthographic());
 
 	if (m_updateRotation) {
 		auto rot = localRotation();
@@ -56,9 +63,6 @@ void FlyingCamera::OnUpdate() {
 	auto newMatrix = Matrix::CreateLookAt(worldPosition(), worldPosition() + rotator.Forward(), rotator.Up());
 	viewMatrix(newMatrix);
 	UpdateProjectionMatrix();
-
-	if (printTransform)
-		game()->SendGameMessage(std::to_string(actor()->Id()) + " tr");
 }
 
 void FlyingCamera::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {

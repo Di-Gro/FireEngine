@@ -28,6 +28,7 @@ namespace EngineDll {
 			DEC_COMPONENT("CameraComponent");
 			PROP_GET("CameraComponent", "bool", "IsAttached");
 			PROP_GETSET("CameraComponent", "bool", "orthographic");
+			PROP_GETSET("CameraComponent", "Matrix4x4", "viewMatrix");
 
 			FUNC("CameraComponent", "Attach", "void", "CppRef compRef");
 			FUNC("CameraComponent", "UpdateProjMatrix", "void", "CppRef compRef");
@@ -37,6 +38,7 @@ namespace EngineDll {
 		public static class Actor {
 		
 <#
+			FUNC("Actor", "BindComponent", "void" , "CppRef objRef, CppRef compRef");
 			FUNC("Actor", "InitComponent", "void" , "CppRef objRef, CppRef compRef");
 
 			FUNC("Actor", "gameObject_get", "CsRef", "CppRef objBaseRef");
@@ -69,6 +71,12 @@ namespace EngineDll {
 			PROP_GET("Actor", "Vector3", "forward");
 			PROP_GET("Actor", "Vector3", "up");
 			PROP_GET("Actor", "Vector3", "right");
+
+			PROP_GETSET_STR("Actor", "name");
+			PROP_GETSET_STR("Actor", "prefabId");
+
+			FUNC("Actor", "scene_get", "CppRef", "CppRef objRef");
+
 #>
 
 		}
@@ -76,9 +84,20 @@ namespace EngineDll {
 		public static class Game {
 		
 <# 
-			ANSI_FUNC("Game", "CreateGameObjectFromCS", "GameObjectInfo" , "CppRef gameRef, CsRef csRef, CppRef parentRef");
-			FUNC("Game", "GetRootActorsCount", "int", "CppRef gameRef");
-			FUNC("Game", "WriteRootActorsRefs", "void", "CppRef gameRef, CsRef[] refs");
+			FUNC("Game", "SetGameCallbacks", "void", "CppRef gameRef, GameCallbacks callbacks");
+			ANSI_FUNC("Game", "CreateGameObjectFromCS", "GameObjectInfo" , "CppRef sceneRef, CsRef csRef, CppRef parentRef");
+			FUNC("Game", "GetRootActorsCount", "int", "CppRef sceneRef");
+			FUNC("Game", "WriteRootActorsRefs", "void", "CppRef sceneRef, CsRef[] refs");
+			FUNC("Game", "mainCamera_get", "CsRef", "CppRef gameRef");
+			FUNC("Game", "Exit", "void", "CppRef gameRef");
+
+			FUNC("Game", "PushScene", "void", "CppRef gameRef, CppRef sceneRef");
+			FUNC("Game", "PopScene", "void", "CppRef gameRef");
+
+			FUNC("Game", "CreateScene", "CppRef", "CppRef gameRef, bool isEditor");
+			FUNC("Game", "DestroyScene", "void", "CppRef gameRef, CppRef sceneRef");
+
+			ANSI_FUNC("Game", "SetEditorSettings", "void", "CppRef gameRef, string startupScene");
 #>
 
 		}
@@ -86,7 +105,10 @@ namespace EngineDll {
 		public static class CsComponent {
 
 <# 
-			FUNC("CsComponent", "Create", "CppObjectInfo" , "CppRef cppObjRef, CsRef csCompRef");
+			//FUNC("CsComponent", "Create", "CppObjectInfo" , "CppRef cppObjRef, CsRef csCompRef");
+			FUNC("CsComponent", "Create", "CppObjectInfo" , "CsRef csCompRef");
+			PROP_GETSET("Component", "bool", "runtimeOnly");
+			PROP_GETSET("Component", "bool", "f_isCrashed");
 #>
 
 		}
@@ -104,35 +126,74 @@ namespace EngineDll {
 			FUNC("HotKeys", "MousePosition",		"Vector2", "CppRef objRef");
 
 			PROP_GET("HotKeys", "int", "wheelDelta");
+			PROP_GET("HotKeys", "Vector2", "mouseDelta");
 #>
 		}
 
 		public static class Material {
 
 <#
-			FUNC("Material", "diffuseColor_get",	"Vector3",	"CppRef matRef");
-			FUNC("Material", "diffuse_get",			"float",	"CppRef matRef");
-			FUNC("Material", "ambient_get",			"float",	"CppRef matRef");
-			FUNC("Material", "specular_get",		"float",	"CppRef matRef");
-			FUNC("Material", "shininess_get",		"float",	"CppRef matRef");
+			PUSH_ASSET("Material");
 
-			FUNC("Material", "diffuseColor_set",	"void",		"CppRef matRef, Vector3 value");
-			FUNC("Material", "diffuse_set",			"void",		"CppRef matRef, float value");
-			FUNC("Material", "ambient_set",			"void",		"CppRef matRef, float value");
-			FUNC("Material", "specular_set",		"void",		"CppRef matRef, float value");
-			FUNC("Material", "shininess_set",		"void",		"CppRef matRef, float value");
+			PROP_GETSET("Material", "Vector3", "diffuseColor");
+			PROP_GETSET("Material", "float", "diffuse");
+			PROP_GETSET("Material", "float", "ambient");
+			PROP_GETSET("Material", "float", "specular");
+			PROP_GETSET("Material", "float", "shininess");
 
-			FUNC("Material", "name_get",			"int",		"CppRef matRef, byte[] buf, int bufLehgth");
+			PROP_GETSET("Material", "int", "cullMode");
+			PROP_GETSET("Material", "int", "fillMode");
+			PROP_GETSET("Material", "size_t", "priority");
+
+			ANSI_FUNC("Material", "name_set", "void", "CppRef matRef, string name");
+			FUNC("Material", "name_length", "size_t", "CppRef matRef");
+			FUNC("Material", "name_get", "void", "CppRef matRef, byte[] buf");
+
+			ANSI_FUNC("Material", "shader_set", "void", "CppRef gameRef, CppRef matRef, string name");
+			FUNC("Material", "shader_length", "size_t", "CppRef matRef");
+			FUNC("Material", "shader_get", "void", "CppRef matRef, byte[] buf");
+
+			FUNC("Material", "isDynamic_get",		"bool",		"CppRef matRef");
+
+			FUNC("Material", "Init", "void", "CppRef gameRef, CppRef matRef");
+			FUNC("Material", "textures_set", "void", "CppRef matRef, size_t[] cppRefs, int count");
+#>
+		}
+
+		public static class Assets {
+		
+<#
+			FUNC("Assets", "Reload", "void", "CppRef gameRef, int assetIdHash");
+			FUNC("Assets", "Get", "CppRef", "CppRef gameRef, int assetIdHash");
+			FUNC("Assets", "MakeDirty", "void", "CppRef gameRef, int assetIdHash");
+			FUNC("Assets", "IsDirty", "bool", "CppRef gameRef, int assetIdHash");
+#>
+		}
+
+		public static class Image {
+		
+<#
+			PUSH_ASSET("Image");
+			ANSI_FUNC("Image", "Init", "void", "CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height");
+#>
+		}
+
+		public static class Texture {
+		
+<#
+			PUSH_ASSET("Texture");
+			FUNC("Texture", "Init", "void", "CppRef gameRef, CppRef texRef, uint width, uint height");
+			FUNC("Texture", "InitFromImage", "void", "CppRef gameRef, CppRef texRef, CppRef imageRef");
 #>
 		}
 
 		public static class MeshAsset {
 
 <#
-			ANSI_FUNC("MeshAsset", "CreateHash",	"size_t", 	"CppRef meshAssetRef, string fileName");
+			//ANSI_FUNC("MeshAsset", "CreateHash",	"size_t", 	"CppRef meshAssetRef, string fileName");
 
-			FUNC("MeshAsset", "Load",		"void", 	"CppRef meshAssetRef, size_t assetHash");
-			FUNC("MeshAsset", "GetMesh",	"CppRef", 	"CppRef meshAssetRef, size_t assetHash");
+			//FUNC("MeshAsset", "Load",		"void", 	"CppRef meshAssetRef, int assetHash");
+			//FUNC("MeshAsset", "GetMesh",	"CppRef", 	"CppRef meshAssetRef, int assetHash");
 
 			FUNC("MeshAsset", "CreateDynamicMaterial",	"CppRef",	"CppRef meshAssetRef, CppRef otherMaterialRef");
 			FUNC("MeshAsset", "DeleteDynamicMaterial",	"void",		"CppRef meshAssetRef, CppRef otherMaterialRef");
@@ -142,8 +203,12 @@ namespace EngineDll {
 		public static class Mesh4 {
 		
 <#
+			PUSH_ASSET("Mesh4");
+			ANSI_FUNC("Mesh4", "Init", "void", "CppRef gameRef, CppRef meshRef, string path");
+
 			FUNC("Mesh4", "ShapeCount",			"int", "CppRef mesh4Ref");
 			FUNC("Mesh4", "MaterialMaxIndex",	"int", "CppRef mesh4Ref");
+			FUNC("Mesh4", "materials_set", "void", "CppRef meshRef, size_t[] cppRefs, int count");
 #>
 		}
 
@@ -155,6 +220,7 @@ namespace EngineDll {
 			PROP_GET("MeshComponent", "bool", "IsDynamic");
 			PROP_GET("MeshComponent", "bool", "IsStatic");
 			PROP_GET("MeshComponent", "int", "MaterialCount");
+			PROP_GETSET("MeshComponent", "bool", "castShadow");
 
 			FUNC("MeshComponent",	"SetFromCs", "void", "CppRef compRef, CppRef meshRef");
 
@@ -167,7 +233,148 @@ namespace EngineDll {
 			FUNC("MeshComponent", "SetMaterial",		"void",		"CppRef compRef, size_t index, CppRef materialRef");
 			FUNC("MeshComponent", "GetMaterial",		"CppRef",	"CppRef compRef, size_t index");
 
+			FUNC("MeshComponent", "SetPreInitMesh", "void", "CppRef compRef, CppRef meshRef");
+			FUNC("MeshComponent", "SetPreInitMaterials", "void", "CppRef compRef, size_t[] matRefs, int count");
+
 #>
 		}
+
+		public static class UI_Inspector {
+
+<#
+			ANSI_FUNC("UI_Inspector", "ShowText", "bool", "CppRef gameRef, string label, string buffer, int length, ref ulong ptr");
+			ANSI_FUNC("UI_Inspector", "SetComponentName", "void", "CppRef gameRef, string value");
+			ANSI_FUNC("UI_Inspector", "ShowAsset", "bool", "CppRef gameRef, string label, int scriptIdHash, ref int assetIdHash, bool isActive");
+			ANSI_FUNC("UI_Inspector", "ShowActor", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef");
+			ANSI_FUNC("UI_Inspector", "ShowComponent", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef, int scriptIdHash");
+
+			ANSI_FUNC("UI_Inspector", "ShowColor3", "bool", "CppRef gameRef, string label, ref Vector3 value");
+#>
+		}
+
+		public static class DirectionalLight {
+		
+<#
+			DEC_COMPONENT("DirectionLight");
+#>
+		}
+
+		public static class AmbientLight {
+		
+<#
+			DEC_COMPONENT("AmbientLight");
+#>
+		}
+
+		public static class PointLight {
+		
+<#
+			DEC_COMPONENT("PointLight");
+#>
+		}
+
+		public static class SpotLight {
+		
+<#
+			DEC_COMPONENT("SpotLight");
+#>
+		}
+
+		public static class AssetStore {
+		
+<#
+			FUNC("AssetStore", "ClearTypes", "void", "CppRef gameRef");
+			FUNC("AssetStore", "ClearComponents", "void", "CppRef gameRef");
+			FUNC("AssetStore", "ClearAssets", "void", "CppRef gameRef");
+			FUNC("AssetStore", "ClearAssetTypes", "void", "CppRef gameRef");
+
+			ANSI_FUNC("AssetStore", "SetType", "void", "CppRef gameRef, int typeId, string fullName, string name");
+			FUNC("AssetStore", "AddComponent", "void", "CppRef gameRef, int typeId");
+			ANSI_FUNC("AssetStore", "AddAsset", "void", "CppRef gameRef, int typeId, int assetId, string name");
+			FUNC("AssetStore", "AddAssetType", "void", "CppRef gameRef, int typeId");
+
+			PROP_GETSET_STR("AssetStore", "projectPath");
+			PROP_GETSET_STR("AssetStore", "assetsPath");
+			PROP_GETSET_STR("AssetStore", "editorPath");
+
+			PROP_GETSET("AssetStore", "int", "actorTypeIdHash");
+			PROP_GETSET("AssetStore", "int", "prefabTypeIdHash");
+			PROP_GETSET("AssetStore", "int", "componentTypeIdHash");
+			PROP_GETSET("AssetStore", "int", "sceneTypeIdHash");
+
+			PROP_GETSET_STR("AssetStore", "buffer");
+
+			ANSI_FUNC("AssetStore", "RenameAsset", "void", "CppRef gameRef, int assetId, string name");
+			FUNC("AssetStore", "RemoveAsset", "void", "CppRef gameRef, int typeId, int assetId");
+
+#>
+		}
+
+		public static class ImGui {
+		
+<#
+			ANSI_FUNC("ImGui", "CalcTextWidth", "float", "string value");
+#>
+		}
+
+		public static class Scene {
+		
+<#
+			PUSH_ASSET("Scene");
+			PROP_GETSET_STR("Scene", "name");
+
+			PROP_GETSET("Scene", "Vector3", "editorCameraPos");
+			PROP_GETSET("Scene", "Quaternion", "editorCameraRot");
+			PROP_GETSET("Scene", "float", "editorCameraSpeed");
+#>
+		}
+
+		public static class BoxCollider {
+		
+<#
+			DEC_COMPONENT("BoxCollider");
+#>
+		}
+
+		public static class SphereCollider {
+		
+<#
+			DEC_COMPONENT("SphereCollider");
+#>
+		}
+
+		public static class CapsuleCollider {
+		
+<#
+			DEC_COMPONENT("CapsuleCollider");
+#>
+		}
+
+		public static class Rigidbody {
+		
+<#
+			DEC_COMPONENT("Rigidbody");
+
+			PROP_GETSET("Rigidbody", "bool", "active");
+			PROP_GETSET("Rigidbody", "float", "gravity");
+
+			PROP_GETSET("Rigidbody", "uint", "motion");
+			PROP_GETSET("Rigidbody", "uint", "quality");
+
+			FUNC("Rigidbody", "AddForce", "void", "CppRef bodyRef, Vector3 inForce");
+			FUNC("Rigidbody", "AddForceInPos", "void", "CppRef bodyRef, Vector3 inForce, Vector3 inPosition");
+
+			FUNC("Rigidbody", "GetLinearVelocity", "Vector3", "CppRef bodyRef");
+			FUNC("Rigidbody", "SetLinearVelocityClamped", "void", "CppRef bodyRef, Vector3 inLinearVelocity");
+
+			FUNC("Rigidbody", "AddImpulse", "void", "CppRef bodyRef, Vector3 inImpulse");
+			FUNC("Rigidbody", "AddImpulseInPos", "void", "CppRef bodyRef, Vector3 inImpulse, Vector3 inPosition");
+
+			FUNC("Rigidbody", "GetFriction", "float", "CppRef bodyRef");
+			FUNC("Rigidbody", "SetFriction", "void", "CppRef bodyRef, float inFriction");
+#>
+		}
+
+		
 	}
 }

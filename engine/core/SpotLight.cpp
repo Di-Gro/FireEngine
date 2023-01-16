@@ -1,9 +1,13 @@
 #include "SpotLight.h"
 
+#include "Game.h"
+#include "Render.h"
+#include "RenderPass.h"
+#include "Assets.h"
+#include "MeshAsset.h"
+
 #include "CameraComponent.h"
 #include "SimpleMath.h"
-
-DEF_PURE_COMPONENT(SpotLight);
 
 
 void SpotLight::OnInit() {
@@ -16,11 +20,11 @@ void SpotLight::OnInit() {
 	m_materialShape = meshAsset->CreateDynamicMaterial("Spot Light", Assets::ShaderDiffuseColor);
 	m_materialShape->data.diffuseColor = { 0, 0.1f, 0, 1 };
 
-	m_lightSource = render->AddLightSource(this);
+	m_lightSource = scene()->renderer.AddLightSource(this);
 }
 
 void SpotLight::OnDestroy() {
-	game()->render()->RemoveLightSource(m_lightSource);
+	scene()->renderer.RemoveLightSource(m_lightSource);
 }
 
 void SpotLight::OnDrawLight(RenderPass* renderPass) {
@@ -37,7 +41,7 @@ void SpotLight::OnDrawLight(RenderPass* renderPass) {
 
 	auto position = worldPosition();
 	auto worldMatrix = localTransform * GetWorldMatrix();
-	auto transMatrix = worldMatrix * render->camera()->cameraMatrix();
+	auto transMatrix = worldMatrix * render->renderer()->camera()->cameraMatrix();
 
 	m_material->cullMode = CullMode::Front;
 
@@ -65,7 +69,7 @@ void SpotLight::OnDrawLight(RenderPass* renderPass) {
 		localTransform *= Matrix::CreateTranslation(0, 0, -length / 2);
 
 		worldMatrix = localTransform * GetWorldMatrix();
-		transMatrix = worldMatrix * render->camera()->cameraMatrix();
+		transMatrix = worldMatrix * render->renderer()->camera()->cameraMatrix();
 
 		data.worldMatrix = &worldMatrix;
 		data.transfMatrix = &transMatrix;
@@ -91,4 +95,13 @@ LightCBuffer SpotLight::GetCBuffer() {
 	cbuffer.param6 = attenuation;
 
 	return cbuffer;
+}
+
+DEF_COMPONENT(SpotLight, Engine.SpotLight, 6, RunMode::EditPlay) {
+	OFFSET(0, SpotLight, color);
+	OFFSET(1, SpotLight, intensity);
+	OFFSET(2, SpotLight, length);
+	OFFSET(3, SpotLight, angle);
+	OFFSET(4, SpotLight, blend);
+	OFFSET(5, SpotLight, attenuation);
 }

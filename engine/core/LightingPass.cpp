@@ -1,10 +1,13 @@
 #include "LightingPass.h"
 
+#include "Game.h"
+#include "Scene.h"
 #include "Render.h"
 #include "CameraComponent.h"
 #include "MaterialAlias.h"
 #include "Mesh.h"
 #include "MeshComponent.h"
+#include "Lighting.h"
 #include "DirectionLight.h"
 
 #include "RenderTarget.h"
@@ -41,7 +44,8 @@ void LightingPass::Draw() {
 	BeginDraw();
 	m_SetShadowCBuffer();
 	
-	for (auto* lightSource : m_render->m_lightSources) {
+	auto* renderer = m_game->render()->renderer();
+	for (auto* lightSource : renderer->m_lightSources) {
 		m_SetLightCBuffer(lightSource);
 		lightSource->OnDrawLight(this);
 	}
@@ -50,17 +54,18 @@ void LightingPass::Draw() {
 
 void LightingPass::m_SetShadowCBuffer() {
 	auto* context = m_render->context();
-	auto* dirLight = m_game->lighting()->directionLight();
+	auto* dirLight = m_game->render()->scene()->directionLight;
 
 	context->PSSetConstantBuffers(PASS_CB_SHADOW_PS, 1, m_shadowCBuffer.GetAddressOf());
 
 	D3D11_MAPPED_SUBRESOURCE res = {};
 	context->Map(m_shadowCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 
-	auto* cbuf = (ShadowCBuffer*)res.pData;
-	cbuf->uvMatrix = dirLight->uvMatrix();
-	cbuf->mapScale = dirLight->mapScale();
-
+	if (dirLight != nullptr) {
+		auto* cbuf = (ShadowCBuffer*)res.pData;
+		cbuf->uvMatrix = dirLight->uvMatrix();
+		cbuf->mapScale = dirLight->mapScale();
+	}
 	context->Unmap(m_shadowCBuffer.Get(), 0);
 }
 

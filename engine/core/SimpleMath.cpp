@@ -1,5 +1,11 @@
 #include "SimpleMath.h"
 
+std::string ToString(const Vector2& vec) {
+	return "("
+		+ std::to_string(vec.x) + ", "
+		+ std::to_string(vec.y) + ")";
+}
+
 std::string ToString(const Vector3& vec) {
 	return "("
 		+ std::to_string(vec.x) + ", "
@@ -69,4 +75,12 @@ inline void FixNaN(Matrix& value) {
 
 inline bool IsNaN(Matrix& value) {
 	return IsAllNaN(value);
+}
+
+float VecMin(const DirectX::SimpleMath::Vector3& vec) {
+	return min(min(vec.x, vec.y), vec.z);
+}
+
+float VecMax(const DirectX::SimpleMath::Vector3& vec) {
+	return max(max(vec.x, vec.y), vec.z);
 }

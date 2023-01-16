@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
+
 #include "ShaderResource.h"
 
 #include "imgui\TextEditor\TextEditor.h"

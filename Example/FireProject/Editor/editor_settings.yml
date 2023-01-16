@@ -1,0 +1,6 @@
+.file0.assetId: {AssetId: d41d19d7-fef9-4034-a3e3-6589d657d863}
+.file0.files: {Var: 1}
+
+.file1!script: {Var: EditorSettings}
+.file1!scriptId: {AssetId: 3dfd7ca5-2750-4783-b7ef-9fced505568d}
+.file1.StartupScene.assetId: {AssetId: f69709f7-3150-4308-8cf1-b566c6abb124}

@@ -1,0 +1,7 @@
+.file0.assetId: {AssetId: P0000000003T}
+.file0.files: {Scalar: 1}
+
+.file1!scriptId: {AssetId: 00000010000}
+.file1!prefabId: {AssetId: P0000000002T}
+.file1!.file1!.file1.name: {Scalar: "prefab_3_test"}
+.file1!.file1!.file1.matList.1.assetId: {AssetId: "00100000402"}

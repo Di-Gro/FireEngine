@@ -1,5 +1,49 @@
 ﻿<#@ import namespace="System.Runtime.InteropServices" #>
 <#+
+    private void PROP_GETSET_STR(string className, string propName)
+    {
+        PROP_GET_STR(className, propName);
+        PROP_SET_STR(className, propName);
+    }
+#>
+<#+
+    private void PROP_GET_STR(string className, string propName)
+    {
+        var cppGetterName = className + "_" + propName + "_get";
+        var csGetterName = propName + "_get";
+#>
+            [DllImport(Paths.Exe, EntryPoint = "<#= cppGetterName #>")]
+		    private static extern size_t <#= csGetterName #>_ptr(CppRef objRef);
+
+            public static string <#= csGetterName #>(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(<#= csGetterName #>_ptr(objRef)) : "";
+
+<#+
+    }
+#>
+<#+
+    private void PROP_SET_STR(string className, string propName)
+    {
+        var cppGetterName = className + "_" + propName + "_set";
+        var csGetterName = propName + "_set";
+#>
+            [DllImport(Paths.Exe, EntryPoint = "<#= cppGetterName #>", CharSet = CharSet.Ansi)]
+		    private static extern void <#= csGetterName #>_inner(CppRef objRef, string value);
+
+            public static void <#= csGetterName #>(CppRef objRef, string value) { if(objRef.value != 0) <#= csGetterName #>_inner(objRef, value); }
+
+<#+
+    }
+#>
+<#+
+    private void PUSH_ASSET(string className)
+    {
+        ANSI_FUNC(className, "PushAsset", "CppRef", "CppRef gameRef, string assetId, int assetIdHash");
+        FUNC(className, "assetId_get", "size_t", "CppRef cppRef");
+        ANSI_FUNC(className, "assetId_set", "void", "CppRef cppRef, string value");
+        PROP_GETSET(className, "int", "assetIdHash");
+    }
+#>
+<#+
     private void PROP_GETSET(string className, string propType, string propName)
     {
         PROP_GET(className, propType, propName);
@@ -13,7 +57,9 @@
         var csGetterName = propName + "_get";
 #>
             [DllImport(Paths.Exe, EntryPoint = "<#= cppGetterName #>")]
-		    public static extern <#= propType #> <#= csGetterName #>(CppRef objRef);
+		    private static extern <#= propType #> <#= csGetterName #>_inner(CppRef objRef);
+
+            public static <#= propType #> <#= csGetterName #>(CppRef objRef) => objRef.value != 0 ? <#= csGetterName #>_inner(objRef) : default;
 
 <#+
     }
@@ -25,7 +71,9 @@
         var csGetterName = propName + "_set";
 #>
             [DllImport(Paths.Exe, EntryPoint = "<#= cppGetterName #>")]
-		    public static extern void <#= csGetterName #>(CppRef objRef, <#= propType #> value);
+		    private static extern void <#= csGetterName #>_inner(CppRef objRef, <#= propType #> value);
+
+            public static void <#= csGetterName #>(CppRef objRef, <#= propType #> value) { if(objRef.value != 0) <#= csGetterName #>_inner(objRef, value); }
 
 <#+
     }
@@ -71,7 +119,7 @@
         var fullName = className + "_" + "Create";
 #>
             [DllImport(Paths.Exe, EntryPoint = "<#= fullName #>")]
-		    public static extern CppObjectInfo Create(CppRef cppObjRef, CsRef csCompRef);
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
 <#+
     }

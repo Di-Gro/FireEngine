@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
+#include "InputDevice.h"
 
 class CameraComponent;
 class Player;
@@ -9,8 +10,8 @@ class ShadowPass;
 class GameController : public Component {
 	PURE_COMPONENT(GameController)
 private:
-	CameraComponent* m_defaultCamera;
-	CameraComponent* m_playerCamera;
+	//CameraComponent* m_defaultCamera;
+	//CameraComponent* m_playerCamera;
 
 	Player* m_player;
 
@@ -19,7 +20,7 @@ private:
 
 	DelegateHandle m_mouseMoveHandle;
 
-	ShadowPass* m_shadowPass;
+	//ShadowPass* m_shadowPass;
 
 public:
 	//GameController(Actor* actor) : Component(actor) {}

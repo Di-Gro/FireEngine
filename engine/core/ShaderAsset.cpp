@@ -15,7 +15,9 @@
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxguid.lib")
 
+#include "Game.h"
 #include "Render.h"
+#include "Assets.h"
 
 
 void ShaderAsset::Init(Render* render) {
@@ -23,16 +25,20 @@ void ShaderAsset::Init(Render* render) {
 }
 
 void ShaderAsset::CompileShader(const fs::path& path) {
+	if (!TryCompileShader(path))
+		std::exit(1);
+}
+
+bool ShaderAsset::TryCompileShader(const fs::path& path) {
 	auto hash = GetShaderHash(path);
 
 	if (HasShader(hash))
-		return;
+		return true;
 
 	m_shaders.insert(std::make_pair(hash, Shader()));
 	Shader& shader = m_shaders.at(hash);
 
-	if (!m_CompileShader(path, &shader))
-		std::exit(1);
+	return m_CompileShader(path, &shader);
 }
 
 

@@ -11,20 +11,21 @@
 #include "Material.h"
 #include "CsLink.h"
 #include "CSBridge.h"
+#include "IAsset.h"
 
 #include "ShaderResource.h"
 
 using namespace DirectX::SimpleMath;
 
 #pragma pack(push, 4)
-static struct CameraCBuffer {
+struct CameraCBuffer {
 	Vector3 position;
 	float _1[1];
 };
 #pragma pack(pop)
 
 #pragma pack(push, 4)
-static struct ShadowCBuffer {
+struct ShadowCBuffer {
 	Matrix uvMatrix;
 	float mapScale;
 	float _f[3];
@@ -32,11 +33,12 @@ static struct ShadowCBuffer {
 #pragma pack(pop)
 
 #pragma pack(push, 4)
-static struct MeshCBuffer {
+struct MeshCBuffer {
 	Matrix wvpMatrix;
 	Matrix worldMatrix;
 	Vector3 cameraPosition;
 	float _1[1];
+	//Matrix absLocalMatrix;
 };
 #pragma pack(pop)
 
@@ -45,9 +47,14 @@ class Render;
 class MeshAsset;
 class MeshComponent;
 
-class Mesh4 : public CsLink {
+
+FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count);
+
+class Mesh4 : public IAsset {
 	friend class MeshAsset;
 	friend class MeshComponent;
+
+	FRIEND_FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count);
 
 public:
 	class Vertex {
@@ -56,6 +63,13 @@ public:
 		Vector4 color = Vector4::One;
 		Vector4 normal = Vector4::One;
 		Vector4 uv = Vector4::Zero;
+
+		Vertex() {}
+		Vertex(Vector3 pos) {
+			position.x = pos.x;
+			position.y = pos.y;
+			position.z = pos.z;
+		}
 	};
 
 public:
@@ -64,6 +78,7 @@ public:
 		const Matrix* worldMatrix;
 		const Matrix* transfMatrix;
 		const Vector3* cameraPosition;
+		//const Matrix* absLocalMatrix;
 	};
 
 private:
@@ -82,9 +97,11 @@ private:
 
 public:
 	mutable D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	int version = 0;
 
 private:
-	size_t f_assetHash = 0;
+	std::vector<const Material*> f_staticMaterials;
+	//size_t f_assetHash = 0;
 	std::vector<Shape> m_shapes;
 	Render* m_render;
 
@@ -94,6 +111,7 @@ private:
 public:
 	Mesh4() {};
 	Mesh4(const Mesh4& other);
+	Mesh4& operator=(const Mesh4& other);
 	~Mesh4();
 
 
@@ -117,11 +135,16 @@ public:
 	void Draw(const DynamicShapeData& data) const;
 	void DrawShape(const DynamicShapeData& data, int index) const;
 
-	int shapeCount() const { return m_shapes.size(); }
+	int shapeCount() const { return (int)m_shapes.size(); }
+	//size_t assetHash() { return f_assetHash; }
 
 	int maxMaterialIndex() const;
 
+	const std::vector<const Material*>* GetMaterials() const { return &f_staticMaterials; }
+
 	Shape* GetShape(int index);
+
+	void Release();
 
 };
 
@@ -134,15 +157,20 @@ public:
 
 public:
 	Render* m_render;
-	const Shader* m_shader;
+	const Shader* shader;
 	comptr<ID3D11SamplerState> m_sampler;
 	
 public:
 
 	void Init(Render* render, const Shader* shader);
+	void Release();
 	void Draw() const;
 	void Draw2() const;
 };
 
 FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref);
 FUNC(Mesh4, MaterialMaxIndex, int)(CppRef mesh4Ref);
+
+PUSH_ASSET(Mesh4);
+
+FUNC(Mesh4, Init, void)(CppRef gameRef, CppRef meshRef, const char* path);

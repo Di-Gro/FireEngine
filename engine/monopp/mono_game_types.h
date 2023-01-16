@@ -79,6 +79,58 @@ public:
 	void(*onInit)();
 	void(*onStart)();
 	void(*onUpdate)();
+	void(*onFixedUpdate)();
 	void(*onDestroy)();
-
 };
+
+class GameCallbacks {
+public:
+	void (*setSceneRef)(CppRef value);
+	void (*setMeshAssetRef)(CppRef value);
+	void (*setAssetStoreRef)(CppRef value);
+	void (*setUpdateData)(GameUpdateData value);
+	void (*onInputUpdate)();
+
+	int (*saveScene)(CppRef cppSceneRef, size_t pathPtr);
+	bool (*loadScene)(CppRef cppSceneRef, int assetGuidHash);
+
+	//bool(*saveScene)(CppRef cppSceneRef, size_t assetIdPtr, size_t pathPtr);
+	//bool(*loadScene)(CppRef cppSceneRef, size_t assetIdPtr);
+
+	bool (*runOrCrush)(CsRef componentRef, void(*method)());
+
+	bool (*isAssignable)(CsRef objRef, int typeIdHash);
+
+	void (*removeCsRef)(CsRef value);
+
+	void (*loadAssetStore)();
+	bool (*hasAssetInStore)(int assetIdHash);
+
+	int (*getStringHash)(size_t stringPtr);
+
+	bool (*loadAsset)(int assetIdHash, CppRef cppRef);
+	void (*reloadAsset)(int assetIdHash);
+	void (*saveAsset)(int assetIdHash);
+
+	void (*pushClipboard)(CsRef value);
+	CppRef (*peekClipboard)();
+	bool (*clipboardIsAssignable)(int scriptIdHash);
+	bool (*clipboardIsSameType)(int scriptIdHash);
+	void (*clipboardSetActor)(CsRef value);
+
+	bool (*createAsset)(size_t pathPtr);
+	bool (*renameAsset)(int assetGuidHash, size_t newPathPtr);
+	void (*removeAsset)(int assetGuidHash);
+
+	int (*createPrefab)(CsRef actorRef, size_t pathPtr);
+	bool (*loadPrefab)(int assetGuidHash, CsRef actorRef);
+	bool (*updatePrefab)(CsRef actorRef, int assetGuidHash);
+
+	void (*setPrefabId)(CsRef actorRef, int prefabGuidHash);
+
+	int (*createSceneAsset)(size_t pathPtr);
+	bool (*renameSceneAsset)(int assetIdHash, size_t pathPtr);
+
+	void (*requestAssetGuid)(int assetIdHash);
+};
+

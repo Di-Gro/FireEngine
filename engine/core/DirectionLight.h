@@ -1,20 +1,25 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
+#include "Texture.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
 #include "MaterialAlias.h"
 #include "ILightSource.h"
+#include "CSBridge.h"
+
+#include "Mesh.h"
 
 class MeshComponent;
 class LineComponent;
 class CameraComponent;
 
 class DirectionLight : public Component, public ILightSource {
-	PURE_COMPONENT(DirectionLight);
+	COMPONENT(DirectionLight);
+
 public:
 	Vector3 color = Vector3::One;
-	float intensity = 1.0f;
+	float intensity = 0.6f;
 
 private:
 	Texture m_renderTexture;
@@ -68,3 +73,4 @@ public:
 	void RecieveGameMessage(const std::string& msg);
 };
 
+DEC_COMPONENT(DirectionLight);

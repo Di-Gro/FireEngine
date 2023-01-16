@@ -1,0 +1,30 @@
+. ... ... ... .
+... Material...
+. ... [OK]... .
+.file1!script: {Var: Material}
+.file1!scriptId: {AssetId: 00000010000}
+.file1.textures.0.assetId: {AssetId: 00000010100}
+. ... ... ... .
+... Texture ...
+. ... [OK]... .
+.file1!script: {Var: Texture}
+.file1!scriptId: {AssetId: 00000010000}
+.file1.height: {Var: 148}
+.file1.width: {Var: 356}
+.file1.image.assetId: {AssetId: 00010010010}
+. ... ... ... .
+... .Image. ...
+. ... [OK]... .
+.file1!script: {Var: Image}
+.file1!scriptId: {AssetId: 00000010000}
+.file1.m_ext: {Var: png}
+. ... ... ... .
+... .Mesh.. ...
+. ... [OK]... .
+.file1!script: {Var: Mesh}
+.file1!scriptId: {AssetId: 00000010000}
+.file1.scale: {Var: 1.0}
+.file1.materials.0.assetId: {AssetId: 00000010100}
+. ... ... ... .
+... ... ... ...
+. ... ... ... .

@@ -1,4 +1,12 @@
 //////ShaderPass///////ShaderPass///////ShaderPass/////ShaderPass///////ShaderPass
+struct EditorData {
+    uint selectedActorId;
+};
+
+struct ActorData {
+    uint actorId;
+};
+
 struct CameraData {
     float3 position;
 };
@@ -44,6 +52,12 @@ cbuffer PS_MaterialData : register(b3) { MaterialData cb_material; }
 // PASS_CB_MESH_PS 4
 cbuffer VS_PS_MeshData : register(b4) { MeshData cb_mesh; }
 
+// PASS_CB_ACTOR_PS 5
+cbuffer PS_ActorData : register(b5) { ActorData cb_actor; }
+
+// PASS_CB_EDITOR_PS 6
+cbuffer PS_EditorData : register(b6) { ActorData cb_editor; }
+
 // PASS_R_PASS_PS 0
 Texture2D ShadowMap : register(t0);
 SamplerComparisonState CompSampler : register(s0);
@@ -54,6 +68,7 @@ Texture2D gbuf_normal : register(t2);
 Texture2D gbuf_vertexColor : register(t3);
 Texture2D gbuf_worldPos : register(t4);
 Texture2D gbuf_matParams : register(t5);
+Texture2D gbuf_actor : register(t6);
 
 float3 GetDiffuse(float2 screenPos){ return gbuf_diffuseRGB.Load(float3(screenPos.xy, 0)).rgb; }
 float3 GetNormal(float2 screenPos){ return gbuf_normal.Load(float3(screenPos.xy, 0)).rgb; }
@@ -63,5 +78,5 @@ float GetMatDiffuse(float2 screenPos){ return gbuf_matParams.Load(float3(screenP
 float GetMatAmbient(float2 screenPos){ return gbuf_matParams.Load(float3(screenPos.xy, 0)).g; }
 float GetMatSpecular(float2 screenPos){ return gbuf_matParams.Load(float3(screenPos.xy, 0)).b;}
 float GetMatShininess(float2 screenPos){ return gbuf_matParams.Load(float3(screenPos.xy, 0)).a; }
-
+uint GetActorId(float2 screenPos){ return gbuf_actor.Load(float3(screenPos.xy, 0)).a; }
 //////ShaderPass///////ShaderPass///////ShaderPass/////ShaderPass///////ShaderPass

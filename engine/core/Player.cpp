@@ -1,11 +1,15 @@
 #include "Player.h"
+
+#include "Game.h"
+#include "MeshAsset.h"
+
 #include "PlayerCamera.h"
 #include "MeshComponent.h"
 #include "LineComponent.h"
 #include "Forms.h"
-#include "Collider.h"
+#include "Attachable.h"
 
-DEF_PURE_COMPONENT(Player);
+DEF_PURE_COMPONENT(Player, RunMode::PlayOnly);
 
 void Player::OnInit() {
 	m_rotationSpeed = rad(speed / (2 * pi * radius) * 360);
@@ -75,15 +79,15 @@ void Player::OnStart() {
 void Player::OnUpdate() {
 	if (m_updatePosition) {
 
-		if (m_onCollision) {
-			auto nextPoint = m_hitPoint + m_velocityDelta;
-			if (m_hitCollider->FloorContainPoint(nextPoint)) {
-				auto xz = m_hitCollider->GetClosestFloorPoint(nextPoint);
-				Vector3 closest = { xz.x, m_hitPoint.y, xz.y };
+		//if (m_onCollision) {
+		//	auto nextPoint = m_hitPoint + m_velocityDelta;
+		//	if (m_hitCollider->FloorContainPoint(nextPoint)) {
+		//		auto xz = m_hitCollider->GetClosestFloorPoint(nextPoint);
+		//		Vector3 closest = { xz.x, m_hitPoint.y, xz.y };
 
-				m_velocityDelta = closest - m_hitPoint;
-			}
-		}
+		//		m_velocityDelta = closest - m_hitPoint;
+		//	}
+		//}
 		localPosition(localPosition() + m_velocityDelta);
 		m_lastVelocity = m_velocityDelta;
 		m_velocityDelta = Vector3::Zero;
@@ -146,29 +150,29 @@ void Player::Attach(Actor* attachableObj) {
 	localPosition(pos);
 }
 
-void Player::OnCollisionBegin(BoxCollider* collider) {
-	static int index = 0;
-
-	auto pos = worldPosition();
-	auto xz = collider->GetClosestFloorPoint(pos);
-	m_hitPoint = { xz.x, pos.y, xz.y };
-	m_hitCollider = collider;
-
-	m_onCollision = true;
-	std::cout << "OnCollisionBegin " << index++ << "\n";
-}
-
-void Player::OnCollisionEnd(BoxCollider* collider) {
-	static int index = 0;
-
-	m_onCollision = false;
-	m_hitCollider = nullptr;
-	std::cout << "OnCollisionEnd " << index++ << "\n";
-}
-
-void Player::OnCollision(BoxCollider* collider) {
-	auto pos = worldPosition();
-	auto xz = collider->GetClosestFloorPoint(pos);
-	m_hitPoint = { xz.x, pos.y, xz.y };
-	m_hitCollider = collider;
-}
+//void Player::OnCollisionBegin(BoxCollider* collider) {
+//	static int index = 0;
+//
+//	auto pos = worldPosition();
+//	auto xz = collider->GetClosestFloorPoint(pos);
+//	m_hitPoint = { xz.x, pos.y, xz.y };
+//	m_hitCollider = collider;
+//
+//	m_onCollision = true;
+//	std::cout << "OnCollisionBegin " << index++ << "\n";
+//}
+//
+//void Player::OnCollisionEnd(BoxCollider* collider) {
+//	static int index = 0;
+//
+//	m_onCollision = false;
+//	m_hitCollider = nullptr;
+//	std::cout << "OnCollisionEnd " << index++ << "\n";
+//}
+//
+//void Player::OnCollision(BoxCollider* collider) {
+//	auto pos = worldPosition();
+//	auto xz = collider->GetClosestFloorPoint(pos);
+//	m_hitPoint = { xz.x, pos.y, xz.y };
+//	m_hitCollider = collider;
+//}

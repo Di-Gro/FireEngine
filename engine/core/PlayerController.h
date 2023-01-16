@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Game.h"
+#include "Actor.h"
 
 class Player;
 class PlayerCamera;

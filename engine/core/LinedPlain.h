@@ -1,32 +1,33 @@
 #pragma once
 
-#include <d3d11.h>
-#include <SimpleMath.h>
+#include "SimpleMath.h"
 
-#include "MeshComponent.h"
-#include "Forms.h"
-
-using namespace DirectX::SimpleMath;
+#include "CSBridge.h"
+#include "Actor.h"
+#include "Mesh.h"
 
 class MeshComponent;
+class Material;
 
 class LinedPlain : public Component {
-private:
-
-	float m_size = 10'000.0f;
-	float m_tileSize = 30.0f;
-	Vector4 m_color = MyColors::SkyWhite; //{231 / 255.0f, 159 / 255.0f, 196 / 255.0f, 1.0f}; //{ 0.8f, 0.0f, 0.0f, 0.0f }; 
-
-	MeshComponent* m_meshComponent;
+	PURE_COMPONENT(LinedPlain);
 
 public:
-	//LinedPlain(Actor* gameObject) : Component(gameObject) {}
+	Vector3 color = { 0.13f, 0.14f, 0.15f };
+	float size = 10'000.0f;
+	float tileSize = 30.0f;
 
+private:
+	MeshComponent* m_meshComponent;
+	Material* m_material = nullptr;
+
+public:
 	void OnInit() override;
+	void OnStart() override;
 	void OnDestroy() override;
 
 private:
-	void m_GeneratePoints(std::vector<Vector4>& points, std::vector<int>& indexes);
+	void m_GeneratePoints(std::vector<Mesh4::Vertex>& points, std::vector<int>& indexes);
 
 };
 

@@ -1,6 +1,7 @@
 #include "Refs.h"
 
 #include <iostream>
+#include <string>
 
 
 template<typename T>
@@ -27,6 +28,6 @@ T* CppRefs::ThrowPointer(CppRef refId) {
 	if (pointer != nullptr)
 		return pointer;
 
-	std::cout << "+: CppRefs::ThrowPointer(): NullptrException" << std::endl;
-	throw std::exception("+: CppRefs::ThrowPointer(): NullptrException");
+	auto text = "CppRefs::ThrowPointer(): CppRef:" + std::to_string(refId.value) + " not exists";
+	throw std::exception(text.c_str());
 }

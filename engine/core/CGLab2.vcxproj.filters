@@ -49,6 +49,21 @@
     <Filter Include="imgui\TextEditor">
       <UniqueIdentifier>{1367e662-7a7d-46f9-bfb0-49b53111381c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{e1ce7b92-18aa-4c25-8cef-40ffde6f16ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imguizmo">
+      <UniqueIdentifier>{a3f48340-4891-484e-8141-6d641a32d4be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ContextMenu">
+      <UniqueIdentifier>{5a3df525-2064-477c-b6ac-7f471709846a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FirePhysics">
+      <UniqueIdentifier>{ffb34ada-54f3-40f8-bbb5-7db8dd57d769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FirePhysics\Physics">
+      <UniqueIdentifier>{6d775892-106f-4314-90ab-2ef648f66013}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
@@ -112,9 +127,6 @@
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="Attachable.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="AxisDrawer.cpp">
@@ -267,6 +279,108 @@
     <ClCompile Include="TestLightComponent.cpp">
       <Filter>Render\Lighting</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UI_BarMenu.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_Console.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_ContentBrowser.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_Editor.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_Hierarchy.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_Inspector.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_PlayGame.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UI_UpperMenu.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UserInterface.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectionPass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="OutlinePass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurPass.cpp">
+      <Filter>Render\Render Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="imguizmo\ImGuizmo.cpp">
+      <Filter>imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Not Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetStore.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ComponentPicker.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRenderer.cpp">
+      <Filter>Not Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\SceneWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\SceneEditorWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\AssetPickerPopup.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorSettings.cpp">
+      <Filter>Not Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ContextMenu.cpp">
+      <Filter>ContextMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Colliders.cpp">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="FireActivationListener.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="FireContactListener.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsScene.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="JoltExtantions.cpp">
+      <Filter>FirePhysics</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\PrefabPickerPopup.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\ScenePickerPopup.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
     <ClCompile Include="Rete.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -396,9 +510,6 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Attachable.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
@@ -562,6 +673,123 @@
     </ClInclude>
     <ClInclude Include="TestLightComponent.h">
       <Filter>Render\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_BarMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_Console.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_ContentBrowser.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_Editor.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_Hierarchy.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_Inspector.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_PlayGame.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UI_UpperMenu.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UserInterface.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorCBuffer.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionPass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCBuffer.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="OutlinePass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="BlurPass.h">
+      <Filter>Render\Render Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="IAsset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="imguizmo\ImGuizmo.h">
+      <Filter>imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetStore.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ComponentPicker.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="RunMode.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneRenderer.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\SceneWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\SceneEditorWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\AssetPickerPopup.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorSettings.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextMenu.h">
+      <Filter>ContextMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="SafeDestroy.h">
+      <Filter>Not Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Rigidbody.h">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Colliders.h">
+      <Filter>FirePhysics\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="FireActivationListener.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="FireContactListener.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsScene.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="Layers.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="JoltExtantions.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\PrefabPickerPopup.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ScenePickerPopup.h">
+      <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Rete.h">
       <Filter>Not Components</Filter>

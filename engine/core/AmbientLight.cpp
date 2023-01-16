@@ -1,6 +1,12 @@
 #include "AmbientLight.h"
 
-DEF_PURE_COMPONENT(AmbientLight);
+#include "Game.h"
+#include "Scene.h"
+#include "Render.h"
+#include "Assets.h"
+#include "ShaderAsset.h"
+#include "Actor.h"
+#include "Lighting.h"
 
 
 void AmbientLight::OnInit() {
@@ -8,11 +14,15 @@ void AmbientLight::OnInit() {
 
 	m_screenQuad.Init(render, game()->shaderAsset()->GetShader(Assets::ShaderAmbientLight));
 
-	m_lightSource = render->AddLightSource(this);
+	m_lightSource = scene()->renderer.AddLightSource(this);
+	scene()->ambientLight = this;
 }
 
 void AmbientLight::OnDestroy() {
-	game()->render()->RemoveLightSource(m_lightSource);
+	scene()->renderer.RemoveLightSource(m_lightSource);
+
+	if(scene()->ambientLight == this)
+		scene()->ambientLight = nullptr;
 }
 
 void AmbientLight::OnDrawLight(RenderPass* renderPass) {
@@ -30,4 +40,9 @@ LightCBuffer AmbientLight::GetCBuffer() {
 	cbuffer.param1 = intensity;
 
 	return cbuffer;
+}
+
+DEF_COMPONENT(AmbientLight, Engine.AmbientLight, 2, RunMode::EditPlay) {
+	OFFSET(0, AmbientLight, color);
+	OFFSET(1, AmbientLight, intensity);
 }

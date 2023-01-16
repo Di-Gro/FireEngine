@@ -3,7 +3,10 @@
 
 #include "RenderPass.h"
 
+class DirectionLight;
+
 class ShadowPass : public RenderPass {
+
 private:
 	comptr<ID3D11RasterizerState> m_rastState;
 

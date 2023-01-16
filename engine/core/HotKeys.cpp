@@ -1,10 +1,12 @@
 #include "HotKeys.h"
 
+#include <iostream>
+
 #include "InputDevice.h"
 #include "Game.h"
 #include "CSBridge.h"
+#include "SimpleMath.h"
 
-//using namespace CS;
 
 void HotKeys::Init(Game* game) {
 	m_game = game;
@@ -52,10 +54,12 @@ void HotKeys::Update(InputDevice* input) {
 				state = KeyState::None;
 		}
 	}
+	m_game->callbacks().onInputUpdate();
 }
 
 void HotKeys::LateUpdate() {
 	m_mouseWheelDelta = 0;
+	m_mousePosDelta = Vector2::Zero;
 }
 
 void HotKeys::RegisterHotkey(Keys key) {
@@ -93,6 +97,14 @@ bool HotKeys::GetButtonDown(Keys key) {
 	return Is(key, KeyState::Press);
 }
 
+bool HotKeys::GetButtonDown(Keys key, Keys modifier) {
+	return Is(key, KeyState::Press) && Is(modifier);
+}
+
+bool HotKeys::GetButtonDown(Keys key, Keys modifier1, Keys modifier2) {
+	return Is(key, KeyState::Press) && Is(modifier1) && Is(modifier2);
+}
+
 bool HotKeys::GetButtonUp(Keys key) {
 	return Is(key, KeyState::Release);
 }
@@ -108,6 +120,9 @@ DirectX::SimpleMath::Vector2 HotKeys::GetMousePosition() {
 void HotKeys::m_OnMouseMove(const InputDevice::MouseMoveArgs& args) {
 	if (args.WheelDelta != 0)
 		m_mouseWheelDelta += args.WheelDelta > 0 ? 1 : -1;
+
+	if (args.Offset.x != 0 || args.Offset.y != 0)
+		m_mousePosDelta += args.Offset;
 }
 
 
@@ -136,3 +151,11 @@ DEF_FUNC(HotKeys, MousePosition, CS::float2)(CppRef objRef) {
 }
 
 DEF_PROP_GET(HotKeys, int, wheelDelta)
+
+CS::float2 HotKeys_mouseDelta_get(CppRef objRef) {
+	auto* a = CppRefs::GetPointer<HotKeys>(objRef);
+	if (a != nullptr)
+		return CS::ToCS(a->mouseDelta());
+
+	return {0, 0};
+}

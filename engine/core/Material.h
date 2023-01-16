@@ -10,19 +10,22 @@
 #include "CSBridge.h"
 #include "MaterialAlias.h"
 #include "ShaderResource.h"
+#include "IAsset.h"
 
 class Shader;
 class Render;
+class SceneRenderer;
 
-enum class CullMode { Front, Back };
+enum class CullMode { Front, Back, None };
 enum class FillMode { Solid, Wireframe };
 
-class Material : public CsLink {
+class Material : public IAsset {
 	friend class Render;
+	friend class SceneRenderer;
 
 	#pragma pack(push, 4)
 	public: struct Data {
-		Vector3 diffuseColor = Vector3::One;		// 12
+		Vector3 diffuseColor = {0.5, 0.5, 0.5};		// 12
 		float diffuse = 1.0f;		// Kd			// 4
 		float ambient = 0.8f;		// Ka			// 4
 		float specular = 0.5f;		// Ks			// 4
@@ -37,7 +40,7 @@ public:
 	const Shader* shader;
 	bool isDynamic = false;
 
-	std::vector<Texture> textures;
+	std::vector<Texture*> textures;
 	std::vector<ShaderResource> resources;
 
 	Data data;
@@ -51,8 +54,9 @@ public:
 	comptr<ID3D11DepthStencilState> depthStencilState;
 
 private:
-	mutable int f_passIndex = -1;
-	mutable Pass::MaterialIter f_materialIter;
+	//mutable int f_passIndex = -1;
+	//mutable RenderPass* f_renderPass = nullptr;
+	//mutable Pass::MaterialIter f_materialIter;
 
 private:
 	std::string m_name;
@@ -68,24 +72,32 @@ public:
 	}
 
 	void Init(Render* render);
+	void Init2(Render* render);
+	void Release() override;
 
 	void UpdateDepthStencilState();
 };
 
-FUNC(Material, diffuseColor_get, Vector3)(CppRef matRef);
-FUNC(Material, diffuse_get, float)(CppRef matRef);
-FUNC(Material, ambient_get, float)(CppRef matRef);
-FUNC(Material, specular_get, float)(CppRef matRef);
-FUNC(Material, shininess_get, float)(CppRef matRef);
+PUSH_ASSET(Material);
+FUNC(Material, Init, void)(CppRef gameRef, CppRef matRef);
 
-FUNC(Material, diffuseColor_set, void)(CppRef matRef, Vector3 value);
-FUNC(Material, diffuse_set, void)(CppRef matRef, float value);
-FUNC(Material, ambient_set, void)(CppRef matRef, float value);
-FUNC(Material, specular_set, void)(CppRef matRef, float value);
-FUNC(Material, shininess_set, void)(CppRef matRef, float value);
+PROP_GETSET(Material, Vector3, diffuseColor)
+PROP_GETSET(Material, float, diffuse)
+PROP_GETSET(Material, float, ambient)
+PROP_GETSET(Material, float, specular)
+PROP_GETSET(Material, float, shininess)
+PROP_GETSET(Material, CullMode, cullMode)
+PROP_GETSET(Material, FillMode, fillMode)
+PROP_GETSET(Material, size_t, priority)
 
-FUNC(Material, name_get, int)(CppRef matRef, char* buf, int bufLehgth);
+FUNC(Material, name_set, void)(CppRef matRef, const char* name);
+FUNC(Material, name_length, size_t)(CppRef matRef);
+FUNC(Material, name_get, void)(CppRef matRef, char* buf);
 
-//extern "C" __declspec(dllexport) char* _cdecl Material_name_get(CppRef matRef);
+FUNC(Material, shader_set, void)(CppRef gameRef, CppRef matRef, const char* name);
+FUNC(Material, shader_length, size_t)(CppRef matRef);
+FUNC(Material, shader_get, void)(CppRef matRef, char* buf);
 
-//class DynamicMaterial
+FUNC(Material, isDynamic_get, bool)(CppRef matRef);
+FUNC(Material, textures_set, void)(CppRef matRef, size_t* cppRefs, int count);
+

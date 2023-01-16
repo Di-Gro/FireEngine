@@ -1,0 +1,74 @@
+--- !lref0
+Id: {assetId: 00000000001}
+
+--- !lref1
+Actor:
+    !M scriptId: {assetId: 00000010000}
+    name:
+    # name: "Actor"
+    intField: 456
+    # localRotation: {}
+    localRotation: {X: 0, Y: 0, Z: 0, W: 1}
+    # localPosition: {X: -32.10138, Y: -8.4575, Z: -3.9753923}
+    # userPrefab: {assetId: 00000010002}
+    # material: {assetId: 00000000003, enumField: Back}
+    # intList:
+    #     - item: 1
+    #     - item: 2
+    #     - item: 3
+    # vecList:
+    #     - item: {X: 1.1, Y: 1.2, Z: 1.3}
+    #     - item: {Xs: 2.1, Y: 2.2, Z: 2.3}
+    #     - item: {X: 3.1, Y: 3.2, Z: 3.3}
+    # matList:
+    #     - item: {assetId: 00100000001, enumField: Back}
+    #     - item: {assetId: 00100000002, enumField: Front}
+    #     - item: {assetId: 00100000003}
+    # !R actorInFile: {!F lref: 2}
+    # actorList:
+    #     - !R item: {!F lref: 2}
+    #     - !R item: {!F lref: 2}
+    #     - !R item: {!F lref: 2}
+    # m_components:
+    #     - component: {!F lref: 6}
+    #     - component: {!F lref: 4}
+    # m_children:
+    #     - actor: {!F lref: 2}
+
+--- !lref2
+Actor:
+    !M scriptId: {assetId: 00000010000}
+    name: "Actor2"
+    localRotation: {X: 0, Y: 0, Z: 0, W: 1}
+    localPosition: {X: -32.12, Y: -8.45, Z: -3.98}
+    userPrefab: {assetId: 00000010002}
+    material: {assetId: 00000000007}
+    components: []
+    children: []
+
+
+--- !lref3
+MeshComponent:
+    !M scriptId: {assetId: 00000010002}
+    mesh: {assetId: 00000000002}
+    materials:
+        - material: {assetId: 00000000003}
+        - material: {assetId: 00000000004}
+
+--- !lref6
+SameComponent:
+    !M scriptId: {assetId: 00000010003}
+    material: {assetId: 00000000003}
+
+--- !lref4
+SameComponent2:
+    !M scriptId: {assetId: 00000010004}
+    !M baseRef: {!F lref: 5}
+    userPrefab: {assetId: 00000010002}
+    material: {assetId: 00000000003}
+    intField: 65
+
+--- !lref5
+SameComponent2Base:
+    !M scriptId: {assetId: 00000010005}
+    intField: 78

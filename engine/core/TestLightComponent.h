@@ -6,9 +6,10 @@
 #include <d3d11.h>
 #include <SimpleMath.h>
 
+#include "Actor.h"
+
 #include "Forms.h"
 #include "Mesh.h"
-#include "Game.h"
 #include "MaterialAlias.h"
 #include "IShadowCaster.h"
 
@@ -29,11 +30,6 @@ private:
 	PointLight* m_pointLight = nullptr;
 	SpotLight* m_spotLight = nullptr;
 	
-	CameraComponent* m_pointCamera = nullptr;
-	CameraComponent* m_spotCamera = nullptr;
-
-	CameraComponent* m_defaultCamera;
-
 	bool m_isOpened = true;
 
 public:
