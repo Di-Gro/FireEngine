@@ -366,7 +366,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;Detour.lib;Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib;$(SolutionDir)\engine\RD\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib;$(SolutionDir)\engine\RD\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
