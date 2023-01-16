@@ -146,11 +146,12 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	float mousePosY = mouseHeight - cursorHeight;
 
 	//std::string actorId = std::to_string(actor->Id());
-	auto actorId = "[" + std::to_string(actor->Id()) + "] ";
-	auto treeNodeId = actorId + actor->name() + "##" + actorId + "SceneTreeNodeEx";
+	auto actorId = "[" + std::to_string(actor->Id()) + "]";
+	auto treeNodeId = actor->name() + "##" + actorId + "SceneTreeNodeEx";
 
-	auto currentCursor = ImGui::GetCursorPos();
+	auto lastCursor = ImGui::GetCursorPos();
 	bool selectedTree = ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);
+	auto nextCursor = ImGui::GetCursorPos();
 	auto imGuiItemSize = ImGui::GetItemRectSize();
 
 	float height = mousePosY / (ImGui::GetFrameHeight() - 1);
@@ -158,7 +159,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	m_DrawActorContextMenu(actor);
 
 	HandleDrag(actor);
-	HandleDrop(actor, selectedTree, height, imGuiItemSize, currentCursor);
+	HandleDrop(actor, selectedTree, height, imGuiItemSize, lastCursor);
 
 	ImGui::PopStyleVar(2);
 
@@ -170,6 +171,8 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 			m_ui->SelectedActor(actor);
 	}
 
+	m_DrawActorId(actorId, imGuiItemSize, lastCursor, nextCursor);
+
 	if (selectedTree)
 	{
 		for (int i = 0; i < actor->GetChildrenCount(); ++i)
@@ -178,6 +181,26 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 		if(!isChild)
 			ImGui::TreePop();
 	}
+}
+
+void UI_Hierarchy::m_DrawActorId(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor) {
+	auto textSize = ImGui::CalcTextSize(idText.c_str());
+
+	lastCursor.x = headerSize.x - textSize.x - 10;
+	lastCursor.y += (headerSize.y - textSize.y) / 2;
+
+	auto id = "##m_DrawActorId" + idText;
+	ImGui::PushID(id.c_str());
+
+	ImGui::PushStyleColor(ImGuiCol_Text, { 0.4f, 0.4f ,0.4f ,1.0f });
+
+	ImGui::SetCursorPos(lastCursor);
+	ImGui::Text(idText.c_str());
+	ImGui::SetCursorPos(nextCursor);
+
+	ImGui::PopStyleColor(1);
+
+	ImGui::PopID();
 }
 
 void UI_Hierarchy::HandleDrag(Actor* actor)

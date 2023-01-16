@@ -57,4 +57,6 @@ private:
 	bool m_FindTargetInActorParent(Actor* actor, Actor* target);
 
 	void m_HandleInput();
+
+	void m_DrawActorId(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor);
 };
