@@ -6,6 +6,8 @@
 
 #include "CSBridge.h"
 
+class Game;
+
 class AssetStore {
 public:
 	using ScriptIdHash = int;
@@ -23,8 +25,11 @@ public:
 	int actorTypeIdHash;
 	int prefabTypeIdHash;
 	int componentTypeIdHash;
+	int sceneTypeIdHash;
 	
 private:
+	Game* m_game;
+
 	std::string m_emptyValue = "";
 	std::string m_nullValue = "Null";
 	std::string m_missingValue = "Missing";
@@ -34,17 +39,23 @@ private:
 	std::string m_assetsPath;
 	std::string m_editorPath;
 
+	std::string m_buffer;
+
 public:
+	void Init(Game* game) { m_game = game; }
 	~AssetStore();
 
-	const std::string& projectPath() { return m_projectPath; }
-	void projectPath(const std::string& value) { m_projectPath = value; }
+	const std::string&	projectPath() { return m_projectPath; }
+	void				projectPath(const std::string& value) { m_projectPath = value; }
 
-	const std::string& assetsPath() { return m_assetsPath; }
-	void assetsPath(const std::string& value) { m_assetsPath = value; }
+	const std::string&	assetsPath() { return m_assetsPath; }
+	void				assetsPath(const std::string& value) { m_assetsPath = value; }
 
-	const std::string& editorPath() { return m_editorPath; }
-	void editorPath(const std::string& value) { m_editorPath = value; }
+	const std::string&	editorPath() { return m_editorPath; }
+	void				editorPath(const std::string& value) { m_editorPath = value; }
+
+	const std::string&	buffer() { return m_emptyValue; }
+	void				buffer(const std::string& value) { m_buffer = value; }
 
 	const std::string& GetAssetName(int assetIdHash) {
 		if (assetIdHash == 0)
@@ -79,6 +90,8 @@ public:
 		return m_missingValue;
 	}
 
+	const std::string& GetAssetGuid(int assetGuidHash);
+
 	void SetType(ScriptIdHash typeId, const std::string& fullName, const std::string& name);
 	void AddComponent(ScriptIdHash typeId);
 	void AddAsset(ScriptIdHash typeId, AssetIdHash assetId, const std::string& name);
@@ -110,6 +123,9 @@ PROP_GETSET_STR(AssetStore, editorPath);
 PROP_GETSET(AssetStore, int, actorTypeIdHash);
 PROP_GETSET(AssetStore, int, prefabTypeIdHash);
 PROP_GETSET(AssetStore, int, componentTypeIdHash);
+PROP_GETSET(AssetStore, int, sceneTypeIdHash);
+
+PROP_GETSET_STR(AssetStore, buffer);
 
 FUNC(AssetStore, RenameAsset, void)(CppRef gameRef, int assetId, const char* name);
 FUNC(AssetStore, RemoveAsset, void)(CppRef gameRef, int typeId, int assetId);

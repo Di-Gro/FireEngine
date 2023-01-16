@@ -11,6 +11,15 @@ class SceneMenu {
 public:
 	static void AddActor(Scene* scene);
 	static void AddLight(Scene* scene);
+
+	static bool CanCreate(Game* game, const std::string& name);
+	static int Create(Game* game, const std::string& name);
+
+	static bool CanRename(Scene* scene, const std::string& name);
+	static void Rename(Scene* scene, const std::string& name);
+
+	static bool CanSave(Scene* scene);
+	static void Save(Scene* scene);
 };
 
 class ActorMenu {

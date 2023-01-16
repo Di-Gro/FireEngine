@@ -114,6 +114,7 @@
     <ClCompile Include="UI\AssetPickerPopup.cpp" />
     <ClCompile Include="UI\PrefabPickerPopup.cpp" />
     <ClCompile Include="UI\SceneEditorWindow.cpp" />
+    <ClCompile Include="UI\ScenePickerPopup.cpp" />
     <ClCompile Include="UI\SceneWindow.cpp" />
     <ClCompile Include="UI\ComponentPicker.cpp" />
     <ClCompile Include="UI\UI_BarMenu.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="UI\AssetPickerPopup.h" />
     <ClInclude Include="UI\PrefabPickerPopup.h" />
     <ClInclude Include="UI\SceneEditorWindow.h" />
+    <ClInclude Include="UI\ScenePickerPopup.h" />
     <ClInclude Include="UI\SceneWindow.h" />
     <ClInclude Include="UI\ComponentPicker.h" />
     <ClInclude Include="UI\UI_BarMenu.h" />

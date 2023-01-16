@@ -117,6 +117,7 @@ void Game::Init(MonoInst* imono) {
 	m_input->Init(this);
 	m_hotkeys->Init(this);
 	m_assets->Init(this);
+	m_assetStore->Init(this);
 
 	for (auto& path : game_shaderPaths)
 		m_shaderAsset->CompileShader(path);
@@ -277,6 +278,21 @@ void Game::m_BeginUpdate() {
 	m_hotkeys->Update(input());
 
 	m_BeginUpdateImGui();
+
+	if (m_nextScene != nullptr) {
+		bool isSelected = ui()->selectedScene() == m_editorScene;
+
+		DestroyScene(m_editorScene);
+		m_editorScene = m_nextScene;
+		m_nextScene = nullptr;
+
+		m_editorWindow->scene(m_editorScene);
+
+		if (isSelected)
+			ui()->selectedScene(m_editorScene);
+
+		LoadScene(m_editorScene);
+	}
 }
 
 void Game::m_EndUpdate() {
@@ -368,6 +384,17 @@ void Game::DestroyScene(Scene* scene) {
 		scene->Destroy();
 		scene->EndDestroy();
 	}
+}
+
+bool  Game::CanChangeScene() { 
+	return m_nextScene == nullptr; 
+}
+
+void Game::ChangeScene(Scene* scene) {
+	if (m_editorScene == scene)
+		return;
+
+	m_nextScene = scene;
 }
 
 std::list<Scene*>::iterator Game::m_EraseScene(std::list<Scene*>::iterator iter) {

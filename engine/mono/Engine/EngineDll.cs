@@ -753,6 +753,26 @@ namespace EngineDll {
 
             public static void componentTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) componentTypeIdHash_set_inner(objRef, value); }
 
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_sceneTypeIdHash_get")]
+		    private static extern int sceneTypeIdHash_get_inner(CppRef objRef);
+
+            public static int sceneTypeIdHash_get(CppRef objRef) => objRef.value != 0 ? sceneTypeIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_sceneTypeIdHash_set")]
+		    private static extern void sceneTypeIdHash_set_inner(CppRef objRef, int value);
+
+            public static void sceneTypeIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) sceneTypeIdHash_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_buffer_get")]
+		    private static extern size_t buffer_get_ptr(CppRef objRef);
+
+            public static string buffer_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(buffer_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "AssetStore_buffer_set", CharSet = CharSet.Ansi)]
+		    private static extern void buffer_set_inner(CppRef objRef, string value);
+
+            public static void buffer_set(CppRef objRef, string value) { if(objRef.value != 0) buffer_set_inner(objRef, value); }
+
             [DllImport(Paths.Exe, EntryPoint = "AssetStore_RenameAsset", CharSet = CharSet.Ansi)]
 		    public static extern void RenameAsset(CppRef gameRef, int assetId, string name);
 

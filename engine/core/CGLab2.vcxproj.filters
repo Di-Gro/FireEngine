@@ -378,6 +378,9 @@
     <ClCompile Include="UI\PrefabPickerPopup.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="UI\ScenePickerPopup.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -753,6 +756,9 @@
       <Filter>FirePhysics</Filter>
     </ClInclude>
     <ClInclude Include="UI\PrefabPickerPopup.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\ScenePickerPopup.h">
       <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>

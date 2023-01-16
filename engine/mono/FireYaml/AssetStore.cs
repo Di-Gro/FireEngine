@@ -307,11 +307,13 @@ namespace FireYaml {
             var actorId = GUIDAttribute.GetGuidHash(typeof(Engine.Actor));
             var componentId = GUIDAttribute.GetGuidHash(typeof(Engine.Component));
             var prefabGuidHash = GUIDAttribute.GetGuidHash(typeof(Engine.Prefab));
+            var sceneGuidHash = GUIDAttribute.GetGuidHash(typeof(Engine.Scene));
 
             Dll.AssetStore.ClearAssets(Game.gameRef);
             Dll.AssetStore.actorTypeIdHash_set(Game.assetStoreRef, actorId);
             Dll.AssetStore.prefabTypeIdHash_set(Game.assetStoreRef, prefabGuidHash);
             Dll.AssetStore.componentTypeIdHash_set(Game.assetStoreRef, componentId);
+            Dll.AssetStore.sceneTypeIdHash_set(Game.assetStoreRef, sceneGuidHash);
 
             foreach (var assetGuidHash in m_assetGuidHash_assetData.Keys) {
                 var assetData = m_assetGuidHash_assetData[assetGuidHash];
@@ -605,6 +607,11 @@ namespace FireYaml {
 
             var result = type.IsAssignableFrom(obj.GetType());
             return result;
+        }
+
+        public static void cpp_RequestAssetGuid(int assetGuidHash) {
+            var guid = Instance.GetAssetGuid(assetGuidHash);
+            Dll.AssetStore.buffer_set(Game.assetStoreRef, guid);
         }
 
 

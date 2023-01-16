@@ -38,7 +38,7 @@ namespace Engine {
         }
 
         public float CameraSpeed {
-            get => Dll.Scene.editorCameraSpeed_get(cppRef);
+            get => cppRef.value == 0 ? 100 : Dll.Scene.editorCameraSpeed_get(cppRef);
             set => Dll.Scene.editorCameraSpeed_set(cppRef, value);
         }
 
@@ -93,7 +93,28 @@ namespace Engine {
             AssetStore.Instance.UpdateAsset(assetId, this);
         }
 
+        public static int CreateSceneAsset(ulong cpath) {
+            var path = Assets.ReadCString(cpath);
 
+            var data = AssetStore.Instance.CreateNewAsset(typeof(Scene), path);
+
+            return data == null ? 0 : data.guidHash;
+        }
+
+        public static bool RenameSceneAsset(int assetIdHash, ulong cpath) {
+            var newPath = Assets.ReadCString(cpath);
+
+            var assetGuid = AssetStore.Instance.GetAssetGuid(assetIdHash);
+            var assetPath = AssetStore.Instance.GetAssetPath(assetGuid);
+
+            if(!File.Exists(assetPath) || File.Exists(newPath))
+                return false;
+
+            File.Move(assetPath, newPath);
+
+            AssetStore.Instance.UpdateAssetData(typeof(Scene), newPath);
+            return true;
+        }
     }
 
     public class SceneSerializer : SerializerBase {

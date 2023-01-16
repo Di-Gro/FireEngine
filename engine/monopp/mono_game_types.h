@@ -127,5 +127,10 @@ public:
 	bool (*updatePrefab)(CsRef actorRef, int assetGuidHash);
 
 	void (*setPrefabId)(CsRef actorRef, int prefabGuidHash);
+
+	int (*createSceneAsset)(size_t pathPtr);
+	bool (*renameSceneAsset)(int assetIdHash, size_t pathPtr);
+
+	void (*requestAssetGuid)(int assetIdHash);
 };
 

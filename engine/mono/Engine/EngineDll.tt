@@ -300,6 +300,9 @@ namespace EngineDll {
 			PROP_GETSET("AssetStore", "int", "actorTypeIdHash");
 			PROP_GETSET("AssetStore", "int", "prefabTypeIdHash");
 			PROP_GETSET("AssetStore", "int", "componentTypeIdHash");
+			PROP_GETSET("AssetStore", "int", "sceneTypeIdHash");
+
+			PROP_GETSET_STR("AssetStore", "buffer");
 
 			ANSI_FUNC("AssetStore", "RenameAsset", "void", "CppRef gameRef, int assetId, string name");
 			FUNC("AssetStore", "RemoveAsset", "void", "CppRef gameRef, int typeId, int assetId");

@@ -71,6 +71,7 @@ private:
 
 	Scene* m_editorScene;
 	Scene* m_gameScene = nullptr;
+	Scene* m_nextScene = nullptr;
 
 	std::list<Scene*> m_scenes;
 	std::list<Scene*> m_sceneStack;
@@ -137,6 +138,9 @@ public:
 	Scene* CreateScene(bool isEditor);
 	Scene* CreateScene(bool isEditor, const std::string& assetId);
 	void DestroyScene(Scene* scene);
+
+	bool CanChangeScene();
+	void ChangeScene(Scene* scene);
 
 	inline std::list<Scene*>::iterator ScenesBegin() { return m_scenes.begin(); }
 	inline std::list<Scene*>::iterator ScenesEnd() { return m_scenes.end(); }

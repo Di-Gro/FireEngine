@@ -98,6 +98,11 @@ namespace Engine {
             
             m_gameCallbacks.setPrefabId = new GameCallbacks.SetPrefabId(Actor.SetPrefabId);
 
+            m_gameCallbacks.createSceneAsset = new GameCallbacks.CreateSceneAsset(Scene.CreateSceneAsset);
+            m_gameCallbacks.renameSceneAsset = new GameCallbacks.RenameSceneAsset(Scene.RenameSceneAsset);
+
+            m_gameCallbacks.requestAssetGuid = new GameCallbacks.TakeAssetHash(AssetStore.cpp_RequestAssetGuid);
+
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
 
@@ -204,6 +209,9 @@ namespace Engine {
         public delegate bool LoadPrefab(int assetGuidHash, CsRef actorRef);
         public delegate bool UpdatePrefab(CsRef actorRef, int assetGuidHash);
         public delegate void SetPrefabId(CsRef actorRef, int prefabGuidHash);
+        public delegate int CreateSceneAsset(ulong cpath);
+        public delegate bool RenameSceneAsset(int assetIdHash, ulong cpath);
+        public delegate void TakeAssetHash(int assetGuidHash);
 
         public TakeCppRef setSceneRef;
         public TakeCppRef setMeshAssetRef;
@@ -243,6 +251,11 @@ namespace Engine {
         public UpdatePrefab updatePrefab;
 
         public SetPrefabId setPrefabId;
+
+        public CreateSceneAsset createSceneAsset;
+        public RenameSceneAsset renameSceneAsset;
+
+        public TakeAssetHash requestAssetGuid;
 
 
     }

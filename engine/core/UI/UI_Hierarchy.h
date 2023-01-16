@@ -6,6 +6,8 @@
 #include "../SimpleMath.h"
 #include "../imgui/imgui.h"
 
+#include "ScenePickerPopup.h"
+
 #include <list>
 
 class Game;
@@ -38,6 +40,8 @@ private:
 	Actor* m_dragTargetActor = nullptr;
 	Actor* m_clickedActor = nullptr;
 
+	ScenePickerPopup m_scenePickerPopup;
+
 public:
 	void Draw_UI_Hierarchy();
 	void Init(Game* game);
@@ -57,6 +61,7 @@ private:
 	bool m_FindTargetInActorParent(Actor* actor, Actor* target);
 
 	void m_HandleInput();
+	void m_DrawSceneHeader();
 
-	void m_DrawActorId(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor);
+	void m_DrawHeaderContext(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor);
 };

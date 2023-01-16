@@ -55,6 +55,11 @@ void AssetStore::ClearAssetTypes() {
 	assetTypes.clear();
 }
 
+const std::string& AssetStore::GetAssetGuid(int assetGuidHash) {
+	m_game->callbacks().requestAssetGuid(assetGuidHash);
+	return m_buffer;
+}
+
 DEF_FUNC(AssetStore, ClearTypes, void)(CppRef gameRef) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
 	game->assetStore()->ClearTypes();
@@ -102,6 +107,9 @@ DEF_PROP_GETSET_STR(AssetStore, editorPath);
 DEF_PROP_GETSET_F(AssetStore, int, actorTypeIdHash, actorTypeIdHash);
 DEF_PROP_GETSET_F(AssetStore, int, prefabTypeIdHash, prefabTypeIdHash);
 DEF_PROP_GETSET_F(AssetStore, int, componentTypeIdHash, componentTypeIdHash);
+DEF_PROP_GETSET_F(AssetStore, int, sceneTypeIdHash, sceneTypeIdHash);
+
+DEF_PROP_GETSET_STR(AssetStore, buffer);
 
 FUNC(AssetStore, RenameAsset, void)(CppRef gameRef, int assetId, const char* name) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);

@@ -7,6 +7,7 @@
 #include "../Lighting.h"
 #include "../ContextMenu.h"
 #include "../HotKeys.h"
+#include "../AssetStore.h"
 
 #include "UserInterface.h"
 
@@ -29,8 +30,10 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 		auto scene = m_game->ui()->selectedScene();
 		if (scene != nullptr) {
 			m_game->PushScene(scene);
-
 			m_DrawSceneContextMenu();
+
+			m_DrawSceneHeader();
+
 			auto it = scene->GetNextRootActors(scene->BeginActor());
 			for (; it != scene->EndActor(); it = scene->GetNextRootActors(++it))
 				VisitActor(*it, -1, it);
@@ -50,6 +53,39 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 	}
 	ImGui::End();
 	ImGui::PopStyleVar();
+}
+
+void UI_Hierarchy::m_DrawSceneHeader() {
+	ImGuiTreeNodeFlags node_flags = 0
+		//| ImGuiTreeNodeFlags_SpanFullWidth
+		| ImGuiTreeNodeFlags_FramePadding
+		| ImGuiTreeNodeFlags_Framed
+		| ImGuiTreeNodeFlags_Leaf
+		| ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 4.5f));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+
+	auto scene = m_game->ui()->selectedScene();
+
+	auto treeNodeId = "\t" + scene->name() + "##m_DrawSceneHeader";
+	
+	auto lastCursor = ImGui::GetCursorPos();
+	bool selectedTree = ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);
+	auto nextCursor = ImGui::GetCursorPos();
+	auto imGuiItemSize = ImGui::GetItemRectSize();
+
+	bool hasSelected = m_scenePickerPopup.Open(scene, treeNodeId.c_str());
+	
+	m_DrawHeaderContext("Scene", imGuiItemSize, lastCursor, nextCursor);
+
+	if (hasSelected && m_game->CanChangeScene()) {
+		auto guid = m_game->assetStore()->GetAssetGuid(m_scenePickerPopup.selected);
+		auto nextScene = m_game->CreateScene(true, guid);
+		m_game->ChangeScene(nextScene);
+	}
+
+	ImGui::PopStyleVar(2);
 }
 
 void UI_Hierarchy::m_HandleInput() {
@@ -131,6 +167,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 4.5f));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+
 	ImGuiTreeNodeFlags node_flags = (actor == m_ui->GetActor() ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick
 		| ImGuiTreeNodeFlags_SpanFullWidth
@@ -146,7 +183,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	float mousePosY = mouseHeight - cursorHeight;
 
 	//std::string actorId = std::to_string(actor->Id());
-	auto actorId = "[" + std::to_string(actor->Id()) + "]";
+	auto actorId = "ID:" + std::to_string(actor->Id());
 	auto treeNodeId = actor->name() + "##" + actorId + "SceneTreeNodeEx";
 
 	auto lastCursor = ImGui::GetCursorPos();
@@ -171,7 +208,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 			m_ui->SelectedActor(actor);
 	}
 
-	m_DrawActorId(actorId, imGuiItemSize, lastCursor, nextCursor);
+	m_DrawHeaderContext(actorId, imGuiItemSize, lastCursor, nextCursor);
 
 	if (selectedTree)
 	{
@@ -183,7 +220,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	}
 }
 
-void UI_Hierarchy::m_DrawActorId(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor) {
+void UI_Hierarchy::m_DrawHeaderContext(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor) {
 	auto textSize = ImGui::CalcTextSize(idText.c_str());
 
 	lastCursor.x = headerSize.x - textSize.x - 10;

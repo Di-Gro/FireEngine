@@ -1,11 +1,11 @@
-#include "PrefabPickerPopup.h"
+#include "ScenePickerPopup.h"
 
 #include <iostream>
 #include <algorithm>
 #include <math.h>
 
 #include "../Game.h"
-#include "../Actor.h"
+#include "../Scene.h"
 #include "../Math.h"
 #include "../AssetStore.h"
 #include "../ContextMenu.h"
@@ -14,7 +14,7 @@
 #include "../imgui/misc/cpp/imgui_stdlib.h"
 
 
-bool PrefabPickerPopup::IsMatch(std::string source, std::string target) {
+bool ScenePickerPopup::IsMatch(std::string source, std::string target) {
 	std::transform(source.begin(), source.end(), source.begin(), ::tolower);
 	std::transform(target.begin(), target.end(), target.begin(), ::tolower);
 
@@ -23,16 +23,16 @@ bool PrefabPickerPopup::IsMatch(std::string source, std::string target) {
 	return res != std::string::npos;
 }
 
-bool PrefabPickerPopup::Open(Actor* actor) {
-	auto game = actor->game();
+bool ScenePickerPopup::Open(Scene* scene, const char* id) {
+	auto game = scene->game();
 	auto store = game->assetStore();
 
-	m_prefabIdHash = store->prefabTypeIdHash;
+	m_typeIdHash = store->sceneTypeIdHash;
 
-	if (!store->assets.contains(m_prefabIdHash))
+	if (!store->assets.contains(m_typeIdHash))
 		return false;
 
-	const auto* content = &store->assets[m_prefabIdHash];
+	const auto* content = &store->assets[m_typeIdHash];
 
 	bool hasSelected = false;
 
@@ -70,7 +70,7 @@ bool PrefabPickerPopup::Open(Actor* actor) {
 		ImGui::Separator();
 		ImGui::PopStyleVar(1);
 
-		hasSelected = m_DrawMenu(actor);
+		hasSelected = m_DrawMenu(scene);
 		
 		for (int i = 0; i < content->size(); i++) {
 			if (IsMatch(store->GetAssetName(content->at(i)), m_input))
@@ -116,49 +116,45 @@ bool PrefabPickerPopup::Open(Actor* actor) {
 }
 
 
-bool PrefabPickerPopup::m_DrawMenu(Actor* actor) {
-	auto game = actor->game();
+bool ScenePickerPopup::m_DrawMenu(Scene* scene) {
+	auto game = scene->game();
 	bool hasItems = false;
 	bool hasUniqueName = m_filteredCount == 0 && m_input.size() > 0;
 	auto filename = m_input;
 
 	if (hasUniqueName) {
-		if (PrefabMenu::CanCreate(actor, filename)) {
+		if (SceneMenu::CanCreate(game, filename)) {
 
 			if (ImGui::Selectable("Create")) {
-				PrefabMenu::Create(actor, filename);
-				ImGui::CloseCurrentPopup();
-			}
-			hasItems = true;
-		}
-	}
-	else {
-		{
-			if (ImGui::Selectable("Null")) {
-				selected = 0;
+				int assetIdHash = SceneMenu::Create(game, filename);
+				if(assetIdHash != 0)
+					selected = assetIdHash;
+
 				ImGui::CloseCurrentPopup();
 				return true;
 			}
 			hasItems = true;
 		}
-		if (PrefabMenu::CanSave(actor)) {
+		if (SceneMenu::CanRename(scene, filename)) {
 
-			if (ImGui::Selectable("Save")) {
-				PrefabMenu::Save(actor);
-				ImGui::CloseCurrentPopup();
-			}
-			hasItems = true;
-		}
-		if (PrefabMenu::CanLoad(actor)) {
-
-			if (ImGui::Selectable("Load")) {
-				PrefabMenu::Load(actor);
+			if (ImGui::Selectable("Rename")) {
+				SceneMenu::Rename(scene, filename);
 				ImGui::CloseCurrentPopup();
 			}
 			hasItems = true;
 		}
 	}
-	if(hasItems)
+
+	if (SceneMenu::CanSave(scene)) {
+
+		if (ImGui::Selectable("Save")) {
+			SceneMenu::Save(scene);
+			ImGui::CloseCurrentPopup();
+		}
+		hasItems = true;
+	}
+
+	if (hasItems)
 		ImGui::Separator();
 
 	return false;
