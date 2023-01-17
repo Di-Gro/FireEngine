@@ -29,7 +29,7 @@ public class PlayerController : CSComponent {
         if (Input.GetButton(Key.A)) inputAxis += Vector3.Left;
         if (Input.GetButton(Key.D)) inputAxis += Vector3.Right;
         inputAxis = inputAxis.Normalized();
-
+        
         if (Input.GetButton(Key.LeftShift))
             inputAxis *= 2;
             

@@ -393,6 +393,17 @@ namespace EngineDll {
 #>
 		}
 
+		public static class AIComponent {
+<#
+			DEC_COMPONENT("AIComponent");
+			ANSI_FUNC("AIComponent", "AddWME", "int", "CppRef compRef, string id, string attr, string value");
+			ANSI_FUNC("AIComponent", "SetWMEValue", "void", "CppRef compRef, int index, string value");
+			ANSI_FUNC("AIComponent", "AddCondition", "void", "CppRef compRef, int decisionHash, int type1, string value1, int type2, string value2, int type3, string value3");
+			FUNC("AIComponent", "Decide", "bool", "CppRef compRef, int decisionHash");
+			FUNC("AIComponent", "GetText", "size_t", "CppRef compRef, int decisionHash");
+#>
+		}
+
 		
 	}
 }

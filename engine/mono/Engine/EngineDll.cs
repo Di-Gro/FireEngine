@@ -985,6 +985,27 @@ namespace EngineDll {
 
 		}
 
+		public static class AIComponent {
+            [DllImport(Paths.Exe, EntryPoint = "AIComponent_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AIComponent_AddWME", CharSet = CharSet.Ansi)]
+		    public static extern int AddWME(CppRef compRef, string id, string attr, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "AIComponent_SetWMEValue", CharSet = CharSet.Ansi)]
+		    public static extern void SetWMEValue(CppRef compRef, int index, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "AIComponent_AddCondition", CharSet = CharSet.Ansi)]
+		    public static extern void AddCondition(CppRef compRef, int decisionHash, int type1, string value1, int type2, string value2, int type3, string value3);
+
+            [DllImport(Paths.Exe, EntryPoint = "AIComponent_Decide")]
+		    public static extern bool Decide(CppRef compRef, int decisionHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "AIComponent_GetText")]
+		    public static extern size_t GetText(CppRef compRef, int decisionHash);
+
+		}
+
 		
 	}
 }

@@ -19,6 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIComponent.cpp" />
+    <ClCompile Include="AI\AlphaMemory.cpp" />
+    <ClCompile Include="AI\BetaMemory.cpp" />
+    <ClCompile Include="AI\Condition.cpp" />
+    <ClCompile Include="AI\ConstTestNode.cpp" />
+    <ClCompile Include="AI\JoinNode.cpp" />
+    <ClCompile Include="AI\ProductionNode.cpp" />
+    <ClCompile Include="AI\Rete.cpp" />
+    <ClCompile Include="AI\Rete_AI.cpp" />
+    <ClCompile Include="AI\TestJoin.cpp" />
+    <ClCompile Include="AI\Token.cpp" />
+    <ClCompile Include="AI\WME.cpp" />
     <ClCompile Include="AmbientLight.cpp" />
     <ClCompile Include="Assets.cpp" />
     <ClCompile Include="AssetStore.cpp" />
@@ -131,6 +143,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActorCBuffer.h" />
+    <ClInclude Include="AIComponent.h" />
+    <ClInclude Include="AI\AlphaMemory.h" />
+    <ClInclude Include="AI\BetaMemory.h" />
+    <ClInclude Include="AI\Condition.h" />
+    <ClInclude Include="AI\ConstTestNode.h" />
+    <ClInclude Include="AI\JoinNode.h" />
+    <ClInclude Include="AI\ProductionNode.h" />
+    <ClInclude Include="AI\Rete.h" />
+    <ClInclude Include="AI\TestJoin.h" />
+    <ClInclude Include="AI\Token.h" />
+    <ClInclude Include="AI\WME.h" />
     <ClInclude Include="AmbientLight.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="AssetStore.h" />
