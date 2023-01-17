@@ -1,5 +1,5 @@
 .file0.assetId: {AssetId: 3fe00c12-5e31-47cc-8274-b5ab43cbb49f}
-.file0.files: {Var: 29}
+.file0.files: {Var: 28}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
@@ -17,7 +17,6 @@
 .file1.m_roots.2: {Ref: file6}
 .file1.m_roots.3: {Ref: file10}
 .file1.m_roots.4: {Ref: file20}
-.file1.m_roots.5: {Ref: file28}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -279,10 +278,10 @@
 .file20.localScale.X: {Var: 1}
 .file20.localScale.Y: {Var: 1}
 .file20.localScale.Z: {Var: 1}
-.file20.m_components: {Null: }
 .file20.m_children.0: {Ref: file21}
 .file20.m_children.1: {Ref: file23}
 .file20.m_children.2: {Ref: file26}
+.file20.m_components.0: {Ref: file28}
 
 .file21!script: {Var: Actor}
 .file21!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -389,24 +388,7 @@
 .file27.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
 .file27.m_materials.0.assetId: {AssetId: bca7088f-eef7-46a3-9803-0a652eedba0e}
 
-.file28!script: {Var: Actor}
-.file28!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file28.prefabId: {Var: }
-.file28.Name: {Var: Actor}
-.file28.localPosition.X: {Var: 0}
-.file28.localPosition.Y: {Var: 0}
-.file28.localPosition.Z: {Var: 0}
-.file28.localRotationQ.X: {Var: 0}
-.file28.localRotationQ.Y: {Var: 0}
-.file28.localRotationQ.Z: {Var: 0}
-.file28.localRotationQ.W: {Var: 1}
-.file28.localScale.X: {Var: 1}
-.file28.localScale.Y: {Var: 1}
-.file28.localScale.Z: {Var: 1}
-.file28.m_children: {Null: }
-.file28.m_components.0: {Ref: file29}
-
-.file29!script: {Var: AITestComponent}
-.file29!scriptId: {AssetId: ec0f9944-49f0-49ae-a94f-b34c5cc72acc}
-.file29.ammo: {Var: 5}
+.file28!script: {Var: AITestComponent}
+.file28!scriptId: {AssetId: ec0f9944-49f0-49ae-a94f-b34c5cc72acc}
+.file28.ammo: {Var: 5}
 
