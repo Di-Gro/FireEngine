@@ -282,6 +282,9 @@ void Game::m_BeginUpdate() {
 	if (m_nextScene != nullptr) {
 		bool isSelected = ui()->selectedScene() == m_editorScene;
 
+		if (ui()->HasActor() && ui()->GetActor()->scene() == m_editorScene)
+			ui()->SelectedActor(nullptr);
+
 		DestroyScene(m_editorScene);
 		m_editorScene = m_nextScene;
 		m_nextScene = nullptr;
