@@ -72,6 +72,7 @@ public:
 class GameUpdateData {
 public:
 	float deltaTime;
+	float deltaFixedTime;
 };
 
 class ComponentCallbacks {

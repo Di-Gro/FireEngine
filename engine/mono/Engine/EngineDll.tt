@@ -396,6 +396,8 @@ namespace EngineDll {
 
 			FUNC("FireCharacter", "GetFriction", "float", "CppRef bodyRef");
 			FUNC("FireCharacter", "SetFriction", "void", "CppRef bodyRef, float inFriction");
+
+			FUNC("FireCharacter", "HandleInput", "void", "CppRef bodyRef, Vector3 movementDirection, bool jump, bool run, float deltaTime");
 #>
 		}
 

@@ -15,6 +15,7 @@ namespace Engine {
         public static CppRef assetStoreRef { get; private set; }
         public static CppRef sceneRef { get; private set; }
         public static float DeltaTime => m_updateData.deltaTime;
+        public static float DeltaFixedTime => m_updateData.deltaFixedTime;
 
         public static CameraComponent MainCamera => (CameraComponent)CppLinked.GetObjectByRef(Dll.Game.mainCamera_get(gameRef));
 
@@ -187,6 +188,7 @@ namespace Engine {
     [StructLayout(LayoutKind.Sequential)]
     public struct GameUpdateData {
         public float deltaTime;
+        public float deltaFixedTime;
     };
 
     [StructLayout(LayoutKind.Sequential)]

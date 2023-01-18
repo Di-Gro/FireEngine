@@ -20,6 +20,11 @@ namespace Engine {
             set => Dll.Character.gravity_set(cppRef, value);
         }
 
+        public float WalkSpeed { get => prop_walkSpeed.value; set => prop_walkSpeed.value = value; }
+        public float RunSpeed { get => prop_runSpeed.value; set => prop_runSpeed.value = value; }
+        public float JumpSpeed { get => prop_jumpSpeed.value; set => prop_jumpSpeed.value = value; }
+        [Close] public Vector3 Velosity { get => prop_velosity.value; }
+
         public float Friction { get => prop_Friction.value; set => prop_Friction.value = value; }
 
         public Vector3 GetLinearVelocity() => Dll.Character.GetLinearVelocity(cppRef);
@@ -30,12 +35,20 @@ namespace Engine {
         public float GetFriction() => Dll.Character.GetFriction(cppRef);
         public void SetFriction(float inFriction) => Dll.Character.SetFriction(cppRef, inFriction);
 
+        public void HandleInput(Vector3 movementDirection, bool jump, bool run, float deltaTime) {
+            Dll.Character.HandleInput(cppRef, movementDirection, jump, run, deltaTime);
+        }
+
 
         public override CppObjectInfo CppConstructor() => Dll.Character.Create(csRef);
 
         private Prop<float> prop_MaxSlopeAngle = new Prop<float>(0);
         private Prop<float> prop_Friction = new Prop<float>(1);
         private Prop<float> prop_mass = new Prop<float>(2);
+        private Prop<float> prop_walkSpeed = new Prop<float>(3);
+        private Prop<float> prop_jumpSpeed = new Prop<float>(4);
+        private Prop<Vector3> prop_velosity = new Prop<Vector3>(5);
+        private Prop<float> prop_runSpeed = new Prop<float>(6);
 
         public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
             Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");

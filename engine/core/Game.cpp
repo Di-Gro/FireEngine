@@ -273,6 +273,7 @@ void Game::m_DrawUI() {
 void Game::m_BeginUpdate() {
 	GameUpdateData updateData;
 	updateData.deltaTime = deltaTime();
+	updateData.deltaFixedTime = deltaFixedTime();
 	m_callbacks.setUpdateData(updateData);
 
 	m_hotkeys->Update(input());

@@ -1013,6 +1013,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "FireCharacter_SetFriction")]
 		    public static extern void SetFriction(CppRef bodyRef, float inFriction);
 
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_HandleInput")]
+		    public static extern void HandleInput(CppRef bodyRef, Vector3 movementDirection, bool jump, bool run, float deltaTime);
+
 		}
 
 		public static class AIComponent {

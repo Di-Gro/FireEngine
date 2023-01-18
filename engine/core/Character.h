@@ -20,6 +20,10 @@ public:
 	float maxSlopeAngle = 45.0f;
 	float friction = 0.2f;
 	float mass = 1.0f;
+	float walkSpeed = 100;
+	float runSpeed = 200;
+	float jumpSpeed = 100;
+	Vector3 velosity;
 
 private:
 	bool m_simulate = true;
@@ -57,6 +61,8 @@ public:
 	float GetFriction() const;
 	void SetFriction(float inFriction);
 
+	void HandleInput(Vector3 movementDirection, bool jump, bool run, float deltaTime);
+
 private:
 	void m_CreateBody();
 	void m_RemoveBody();
@@ -75,3 +81,5 @@ FUNC(FireCharacter, AddImpulse, void)(CppRef bodyRef, Vector3 inImpulse);
 
 FUNC(FireCharacter, GetFriction, float)(CppRef bodyRef);
 FUNC(FireCharacter, SetFriction, void)(CppRef bodyRef, float inFriction);
+
+FUNC(FireCharacter, HandleInput, void)(CppRef bodyRef, Vector3 movementDirection, bool jump, bool run, float deltaTime);
