@@ -73,7 +73,11 @@ namespace Engine {
             m_gameCallbacks.onInputUpdate = new GameCallbacks.Void(Input.OnUpdate);
             m_gameCallbacks.saveScene = new GameCallbacks.SaveScene(SaveScene);
             m_gameCallbacks.loadScene = new GameCallbacks.LoadScene(LoadScene);
+
             m_gameCallbacks.runOrCrush = new GameCallbacks.RunOrCrush(Component.RunOrCrush);
+            m_gameCallbacks.runOrCrushContactEnter = new GameCallbacks.RunOrCrushContactEnter(Component.RunOrCrushContactEnter);
+            m_gameCallbacks.runOrCrushContactExit = new GameCallbacks.RunOrCrushContactExit(Component.RunOrCrushContactExit);
+
             m_gameCallbacks.isAssignable = new GameCallbacks.IsAssignable(FireYaml.AssetStore.IsAssignable);
             m_gameCallbacks.removeCsRef = new GameCallbacks.TakeCsRef(CppLinked.RemoveCsRef);
             m_gameCallbacks.loadAssetStore = new GameCallbacks.Void(LoadAssets);
@@ -196,6 +200,8 @@ namespace Engine {
         public delegate int SaveScene(CppRef cppSceneRef, ulong pathPtr);
         public delegate bool LoadScene(CppRef cppSceneRef, int assetGuidHash);
         public delegate bool RunOrCrush(CsRef componentRef, ComponentCallbacks.ComponentCallback method);
+        public delegate bool RunOrCrushContactEnter(CsRef componentRef, ComponentCallbacks.ContactEnter method, CsRef csRef, in Contact contact);
+        public delegate bool RunOrCrushContactExit(CsRef componentRef, ComponentCallbacks.ContactExit method, CsRef csRef);
         public delegate bool IsAssignable(CsRef csRef, int typeIdHash);
         public delegate bool HasAsset(int typeIdHash);
         public delegate int GetStringHash(ulong stringPtr);
@@ -223,6 +229,8 @@ namespace Engine {
         public LoadScene loadScene;
 
         public RunOrCrush runOrCrush;
+        public RunOrCrushContactEnter runOrCrushContactEnter;
+        public RunOrCrushContactExit runOrCrushContactExit;
 
         public IsAssignable isAssignable; // From, To
         public TakeCsRef removeCsRef;

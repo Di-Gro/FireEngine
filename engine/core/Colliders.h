@@ -15,7 +15,7 @@ public:
 	//bool isTrigger = false;
 	//PhysicsMaterial material = nullptr;
 
-	bool isTrigger = false;
+	//bool isTrigger = false;
 	//Vector3 center = { 0, 0, 0 };	
 
 	//float mFriction = 0.2f;

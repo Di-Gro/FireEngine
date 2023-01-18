@@ -132,7 +132,7 @@ namespace FireYaml {
         public YamlValues GetObject(string path) {
             var selected = from pair in m_values
                            where 
-                           pair.Key.StartsWith($"{path}:") || 
+                           pair.Key == $"{path}" || 
                            pair.Key.StartsWith($"{path}.") || 
                            pair.Key.StartsWith($"{path}!")
                            select pair;

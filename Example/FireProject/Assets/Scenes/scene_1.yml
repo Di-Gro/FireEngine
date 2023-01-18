@@ -4,13 +4,13 @@
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: scene_1}
-.file1.CameraPos.X: {Var: 6.368783}
-.file1.CameraPos.Y: {Var: 145.2134}
-.file1.CameraPos.Z: {Var: 128.992}
-.file1.CameraRot.X: {Var: -0.1181878}
-.file1.CameraRot.Y: {Var: -0.01432863}
-.file1.CameraRot.Z: {Var: -0.00170559}
-.file1.CameraRot.W: {Var: 0.9928864}
+.file1.CameraPos.X: {Var: -0.5853971}
+.file1.CameraPos.Y: {Var: 183.3215}
+.file1.CameraPos.Z: {Var: 193.9592}
+.file1.CameraRot.X: {Var: -0.1789956}
+.file1.CameraRot.Y: {Var: -0.01124563}
+.file1.CameraRot.Z: {Var: -0.002046087}
+.file1.CameraRot.W: {Var: 0.9837835}
 .file1.CameraSpeed: {Var: 115}
 .file1.m_roots.0: {Ref: file51}
 .file1.m_roots.1: {Ref: file46}
@@ -22,6 +22,7 @@
 .file46!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file46.prefabId: {Var: }
 .file46.Name: {Var: Actor}
+.file46.ActiveSelf: {Var: True}
 .file46.localPosition.X: {Var: 0}
 .file46.localPosition.Y: {Var: 0}
 .file46.localPosition.Z: {Var: 0}
@@ -33,12 +34,14 @@
 .file46.localScale.Y: {Var: 1}
 .file46.localScale.Z: {Var: 1}
 .file46.m_children: {Null: }
+.file46.m_flags: {Var: 0}
 .file46.m_components: {Null: }
 
 .file47!script: {Var: Actor}
 .file47!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file47.prefabId: {Var: }
-.file47.Name: {Var: Actor}
+.file47.Name: {Var: Test Tags}
+.file47.ActiveSelf: {Var: True}
 .file47.localPosition.X: {Var: 0}
 .file47.localPosition.Y: {Var: 2.6}
 .file47.localPosition.Z: {Var: 0}
@@ -50,6 +53,7 @@
 .file47.localScale.Y: {Var: 2}
 .file47.localScale.Z: {Var: 600}
 .file47.m_children: {Null: }
+.file47.m_flags: {Var: 13}
 .file47.m_components.0: {Ref: file85}
 .file47.m_components.1: {Ref: file86}
 .file47.m_components.2: {Ref: file87}
@@ -58,6 +62,7 @@
 .file48!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file48.prefabId: {Var: b844b5de-9f8e-434b-8119-5716c834e9e2}
 .file48.Name: {Var: Actor}
+.file48.ActiveSelf: {Var: True}
 .file48.localPosition.X: {Var: -80.47157}
 .file48.localPosition.Y: {Var: 55.2149}
 .file48.localPosition.Z: {Var: -81.98249}
@@ -68,6 +73,7 @@
 .file48.localScale.X: {Var: 1}
 .file48.localScale.Y: {Var: 1}
 .file48.localScale.Z: {Var: 1}
+.file48.m_flags: {Var: 11}
 .file48.m_children.0: {Ref: file88}
 .file48.m_children.1: {Ref: file90}
 .file48.m_children.2: {Ref: file93}
@@ -78,6 +84,7 @@
 .file51!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file51.prefabId: {Var: }
 .file51.Name: {Var: Light}
+.file51.ActiveSelf: {Var: True}
 .file51.localPosition.X: {Var: 0}
 .file51.localPosition.Y: {Var: 0}
 .file51.localPosition.Z: {Var: 300}
@@ -89,6 +96,7 @@
 .file51.localScale.Y: {Var: 1}
 .file51.localScale.Z: {Var: 1}
 .file51.m_children: {Null: }
+.file51.m_flags: {Var: 0}
 .file51.m_components.0: {Ref: file52}
 .file51.m_components.1: {Ref: file53}
 
@@ -110,6 +118,7 @@
 .file58!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file58.prefabId: {Var: b844b5de-9f8e-434b-8119-5716c834e9e2}
 .file58.Name: {Var: Actor}
+.file58.ActiveSelf: {Var: True}
 .file58.localPosition.X: {Var: 96.44813}
 .file58.localPosition.Y: {Var: 54.07525}
 .file58.localPosition.Z: {Var: -43.9868}
@@ -120,6 +129,7 @@
 .file58.localScale.X: {Var: 1}
 .file58.localScale.Y: {Var: 1}
 .file58.localScale.Z: {Var: 1}
+.file58.m_flags: {Var: 0}
 .file58.m_components: {Null: }
 .file58.m_children.0: {Ref: file78}
 .file58.m_children.1: {Ref: file80}
@@ -129,6 +139,7 @@
 .file78!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file78.prefabId: {Var: }
 .file78.Name: {Var: Actor 1}
+.file78.ActiveSelf: {Var: True}
 .file78.localPosition.X: {Var: 0}
 .file78.localPosition.Y: {Var: 0}
 .file78.localPosition.Z: {Var: 0}
@@ -140,6 +151,7 @@
 .file78.localScale.Y: {Var: 30}
 .file78.localScale.Z: {Var: 30}
 .file78.m_children: {Null: }
+.file78.m_flags: {Var: 0}
 .file78.m_components.0: {Ref: file79}
 
 .file79!script: {Var: MeshComponent}
@@ -157,6 +169,7 @@
 .file80!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file80.prefabId: {Var: }
 .file80.Name: {Var: Actor 2}
+.file80.ActiveSelf: {Var: True}
 .file80.localPosition.X: {Var: -30}
 .file80.localPosition.Y: {Var: 30}
 .file80.localPosition.Z: {Var: 0}
@@ -168,6 +181,7 @@
 .file80.localScale.Y: {Var: 30}
 .file80.localScale.Z: {Var: 30}
 .file80.m_children: {Null: }
+.file80.m_flags: {Var: 0}
 .file80.m_components.0: {Ref: file81}
 .file80.m_components.1: {Ref: file82}
 
@@ -206,6 +220,7 @@
 .file83!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file83.prefabId: {Var: }
 .file83.Name: {Var: Actor 3}
+.file83.ActiveSelf: {Var: True}
 .file83.localPosition.X: {Var: 30}
 .file83.localPosition.Y: {Var: 30}
 .file83.localPosition.Z: {Var: 0}
@@ -217,6 +232,7 @@
 .file83.localScale.Y: {Var: 30}
 .file83.localScale.Z: {Var: 30}
 .file83.m_children: {Null: }
+.file83.m_flags: {Var: 0}
 .file83.m_components.0: {Ref: file84}
 
 .file84!script: {Var: MeshComponent}
@@ -232,7 +248,8 @@
 
 .file85!script: {Var: Rigidbody}
 .file85!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
-.file85.active: {Var: True}
+.file85.simulate: {Var: True}
+.file85.isSensor: {Var: False}
 .file85.motion: {Var: Static}
 .file85.Mass: {Var: 1}
 .file85.gravity: {Var: 1}
@@ -266,6 +283,7 @@
 .file88!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file88.prefabId: {Var: }
 .file88.Name: {Var: Actor 1}
+.file88.ActiveSelf: {Var: True}
 .file88.localPosition.X: {Var: 0}
 .file88.localPosition.Y: {Var: 0}
 .file88.localPosition.Z: {Var: 0}
@@ -277,6 +295,7 @@
 .file88.localScale.Y: {Var: 30}
 .file88.localScale.Z: {Var: 30}
 .file88.m_children: {Null: }
+.file88.m_flags: {Var: 0}
 .file88.m_components.0: {Ref: file89}
 
 .file89!script: {Var: MeshComponent}
@@ -294,6 +313,7 @@
 .file90!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file90.prefabId: {Var: }
 .file90.Name: {Var: Actor 2}
+.file90.ActiveSelf: {Var: True}
 .file90.localPosition.X: {Var: -30}
 .file90.localPosition.Y: {Var: 30}
 .file90.localPosition.Z: {Var: 0}
@@ -305,6 +325,7 @@
 .file90.localScale.Y: {Var: 30}
 .file90.localScale.Z: {Var: 30}
 .file90.m_children: {Null: }
+.file90.m_flags: {Var: 0}
 .file90.m_components.0: {Ref: file91}
 .file90.m_components.1: {Ref: file92}
 
@@ -343,6 +364,7 @@
 .file93!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file93.prefabId: {Var: }
 .file93.Name: {Var: Actor 3}
+.file93.ActiveSelf: {Var: True}
 .file93.localPosition.X: {Var: 30}
 .file93.localPosition.Y: {Var: 30}
 .file93.localPosition.Z: {Var: 0}
@@ -354,6 +376,7 @@
 .file93.localScale.Y: {Var: 30}
 .file93.localScale.Z: {Var: 30}
 .file93.m_children: {Null: }
+.file93.m_flags: {Var: 0}
 .file93.m_components.0: {Ref: file94}
 
 .file94!script: {Var: MeshComponent}
@@ -369,7 +392,8 @@
 
 .file95!script: {Var: Rigidbody}
 .file95!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
-.file95.active: {Var: True}
+.file95.simulate: {Var: True}
+.file95.isSensor: {Var: False}
 .file95.motion: {Var: Dynamic}
 .file95.Mass: {Var: 1}
 .file95.gravity: {Var: 1}

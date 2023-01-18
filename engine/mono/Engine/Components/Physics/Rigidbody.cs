@@ -1,3 +1,5 @@
+using System;
+
 using EngineDll;
 
 namespace Engine {
@@ -9,10 +11,12 @@ namespace Engine {
     [GUID("6338b2f1-49da-4a86-8c6b-a2a975e644c4")]
     public class Rigidbody : CppComponent {
 
-        public bool active {
-            get => Dll.Rigidbody.active_get(cppRef);
-            set => Dll.Rigidbody.active_set(cppRef, value);
+        public bool simulate {
+            get => Dll.Rigidbody.simulate_get(cppRef);
+            set => Dll.Rigidbody.simulate_set(cppRef, value);
         }
+
+        public bool isSensor { get => prop_isSensor.value; set => prop_isSensor.value = value; }
 
         public MotionType motion{
             get => (MotionType) Dll.Rigidbody.motion_get(cppRef);
@@ -60,5 +64,22 @@ namespace Engine {
         private Prop<float> prop_Friction = new Prop<float>(4);
         private Prop<float> prop_Bounciness = new Prop<float>(5);
         private Prop<bool> prop_AllowSleeping = new Prop<bool>(6);
+        private Prop<bool> prop_isSensor = new Prop<bool>(7);
+
+        public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
+            Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
+        }
+
+        public override void OnTriggerExit(Actor otherActor) {
+            Console.WriteLine($"OnTriggerExit: {actor.Name} -> {otherActor.Name}");
+        }
+
+        public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
+            Console.WriteLine($"OnCollisionEnter: {actor.Name} -> {otherActor.Name}");
+        }
+
+        public override void OnCollisionExit(Actor otherActor) {
+            Console.WriteLine($"OnCollisionExit: {actor.Name} -> {otherActor.Name}");
+        }
     }
 }

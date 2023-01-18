@@ -55,6 +55,11 @@ namespace EngineDll {
 			FUNC("Actor", "GetChildrenCount", "int", "CppRef objRef");
 			FUNC("Actor", "GetChild", "CsRef", "CppRef objRef, int index");
 
+			PROP_GETSET("Actor", "size_t", "flags");
+
+			PROP_GET("Actor", "bool", "isActive");
+			PROP_GETSET("Actor", "bool", "activeSelf");
+
 			PROP_GETSET("Actor", "Vector3", "localPosition");
 			PROP_GETSET("Actor", "Vector3", "localRotation");
 			PROP_GETSET("Actor", "Quaternion", "localRotationQ");
@@ -109,6 +114,7 @@ namespace EngineDll {
 			FUNC("CsComponent", "Create", "CppObjectInfo" , "CsRef csCompRef");
 			PROP_GETSET("Component", "bool", "runtimeOnly");
 			PROP_GETSET("Component", "bool", "f_isCrashed");
+			PROP_GET("Component", "bool", "IsActivated");
 #>
 
 		}
@@ -355,7 +361,7 @@ namespace EngineDll {
 <#
 			DEC_COMPONENT("Rigidbody");
 
-			PROP_GETSET("Rigidbody", "bool", "active");
+			PROP_GETSET("Rigidbody", "bool", "simulate");
 			PROP_GETSET("Rigidbody", "float", "gravity");
 
 			PROP_GETSET("Rigidbody", "uint", "motion");
@@ -380,7 +386,7 @@ namespace EngineDll {
 <#
 			DEC_COMPONENT("FireCharacter");
 
-			PROP_GETSET("FireCharacter", "bool", "active");
+			PROP_GETSET("FireCharacter", "bool", "simulate");
 			PROP_GETSET("FireCharacter", "float", "gravity");
 
 			FUNC("FireCharacter", "GetLinearVelocity", "Vector3", "CppRef bodyRef");

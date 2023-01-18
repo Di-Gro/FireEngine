@@ -34,7 +34,8 @@ void MeshComponent::OnInit() {
 	m_meshAsset = game()->meshAsset();
 	m_InitMono();
 
-	m_shadowCaster = scene()->renderer.AddShadowCaster(this);
+	if (m_castShadow)
+		m_shadowCaster = scene()->renderer.AddShadowCaster(this);
 
 	if (m_preinitMesh != nullptr) {
 		mesh(m_preinitMesh);
@@ -45,6 +46,22 @@ void MeshComponent::OnInit() {
 			SetMaterial(i, m_preinitMaterials[i]);
 		m_preinitMaterials.clear();
 	}
+}
+
+void MeshComponent::OnActivate() {
+	//if (m_castShadow)
+	//	m_shadowCaster = scene()->renderer.AddShadowCaster(this);
+
+	//for (int i = 0; i < m_materials.size(); ++i)
+	//	m_RegisterShapesWithMaterial(i);
+}
+
+void MeshComponent::OnDeactivate() {
+	//if (m_castShadow)
+	//	scene()->renderer.RemoveShadowCaster(m_shadowCaster);
+
+	//for (int i = 0; i < m_materials.size(); ++i)
+	//	m_UnRegisterShapesWithMaterial(i);
 }
 
 void MeshComponent::OnDestroy() {
@@ -315,7 +332,7 @@ void MeshComponent::castShadow(bool value) {
 }
 
 void MeshComponent::OnDrawShadow(RenderPass* renderPass, const Vector3& scale) {
-	if (!isDebug)
+	if (!isDebug && IsActivated())
 		m_Draw(renderPass, scale);
 }
 
@@ -330,7 +347,7 @@ void MeshComponent::OnDraw() {
 //}
 
 void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
-	if (!visible || m_mesh == nullptr)
+	if (!visible || m_mesh == nullptr || !IsActivated())
 		return;
 
 	if (m_meshVersion != m_mesh->version)
@@ -366,7 +383,7 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 }
 
 void MeshComponent::OnDrawShape(int index) {
-	if (!visible || m_mesh == nullptr)
+	if (!visible || m_mesh == nullptr || !IsActivated())
 		return;
 
 	if (m_meshVersion != m_mesh->version)

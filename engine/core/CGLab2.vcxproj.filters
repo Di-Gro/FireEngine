@@ -839,6 +839,9 @@
     <ClInclude Include="AIComponent.h">
       <Filter>AI</Filter>
     </ClInclude>
+    <ClInclude Include="Contact.h">
+      <Filter>FirePhysics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Delegates.natvis">

@@ -174,6 +174,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 		| ImGuiTreeNodeFlags_FramePadding;
 
 	bool isChild = actor->GetChildrenCount() == 0;
+	bool isActive = actor->isActive();
 
 	if (isChild)
 		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
@@ -185,11 +186,17 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	//std::string actorId = std::to_string(actor->Id());
 	auto actorId = "ID:" + std::to_string(actor->Id());
 	auto treeNodeId = actor->name() + "##" + actorId + "SceneTreeNodeEx";
+		
+	if (!isActive)
+		ImGui::PushStyleColor(ImGuiCol_Text, { 1.00f, 1.00f, 1.00f, 0.3f });
 
 	auto lastCursor = ImGui::GetCursorPos();
 	bool selectedTree = ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);
 	auto nextCursor = ImGui::GetCursorPos();
 	auto imGuiItemSize = ImGui::GetItemRectSize();
+
+	if (!isActive)
+		ImGui::PopStyleColor(1);
 
 	float height = mousePosY / (ImGui::GetFrameHeight() - 1);
 

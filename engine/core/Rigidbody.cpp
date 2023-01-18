@@ -16,7 +16,7 @@
 using namespace JPH;
 
 
-DEF_COMPONENT(Rigidbody, Engine.Rigidbody, 7, RunMode::PlayOnly) {
+DEF_COMPONENT(Rigidbody, Engine.Rigidbody, 8, RunMode::PlayOnly) {
 	OFFSET(0, Rigidbody, mass);
 	OFFSET(1, Rigidbody, maxLinearVelocity);
 	OFFSET(2, Rigidbody, linearDamping);
@@ -24,6 +24,7 @@ DEF_COMPONENT(Rigidbody, Engine.Rigidbody, 7, RunMode::PlayOnly) {
 	OFFSET(4, Rigidbody, friction);
 	OFFSET(5, Rigidbody, bounciness);
 	OFFSET(6, Rigidbody, mAllowSleeping);
+	OFFSET(7, Rigidbody, isSensor);
 }
 
 void Rigidbody::OnInit() {
@@ -32,10 +33,25 @@ void Rigidbody::OnInit() {
 		throw std::exception("Rigidbody: collider == nullptr");
 }
 
-void Rigidbody::OnStart() {
-	if (!active())
-		return;
+void Rigidbody::OnActivate() {
+	if (simulate())
+		m_CreateBody();
+}
 
+void Rigidbody::OnStart() {
+
+}
+
+void Rigidbody::OnDeactivate() {
+	if (m_body != nullptr)
+		m_RemoveBody();
+}
+
+void Rigidbody::OnDestroy() {
+	
+}
+
+void Rigidbody::m_CreateBody() {
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = physicsScene->bodyInterface();
 
@@ -43,7 +59,7 @@ void Rigidbody::OnStart() {
 
 	auto shapeSettings = m_collider->settings;
 	//m_center = m_collider->center;
-	auto layer = Layers::GetLayerFromMotionType(motion());
+	auto layer = isSensor ? Layers::TRIGGER : Layers::GetLayerFromMotionType(motion());
 	auto position = worldPosition();
 	auto rotation = localRotationQ();
 
@@ -51,7 +67,7 @@ void Rigidbody::OnStart() {
 	m_bodySettings.mGravityFactor = m_gravity * physicsScene->cWorldScale;
 	m_bodySettings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
 	m_bodySettings.mMassPropertiesOverride.mMass = mass;
-	m_bodySettings.mIsSensor = m_collider->isTrigger;
+	//m_bodySettings.mIsSensor = m_collider->isTrigger;
 	m_bodySettings.mLinearDamping = linearDamping;
 	m_bodySettings.mAngularDamping = angularDamping;
 	m_bodySettings.mMaxLinearVelocity = maxLinearVelocity;
@@ -60,21 +76,21 @@ void Rigidbody::OnStart() {
 	m_bodySettings.mMotionQuality = quality();
 	m_bodySettings.mAllowDynamicOrKinematic = true;
 	m_bodySettings.mAllowSleeping = mAllowSleeping;
+	m_bodySettings.mUserData = (uint64)actor();
+	m_bodySettings.mIsSensor = isSensor;
 
 	m_body = bodyInterface->CreateBody(m_bodySettings);
 	assert(m_body != nullptr);
 
+	bool tes = m_body->IsSensor();
+
 	m_lastScale = localScale();
 	m_body->GetShape()->ScaleShape(ToJolt(m_lastScale));
-		
-	bodyInterface->AddBody(m_body->GetID(), EActivation::Activate);
 
+	bodyInterface->AddBody(m_body->GetID(), EActivation::Activate);
 }
 
-void Rigidbody::OnDestroy() {
-	if (m_body == nullptr)
-		return; 
-
+void Rigidbody::m_RemoveBody() {
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = physicsScene->bodyInterface();
 
@@ -85,16 +101,8 @@ void Rigidbody::OnDestroy() {
 	physicsScene->rigidbodies.erase(m_rigidbodyIter);
 }
 
-void Rigidbody::OnUpdate() {
-	if (game()->ui()->GetActor() == actor()) {
-		if (game()->hotkeys()->GetButtonDown(Keys::G)) {
-			AddForce({ 0, 1000, 0 });
-		}
-	}
-}
-
 void Rigidbody::BeforePhysicsUpdate() {
-	if (m_body == nullptr || m_body->IsStatic() || !active())
+	if (m_body == nullptr || m_body->IsStatic() || !simulate())
 		return;
 
 	auto position = worldPosition();
@@ -114,15 +122,10 @@ void Rigidbody::BeforePhysicsUpdate() {
 }
 
 void Rigidbody::OnFixedUpdate() {
-	if (m_body == nullptr || m_body->IsStatic() || !active())
+	if (m_body == nullptr || m_body->IsStatic() || !simulate())
 		return;
 
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
-
-	//auto pos = m_body->GetCenterOfMassPosition(); 
-	//auto tr = m_body->GetCenterOfMassTransform();
-
-	//SetLocalMatrix((Matrix&)tr);
 	 
 	auto pos = m_body->GetPosition();
 	auto rot = m_body->GetRotation();
@@ -131,45 +134,20 @@ void Rigidbody::OnFixedUpdate() {
 	localRotationQ(FromJolt(rot));
 }
 
-void Rigidbody::active(bool value) {
-	//if (m_body != nullptr) {
+void Rigidbody::simulate(bool value) {
+	m_simulate = value;
 
-		auto isActive = m_active;
-		m_active = value;
+	if (m_body == nullptr && m_simulate && IsActivated())
+		m_CreateBody();
 
-		auto bodyInterface = scene()->physicsScene()->bodyInterface();
-
-		if (value && !isActive)
-			OnStart();
-			//bodyInterface->AddBody(m_body->GetID(), EActivation::Activate);
-
-		if (!value && isActive)
-			OnDestroy();
-		//{
-		//	bodyInterface->RemoveBody(m_body->GetID());
-		//	bodyInterface->DestroyBody(m_body->GetID());
-		//	m_body = nullptr;
-		//}
-	//}
-	
-
-	//if (m_body == nullptr)
-	//	return;
-
-	//auto isActive = m_body->IsActive();
-	//auto bodyInterface = scene()->physicsScene()->bodyInterface(); 
-
-	//if (isActive && !m_active) 
-	//	bodyInterface->DeactivateBody(m_body->GetID());
-
-	//if (!isActive && m_active)
-	//	bodyInterface->ActivateBody(m_body->GetID());
+	if (m_body != nullptr && (!m_simulate || !IsActivated()))
+		m_RemoveBody();
 }
 
 void Rigidbody::motion(EMotionType value) {
 	m_motion = value;
 
-	if (m_body == nullptr || !active())
+	if (m_body == nullptr || !simulate())
 		return;
 	
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
@@ -182,7 +160,7 @@ void Rigidbody::motion(EMotionType value) {
 void Rigidbody::gravity(float value) {
 	m_gravity = value;
 
-	if (m_body == nullptr || m_body->IsStatic() || !active())
+	if (m_body == nullptr || m_body->IsStatic() || !simulate())
 		return;
 
 	auto physicsScene = scene()->physicsScene();
@@ -192,7 +170,7 @@ void Rigidbody::gravity(float value) {
 }
 
 void Rigidbody::AddForce(Vector3 inForce) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !active())
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
 		return;
 
 	auto physicsScene = scene()->physicsScene();
@@ -205,7 +183,7 @@ void Rigidbody::AddForce(Vector3 inForce) {
 }
 
 void Rigidbody::AddForce(Vector3 inForce, Vector3 inPosition) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !active())
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
 		return;
 
 	auto physicsScene = scene()->physicsScene();
@@ -225,7 +203,7 @@ Vector3 Rigidbody::GetLinearVelocity() const {
 }
 
 void Rigidbody::SetLinearVelocityClamped(Vector3 inLinearVelocity) {
-	if (m_body == nullptr || m_body->IsStatic() || !active())
+	if (m_body == nullptr || m_body->IsStatic() || !simulate())
 		return;
 
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
@@ -236,16 +214,8 @@ void Rigidbody::SetLinearVelocityClamped(Vector3 inLinearVelocity) {
 	m_body->SetLinearVelocityClamped(ToJolt(inLinearVelocity));
 }
 
-//void Rigidbody::SetMass(float mass) { //TODO Хз можно ли так, есть еще метод SetShapeInternal, возможном нужно через него
-//	if (m_body) {
-//		auto body_shape = m_body->GetShape();
-//		auto mass_prop = body_shape->GetMassProperties();
-//		mass_prop.mMass = mass;
-//	}
-//}
-
 void Rigidbody::AddImpulse(Vector3 inImpulse) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !active())
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
 		return;
 
 	auto physicsScene = scene()->physicsScene();
@@ -258,7 +228,7 @@ void Rigidbody::AddImpulse(Vector3 inImpulse) {
 }
 
 void Rigidbody::AddImpulse(Vector3 inImpulse, Vector3 inPosition) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !active())
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
 		return;
 
 	auto physicsScene = scene()->physicsScene();
@@ -269,26 +239,13 @@ void Rigidbody::AddImpulse(Vector3 inImpulse, Vector3 inPosition) {
 
 	m_body->AddImpulse(ToJolt(inImpulse * physicsScene->cWorldScale), ToJolt(inPosition));
 }
-//
-//bool  Rigidbody::IsKinematic() const {
-//	if (m_body)
-//		return m_body->IsKinematic();
-//}
-//bool  Rigidbody::IsDynamic() const {
-//	if (m_body)
-//		return m_body->IsDynamic();
-//}
-//bool Rigidbody::IsStatic() const {
-//	if (m_body)
-//		return m_body->IsStatic();
-//}
 
 float Rigidbody::GetFriction() const {
 	if (m_body)
 		return m_body->GetFriction();
 }
 void Rigidbody::SetFriction(float inFriction) {
-	if (m_body == nullptr || !active())
+	if (m_body == nullptr || !simulate())
 		return;
 
 	if (inFriction < 0)
@@ -298,7 +255,7 @@ void Rigidbody::SetFriction(float inFriction) {
 }
 
 
-DEF_PROP_GETSET(Rigidbody, bool, active);
+DEF_PROP_GETSET(Rigidbody, bool, simulate);
 DEF_PROP_GETSET(Rigidbody, float, gravity);
 
 DEF_PROP_GETSET_E(Rigidbody, EMotionType, motion);

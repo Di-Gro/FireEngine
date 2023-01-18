@@ -79,15 +79,15 @@ void Physics::Update(Scene* scene) {
 // Callback for traces, connect this to your own trace function if you have one
 static void TraceImpl(const char* inFMT, ...)
 {
-	//// Format the message
-	//va_list list;
-	//va_start(list, inFMT);
-	//char buffer[1024];
-	//vsnprintf(buffer, sizeof(buffer), inFMT, list);
-	//va_end(list);
+	// Format the message
+	va_list list;
+	va_start(list, inFMT);
+	char buffer[1024];
+	vsnprintf(buffer, sizeof(buffer), inFMT, list);
+	va_end(list);
 
-	//// Print to the TTY
-	//std::cout << buffer << std::endl;
+	// Print to the TTY
+	std::cout << buffer << std::endl;
 }
 
 // Callback for asserts, connect this to your own assert handler if you have one

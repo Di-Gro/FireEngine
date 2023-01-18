@@ -23,9 +23,10 @@ public:
 	float mass = 1.0f;
 	float bounciness = 0.2f;
 	bool mAllowSleeping = true;
+	bool isSensor = false;
 
 private:
-	bool m_active = true;
+	bool m_simulate = true;
 	JPH::EMotionType m_motion;
 	//float m_mass = 1.0f;
 	float m_gravity = 1.0f;
@@ -43,8 +44,8 @@ private:
 	//Vector3 m_center;
 
 public:
-	bool active() const { return m_active; };
-	void active(bool value);
+	bool simulate() const { return m_simulate; };
+	void simulate(bool value);
 
 	JPH::EMotionType motion() { return m_motion; };
 	void motion(JPH::EMotionType value);
@@ -57,10 +58,18 @@ public:
 
 	void OnInit() override;
 	void OnStart() override;
-	void OnUpdate() override;
 	void OnDestroy() override;
 	void OnFixedUpdate() override;
 	void BeforePhysicsUpdate() override;
+
+	void OnActivate() override;
+	void OnDeactivate() override;
+
+	//void OnCollisionEnter(Actor* otherActor) override;
+	//void OnCollisionExit(Actor* otherActor) override;
+
+	//void OnTriggerEnter(Actor* otherActor) override;
+	//void OnTriggerExit(Actor* otherActor) override;
 
 	void AddForce(Vector3 inForce);
 	void AddForce(Vector3 inForce, Vector3 inPosition);
@@ -74,10 +83,14 @@ public:
 	//bool IsStatic() const;
 	float GetFriction() const;
 	void SetFriction(float inFriction);
+
+private:
+	void m_CreateBody();
+	void m_RemoveBody();
 };
 DEC_COMPONENT(Rigidbody);
 
-PROP_GETSET(Rigidbody, bool, active);
+PROP_GETSET(Rigidbody, bool, simulate);
 PROP_GETSET(Rigidbody, float, gravity);
 PROP_GETSET_E(Rigidbody, JPH::EMotionType, motion);
 PROP_GETSET_E(Rigidbody, JPH::EMotionQuality, quality);

@@ -24,36 +24,51 @@ Actor::Actor() {  }
 
 Actor::~Actor() { }
 
+bool Actor::isActive() {
+	auto actor = this;
+	while (actor != nullptr) {
+
+		if (!actor->activeSelf())
+			return false;
+
+		actor = actor->parent();
+	}
+	return true;
+}
+
+void Actor::activeSelf(bool value) {
+	if (IsDestroyed() || m_isActiveSelf == value)
+		return;
+	
+	m_isActiveSelf = value;
+
+	bool isParentActive = parent() != nullptr ? parent()->isActive() : true;
+	if (isParentActive)
+		m_OnActiveChanged(m_isActiveSelf, true);
+}
+
+void Actor::m_OnActiveChanged(bool value, bool self) {
+	if (!self && !m_isActiveSelf)
+		return;
+
+	for (auto it = m_components.begin(); it != m_components.end(); it++) {
+		auto component = (*it);
+
+		if (!component->IsDestroyed() && m_NeedRunComponent(component) && component->f_isInited) {
+			if (value)
+				m_RunOrCrash(component, &Actor::m_OnActivateComponent);
+			else
+				m_RunOrCrash(component, &Actor::m_OnDeactivateComponent);
+		}
+	}
+
+	for (auto child : m_childs)
+		child->m_OnActiveChanged(value, false);
+}
+
 void Actor::m_CreateTransform() {
 	transform = &m_transform;
 	transform->friend_gameObject = this;
-}
-
-void Actor::MoveChild(Actor* from, Actor* to, bool isPastBefore) {
-	bool isFrom = false;
-	bool isTo = false;
-
-	int newIndex = 0;
-
-	for (int i = 0; i < m_childs.size(); ++i) {
-		if (m_childs[i] == from) {
-			m_childs.erase(m_childs.begin() + i);
-			isFrom = true;
-			--i;
-			continue;
-		} 
-		if (m_childs[i] == to) {
-			newIndex = i;
-			isTo = true;
-		} 
-		if (isFrom && isTo)
-			break;
-	}
-
-	if (isPastBefore)
-		m_childs.insert(m_childs.begin() + newIndex, from);
-	else
-		m_childs.insert(m_childs.begin() + (newIndex + 1), from);
 }
 
 void Actor::f_Init(Game* game, Scene* scene) {
@@ -78,6 +93,8 @@ void Actor::m_InitMono() {
 }
 
 void Actor::f_Update() {
+	if (!isActive())
+		return;
 
 	auto it = m_components.begin();
 	while (it != m_components.end()) {
@@ -91,7 +108,9 @@ void Actor::f_Update() {
 		}
 
 		if (m_NeedRunComponent(component)) {
-			if (!component->f_isStarted)
+			if(!component->f_isInited)
+				m_RunOrCrash(component, &Actor::m_OnInitComponent);
+			else if (!component->f_isStarted)
 				m_RunOrCrash(component, &Actor::m_OnStartComponent);
 			else
 				m_RunOrCrash(component, &Actor::m_OnUpdateComponent);
@@ -101,16 +120,73 @@ void Actor::f_Update() {
 };
 
 void Actor::f_FixedUpdate() {
+	if (!isActive())
+		return;
+
 	for (auto it = m_components.begin(); it != m_components.end(); it++) {
 		auto component = (*it);
 
 		if (!component->IsDestroyed() && m_NeedRunComponent(component)) {
-			if (!component->f_isStarted)
-				m_RunOrCrash(component, &Actor::m_OnStartComponent);
-			else
+			if (component->f_isStarted)
 				m_RunOrCrash(component, &Actor::m_OnFixedUpdateComponent);
 		}
 	}
+}
+
+void Actor::f_EnterCollision(Actor* otherActor, const Contact& contact) {
+	assert(isActive());
+
+	for (auto it = m_components.begin(); it != m_components.end(); it++) {
+		auto component = (*it);
+
+		if (!component->IsDestroyed() && m_NeedRunComponent(component) && component->f_isStarted) {
+			m_RunOrCrash(component, &Actor::m_OnCollisionEnterComponent, otherActor, contact);
+		}
+	}
+}
+
+void Actor::f_ExitCollision(Actor* otherActor) {
+	assert(isActive());
+
+	for (auto it = m_components.begin(); it != m_components.end(); it++) {
+		auto component = (*it);
+
+		if (!component->IsDestroyed() && m_NeedRunComponent(component) && component->f_isStarted) {
+			m_RunOrCrash(component, &Actor::m_OnCollisionExitComponent, otherActor);
+		}
+	}
+}
+
+void Actor::f_EnterTrigger(Actor* otherActor, const Contact& contact) {
+	assert(isActive());
+
+	for (auto it = m_components.begin(); it != m_components.end(); it++) {
+		auto component = (*it);
+
+		if (!component->IsDestroyed() && m_NeedRunComponent(component) && component->f_isStarted) {
+			m_RunOrCrash(component, &Actor::m_OnTriggerEnterComponent, otherActor, contact);
+		}
+	}
+}
+
+void Actor::f_ExitTrigger(Actor* otherActor) {
+	assert(isActive());
+
+	for (auto it = m_components.begin(); it != m_components.end(); it++) {
+		auto component = (*it);
+
+		if (!component->IsDestroyed() && m_NeedRunComponent(component) && component->f_isStarted) {
+			m_RunOrCrash(component, &Actor::m_OnTriggerExitComponent, otherActor);
+		}
+	}
+}
+
+void Actor::f_Destroy() {
+	Clear();
+
+	m_DeleteFromParent();
+
+	f_game = nullptr;
 }
 
 void Actor::Clear() {
@@ -124,14 +200,6 @@ void Actor::Clear() {
 		f_DestroyComponent(*it);
 		it = m_EraseComponent(it);
 	}
-}
-
-void Actor::f_Destroy() {
-	Clear();
-
-	m_DeleteFromParent();
-
-	f_game = nullptr;
 }
 
 void Actor::f_Draw() {
@@ -160,13 +228,16 @@ void Actor::m_BindComponent(Component* component) {
 }
 
 void Actor::m_InitComponent(Component* component) {
+	if (!isActive())
+		return;
+
 	if (m_NeedRunComponent(component))
 		m_RunOrCrash(component, &Actor::m_OnInitComponent);
 }
 
 void Actor::f_DestroyComponent(Component* component) {
 	if (component->ActorBase::BeginDestroy()) {
-		if (m_NeedRunComponent(component))
+		if (isActive() && m_NeedRunComponent(component))
 			m_RunOrCrash(component, &Actor::m_OnDestroyComponent);
 
 		if (CppRefs::IsValid(component->f_ref)) 
@@ -187,12 +258,17 @@ void Actor::f_SetParent(Actor* actor) {
 	if (f_parent == actor)
 		return;
 
+	bool lastActive = isActive();
+
 	transform->friend_ChangeParent(actor);
 	m_DeleteFromParent();
 	f_parent = actor;
 	
 	if (f_parent != nullptr)
 		f_parent->m_childs.push_back(this);
+
+	if (lastActive != isActive())
+		m_OnActiveChanged(!lastActive, true);
 }
 
 void Actor::m_DeleteFromParent() {
@@ -235,6 +311,32 @@ Actor* Actor::GetChild(int index) {
 	return nullptr;
 }
 
+void Actor::MoveChild(Actor* from, Actor* to, bool isPastBefore) {
+	bool isFrom = false;
+	bool isTo = false;
+
+	int newIndex = 0;
+
+	for (int i = 0; i < m_childs.size(); ++i) {
+		if (m_childs[i] == from) {
+			m_childs.erase(m_childs.begin() + i);
+			isFrom = true;
+			--i;
+			continue;
+		}
+		if (m_childs[i] == to) {
+			newIndex = i;
+			isTo = true;
+		}
+		if (isFrom && isTo)
+			break;
+	}
+
+	if (isPastBefore)
+		m_childs.insert(m_childs.begin() + newIndex, from);
+	else
+		m_childs.insert(m_childs.begin() + (newIndex + 1), from);
+}
 
 static inline Vector3 deg(Vector3 vec) {
 	return Vector3(deg(vec.x), deg(vec.y), deg(vec.z));
@@ -260,6 +362,7 @@ bool Actor::m_NeedRunComponent(Component* component) {
 
 	if (scene()->isEditor())
 		return component->NeedRunInEditor();
+
 	return component->NeedRunInPlayer();
 }
 
@@ -268,18 +371,40 @@ void Actor::m_RunOrCrash(Component* component, void (Actor::* func)(Component*))
 		(this->*func)(component);
 	}
 	catch (std::exception ex) {
-		component->f_isCrashed = true;
-
-		auto className = component->GetMeta().name;
-		auto actorName = component->actor()->name();
-		auto actorId = std::to_string(component->actor()->Id());
-
-		std::cout << "ComponentCrash: Component was disabled.\n";
-		std::cout << "Component class: " << className << ", ";
-		std::cout <<  "Actor {name: " << actorName << ", ID : " << actorId << "}\n";
-		std::cout << "Exception: \n";
-		std::cout << ex.what() << "\n";
+		m_CrashComponent(component, ex);
 	}
+}
+
+void Actor::m_RunOrCrash(Component* component, void (Actor::* func)(Component*, Actor*, const Contact&), Actor* otherActor, const Contact& contact) {
+	try {
+		(this->*func)(component, otherActor, contact);
+	}
+	catch (std::exception ex) {
+		m_CrashComponent(component, ex);
+	}
+}
+
+void Actor::m_RunOrCrash(Component* component, void (Actor::* func)(Component*, Actor*), Actor* otherActor) {
+	try {
+		(this->*func)(component, otherActor);
+	}
+	catch (std::exception ex) {
+		m_CrashComponent(component, ex);
+	}
+}
+
+void Actor::m_CrashComponent(Component* component, std::exception ex) {
+	component->f_isCrashed = true;
+
+	auto className = component->GetMeta().name;
+	auto actorName = component->actor()->name();
+	auto actorId = std::to_string(component->actor()->Id());
+
+	std::cout << "ComponentCrash: Component was disabled.\n";
+	std::cout << "Component class: " << className << ", ";
+	std::cout << "Actor {name: " << actorName << ", ID : " << actorId << "}\n";
+	std::cout << "Exception: \n";
+	std::cout << ex.what() << "\n";
 }
 
 void Actor::m_OnInitComponent(Component* component) {
@@ -297,8 +422,11 @@ void Actor::m_OnInitComponent(Component* component) {
 }
 
 void Actor::m_OnStartComponent(Component* component) {
-	if(!component->f_isInited)
-		throw std::exception("Component is not inited.");
+	assert(component->f_isInited);
+	
+	m_OnActivateComponent(component);
+
+	assert(component->f_isActive);
 
 	component->OnStart();
 	component->f_isStarted = true;
@@ -311,8 +439,8 @@ void Actor::m_OnStartComponent(Component* component) {
 }
 
 void Actor::m_OnUpdateComponent(Component* component) {
-	if (!component->f_isStarted)
-		throw std::exception("Component is not started.");
+	assert(component->f_isActive);
+	assert(component->f_isStarted);
 
 	component->OnUpdate();
 	if (component->csRef().value > 0 && component->f_callbacks.onUpdate != nullptr) {
@@ -324,8 +452,8 @@ void Actor::m_OnUpdateComponent(Component* component) {
 }
 
 inline void Actor::m_OnFixedUpdateComponent(Component* component) {
-	if (!component->f_isStarted)
-		throw std::exception("Component is not started.");
+	assert(component->f_isActive);
+	assert(component->f_isStarted);
 
 	auto id = component->actor()->Id();
 	component->OnFixedUpdate();
@@ -341,6 +469,10 @@ void Actor::m_OnDestroyComponent(Component* component) {
 	if (!component->f_isInited)
 		return;
 
+	m_OnDeactivateComponent(component);
+
+	assert(!component->f_isActive);
+
 	component->OnDestroy();
 	if (component->csRef().value > 0 && component->f_callbacks.onDestroy != nullptr) {
 		auto method = component->f_callbacks.onDestroy;
@@ -350,10 +482,88 @@ void Actor::m_OnDestroyComponent(Component* component) {
 	}
 }
 
+void Actor::m_OnActivateComponent(Component* component) {
+	assert(component->f_isInited);
+	assert(!component->f_isActive);
+
+	component->OnActivate();
+	component->f_isActive = true;
+	if (component->csRef().value > 0 && component->f_callbacks.onActivate != nullptr) {
+		auto method = component->f_callbacks.onActivate;
+		auto runOrCrash = game()->callbacks().runOrCrush;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method);
+	}
+}
+
+void Actor::m_OnDeactivateComponent(Component* component) {
+	assert(component->f_isInited);
+	assert(component->f_isActive);
+
+	component->OnDeactivate();
+	component->f_isActive = false;
+	if (component->csRef().value > 0 && component->f_callbacks.onDeactivate != nullptr) {
+		auto method = component->f_callbacks.onDeactivate;
+		auto runOrCrash = game()->callbacks().runOrCrush;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method);
+	}
+}
+
+void Actor::m_OnCollisionEnterComponent(Component* component, Actor* otherActor, const Contact& contact) {
+	if (!component->f_isStarted)
+		return;
+
+	component->OnCollisionEnter(otherActor, contact);
+	if (component->csRef().value > 0 && component->f_callbacks.onCollisionEnter != nullptr) {
+		auto method = component->f_callbacks.onCollisionEnter;
+		auto runOrCrash = game()->callbacks().runOrCrushContactEnter;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method, otherActor->csRef(), &contact);
+	}
+}
+void Actor::m_OnCollisionExitComponent(Component* component, Actor* otherActor) {
+	if (!component->f_isStarted)
+		return;
+
+	component->OnCollisionExit(otherActor);
+	if (component->csRef().value > 0 && component->f_callbacks.onCollisionExit != nullptr) {
+		auto method = component->f_callbacks.onCollisionExit;
+		auto runOrCrash = game()->callbacks().runOrCrushContactExit;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method, otherActor->csRef());
+	}
+}
+
+void Actor::m_OnTriggerEnterComponent(Component* component, Actor* otherActor, const Contact& contact) {
+	if (!component->f_isStarted)
+		return;
+
+	component->OnTriggerEnter(otherActor, contact);
+	if (component->csRef().value > 0 && component->f_callbacks.onTriggerEnter != nullptr) {
+		auto method = component->f_callbacks.onTriggerEnter;
+		auto runOrCrash = game()->callbacks().runOrCrushContactEnter;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method, otherActor->csRef(), &contact);
+	}
+}
+
+void Actor::m_OnTriggerExitComponent(Component* component, Actor* otherActor) {
+	if (!component->f_isStarted)
+		return;
+
+	component->OnTriggerExit(otherActor);
+	if (component->csRef().value > 0 && component->f_callbacks.onTriggerExit != nullptr) {
+		auto method = component->f_callbacks.onTriggerExit;
+		auto runOrCrash = game()->callbacks().runOrCrushContactExit;
+
+		component->f_isCrashed |= runOrCrash(component->csRef(), method, otherActor->csRef());
+	}
+}
+
 void Actor::m_SetComponentCallbacks(Component* component, ComponentCallbacks callbacks) {
 	component->f_callbacks = callbacks;
 }
-
 
 DEF_FUNC(Actor, gameObject_get, CsRef)(CppRef objBaseRef) {
 	return CppRefs::ThrowPointer<ActorBase>(objBaseRef)->actor()->csRef();
@@ -409,8 +619,13 @@ DEF_FUNC(Actor, GetChild, CsRef)(CppRef objRef, int index) {
 	return child != nullptr ? child->csRef() : CsRef();
 }
 
+DEF_PROP_GETSET_F(Actor, size_t, flags, flags);
+
 DEF_PROP_GETSET_STR(Actor, name);
 DEF_PROP_GETSET_STR(Actor, prefabId);
+
+DEF_PROP_GET(Actor, bool, isActive);
+DEF_PROP_GETSET(Actor, bool, activeSelf);
 
 DEF_PROP_GETSET(Actor, Vector3, localPosition)
 DEF_PROP_GETSET(Actor, Vector3, localRotation)
@@ -423,6 +638,7 @@ DEF_PROP_GETSET(Actor, Vector3, worldScale)
 
 DEF_PROP_GETSET_F(Component, bool, runtimeOnly, runtimeOnly);
 DEF_PROP_GETSET_F(Component, bool, f_isCrashed, f_isCrashed);
+DEF_PROP_GET(Component, bool, IsActivated);
 
 DEF_PROP_GET(Actor, Vector3, localForward)
 DEF_PROP_GET(Actor, Vector3, localUp)

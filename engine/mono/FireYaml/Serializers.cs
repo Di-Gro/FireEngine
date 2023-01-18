@@ -115,6 +115,7 @@ namespace Engine {
             var components = actor.GetComponentsList();
 
             serializer.AddField($"{selfPath}.m_children", children.GetType(), children);
+            serializer.AddField($"{selfPath}.m_flags", typeof(ulong), (ulong)actor.Flags);
 
             m_AddComponents(serializer, selfPath, components);
 
@@ -151,9 +152,15 @@ namespace Engine {
 
             var componentsPath = $"{selfPath}.m_components";
             var childrenPath = $"{selfPath}.m_children";
+            var flagsPath = $"{selfPath}.m_flags";
 
             m_LoadComponents(reader, componentsPath, actor);
             m_LoadActorChildren(reader, childrenPath, actor);
+
+            var flagsStr = reader.GetField(flagsPath);
+            var str = flagsStr.GetValue(flagsPath, "0");
+            var flags = ulong.Parse(str);
+            actor.Flags = (Flag)flags;
         }
 
         private void m_LoadActorChildren(FireYaml.FireReader reader, string childrenPath, Engine.Actor actor) {

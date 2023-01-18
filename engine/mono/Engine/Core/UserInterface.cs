@@ -33,10 +33,11 @@ namespace Engine
     public struct Callbacks {
         public delegate void Callback(CsRef csRef, float width);
         public delegate void RequestName(CsRef csRef);
+        public delegate void OnDrawActorTags(CsRef csRef);
 
         public Callback onDrawComponent;
         public RequestName requestComponentName;
-        public Callback onDrawActorHeader;
+        public OnDrawActorTags onDrawActorTags;
     }
 
     class UserInterface
@@ -74,27 +75,44 @@ namespace Engine
             Instance.m_callbacks = new Callbacks();
             Instance.m_callbacks.onDrawComponent = new Callbacks.Callback(Instance.OnDrawComponent);
             Instance.m_callbacks.requestComponentName = new Callbacks.RequestName(Instance.RequestComponentName);
-            Instance.m_callbacks.onDrawActorHeader = new Callbacks.Callback(Instance.OnDrawActorHeader);
+            Instance.m_callbacks.onDrawActorTags = new Callbacks.OnDrawActorTags(Instance.DrawActorTags);
 
             dll_SetCallbacks2(cppRef, Instance.m_callbacks);
         }
 
-        public void OnDrawActorHeader(CsRef csRef, float width) {
-            // var actor = CppLinked.GetObjectByRef(csRef) as Actor;
+        public void DrawActorTags(CsRef csRef) {
+            var actor = CppLinked.GetObjectByRef(csRef) as Actor;
 
-            // /// Set Context ->
-            // GUI.style = Marshal.PtrToStructure<UI.ImGuiStyle>(ImGui.GetStyle());
-            // GUI.rectWidth = width;
-            // GUI.groupRef = csRef;
-            // GUI.groupAssetIdHash = actor.scene.assetIdHash;
-            // /// <-
+            var type = typeof(Flag);
+            var names = Enum.GetNames(type);
+            var values = Enum.GetValues(type);
+            var lastFlags = actor.Flags;
 
-            // var prop = typeof(Actor).GetProperty(nameof(IFile.prefabId));
-            // var lastActive = GUI.active;
+            var label = "Flags";
+            var width = Dll.ImGui.CalcTextWidth(label);
+            ImGui.SetNextItemWidth(width);           
 
+            if (ImGui.BeginCombo($"##actorFlags_{csRef}", "")) {
+                for (int i = 0; i < names.Length; i++) {
+                    var name = names.GetValue(i);
+                    var flag = (Flag)values.GetValue(i);
+                    var hasFlag = actor.Has(flag);
 
-            // GUI.DrawActorPrefab(actor);
+                    if(flag == Flag.Null)
+                        continue;
 
+                    if (ImGui.Selectable($"  {name}  ##_{csRef}", hasFlag, (int)ImGuiSelectableFlags_._DontClosePopups)) {
+                        if(hasFlag)
+                            actor.Flags ^= flag;
+                        else
+                            actor.Flags |= flag;
+                    }
+                    GUI.Space();
+                }
+                ImGui.EndCombo();
+            }
+            if (lastFlags != actor.Flags)
+                Assets.MakeDirty(actor.scene.assetIdHash);
         }
 
         public void OnDrawComponent(CsRef csRef, float width) {

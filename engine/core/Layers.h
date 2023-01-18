@@ -12,7 +12,8 @@ namespace Layers
 {
 	static constexpr JPH::uint8 NON_MOVING = 0;
 	static constexpr JPH::uint8 MOVING = 1;
-	static constexpr JPH::uint8 NUM_LAYERS = 2;
+	static constexpr JPH::uint8 TRIGGER = 2;
+	static constexpr JPH::uint8 NUM_LAYERS = 3;
 
 	JPH::uint8 GetLayerFromMotionType(JPH::EMotionType motionType);
 };

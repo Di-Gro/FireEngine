@@ -1,3 +1,5 @@
+using System;
+
 using EngineDll;
 
 namespace Engine {
@@ -5,9 +7,9 @@ namespace Engine {
     [GUID("481ac014-eb4a-4a25-8ef8-c40db6efbb02")]
     public class Character : CppComponent {
 
-        public bool active {
-            get => Dll.Character.active_get(cppRef);
-            set => Dll.Character.active_set(cppRef, value);
+        public bool simulate {
+            get => Dll.Character.simulate_get(cppRef);
+            set => Dll.Character.simulate_set(cppRef, value);
         }
 
         public float MaxSlopeAngle { get => prop_MaxSlopeAngle.value; set => prop_MaxSlopeAngle.value = value; }
@@ -34,5 +36,21 @@ namespace Engine {
         private Prop<float> prop_MaxSlopeAngle = new Prop<float>(0);
         private Prop<float> prop_Friction = new Prop<float>(1);
         private Prop<float> prop_mass = new Prop<float>(2);
+
+        public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
+            Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
+        }
+
+        public override void OnTriggerExit(Actor otherActor) {
+            Console.WriteLine($"OnTriggerExit: {actor.Name} -> {otherActor.Name}");
+        }
+
+        public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
+            Console.WriteLine($"OnCollisionEnter: {actor.Name} -> {otherActor.Name}");
+        }
+
+        public override void OnCollisionExit(Actor otherActor) {
+            Console.WriteLine($"OnCollisionExit: {actor.Name} -> {otherActor.Name}");
+        }
     }
 }

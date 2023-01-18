@@ -31,9 +31,25 @@ void FireCharacter::OnInit() {
 		throw std::exception("Character: collider == nullptr");
 }
 
+void FireCharacter::OnActivate() {
+	if (simulate())
+		m_CreateBody();
+}
+
 void FireCharacter::OnStart() {
-	if (!active())
-		return;
+
+}
+
+void FireCharacter::OnDeactivate() {
+	if (m_ñharacter != nullptr)
+		m_RemoveBody();
+}
+
+void FireCharacter::OnDestroy() {
+	
+}
+
+void FireCharacter::m_CreateBody() {
 
 	auto physicsScene = scene()->physicsScene();
 	auto physicsSystem = physicsScene->physicsSystem();
@@ -44,7 +60,7 @@ void FireCharacter::OnStart() {
 	auto shapeSettings = m_collider->settings;
 	auto position = worldPosition();
 	auto rotation = worldRotationQ();
-	
+
 	float cCharacterRadiusStanding = m_collider->scaledRadius();
 
 	m_ñharacterSettings = new CharacterSettings();
@@ -55,17 +71,15 @@ void FireCharacter::OnStart() {
 	m_ñharacterSettings->mMass = mass;
 	m_ñharacterSettings->mGravityFactor = m_gravity * physicsScene->cWorldScale;
 	m_ñharacterSettings->mSupportingVolume = JPH::Plane(Vec3::sAxisY(), -cCharacterRadiusStanding);
-	
-	m_ñharacter = new Character(m_ñharacterSettings, ToJolt(position), ToJolt(rotation), 0, physicsSystem);
+
+	m_ñharacter = new Character(m_ñharacterSettings, ToJolt(position), ToJolt(rotation), (uint64)actor(), physicsSystem);
 
 	m_ñharacter->AddToPhysicsSystem(EActivation::Activate);
 
+	m_ñharacter->GetBodyID();
 }
 
-void FireCharacter::OnDestroy() {
-	if (m_ñharacter == nullptr)
-		return; 
-
+void FireCharacter::m_RemoveBody() {
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = physicsScene->bodyInterface();
 
@@ -87,7 +101,7 @@ void FireCharacter::BeforePhysicsUpdate() {
 }
 
 void FireCharacter::OnFixedUpdate() {
-	if (m_ñharacter == nullptr || !active())
+	if (m_ñharacter == nullptr || !simulate())
 		return;
 	 
 	auto pos = m_ñharacter->GetPosition();
@@ -97,15 +111,14 @@ void FireCharacter::OnFixedUpdate() {
 	localRotationQ(FromJolt(rot));
 }
 
-void FireCharacter::active(bool value) {
-		auto lastActive = m_active;
-		m_active = value;
+void FireCharacter::simulate(bool value) {
+	m_simulate = value;
 
-		if (value && !lastActive)
-			OnStart();
+	if (m_ñharacter == nullptr && m_simulate && IsActivated())
+		m_CreateBody();
 
-		if (!value && lastActive)
-			OnDestroy();
+	if (m_ñharacter != nullptr && (!m_simulate || !IsActivated()))
+		m_RemoveBody();
 }
 
 void FireCharacter::gravity(float value) {
@@ -139,7 +152,7 @@ void FireCharacter::AddImpulse(Vector3 inImpulse) {
 
 	auto physicsScene = scene()->physicsScene();
 
-	m_ñharacter->AddImpulse(ToJolt(inImpulse)); // * physicsScene->cWorldScale
+	m_ñharacter->AddImpulse(ToJolt(inImpulse));
 }
 
 float FireCharacter::GetFriction() const {
@@ -162,7 +175,7 @@ void FireCharacter::SetFriction(float inFriction) {
 #define DONE
 
 
-DEF_PROP_GETSET(FireCharacter, bool, active);
+DEF_PROP_GETSET(FireCharacter, bool, simulate);
 DEF_PROP_GETSET(FireCharacter, float, gravity);
 
 

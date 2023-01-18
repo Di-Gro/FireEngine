@@ -166,6 +166,7 @@
     <ClInclude Include="Colliders.h" />
     <ClInclude Include="Component.inl" />
     <ClInclude Include="ComponentMeta.h" />
+    <ClInclude Include="Contact.h" />
     <ClInclude Include="CppClass.h" />
     <ClInclude Include="CS.h" />
     <ClInclude Include="CSBridge.h" />

@@ -17,12 +17,26 @@ namespace Engine {
 
         [Close] public int fileId { get; set; } = -1;
 
+        [Close] public Flag Flags { 
+            get => (Flag) Dll.Actor.flags_get(cppRef);
+            set => Dll.Actor.flags_set(cppRef, (ulong)value);
+        }
+
         public string prefabId {
             get => Dll.Actor.prefabId_get(cppRef);
             set => Dll.Actor.prefabId_set(cppRef, value);
         }
 
         public string Name { get => Dll.Actor.name_get(cppRef); set => Dll.Actor.name_set(cppRef, value); }
+
+        public bool IsActive {
+            get => Dll.Actor.isActive_get(cppRef);
+        }
+
+        public bool ActiveSelf {
+            get => Dll.Actor.activeSelf_get(cppRef);
+            set => Dll.Actor.activeSelf_set(cppRef, value);
+        }
 
         public Vector3 localPosition {
             get => Dll.Actor.localPosition_get(cppRef);
@@ -206,6 +220,10 @@ namespace Engine {
                 }
             }
             return list;
+        }
+
+        public bool Has(Flag flags) {
+            return (Flags & flags) == flags;
         }
 
         #endregion

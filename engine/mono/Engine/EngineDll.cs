@@ -88,6 +88,31 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "Actor_GetChild")]
 		    public static extern CsRef GetChild(CppRef objRef, int index);
 
+            [DllImport(Paths.Exe, EntryPoint = "Actor_flags_get")]
+		    private static extern size_t flags_get_inner(CppRef objRef);
+
+            public static size_t flags_get(CppRef objRef) => objRef.value != 0 ? flags_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Actor_flags_set")]
+		    private static extern void flags_set_inner(CppRef objRef, size_t value);
+
+            public static void flags_set(CppRef objRef, size_t value) { if(objRef.value != 0) flags_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Actor_isActive_get")]
+		    private static extern bool isActive_get_inner(CppRef objRef);
+
+            public static bool isActive_get(CppRef objRef) => objRef.value != 0 ? isActive_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Actor_activeSelf_get")]
+		    private static extern bool activeSelf_get_inner(CppRef objRef);
+
+            public static bool activeSelf_get(CppRef objRef) => objRef.value != 0 ? activeSelf_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Actor_activeSelf_set")]
+		    private static extern void activeSelf_set_inner(CppRef objRef, bool value);
+
+            public static void activeSelf_set(CppRef objRef, bool value) { if(objRef.value != 0) activeSelf_set_inner(objRef, value); }
+
             [DllImport(Paths.Exe, EntryPoint = "Actor_localPosition_get")]
 		    private static extern Vector3 localPosition_get_inner(CppRef objRef);
 
@@ -276,6 +301,11 @@ namespace EngineDll {
 		    private static extern void f_isCrashed_set_inner(CppRef objRef, bool value);
 
             public static void f_isCrashed_set(CppRef objRef, bool value) { if(objRef.value != 0) f_isCrashed_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Component_IsActivated_get")]
+		    private static extern bool IsActivated_get_inner(CppRef objRef);
+
+            public static bool IsActivated_get(CppRef objRef) => objRef.value != 0 ? IsActivated_get_inner(objRef) : default;
 
 
 		}
@@ -877,15 +907,15 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "Rigidbody_Create")]
 		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_active_get")]
-		    private static extern bool active_get_inner(CppRef objRef);
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_simulate_get")]
+		    private static extern bool simulate_get_inner(CppRef objRef);
 
-            public static bool active_get(CppRef objRef) => objRef.value != 0 ? active_get_inner(objRef) : default;
+            public static bool simulate_get(CppRef objRef) => objRef.value != 0 ? simulate_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_active_set")]
-		    private static extern void active_set_inner(CppRef objRef, bool value);
+            [DllImport(Paths.Exe, EntryPoint = "Rigidbody_simulate_set")]
+		    private static extern void simulate_set_inner(CppRef objRef, bool value);
 
-            public static void active_set(CppRef objRef, bool value) { if(objRef.value != 0) active_set_inner(objRef, value); }
+            public static void simulate_set(CppRef objRef, bool value) { if(objRef.value != 0) simulate_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Rigidbody_gravity_get")]
 		    private static extern float gravity_get_inner(CppRef objRef);
@@ -948,15 +978,15 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "FireCharacter_Create")]
 		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_active_get")]
-		    private static extern bool active_get_inner(CppRef objRef);
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_simulate_get")]
+		    private static extern bool simulate_get_inner(CppRef objRef);
 
-            public static bool active_get(CppRef objRef) => objRef.value != 0 ? active_get_inner(objRef) : default;
+            public static bool simulate_get(CppRef objRef) => objRef.value != 0 ? simulate_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_active_set")]
-		    private static extern void active_set_inner(CppRef objRef, bool value);
+            [DllImport(Paths.Exe, EntryPoint = "FireCharacter_simulate_set")]
+		    private static extern void simulate_set_inner(CppRef objRef, bool value);
 
-            public static void active_set(CppRef objRef, bool value) { if(objRef.value != 0) active_set_inner(objRef, value); }
+            public static void simulate_set(CppRef objRef, bool value) { if(objRef.value != 0) simulate_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "FireCharacter_gravity_get")]
 		    private static extern float gravity_get_inner(CppRef objRef);
