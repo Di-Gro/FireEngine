@@ -140,4 +140,6 @@ public:
 	bool (*renameSceneAsset)(int assetIdHash, size_t pathPtr);
 
 	void (*requestAssetGuid)(int assetIdHash);
+
+	void (*setStartupScene)(CppRef sceneRef);
 };

@@ -177,7 +177,7 @@ void Game::Run() {
 	m_render->Start();
 	m_meshAsset->Start();
 
-	m_editorScene = CreateScene(true, editorSettings.startupScene);
+	m_editorScene = CreateScene(true, editorSettings.startupSceneId);
 	if (!LoadScene(m_editorScene)) {
 		PushScene(m_editorScene);
 		m_editorScene->name("!!!This scene can not be saved!!!");

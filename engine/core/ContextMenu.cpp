@@ -99,6 +99,29 @@ void SceneMenu::Save(Scene* scene) {
 	game->assets()->Save(scene->assetIdHash());
 }
 
+bool SceneMenu::CanSetAsStartup(Scene* scene) {
+	if (scene == nullptr)
+		return false;
+
+	auto game = scene->game();
+
+	int startupSceneIdHash = game->editorSettings.startupSceneIdHash;
+	if (startupSceneIdHash == scene->assetIdHash())
+		return false;
+
+	return true;
+}
+
+void SceneMenu::SetAsStartup(Scene* scene) {
+	if (!CanSetAsStartup(scene))
+		return;
+
+	auto game = scene->game();
+	auto sceneRef = CppRefs::GetRef(scene);
+
+	game->callbacks().setStartupScene(sceneRef);
+}
+
 void ActorMenu::AddChild(Actor* actor) {
 	auto child = actor->scene()->CreateActor(actor);
 

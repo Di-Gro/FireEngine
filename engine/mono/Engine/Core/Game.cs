@@ -107,6 +107,7 @@ namespace Engine {
             m_gameCallbacks.renameSceneAsset = new GameCallbacks.RenameSceneAsset(Scene.RenameSceneAsset);
 
             m_gameCallbacks.requestAssetGuid = new GameCallbacks.TakeAssetHash(AssetStore.cpp_RequestAssetGuid);
+            m_gameCallbacks.setStartupScene = new GameCallbacks.TakeCppRef(SetStartupScene);
 
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
@@ -116,6 +117,15 @@ namespace Engine {
             AssetStore.Instance.Init("../../Example/FireProject");
 
             editorSettings = InstanciateAsset<EditorSettings>(Assets.editor_settings);
+            editorSettings.UpdateInCpp();
+        }
+
+        private static void SetStartupScene(CppRef sceneRef) {
+            var scene = new Scene(new Scene(sceneRef).assetId);
+
+            editorSettings.StartupScene = scene;
+
+            AssetStore.Instance.UpdateAsset(Assets.editor_settings, editorSettings);
             editorSettings.UpdateInCpp();
         }
 
@@ -266,6 +276,8 @@ namespace Engine {
         public RenameSceneAsset renameSceneAsset;
 
         public TakeAssetHash requestAssetGuid;
+
+        public TakeCppRef setStartupScene;
 
 
     }
