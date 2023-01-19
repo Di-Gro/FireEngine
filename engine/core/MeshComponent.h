@@ -94,6 +94,8 @@ public:
 	void RemoveMaterials();
 	void ClearMesh();
 
+	void OnPreInit();
+
 	void OnInit() override;
 	void OnDestroy() override;
 
@@ -141,6 +143,8 @@ FUNC(MeshComponent, ClearMesh, void)(CppRef compRef);
 
 FUNC(MeshComponent, SetMaterial, void)(CppRef compRef, size_t index, CppRef materialRef);
 FUNC(MeshComponent, GetMaterial, CppRef)(CppRef compRef, size_t index);
+
+FUNC(MeshComponent, OnPreInit, void)(CppRef compRef);
 
 
 

@@ -29,13 +29,10 @@ void MeshComponent::m_InitMono() {
 	mono_inited = true;
 }
 
-void MeshComponent::OnInit() {
+void MeshComponent::OnPreInit() {
 	m_render = game()->render();
 	m_meshAsset = game()->meshAsset();
 	m_InitMono();
-
-	if (m_castShadow)
-		m_shadowCaster = scene()->renderer.AddShadowCaster(this);
 
 	if (m_preinitMesh != nullptr) {
 		mesh(m_preinitMesh);
@@ -46,6 +43,13 @@ void MeshComponent::OnInit() {
 			SetMaterial(i, m_preinitMaterials[i]);
 		m_preinitMaterials.clear();
 	}
+}
+
+void MeshComponent::OnInit() {
+	OnPreInit();
+
+	if (m_castShadow)
+		m_shadowCaster = scene()->renderer.AddShadowCaster(this);
 }
 
 void MeshComponent::OnActivate() {
@@ -490,4 +494,8 @@ DEF_FUNC(MeshComponent, SetPreInitMaterials, void)(CppRef compRef, size_t* matRe
 
 		meshComp->m_preinitMaterials.push_back(material);
 	}
+}
+
+DEF_FUNC(MeshComponent, OnPreInit, void)(CppRef compRef) {
+	CppRefs::ThrowPointer<MeshComponent>(compRef)->OnPreInit();
 }

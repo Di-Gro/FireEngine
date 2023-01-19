@@ -20,6 +20,8 @@ namespace Engine {
     public class OpenAttribute : Attribute { }
 
     public class ColorAttribute : Attribute { }
+    
+    public class SpaceAttribute : Attribute { }
 
     public class RangeAttribute : Attribute {
         public int imin, imax;
@@ -267,6 +269,7 @@ namespace Engine {
             m_LoadMesh(deserializer, meshPath, meshComponent);
             m_LoadMaterials(deserializer, materialsPath, meshComponent);
 
+            Dll.MeshComponent.OnPreInit(meshComponent.cppRef);
         }
 
         private List<StaticMaterial> m_GetMaterialsList(MeshComponent meshComponent) {
