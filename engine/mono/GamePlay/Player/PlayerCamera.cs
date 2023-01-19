@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using Engine;
 
-// #if BADCODE
-
 [GUID("a49b6d24-fe71-4965-a421-36645951c2c3")]
 public class PlayerCamera : CSComponent {
 
@@ -16,7 +14,7 @@ public class PlayerCamera : CSComponent {
     public float distance = 100;
 
     [Open] private Vector3 m_angles = Vector3.Zero;
-    
+
 
     public override void OnInit() {
         if (m_cameraTarget == null || m_camera == null)
@@ -43,7 +41,7 @@ public class PlayerCamera : CSComponent {
             return;
 
 
-        var rot = Quaternion.CreateFromAxisAngle(Vector3.Up, -m_angles.X) 
+        var rot = Quaternion.CreateFromAxisAngle(Vector3.Up, -m_angles.X)
                 * Quaternion.CreateFromAxisAngle(Vector3.Right, m_angles.Y);
 
         var cameraBackward = Vector3.Forward.Rotate(rot);
@@ -51,7 +49,7 @@ public class PlayerCamera : CSComponent {
 
         actor.worldPosition = cameraPos;
         actor.localRotationQ = -rot;
-        
+
         var newMatrix = Matrix4x4.CreateLookAt(cameraPos, m_cameraTarget.worldPosition, Vector3.Up);
         m_camera.viewMatrix = newMatrix;
     }
