@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using Engine;
 
-// #if BADCODE
-
 [GUID("a49b6d24-fe71-4965-a421-36645951c2c3")]
 public class PlayerCamera : CSComponent {
 
@@ -74,4 +72,3 @@ public class PlayerCamera : CSComponent {
         distance = Math.Clamp(distance, 1, 10000);
     }
 }
-// #endif
