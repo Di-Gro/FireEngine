@@ -10,12 +10,22 @@ namespace Engine {
     [StructLayout(LayoutKind.Sequential)]
     public struct ComponentCallbacks {
         public delegate void ComponentCallback();
+        public delegate void ContactEnter(Actor otherActor, in Contact contact);
+        public delegate void ContactExit(Actor otherActor);
 
         public ComponentCallback onInit;
         public ComponentCallback onStart;
         public ComponentCallback onUpdate;
         public ComponentCallback onFixedUpdate;
         public ComponentCallback onDestroy;
+
+        public ContactEnter onCollisionEnter;
+        public ContactExit onCollisionExit;
+        public ContactEnter onTriggerEnter;
+        public ContactExit onTriggerExit;
+
+        public ComponentCallback onActivate;
+        public ComponentCallback onDeactivate;
 
     }
 
@@ -30,6 +40,10 @@ namespace Engine {
         public bool IsCrashed {
             get => Dll.CsComponent.f_isCrashed_get(cppRef);
             private set => Dll.CsComponent.f_isCrashed_set(cppRef, value);
+        }
+
+        [Close] public bool IsActivated {
+            get => Dll.CsComponent.IsActivated_get(cppRef);
         }
 
         private CsRef m_objectRef;
@@ -51,6 +65,14 @@ namespace Engine {
         public virtual void OnFixedUpdate() { }
         public virtual void OnDestroy() { }
 
+        public virtual void OnCollisionEnter(Actor otherActor, in Contact contact) { }
+        public virtual void OnCollisionExit(Actor otherActor) { }
+        public virtual void OnTriggerEnter(Actor otherActor, in Contact contact) { }
+        public virtual void OnTriggerExit(Actor otherActor) { }
+
+        public virtual void OnActivate() { }
+        public virtual void OnDeactivate() { }
+
 
         public void Destroy() => Dll.Actor.Destroy(cppRef);
 
@@ -69,6 +91,14 @@ namespace Engine {
             m_callbacks.onFixedUpdate = new ComponentCallbacks.ComponentCallback(OnFixedUpdate);
             m_callbacks.onDestroy = new ComponentCallbacks.ComponentCallback(OnDestroy);
 
+            m_callbacks.onCollisionEnter = new ComponentCallbacks.ContactEnter(OnCollisionEnter);
+            m_callbacks.onCollisionExit = new ComponentCallbacks.ContactExit(OnCollisionExit);
+            m_callbacks.onTriggerEnter = new ComponentCallbacks.ContactEnter(OnTriggerEnter);
+            m_callbacks.onTriggerExit = new ComponentCallbacks.ContactExit(OnTriggerExit);
+
+            m_callbacks.onActivate = new ComponentCallbacks.ComponentCallback(OnActivate);
+            m_callbacks.onDeactivate = new ComponentCallbacks.ComponentCallback(OnDeactivate);
+
             dll_SetComponentCallbacks(cppRef, m_callbacks);
 
             return res;
@@ -80,23 +110,72 @@ namespace Engine {
                 return false;
             }
             catch(Exception ex) {
-                var component = CppLinked.GetObjectByRef(componentRef) as Component;
-
-                Console.WriteLine("ComponentCrash: Component was disabled.");
-                if (component == null) {
-                    Console.WriteLine($"Component: null {componentRef}");
-                } else {
-                    Console.WriteLine($"Component: {component.GetType().FullName}, ");
-                    Console.WriteLine($"Actor name: ({component.actor.Name})");
-                }
-                Console.WriteLine("Message: ");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("StackTrace: ");
-                Console.WriteLine(ex.StackTrace);
-                
+                CrashComponent(componentRef, ex);
                 return true;
             }
         }
+
+        public static bool RunOrCrushContactEnter(CsRef componentRef, ComponentCallbacks.ContactEnter method, CsRef otherActorRef, in Contact contact) {
+            try {
+                var otherActor = CppLinked.GetObjectByRef(otherActorRef) as Actor;
+                method.Invoke(otherActor, in contact);
+                return false;
+            } catch (Exception ex) {
+                CrashComponent(componentRef, ex);
+                return true;
+            }
+        }
+
+        public static bool RunOrCrushContactExit(CsRef componentRef, ComponentCallbacks.ContactExit method, CsRef otherActorRef) {
+            try {
+                var otherActor = CppLinked.GetObjectByRef(otherActorRef) as Actor;
+                method.Invoke(otherActor);
+                return false;
+            } catch (Exception ex) {
+                CrashComponent(componentRef, ex);
+                return true;
+            }
+        }
+
+        private static void CrashComponent(CsRef componentRef, Exception ex) {
+            var component = CppLinked.GetObjectByRef(componentRef) as Component;
+
+            Console.WriteLine("ComponentCrash: Component was disabled.");
+            if (component == null) {
+                Console.WriteLine($"Component: null {componentRef}");
+            } else {
+                Console.WriteLine($"Component: {component.GetType().FullName}, ");
+                Console.WriteLine($"Actor name: ({component.actor.Name})");
+            }
+            Console.WriteLine("Message: ");
+            Console.WriteLine(ex.Message);
+            Console.WriteLine("StackTrace: ");
+            Console.WriteLine(ex.StackTrace);
+        }
+
+        // private void cpp_OnCollisionEnter(CsRef otherActorRef) {
+        //     var otherActor = CppLinked.GetObjectByRef(otherActorRef) as Actor;
+
+        //     OnCollisionEnter(otherActor);
+        // }
+
+        // private void cpp_OnCollisionExit(CsRef otherActorRef) {
+        //     var otherActor = CppLinked.GetObjectByRef(otherActorRef) as Actor;
+
+        //     OnCollisionExit(otherActor);
+        // }
+
+        // private void cpp_OnTriggerEnter(CsRef otherActorRef) {
+        //     var otherActor = CppLinked.GetObjectByRef(otherActorRef) as Actor;
+
+        //     OnTriggerEnter(otherActor);
+        // }
+
+        // private void cpp_OnTriggerExit(CsRef otherActorRef) {
+        //     var otherActor = CppLinked.GetObjectByRef(otherActorRef) as Actor;
+
+        //     OnTriggerExit(otherActor);
+        // }
 
         [DllImport(Paths.Exe, EntryPoint = "Actor_SetComponentCallbacks")]
         private static extern void dll_SetComponentCallbacks(CppRef componentRef, ComponentCallbacks callbacks);

@@ -138,23 +138,40 @@ void UI_Inspector::m_DrawTransformContent()
 void UI_Inspector::m_DrawHeader() {
 
 	auto actor = _game->ui()->GetActor();
+	bool isActiveSelf = actor->activeSelf();
 
 	const auto bufSize = 80;
 	char nameBuffer[bufSize] = { 0 };
 	auto name = actor->name();
 	std::memcpy(&nameBuffer, name.c_str(), min(name.size(), bufSize));
 
-	bool isActive = true;
 	auto id = "ID: " + std::to_string(actor->Id());
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10.0f, 0.0f });
 
 	ImGui::Indent(10);
-	ImGui::Checkbox("##ObjectIsActive", &isActive);
+	if(ImGui::Checkbox("##ObjectIsActive", &isActiveSelf))
+		actor->activeSelf(isActiveSelf);
 
 	ImGui::SameLine();
-	ImGui::Text(id.c_str());
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
 
+		ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.7f, 0.7f ,0.7f ,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 0.0f ,0.0f ,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.8f, 0.8f ,0.9f ,1.0f });
+		ImGui::PushStyleColor(ImGuiCol_Header, { 0.2f, 0.2f, 0.4f, 0.4f });
+
+		_ui->_callbacks.onDrawActorTags(actor->csRef());
+
+		ImGui::PopStyleVar(6);
+		ImGui::PopStyleColor(4);
+	}
 	ImGui::SameLine();
 	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 10);
 	ImGui::InputText("##ObjectName", nameBuffer, bufSize);
@@ -719,6 +736,7 @@ void UI_Inspector::m_DrawComponentContextMenu(Component* component)
 
 	if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
 	{
+		
 		if (ImGui::Selectable("Copy"))
 			ComponentMenu::Copy(component);
 

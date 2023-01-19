@@ -153,6 +153,14 @@ bool ScenePickerPopup::m_DrawMenu(Scene* scene) {
 		}
 		hasItems = true;
 	}
+	if (SceneMenu::CanSetAsStartup(scene)) {
+
+		if (ImGui::Selectable("Set as startup")) {
+			SceneMenu::SetAsStartup(scene);
+			ImGui::CloseCurrentPopup();
+		}
+		hasItems = true;
+	}
 
 	if (hasItems)
 		ImGui::Separator();

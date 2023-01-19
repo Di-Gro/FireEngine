@@ -64,6 +64,9 @@
     <Filter Include="FirePhysics\Physics">
       <UniqueIdentifier>{6d775892-106f-4314-90ab-2ef648f66013}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{c08fe36c-e735-4477-86e0-ae43a29a2efb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
@@ -383,6 +386,42 @@
     </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>FirePhysics\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Rete.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Rete_AI.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Condition.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\ConstTestNode.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\AlphaMemory.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\BetaMemory.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\JoinNode.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\ProductionNode.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\WME.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\TestJoin.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AI\Token.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
+    <ClCompile Include="AIComponent.cpp">
+      <Filter>AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -766,6 +805,42 @@
     </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>FirePhysics\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Rete.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Condition.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\ConstTestNode.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\AlphaMemory.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\BetaMemory.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\JoinNode.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\ProductionNode.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\WME.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\TestJoin.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AI\Token.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AIComponent.h">
+      <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Contact.h">
+      <Filter>FirePhysics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

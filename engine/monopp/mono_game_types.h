@@ -72,6 +72,7 @@ public:
 class GameUpdateData {
 public:
 	float deltaTime;
+	float deltaFixedTime;
 };
 
 class ComponentCallbacks {
@@ -81,6 +82,14 @@ public:
 	void(*onUpdate)();
 	void(*onFixedUpdate)();
 	void(*onDestroy)();
+
+	void(*onCollisionEnter)(void*, const void*);
+	void(*onCollisionExit)(void*);
+	void(*onTriggerEnter)(void*, const void*);
+	void(*onTriggerExit)(void*);
+
+	void(*onActivate)();
+	void(*onDeactivate)();
 };
 
 class GameCallbacks {
@@ -94,10 +103,9 @@ public:
 	int (*saveScene)(CppRef cppSceneRef, size_t pathPtr);
 	bool (*loadScene)(CppRef cppSceneRef, int assetGuidHash);
 
-	//bool(*saveScene)(CppRef cppSceneRef, size_t assetIdPtr, size_t pathPtr);
-	//bool(*loadScene)(CppRef cppSceneRef, size_t assetIdPtr);
-
 	bool (*runOrCrush)(CsRef componentRef, void(*method)());
+	bool (*runOrCrushContactEnter)(CsRef componentRef, void(*method)(void*, const void*), CsRef, const void*);
+	bool (*runOrCrushContactExit)(CsRef componentRef, void(*method)(void*), CsRef);
 
 	bool (*isAssignable)(CsRef objRef, int typeIdHash);
 
@@ -132,5 +140,6 @@ public:
 	bool (*renameSceneAsset)(int assetIdHash, size_t pathPtr);
 
 	void (*requestAssetGuid)(int assetIdHash);
-};
 
+	void (*setStartupScene)(CppRef sceneRef);
+};

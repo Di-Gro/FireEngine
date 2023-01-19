@@ -21,22 +21,24 @@ public class PlayerController : CSComponent {
             throw new NullFieldException(this);
     }
 
-    public override void OnUpdate() {
+    public override void OnFixedUpdate() {
 
-        var inputAxis = Vector3.Zero;
-        if (Input.GetButton(Key.W)) inputAxis += Vector3.Forward;
-        if (Input.GetButton(Key.S)) inputAxis += Vector3.Backward;
-        if (Input.GetButton(Key.A)) inputAxis += Vector3.Left;
-        if (Input.GetButton(Key.D)) inputAxis += Vector3.Right;
-        inputAxis = inputAxis.Normalized();
+        var direction = Vector3.Zero;
+        if (Input.GetButton(Key.W)) direction += Vector3.Forward;
+        if (Input.GetButton(Key.S)) direction += Vector3.Backward;
+        if (Input.GetButton(Key.A)) direction += Vector3.Left;
+        if (Input.GetButton(Key.D)) direction += Vector3.Right;
+        direction = direction.Normalized();
 
-        if (Input.GetButton(Key.LeftShift))
-            inputAxis *= 2;
-            
-        Move(inputAxis);
+        bool jump = Input.GetButtonDown(Key.Space);
+        bool run = Input.GetButton(Key.LeftShift);
+
+        direction = ToCameraRelativeDiretcion(direction);
+
+        m_character.HandleInput(direction, jump, run, Game.DeltaFixedTime);
     }
 
-    public void Move(Vector3 axis) {
+    public Vector3 ToCameraRelativeDiretcion(Vector3 axis) {
        
         var cameraForward = m_playerCamera.actor.forward;
         var cameraRight = m_playerCamera.actor.right;
@@ -45,16 +47,6 @@ public class PlayerController : CSComponent {
 
         var direction = cameraForward * axis.Z + cameraRight * -axis.X;
 
-        var vel = direction * speed * Game.DeltaTime;
-
-        var velocity = m_character.GetLinearVelocity();
-        velocity.X = vel.X;
-        velocity.Z = vel.Z;
-        // velocity.X = (vel.X / 4 + velocity.X) / 2;
-        // velocity.Z = (vel.Z / 4 + velocity.Z) / 2;
-        m_character.SetLinearVelocityClamped(velocity);
-
-        // m_character.AddForce(vel);
-        // m_character.AddImpulse(vel);
+        return direction;
     }
 }

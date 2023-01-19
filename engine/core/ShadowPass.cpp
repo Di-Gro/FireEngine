@@ -58,7 +58,9 @@ void ShadowPass::Draw() {
 	m_game->currentScene()->renderer.m_camera = light->camera();
 
 	for (auto* shadowCaster : m_game->currentScene()->renderer.m_shadowCasters) {
-		if (!shadowCaster->GetComponent()->IsDestroyed()) {
+		auto component = shadowCaster->GetComponent();
+		
+		if (!component->IsDestroyed()) {
 			shadowCaster->OnDrawShadow(this, shadowMapScale);
 		}
 	}

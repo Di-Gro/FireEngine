@@ -5,7 +5,8 @@
 
 class EditorSettings {
 public:
-	static std::string startupScene;
+	static std::string startupSceneId;
+	static int startupSceneIdHash;
 };
 
 FUNC(Game, SetEditorSettings, void)(CppRef gameRef, const char* startupScene);

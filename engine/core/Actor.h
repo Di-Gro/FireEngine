@@ -13,6 +13,8 @@
 #include "ActorBase.h"
 #include "RunMode.h"
 
+#include "Contact.h"
+
 FUNC(Actor, BindComponent, void)(CppRef objRef, CppRef compRef);
 FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
 FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
@@ -20,6 +22,7 @@ FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCal
 class Render;
 class Game;
 class Scene;
+class FireContactListener;
 
 class Actor : public ActorBase {
 	OBJECT;
@@ -27,21 +30,23 @@ class Actor : public ActorBase {
 	friend class Scene;
 	friend class ActorBase;
 	friend class Render;
+	friend class FireContactListener;
 
 	FRIEND_FUNC(Actor, BindComponent, void)(CppRef objRef, CppRef compRef);
 	FRIEND_FUNC(Actor, InitComponent, void)(CppRef objRef, CppRef compRef);
 	FRIEND_FUNC(Actor, SetComponentCallbacks, void)(CppRef componentRef, const ComponentCallbacks& callbacks);
 
 public:
-	/// TODO: bool isStatic = true;
-	/// TODO: bool isActive = true;
+	size_t flags = 0;
+
 	bool isSelectable = true;
 	//int prefabIdHash = 0;
 
 private:
 	std::string m_name = "";
 	std::string m_prefabId = "";
-	//std::string m_postfix = "";
+
+	bool m_isActiveSelf = true;
 
 	Game* f_game = nullptr;
 	Scene* f_scene = nullptr;
@@ -60,6 +65,10 @@ private:
 
 public:
 	unsigned int Id() const { return f_actorID; }
+
+	bool isActive();
+	bool activeSelf() { return m_isActiveSelf; }
+	void activeSelf(bool value);
 
 	const std::string& name() { return m_name; }
 	void name(const std::string& value) { m_name = value; }
@@ -120,6 +129,12 @@ private:
 	void f_Draw();
 	//void f_DrawUI();
 	void f_Destroy();
+
+	void f_EnterCollision(Actor* otherActor, const Contact& contact);
+	void f_ExitCollision(Actor* otherActor);
+
+	void f_EnterTrigger(Actor* otherActor, const Contact& contact);
+	void f_ExitTrigger(Actor* otherActor);
 	
 	void f_SetParent(Actor* actor);
 
@@ -143,12 +158,27 @@ private:
 	inline void m_OnUpdateComponent(Component* component);
 	inline void m_OnFixedUpdateComponent(Component* component);
 	inline void m_OnDestroyComponent(Component* component);
+	inline void m_OnActivateComponent(Component* component);
+	inline void m_OnDeactivateComponent(Component* component);
+
+	inline void m_OnCollisionEnterComponent(Component* component, Actor* otherActor, const Contact& contact);
+	inline void m_OnCollisionExitComponent(Component* component, Actor* otherActor);
+
+	inline void m_OnTriggerEnterComponent(Component* component, Actor* otherActor, const Contact& contact);
+	inline void m_OnTriggerExitComponent(Component* component, Actor* otherActor);
 
 	inline void m_RunOrCrash(Component* component, void (Actor::* func)(Component*));
+	inline void m_RunOrCrash(Component* component, void (Actor::* func)(Component*, Actor*, const Contact&), Actor* otherActor, const Contact& contact);
+	inline void m_RunOrCrash(Component* component, void (Actor::* func)(Component*, Actor*), Actor* otherActor);
+
+	inline void m_CrashComponent(Component* component, std::exception ex);
+
+	void m_OnActiveChanged(bool value, bool self);
 
 };
 #pragma warning( push )
 #pragma warning( disable : 4190)
+
 
 FUNC(Actor, gameObject_get, CsRef)(CppRef objBaseRef);
 
@@ -164,8 +194,13 @@ FUNC(Actor, WriteComponentsRefs, void)(CppRef objRef, size_t listPtr);
 FUNC(Actor, GetChildrenCount, int)(CppRef objRef);
 FUNC(Actor, GetChild, CsRef)(CppRef objRef, int index);
 
+PROP_GETSET(Actor, size_t, flags)
+
 PROP_GETSET_STR(Actor, name);
 PROP_GETSET_STR(Actor, prefabId);
+
+PROP_GET(Actor, bool, isActive);
+PROP_GETSET(Actor, bool, activeSelf);
 
 PROP_GETSET(Actor, Vector3, localPosition)
 PROP_GETSET(Actor, Vector3, localRotation)
@@ -178,6 +213,7 @@ PROP_GETSET(Actor, Vector3, worldScale)
 
 PROP_GETSET(Component, bool, runtimeOnly);
 PROP_GETSET(Component, bool, f_isCrashed);
+PROP_GET(Component, bool, IsActivated);
 
 PROP_GET(Actor, Vector3, localForward)
 PROP_GET(Actor, Vector3, localUp)

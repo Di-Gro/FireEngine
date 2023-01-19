@@ -55,6 +55,11 @@ namespace EngineDll {
 			FUNC("Actor", "GetChildrenCount", "int", "CppRef objRef");
 			FUNC("Actor", "GetChild", "CsRef", "CppRef objRef, int index");
 
+			PROP_GETSET("Actor", "size_t", "flags");
+
+			PROP_GET("Actor", "bool", "isActive");
+			PROP_GETSET("Actor", "bool", "activeSelf");
+
 			PROP_GETSET("Actor", "Vector3", "localPosition");
 			PROP_GETSET("Actor", "Vector3", "localRotation");
 			PROP_GETSET("Actor", "Quaternion", "localRotationQ");
@@ -109,6 +114,7 @@ namespace EngineDll {
 			FUNC("CsComponent", "Create", "CppObjectInfo" , "CsRef csCompRef");
 			PROP_GETSET("Component", "bool", "runtimeOnly");
 			PROP_GETSET("Component", "bool", "f_isCrashed");
+			PROP_GET("Component", "bool", "IsActivated");
 #>
 
 		}
@@ -355,7 +361,7 @@ namespace EngineDll {
 <#
 			DEC_COMPONENT("Rigidbody");
 
-			PROP_GETSET("Rigidbody", "bool", "active");
+			PROP_GETSET("Rigidbody", "bool", "simulate");
 			PROP_GETSET("Rigidbody", "float", "gravity");
 
 			PROP_GETSET("Rigidbody", "uint", "motion");
@@ -380,7 +386,7 @@ namespace EngineDll {
 <#
 			DEC_COMPONENT("FireCharacter");
 
-			PROP_GETSET("FireCharacter", "bool", "active");
+			PROP_GETSET("FireCharacter", "bool", "simulate");
 			PROP_GETSET("FireCharacter", "float", "gravity");
 
 			FUNC("FireCharacter", "GetLinearVelocity", "Vector3", "CppRef bodyRef");
@@ -390,6 +396,19 @@ namespace EngineDll {
 
 			FUNC("FireCharacter", "GetFriction", "float", "CppRef bodyRef");
 			FUNC("FireCharacter", "SetFriction", "void", "CppRef bodyRef, float inFriction");
+
+			FUNC("FireCharacter", "HandleInput", "void", "CppRef bodyRef, Vector3 movementDirection, bool jump, bool run, float deltaTime");
+#>
+		}
+
+		public static class AIComponent {
+<#
+			DEC_COMPONENT("AIComponent");
+			ANSI_FUNC("AIComponent", "AddWME", "int", "CppRef compRef, string id, string attr, string value");
+			ANSI_FUNC("AIComponent", "SetWMEValue", "void", "CppRef compRef, int index, string value");
+			ANSI_FUNC("AIComponent", "AddCondition", "void", "CppRef compRef, int decisionHash, int type1, string value1, int type2, string value2, int type3, string value3");
+			FUNC("AIComponent", "Decide", "bool", "CppRef compRef, int decisionHash");
+			FUNC("AIComponent", "GetText", "size_t", "CppRef compRef, int decisionHash");
 #>
 		}
 

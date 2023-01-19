@@ -20,6 +20,9 @@ public:
 
 	static bool CanSave(Scene* scene);
 	static void Save(Scene* scene);
+
+	static bool CanSetAsStartup(Scene* scene);
+	static void SetAsStartup(Scene* scene);
 };
 
 class ActorMenu {

@@ -23,7 +23,7 @@ public:
 	struct Callbacks {
 		void (*onDrawComponent)(CsRef, float); 
 		void (*requestComponentName)(CsRef);
-		void (*onDrawActorHeader)(CsRef, float);
+		void (*onDrawActorTags)(CsRef);
 	};
 
 private:

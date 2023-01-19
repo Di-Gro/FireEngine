@@ -177,7 +177,7 @@ void Game::Run() {
 	m_render->Start();
 	m_meshAsset->Start();
 
-	m_editorScene = CreateScene(true, editorSettings.startupScene);
+	m_editorScene = CreateScene(true, editorSettings.startupSceneId);
 	if (!LoadScene(m_editorScene)) {
 		PushScene(m_editorScene);
 		m_editorScene->name("!!!This scene can not be saved!!!");
@@ -273,6 +273,7 @@ void Game::m_DrawUI() {
 void Game::m_BeginUpdate() {
 	GameUpdateData updateData;
 	updateData.deltaTime = deltaTime();
+	updateData.deltaFixedTime = deltaFixedTime();
 	m_callbacks.setUpdateData(updateData);
 
 	m_hotkeys->Update(input());
@@ -281,6 +282,9 @@ void Game::m_BeginUpdate() {
 
 	if (m_nextScene != nullptr) {
 		bool isSelected = ui()->selectedScene() == m_editorScene;
+
+		if (ui()->HasActor() && ui()->GetActor()->scene() == m_editorScene)
+			ui()->SelectedActor(nullptr);
 
 		DestroyScene(m_editorScene);
 		m_editorScene = m_nextScene;
