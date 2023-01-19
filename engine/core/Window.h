@@ -28,7 +28,9 @@ private:
     IWin32InputHandler* m_inputHandler = nullptr;
     bool m_showCursor = true;
 
-    //RECT m_rcOldClip; // previous area for ClipCursor
+    RECT m_rcOldClip; // previous area for ClipCursor
+
+    bool m_isCursorClipped = false;
 
 public:
 
@@ -49,6 +51,10 @@ public:
     void Exit(int code) override;
 
     LRESULT MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) override;
+
+    void ClipCursor(float x, float y, float width, float height);
+    void UnclipCursor();
+    bool IsCursorClipped() { return m_isCursorClipped; }
 
 
     Vector2 ScreenToViewport(Vector2 screenPositon);

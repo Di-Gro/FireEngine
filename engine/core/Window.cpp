@@ -67,15 +67,27 @@ void Window::Create() {
     SetForegroundWindow(m_hWnd);
     ShowCursor(m_showCursor);
 
-    //// Record the area in which the cursor can move.
-    //GetClipCursor(&m_rcOldClip);
-    ////GetWindowRect(m_hWnd, &windowRect); // Get the dimensions of the application's window.
+    // Record the area in which the cursor can move.
+    GetClipCursor(&m_rcOldClip);
+    //GetWindowRect(m_hWnd, &windowRect); // Get the dimensions of the application's window.
     //ClipCursor(&windowRect);  // Confine the cursor to the application's window.
 
 }
 
 void Window::Destroy() {
-    //ClipCursor(&m_rcOldClip); // Restore the cursor to its previous area.
+    UnclipCursor();
+}
+
+void Window::ClipCursor(float x, float y, float width, float height) {
+    RECT rect = { (LONG)x, (LONG)y, (LONG)(x + width), (LONG)(y + height)};
+
+    ::ClipCursor(&rect);
+
+    m_isCursorClipped = true;
+}
+
+void Window::UnclipCursor() {
+    ::ClipCursor(&m_rcOldClip);
 }
 
 void Window::Exit(int code) { PostQuitMessage(code); }

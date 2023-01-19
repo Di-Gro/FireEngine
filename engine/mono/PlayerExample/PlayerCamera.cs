@@ -73,5 +73,9 @@ public class PlayerCamera : CSComponent {
         distance += dir * 2 * scrollSense;
         distance = Math.Clamp(distance, 1, 10000);
     }
+
+    public Vector3 CameraForward() {
+        return (actor.forward * new Vector3(1, 0, 1)).Normalized();
+    }
 }
 // #endif

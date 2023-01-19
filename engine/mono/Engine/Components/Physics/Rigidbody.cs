@@ -66,20 +66,20 @@ namespace Engine {
         private Prop<bool> prop_AllowSleeping = new Prop<bool>(6);
         private Prop<bool> prop_isSensor = new Prop<bool>(7);
 
-        public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
-            Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
-        }
+        // public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
+        //     Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
+        // }
 
-        public override void OnTriggerExit(Actor otherActor) {
-            Console.WriteLine($"OnTriggerExit: {actor.Name} -> {otherActor.Name}");
-        }
+        // public override void OnTriggerExit(Actor otherActor) {
+        //     Console.WriteLine($"OnTriggerExit: {actor.Name} -> {otherActor.Name}");
+        // }
 
-        public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
-            Console.WriteLine($"OnCollisionEnter: {actor.Name} -> {otherActor.Name}");
-        }
+        // public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
+        //     Console.WriteLine($"OnCollisionEnter: {actor.Name} -> {otherActor.Name}");
+        // }
 
-        public override void OnCollisionExit(Actor otherActor) {
-            Console.WriteLine($"OnCollisionExit: {actor.Name} -> {otherActor.Name}");
-        }
+        // public override void OnCollisionExit(Actor otherActor) {
+        //     Console.WriteLine($"OnCollisionExit: {actor.Name} -> {otherActor.Name}");
+        // }
     }
 }

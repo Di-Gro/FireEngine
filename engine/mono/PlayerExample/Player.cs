@@ -5,7 +5,30 @@ using Engine;
 
 [GUID("416a2b38-e34a-44fd-aa1e-429d30c44ba2")]
 public class Player : CSComponent {
-    
+    public Prefab bulletPrefab;
+    public PlayerCamera camera;
+
+    public float bulletSpawnOffset = 30;
+    public float bulletSpawnHeight = 50;
+
+    public override void OnInit() { }
+
+    public override void OnUpdate() {
+        if (bulletPrefab != null && camera != null) {
+            if (Input.GetButtonDown(Key.LeftButton)) {
+                var bullet = bulletPrefab.Instanciate();
+
+                var cameraForward = camera.CameraForward();
+
+                var wpos = actor.worldPosition;
+                wpos += cameraForward * bulletSpawnOffset;
+                wpos.Y = bulletSpawnHeight;
+
+                bullet.worldPosition = wpos;
+            }
+        }
+    }
+
 }
 
 #if BADCODE

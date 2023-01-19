@@ -24,6 +24,7 @@ public:
 	float runSpeed = 200;
 	float jumpSpeed = 100;
 	Vector3 velosity;
+	Vector3 forward;
 
 private:
 	bool m_simulate = true;

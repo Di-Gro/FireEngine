@@ -39,14 +39,13 @@ public class PlayerController : CSComponent {
     }
 
     public Vector3 ToCameraRelativeDiretcion(Vector3 axis) {
-       
-        var cameraForward = m_playerCamera.actor.forward;
+
+        var cameraForward = m_playerCamera.CameraForward();
         var cameraRight = m_playerCamera.actor.right;
 
-        cameraForward = (cameraForward * new Vector3(1, 0, 1)).Normalized();
+        return cameraForward * axis.Z + cameraRight * -axis.X;
 
-        var direction = cameraForward * axis.Z + cameraRight * -axis.X;
-
-        return direction;
+        // var cameraForward = m_playerCamera.actor.forward;
+        // cameraForward = (cameraForward * new Vector3(1, 0, 1)).Normalized();
     }
 }

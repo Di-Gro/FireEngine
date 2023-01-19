@@ -13,7 +13,7 @@ using FireYaml;
 namespace Engine {
 
     [GUID("eec5f7b8-5d7b-4d78-b1a8-d69f21459e73", typeof(Prefab))]
-    sealed class Prefab : FireYaml.IAsset {
+    public sealed class Prefab : FireYaml.IAsset {
 
         /// FireYaml.IAsset
         [Open] public string assetId { get; private set; } = "0000000000";

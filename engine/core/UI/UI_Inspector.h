@@ -59,6 +59,8 @@ private:
 
 	CsRef m_groupRef;
 
+	CsRef m_copyedCompRef = CsRef(0);
+
 public:
 	void Draw_UI_Inspector();
 	void Init(Game* game, UserInterface* ui);
@@ -106,6 +108,7 @@ private:
 	void m_DrawAddComponent();
 
 	void m_DrawComponentContextMenu(Component* component);
+	bool m_DrawComponentFieldContextMenu(int scriptIdHash, CsRef* compRef);
 
 };
 

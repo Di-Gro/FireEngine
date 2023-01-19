@@ -1,6 +1,7 @@
 #include "SceneEditorWindow.h"
 
 #include "../Game.h"
+#include "../Window.h"
 #include "../Scene.h"
 #include "../Render.h"
 #include "../HotKeys.h"
@@ -27,6 +28,15 @@ void SceneEditorWindow::AfterDrawScene() {
 		if (game()->hotkeys()->GetButtonDown(Keys::S, Keys::Ctrl)) {
 			game()->assets()->Save(scene()->assetIdHash());
 		}
+	}
+	if (!scene()->isEditor() && game()->inFocus) {
+		auto vpos = viewportPosition();
+		auto vsize = viewportSize();
+
+		game()->window()->ClipCursor(vpos.x, vpos.y + 18, vsize.x, vsize.y);
+	}
+	else if (game()->window()->IsCursorClipped()) {
+		game()->window()->UnclipCursor();
 	}
 }
 

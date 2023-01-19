@@ -515,14 +515,25 @@ void Game::TogglePlayMode() {
 
 void Game::ToggleGameFocus() {
 	inFocus = !inFocus;
-	if (ui()->selectedScene() != nullptr) {
+	auto scene = ui()->selectedScene();
+	if (scene != nullptr) {
 		if (!inFocus) {
-			ui()->selectedScene()->mainCamera(nullptr);
+			scene->mainCamera(nullptr);
 		}
 		else {
 			ui()->SelectedActor(nullptr);
-			ui()->selectedScene()->AttachPlayerCamera();
+			scene->AttachPlayerCamera();
 		}
+
+		//if (inFocus && m_gameScene != nullptr) {
+		//	auto vpos = m_gameWindow->viewportPosition();
+		//	auto vsize = m_gameWindow->viewportSize();
+
+		//	window()->ClipCursor(vpos.x, vpos.y, vsize.x, vsize.y);
+		//}
+		//else if (window()->IsCursorClipped()) {
+		//	window()->UnclipCursor();
+		//}
 	}
 }
 

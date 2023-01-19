@@ -146,7 +146,6 @@ bool ScenePickerPopup::m_DrawMenu(Scene* scene) {
 	}
 
 	if (SceneMenu::CanSave(scene)) {
-
 		if (ImGui::Selectable("Save")) {
 			SceneMenu::Save(scene);
 			ImGui::CloseCurrentPopup();

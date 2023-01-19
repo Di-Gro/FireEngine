@@ -563,6 +563,9 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 
 	ImGui::Columns(1);
 
+	if (m_DrawComponentFieldContextMenu(scriptIdHash, csRef))
+		return true;
+
 	bool changed = AcceptDroppedComponent(scriptIdHash, csRef);
 
 	return changed;
@@ -696,29 +699,6 @@ bool UI_Inspector::AcceptDroppedComponent(int scriptIdHash, CsRef* currentRef) {
 		}
 	}
 	return false;
-
-	//if (ImGui::BeginDragDropTarget()) {
-	//	auto payload = ImGui::GetDragDropPayload();
-	//	if (payload != nullptr && payload->IsDataType(dataType)) {
-
-	//		auto draggedComponent = *(Component**)payload->Data;
-	//		if (draggedComponent != nullptr) {
-
-	//			auto draggedRef = draggedComponent->csRef();
-	//			if (*currentRef != draggedRef) {
-	//				if (_game->callbacks().isAssignable(draggedRef, scriptIdHash)) {
-	//					ImGui::AcceptDragDropPayload(dataType);
-
-	//					if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-	//						*currentRef = draggedRef;
-	//						return true;
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
-	//return false;
 }
 
 void UI_Inspector::m_DrawComponentContextMenu(Component* component)
@@ -740,6 +720,10 @@ void UI_Inspector::m_DrawComponentContextMenu(Component* component)
 		if (ImGui::Selectable("Copy"))
 			ComponentMenu::Copy(component);
 
+		if (component->csRef().value != 0) {
+			if (ImGui::Selectable("Copy Ref"))
+				m_copyedCompRef = component->csRef();
+		}
 		if (ImGui::Selectable("Remove"))
 			ComponentMenu::Remove(component);
 
@@ -748,6 +732,45 @@ void UI_Inspector::m_DrawComponentContextMenu(Component* component)
 
 	ImGui::PopStyleVar(6);
 	ImGui::PopStyleColor(3);
+}
+
+bool UI_Inspector::m_DrawComponentFieldContextMenu(int scriptIdHash, CsRef* compRef) {
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 10.0f, 10.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
+
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.7f, 0.7f, 0.7f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 0.0f, 0.0f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.8f, 0.8f, 0.9f, 1.0f });
+
+	bool changed = false;
+
+	if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
+	{
+		if (ImGui::Selectable("Set Null")) {
+			*compRef = CsRef(0);
+			changed = true;
+		}
+		if (m_copyedCompRef.value != 0) {
+
+			bool isAssignable = _game->callbacks().isAssignable(m_copyedCompRef, scriptIdHash);
+			if (isAssignable) {
+				if (ImGui::Selectable("Past Ref")) {
+					*compRef = m_copyedCompRef;
+					changed = true;
+				}
+			}
+		}
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopStyleVar(6);
+	ImGui::PopStyleColor(3);
+
+	return changed;
 }
 
 DEF_FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr)
