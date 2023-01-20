@@ -602,3 +602,17 @@ std::vector<Vector3>NavMesh::GetPath(int pathSlot)
     line->SetVector(result,color);
     return result;
 }
+
+Vector3 NavMesh::getRandomNavMeshPoint() {
+    float resultPoint[3];
+    dtPolyRef resultPoly;
+    m_navQuery->findRandomPoint(mFilter, frand, &resultPoly, resultPoint);
+
+    return Vector3(resultPoint[0], resultPoint[1], resultPoint[2]);
+}
+
+static float frand()
+{
+    return (float)rand() / (float)RAND_MAX;
+}
+

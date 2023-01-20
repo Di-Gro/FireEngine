@@ -64,6 +64,7 @@ public:
 	void GetNavmesh();
 	bool SaveNavmesh();
 	bool NavMeshBuild();
+	DirectX::SimpleMath::Vector3 getRandomNavMeshPoint();
 	std::vector<DirectX::SimpleMath::Vector3> GetPath(int pathSlot);
 	int FindPath(DirectX::SimpleMath::Vector3 pStartPos, DirectX::SimpleMath::Vector3 pEndPos, int nPathSlot, int nTarget);
 	int FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarget);
