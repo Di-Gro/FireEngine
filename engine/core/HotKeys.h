@@ -37,6 +37,12 @@ public:
 	bool GetButtonUp(Keys key);
 	bool GetButton(Keys key);
 
+	bool GetButtonDownEd(Keys key);
+	bool GetButtonDownEd(Keys key, Keys modifier);
+	bool GetButtonDownEd(Keys key, Keys modifier1, Keys modifier2);
+	bool GetButtonUpEd(Keys key);
+	bool GetButtonEd(Keys key);
+
 	inline DirectX::SimpleMath::Vector2 GetMousePosition();
 	inline int wheelDelta() { return m_mouseWheelDelta; }
 	inline Vector2 mouseDelta() { return m_mousePosDelta; }

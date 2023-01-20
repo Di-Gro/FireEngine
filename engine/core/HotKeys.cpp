@@ -94,23 +94,43 @@ bool HotKeys::Is(Keys key) {
 }
 
 bool HotKeys::GetButtonDown(Keys key) {
-	return Is(key, KeyState::Press);
+	return !m_game->inFocus ? false : Is(key, KeyState::Press);
 }
 
 bool HotKeys::GetButtonDown(Keys key, Keys modifier) {
-	return Is(key, KeyState::Press) && Is(modifier);
+	return !m_game->inFocus ? false : Is(key, KeyState::Press) && Is(modifier);
 }
 
 bool HotKeys::GetButtonDown(Keys key, Keys modifier1, Keys modifier2) {
-	return Is(key, KeyState::Press) && Is(modifier1) && Is(modifier2);
+	return !m_game->inFocus ? false : Is(key, KeyState::Press) && Is(modifier1) && Is(modifier2);
 }
 
 bool HotKeys::GetButtonUp(Keys key) {
-	return Is(key, KeyState::Release);
+	return !m_game->inFocus ? false : Is(key, KeyState::Release);
 }
 
 bool HotKeys::GetButton(Keys key) {
-	return Is(key);
+	return !m_game->inFocus ? false : Is(key);
+}
+
+bool HotKeys::GetButtonDownEd(Keys key) {
+	return m_game->inFocus ? false : Is(key, KeyState::Press);
+}
+
+bool HotKeys::GetButtonDownEd(Keys key, Keys modifier) {
+	return m_game->inFocus ? false : Is(key, KeyState::Press) && Is(modifier);
+}
+
+bool HotKeys::GetButtonDownEd(Keys key, Keys modifier1, Keys modifier2) {
+	return m_game->inFocus ? false : Is(key, KeyState::Press) && Is(modifier1) && Is(modifier2);
+}
+
+bool HotKeys::GetButtonUpEd(Keys key) {
+	return m_game->inFocus ? false : Is(key, KeyState::Release);
+}
+
+bool HotKeys::GetButtonEd(Keys key) {
+	return m_game->inFocus ? false : Is(key);
 }
 
 DirectX::SimpleMath::Vector2 HotKeys::GetMousePosition() {

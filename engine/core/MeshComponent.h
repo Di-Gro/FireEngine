@@ -99,8 +99,8 @@ public:
 	void OnInit() override;
 	void OnDestroy() override;
 
-	void OnActivate() override;
-	void OnDeactivate() override;
+	void OnInitDisabled() override  { OnInit(); }
+	void OnDestroyDisabled() override  { OnDestroy(); }
 
 	void OnDraw() override;
 	void OnDrawShape(int index) override;

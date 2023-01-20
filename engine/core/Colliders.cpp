@@ -63,9 +63,9 @@ JPH::ShapeRefC BoxCollider::CreateShapeSettings() {
 	ShapeSettings::ShapeResult result = shapeSettings.Create();
 	assert(!result.HasError());
 
-	auto position = worldPosition();
-	auto rotation = worldRotationQ();
-	auto scale = localScale();
+	//auto position = worldPosition();
+	//auto rotation = worldRotationQ();
+	//auto scale = localScale();
 
 	auto shape = result.Get();
 
@@ -73,7 +73,7 @@ JPH::ShapeRefC BoxCollider::CreateShapeSettings() {
 	//result = rotShape.Create();
 	//assert(!result.HasError());
 
-	shape = result.Get();
+	//shape = result.Get();
 
 	//ScaledShapeSettings scaleShape(shape, ToJolt(scale));
 	//result = scaleShape.Create();
@@ -106,7 +106,7 @@ DEF_COMPONENT(SphereCollider, Engine.SphereCollider, 2, RunMode::EditPlay) {
 
 JPH::ShapeRefC SphereCollider::CreateShapeSettings() {
 
-	auto scale = localScale();
+	auto scale = worldScale();
 	auto minScale = VecMin(scale);
 	auto scaledRadius = minScale * radius;
 
@@ -125,10 +125,13 @@ const Mesh4* SphereCollider::CreateDebugMesh() {
 void SphereCollider::OnUpdate() {
 	Collider::OnUpdate();
 
-	//if (drawDebug && debugMesh != nullptr) {
-	//	debugMesh->meshScale = Vector3::One * radius * 2;
-	//	debugMesh->meshOffset = center;
-	//}
+	if (drawDebug && debugMesh != nullptr) {
+		//auto scale = worldScale();
+		//auto minScale = VecMin(scale);
+		auto scaledRadius = /*minScale **/ radius;
+
+		debugMesh->meshScale = Vector3::One * scaledRadius * 2;
+	}
 }
 
 #pragma endregion
@@ -145,11 +148,11 @@ DEF_COMPONENT(CapsuleCollider, Engine.CapsuleCollider, 3, RunMode::EditPlay) {
 }
 
 float CapsuleCollider::scaledRadius() {
-	return VecMin(localScale()) * radius;
+	return VecMin(worldScale()) * radius;
 }
 
 float CapsuleCollider::scaledHeight() {
-	return localScale().y * height;
+	return worldScale().y * height;
 }
 
 JPH::ShapeRefC CapsuleCollider::CreateShapeSettings() {

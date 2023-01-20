@@ -92,13 +92,13 @@ void UI_Hierarchy::m_HandleInput() {
 	if (ImGui::IsWindowHovered() || m_game->ui()->isSceneHovered) {
 		auto actor = m_game->ui()->GetActor();
 
-		if (m_game->hotkeys()->GetButtonDown(Keys::C, Keys::Ctrl))
+		if (m_game->hotkeys()->GetButtonDownEd(Keys::C, Keys::Ctrl))
 			ActorMenu::Copy(actor);
 
-		if (m_game->hotkeys()->GetButtonDown(Keys::V, Keys::Ctrl))
+		if (m_game->hotkeys()->GetButtonDownEd(Keys::V, Keys::Ctrl))
 			ActorMenu::Paste(m_game);
 
-		if (m_game->hotkeys()->GetButtonDown(Keys::Delete))
+		if (m_game->hotkeys()->GetButtonDownEd(Keys::Delete))
 			ActorMenu::Remove(actor);
 	}
 }

@@ -1,0 +1,48 @@
+.file0.assetId: {AssetId: c5e5dbc1-9345-4a8f-95c8-4cb2ddb5cf56}
+.file0.files: {Var: 4}
+
+.file1!script: {Var: Actor}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file1.prefabId: {Var: c5e5dbc1-9345-4a8f-95c8-4cb2ddb5cf56}
+.file1.Name: {Var: Trigger}
+.file1.ActiveSelf: {Var: True}
+.file1.localPosition.X: {Var: 0}
+.file1.localPosition.Y: {Var: 0}
+.file1.localPosition.Z: {Var: 0}
+.file1.localRotationQ.X: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Z: {Var: 0}
+.file1.localRotationQ.W: {Var: 1}
+.file1.localScale.X: {Var: 60}
+.file1.localScale.Y: {Var: 60}
+.file1.localScale.Z: {Var: 60}
+.file1.m_children: {Null: }
+.file1.m_flags: {Var: 0}
+.file1.m_components.0: {Ref: file2}
+.file1.m_components.1: {Ref: file3}
+.file1.m_components.2: {Ref: file4}
+
+.file2!script: {Var: Trigger}
+.file2!scriptId: {AssetId: df4d594d-2fe2-4902-8b8a-08232a172eb4}
+.file2.target: {Null: }
+
+.file3!script: {Var: Rigidbody}
+.file3!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file3.simulate: {Var: True}
+.file3.isSensor: {Var: True}
+.file3.motion: {Var: Kinematic}
+.file3.Mass: {Var: 1}
+.file3.gravity: {Var: 1}
+.file3.MaxLinearVelocity: {Var: 1000}
+.file3.LinearDamping: {Var: 0.05}
+.file3.AgularDamping: {Var: 0.05}
+.file3.Friction: {Var: 4.8}
+.file3.Bounciness: {Var: 0.2}
+.file3.AllowSleeping: {Var: False}
+.file3.Quality: {Var: Discrete}
+
+.file4!script: {Var: SphereCollider}
+.file4!scriptId: {AssetId: aa06e9b3-f75f-4982-976b-a6f57568d6f0}
+.file4.Radius: {Var: 0.5}
+.file4.DrawDebug: {Var: True}
+

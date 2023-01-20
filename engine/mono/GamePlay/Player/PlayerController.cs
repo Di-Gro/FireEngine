@@ -5,20 +5,27 @@ using Engine;
 [GUID("1cd3c575-0b05-4a62-b0dd-3b326c3f7608")]
 public class PlayerController : CSComponent {
 
+    [Open] private PlayerCamera m_playerCamera;
     [Open] private Player m_player;
-    [Open]  private PlayerCamera m_playerCamera;
 
-    public float speed = 1;
-
-    private Character m_character;
 
     public override void OnInit() {
-        if (m_player == null || m_playerCamera == null)
+        if (m_playerCamera == null || m_player == null)
             throw new NullFieldException(this);
+    }
 
-        m_character = m_player.actor.GetComponent<Character>();
-        if (m_character == null)
-            throw new NullFieldException(this);
+    public override void OnUpdate() {
+    
+        if (Input.GetButtonDown(Key.LeftButton)) {
+            if (m_player.CanThrow)
+                m_player.Throw();
+
+            else if (m_player.CanDrop)
+                m_player.Drop();
+
+            else if (m_player.CanPickup)
+                m_player.Pickup();
+        }
     }
 
     public override void OnFixedUpdate() {
@@ -30,22 +37,18 @@ public class PlayerController : CSComponent {
         if (Input.GetButton(Key.D)) direction += Vector3.Right;
         direction = direction.Normalized();
 
+        direction = m_ToCameraRelativeDiretcion(direction);
+
         bool jump = Input.GetButtonDown(Key.Space);
         bool run = Input.GetButton(Key.LeftShift);
-
-        direction = ToCameraRelativeDiretcion(direction);
-
-        m_character.HandleInput(direction, jump, run, Game.DeltaFixedTime);
+       
+        m_player.SetMovementVector(direction, jump, run, Game.DeltaFixedTime);
     }
 
-    public Vector3 ToCameraRelativeDiretcion(Vector3 axis) {
-
+    private Vector3 m_ToCameraRelativeDiretcion(Vector3 axis) {
         var cameraForward = m_playerCamera.CameraForward();
         var cameraRight = m_playerCamera.actor.right;
 
         return cameraForward * axis.Z + cameraRight * -axis.X;
-
-        // var cameraForward = m_playerCamera.actor.forward;
-        // cameraForward = (cameraForward * new Vector3(1, 0, 1)).Normalized();
     }
 }

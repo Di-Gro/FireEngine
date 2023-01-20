@@ -126,17 +126,29 @@ namespace Engine
             /// <-
 
             var instance = CppLinked.GetObjectByRef(csRef);
-            DrawObject(ref instance);
+            var type = instance.GetType();
+
+            DrawObject(type, ref instance);
         }
 
-        public void DrawObject(ref object instance) {
-            var type = instance.GetType();
-            var serializer = FireYaml.FireWriter.GetSerializer(type);
+        public void DrawObject(Type type, ref object instance) {
+            var serializer = FireWriter.GetSerializer(type);
 
-            var fields = FireYaml.FireWriter.GetFields(type, instance, serializer);
+            if (serializer.NeedIncludeBase(type))
+                DrawObject(type.BaseType, ref instance);
+
+            var fields = FireWriter.GetFields(type, instance, serializer);
 
             for (int i = 0; i < fields.Count; i++) {
-                m_DrawField(fields[i]);
+                var field = fields[i];
+
+                if (field.GetCustomAttribute<SpaceAttribute>() != null) {
+                    // ImGui.Separator();
+                    GUI.Space();
+                    GUI.Space();
+                }
+
+                m_DrawField(field);
 
                 if (i != fields.Count - 1)
                     GUI.Space();
@@ -650,7 +662,7 @@ namespace Engine
         public static void TestDrawers() {
             object instance = testObj;
 
-            UserInterface.Instance.DrawObject(ref instance);
+            UserInterface.Instance.DrawObject(instance.GetType(), ref instance);
         }
 
         public static string ReadCString(ulong ptr) {

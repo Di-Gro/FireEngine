@@ -11,6 +11,9 @@ namespace Engine {
     [GUID("6338b2f1-49da-4a86-8c6b-a2a975e644c4")]
     public class Rigidbody : CppComponent {
 
+        [Close] public ComponentCallbacks.ContactEnter TriggerEnterEvent;
+        [Close] public ComponentCallbacks.ContactExit TriggerExitEvent;
+
         public bool simulate {
             get => Dll.Rigidbody.simulate_get(cppRef);
             set => Dll.Rigidbody.simulate_set(cppRef, value);
@@ -66,13 +69,15 @@ namespace Engine {
         private Prop<bool> prop_AllowSleeping = new Prop<bool>(6);
         private Prop<bool> prop_isSensor = new Prop<bool>(7);
 
-        // public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
-        //     Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
-        // }
+        public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
+            // Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
+            TriggerEnterEvent?.Invoke(otherActor, in contact);
+        }
 
-        // public override void OnTriggerExit(Actor otherActor) {
-        //     Console.WriteLine($"OnTriggerExit: {actor.Name} -> {otherActor.Name}");
-        // }
+        public override void OnTriggerExit(Actor otherActor) {
+            TriggerExitEvent?.Invoke(otherActor);
+        }
+
 
         // public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
         //     Console.WriteLine($"OnCollisionEnter: {actor.Name} -> {otherActor.Name}");

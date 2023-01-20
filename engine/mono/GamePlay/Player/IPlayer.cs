@@ -2,9 +2,9 @@
 
 interface IPlayer
 {
-    public void PickupObject();
-    public void DropObject();
-    public void Shoot();
+    public void Pickup();
+    public void Throw();
+    public void Drop();
     public void Death();
-    public void Damage(int damage);
+    public void AddDamage(int damage);
 }

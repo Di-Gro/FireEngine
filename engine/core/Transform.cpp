@@ -31,13 +31,44 @@ void Transform::localPosition(const Vector3& value) {
 }
 
 void Transform::worldPosition(const Vector3& value) {
-	localPosition(m_localPosition + value - worldPosition());
+	auto invworld = GetWorldMatrix().Invert();
+	auto worldPoint = Matrix::CreateTranslation(value);
+	auto localPoint = worldPoint * invworld;
+
+	//auto localPos = localPoint.Translation();
+
+	localPoint *= m_localMatrix;
+
+	auto localPos2 = localPoint.Translation();
+
+
+	//auto wpos = worldPosition();
+	//auto wdelta = value - wpos;
+	//auto lpos = wdelta + m_localPosition;
+
+	localPosition(localPos2);
 }
 
 void Transform::worldRotationQ(const Quaternion& value) {
-	Quaternion iwrot;
-	worldRotationQ().Inverse(iwrot);
-	localRotationQ(localRotationQ() * (value * iwrot));
+	//Quaternion iwrot;
+	//worldRotationQ().Inverse(iwrot);
+	//localRotationQ(localRotationQ() * (value * iwrot));
+
+	auto invworld = GetWorldMatrix().Invert();
+	auto worldSpaceRotation = Matrix::CreateFromQuaternion(value);
+	auto localSpaceRotation = worldSpaceRotation * invworld;
+
+	//auto localPos = localPoint.Translation();
+
+	localSpaceRotation *= m_localMatrix;
+
+	auto rotation = Quaternion::Identity;
+	auto nScale = Vector3::Zero;
+	auto nPos = Vector3::Zero;
+
+	bool res = localSpaceRotation.Decompose(nScale, rotation, nPos);
+
+	localRotationQ(rotation);
 }
 
 void Transform::worldScale(const Vector3& value) {
@@ -118,13 +149,41 @@ void Transform::localScale(const Vector3& value) {
 
 const Vector3 Transform::localScale() { return m_localScale; }
 
-const Vector3 Transform::localForward() { return m_localMatrix.Forward().Normalized(); }
-const Vector3 Transform::localUp()		{ return m_localMatrix.Up().Normalized(); }
-const Vector3 Transform::localRight()	{ return m_localMatrix.Right().Normalized(); }
+const Vector3 Transform::localForward() { 
+	auto vec = m_localMatrix.Forward().Normalized(); 
+	FixNaN(vec);
+	return vec;
+}
 
-const Vector3 Transform::forward()	{ return GetWorldMatrix().Forward().Normalized(); }
-const Vector3 Transform::up()		{ return GetWorldMatrix().Up().Normalized(); }
-const Vector3 Transform::right()	{ return GetWorldMatrix().Right().Normalized(); }
+const Vector3 Transform::localUp() { 
+	auto vec = m_localMatrix.Up().Normalized();
+	FixNaN(vec);
+	return vec;
+}
+
+const Vector3 Transform::localRight() { 
+	auto vec = m_localMatrix.Right().Normalized();
+	FixNaN(vec);
+	return vec;
+}
+
+const Vector3 Transform::forward()	{ 
+	auto vec = GetWorldMatrix().Forward().Normalized();
+	FixNaN(vec);
+	return vec;
+}
+
+const Vector3 Transform::up()		{ 
+	auto vec = GetWorldMatrix().Up().Normalized();
+	FixNaN(vec);
+	return vec;
+}
+
+const Vector3 Transform::right()	{ 
+	auto vec = GetWorldMatrix().Right().Normalized();
+	FixNaN(vec);
+	return vec;
+}
 
 Matrix Transform::GetWorldMatrix() {
 	auto matrix = GetLocalMatrix();

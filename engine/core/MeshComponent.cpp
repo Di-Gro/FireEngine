@@ -45,30 +45,14 @@ void MeshComponent::OnPreInit() {
 	}
 }
 
-void MeshComponent::OnInit() {
+void MeshComponent::MeshComponent::OnInit() {
 	OnPreInit();
 
 	if (m_castShadow)
 		m_shadowCaster = scene()->renderer.AddShadowCaster(this);
 }
 
-void MeshComponent::OnActivate() {
-	//if (m_castShadow)
-	//	m_shadowCaster = scene()->renderer.AddShadowCaster(this);
-
-	//for (int i = 0; i < m_materials.size(); ++i)
-	//	m_RegisterShapesWithMaterial(i);
-}
-
-void MeshComponent::OnDeactivate() {
-	//if (m_castShadow)
-	//	scene()->renderer.RemoveShadowCaster(m_shadowCaster);
-
-	//for (int i = 0; i < m_materials.size(); ++i)
-	//	m_UnRegisterShapesWithMaterial(i);
-}
-
-void MeshComponent::OnDestroy() {
+void MeshComponent::OnDestroy() { 
 	m_preinitMesh = m_mesh;
 	m_preinitMaterials = m_materials;
 

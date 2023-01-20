@@ -159,16 +159,16 @@ void UI_Editor::m_ToggleGizmoMode() {
 }
 
 void UI_Editor::m_HandleEditorInput() {
-	if (_game->hotkeys()->GetButtonDown(Keys::Q))
+	if (_game->hotkeys()->GetButtonDownEd(Keys::Q))
 		m_ToggleGizmoMode();
 
-	if (_game->hotkeys()->GetButtonDown(Keys::E))
+	if (_game->hotkeys()->GetButtonDownEd(Keys::E))
 		m_CurrentGizmoOperation = ImGuizmo::TRANSLATE;
 
-	if (_game->hotkeys()->GetButtonDown(Keys::R))
+	if (_game->hotkeys()->GetButtonDownEd(Keys::R))
 		m_CurrentGizmoOperation = ImGuizmo::ROTATE;
 
-	if (_game->hotkeys()->GetButtonDown(Keys::T))
+	if (_game->hotkeys()->GetButtonDownEd(Keys::T))
 		m_CurrentGizmoOperation = ImGuizmo::SCALE;
 
 	auto hasClick = ImGui::IsMouseClicked(ImGuiMouseButton_::ImGuiMouseButton_Left);

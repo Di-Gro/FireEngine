@@ -29,7 +29,7 @@ void FireContactListener::Init(PhysicsSystem* physicsSystem) {
 
 void			FireContactListener::OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings)
 {
-	std::cout << "OnContactAdded:\n";
+	//std::cout << "OnContactAdded:\n";
 
 	auto actor1 = (Actor*)inBody1.GetUserData();
 	auto actor2 = (Actor*)inBody2.GetUserData();
@@ -75,7 +75,7 @@ void			FireContactListener::OnContactPersisted(const Body& inBody1, const Body& 
 
 void			FireContactListener::OnContactRemoved(const SubShapeIDPair& inSubShapePair)
 {
-	std::cout << "OnContactRemoved:\n";
+	//std::cout << "OnContactRemoved:\n";
 
 	Actor* actor1 = nullptr;
 	Actor* actor2 = nullptr;

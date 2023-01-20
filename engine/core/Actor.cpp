@@ -54,7 +54,7 @@ void Actor::m_OnActiveChanged(bool value, bool self) {
 	for (auto it = m_components.begin(); it != m_components.end(); it++) {
 		auto component = (*it);
 
-		if (!component->IsDestroyed() && m_NeedRunComponent(component) && component->f_isInited) {
+		if (!component->IsDestroyed() && m_NeedRunComponent(component) && component->f_isStarted) {
 			if (value)
 				m_RunOrCrash(component, &Actor::m_OnActivateComponent);
 			else
@@ -130,6 +130,8 @@ void Actor::f_FixedUpdate() {
 			if (component->f_isStarted)
 				m_RunOrCrash(component, &Actor::m_OnFixedUpdateComponent);
 		}
+if (this->IsDestroyed())
+break;
 	}
 }
 
@@ -228,17 +230,24 @@ void Actor::m_BindComponent(Component* component) {
 }
 
 void Actor::m_InitComponent(Component* component) {
-	if (!isActive())
+	if (!m_NeedRunComponent(component))
 		return;
 
-	if (m_NeedRunComponent(component))
+	if (isActive())
 		m_RunOrCrash(component, &Actor::m_OnInitComponent);
+	else 
+		m_RunOrCrash(component, &Actor::m_OnInitDisabledComponent);
 }
 
 void Actor::f_DestroyComponent(Component* component) {
 	if (component->ActorBase::BeginDestroy()) {
-		if (isActive() && m_NeedRunComponent(component))
-			m_RunOrCrash(component, &Actor::m_OnDestroyComponent);
+
+		if (m_NeedRunComponent(component)) {
+			if (isActive())
+				m_RunOrCrash(component, &Actor::m_OnDestroyComponent);
+			else
+				m_RunOrCrash(component, &Actor::m_OnDestroyDisabledComponent);
+		}
 
 		if (CppRefs::IsValid(component->f_ref)) 
 			CppRefs::Remove(component->f_ref);
@@ -421,6 +430,14 @@ void Actor::m_OnInitComponent(Component* component) {
 	}
 }
 
+void Actor::m_OnInitDisabledComponent(Component* component) {
+	if (!m_NeedRunComponent(component))
+		return;
+
+	component->OnInitDisabled();
+	component->f_isInited = true;
+}
+
 void Actor::m_OnStartComponent(Component* component) {
 	assert(component->f_isInited);
 	
@@ -480,6 +497,15 @@ void Actor::m_OnDestroyComponent(Component* component) {
 
 		component->f_isCrashed |= runOrCrash(component->csRef(), method);
 	}
+}
+
+void Actor::m_OnDestroyDisabledComponent(Component* component) {
+	if (!component->f_isInited)
+		return;
+
+	assert(!component->f_isActive);
+
+	component->OnDestroyDisabled();
 }
 
 void Actor::m_OnActivateComponent(Component* component) {
@@ -578,7 +604,7 @@ DEF_FUNC(Actor, parent_set, void)(CppRef objRef, CppRef newObjRef) {
 	//std::cout << "+: GameObject_parent_set(): " << objRef << " -> " << newObjRef << std::endl;
 
 	auto object = CppRefs::ThrowPointer<Actor>(objRef);
-	auto parent = CppRefs::ThrowPointer<Actor>(newObjRef);
+	auto parent = CppRefs::GetPointer<Actor>(newObjRef);
 	object->parent(parent);
 }
 

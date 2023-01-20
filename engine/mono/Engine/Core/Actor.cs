@@ -91,7 +91,7 @@ namespace Engine {
 
         [Close] public Actor parent {
             get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
-            set => Dll.Actor.parent_set(cppRef, value.cppRef);
+            set => Dll.Actor.parent_set(cppRef, value == null ? 0 : value.cppRef);
         }
 
         public bool IsDestroyed => GetObjectByRef(csRef) == null;

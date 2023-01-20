@@ -9,7 +9,7 @@ public class PlayerCamera : CSComponent {
     [Open] private CameraComponent m_camera;
     [Open] private Actor m_cameraTarget;
 
-    public float rotationSense = 1.0f;
+    public float rotationSense = 0.02f;
     public float scrollSense = 1.0f;
     public float distance = 100;
 
@@ -44,13 +44,13 @@ public class PlayerCamera : CSComponent {
         var rot = Quaternion.CreateFromAxisAngle(Vector3.Up, -m_angles.X)
                 * Quaternion.CreateFromAxisAngle(Vector3.Right, m_angles.Y);
 
-        var cameraBackward = Vector3.Forward.Rotate(rot);
+        var cameraBackward = Vector3.Forward.Rotate(rot) ;
         var cameraPos = m_cameraTarget.worldPosition + cameraBackward * distance;
-
+        
         actor.worldPosition = cameraPos;
         actor.localRotationQ = -rot;
 
-        var newMatrix = Matrix4x4.CreateLookAt(cameraPos, m_cameraTarget.worldPosition, Vector3.Up);
+        var newMatrix = Matrix4x4.CreateLookAt(cameraPos, cameraPos - cameraBackward, Vector3.Up);
         m_camera.viewMatrix = newMatrix;
     }
 
@@ -73,6 +73,7 @@ public class PlayerCamera : CSComponent {
     }
 
     public Vector3 CameraForward() {
+        var forward = actor.forward;
         return (actor.forward * new Vector3(1, 0, 1)).Normalized();
     }
 }

@@ -36,6 +36,8 @@ void Rigidbody::OnInit() {
 void Rigidbody::OnActivate() {
 	if (simulate())
 		m_CreateBody();
+
+	m_onPhysicsUpdate = false;
 }
 
 void Rigidbody::OnStart() {
@@ -45,6 +47,8 @@ void Rigidbody::OnStart() {
 void Rigidbody::OnDeactivate() {
 	if (m_body != nullptr)
 		m_RemoveBody();
+
+	m_onPhysicsUpdate = false;
 }
 
 void Rigidbody::OnDestroy() {
@@ -57,11 +61,12 @@ void Rigidbody::m_CreateBody() {
 
 	m_rigidbodyIter = physicsScene->rigidbodies.insert(physicsScene->rigidbodies.end(), this);
 
+	m_collider->settings = m_collider->CreateShapeSettings();
 	auto shapeSettings = m_collider->settings;
 	//m_center = m_collider->center;
 	auto layer = isSensor ? Layers::TRIGGER : Layers::GetLayerFromMotionType(motion());
 	auto position = worldPosition();
-	auto rotation = localRotationQ();
+	auto rotation = worldRotationQ();//localRotationQ();
 
 	m_bodySettings = BodyCreationSettings(shapeSettings, ToJolt(position), ToJolt(rotation), motion(), layer);
 	m_bodySettings.mGravityFactor = m_gravity * physicsScene->cWorldScale;
@@ -78,6 +83,9 @@ void Rigidbody::m_CreateBody() {
 	m_bodySettings.mAllowSleeping = mAllowSleeping;
 	m_bodySettings.mUserData = (uint64)actor();
 	m_bodySettings.mIsSensor = isSensor;
+
+	if (isSensor)
+		actor()->bodyTag = BodyTag::Trigger;
 
 	m_body = bodyInterface->CreateBody(m_bodySettings);
 	assert(m_body != nullptr);
@@ -106,7 +114,7 @@ void Rigidbody::BeforePhysicsUpdate() {
 		return;
 
 	auto position = worldPosition();
-	auto rotation = localRotationQ();
+	auto rotation = worldRotationQ();// localRotationQ();
 	auto scale = localScale();
 
 	if (m_lastScale != scale) {
@@ -114,11 +122,16 @@ void Rigidbody::BeforePhysicsUpdate() {
 
 		auto res = m_body->GetShape()->ScaleShape(ToJolt(localScale()));
 	}
-		
+
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
 
-	bodyInterface->SetPositionAndRotationWhenChanged(m_body->GetID(), ToJolt(position), ToJolt(rotation), EActivation::Activate);
+	if (m_body->IsKinematic()) 
+		bodyInterface->MoveKinematic(m_body->GetID(), ToJolt(position), ToJolt(rotation), game()->deltaFixedTime());
+	else 
+		bodyInterface->SetPositionAndRotationWhenChanged(m_body->GetID(), ToJolt(position), ToJolt(rotation), EActivation::Activate);
 
+	m_UpdateState();
+	m_onPhysicsUpdate = true;
 }
 
 void Rigidbody::OnFixedUpdate() {
@@ -131,10 +144,61 @@ void Rigidbody::OnFixedUpdate() {
 	auto rot = m_body->GetRotation();
 
 	worldPosition(FromJolt(pos));
-	localRotationQ(FromJolt(rot));
+	worldRotationQ(FromJolt(rot));
+	//localRotationQ(FromJolt(rot));
+
+	m_onPhysicsUpdate = false;
+}
+
+void Rigidbody::m_UpdateState() {
+	if (m_onPhysicsUpdate)
+		return;
+
+	if (m_updateSimulate) {
+		m_updateSimulate = false;
+		simulate(m_initSimulate);
+	}
+	if (m_updateMotion) {
+		m_updateMotion = false;
+		motion(m_initMotion);
+	}
+	if (m_updateGravity) {
+		m_updateGravity = false;
+		gravity(m_initGravity);
+	}
+	if (m_updateFriction) {
+		m_updateFriction = false;
+		SetFriction(m_initFriction);
+	}
+	if (m_updateForce) {
+		m_updateForce = false;
+		AddForce(m_initForce);
+	}
+	if (m_updateForceAtPoint) {
+		m_updateForceAtPoint = false;
+		AddForce(m_initForceAtPoint, m_initForcePosition);
+	}
+	if (m_updateImpulse) {
+		m_updateImpulse = false;
+		AddImpulse(m_initImpulse);
+	}
+	if (m_updateImpulseAtPoint) {
+		m_updateImpulseAtPoint = false;
+		AddImpulse(m_initImpulseAtPoint, m_initImpulsePosition);
+	}
+	if (m_updateVelsity) {
+		m_updateVelsity = false;
+		SetLinearVelocityClamped(m_initVelsity);
+	}
 }
 
 void Rigidbody::simulate(bool value) {
+	if (m_onPhysicsUpdate) {
+		m_initSimulate = value;
+		m_updateSimulate = true;;
+		return;
+	}
+
 	m_simulate = value;
 
 	if (m_body == nullptr && m_simulate && IsActivated())
@@ -145,6 +209,12 @@ void Rigidbody::simulate(bool value) {
 }
 
 void Rigidbody::motion(EMotionType value) {
+	if (m_onPhysicsUpdate) {
+		m_initMotion = value;
+		m_updateMotion = true;
+		return;
+	}
+
 	m_motion = value;
 
 	if (m_body == nullptr || !simulate())
@@ -158,10 +228,21 @@ void Rigidbody::motion(EMotionType value) {
 }
 
 void Rigidbody::gravity(float value) {
+	if (m_onPhysicsUpdate) {
+		m_initGravity = value;
+		m_updateGravity = true;;
+		return;
+	}
+
 	m_gravity = value;
 
 	if (m_body == nullptr || m_body->IsStatic() || !simulate())
 		return;
+
+	if (m_onPhysicsUpdate) {
+		m_updateGravity = true;
+		return;
+	}
 
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
@@ -170,8 +251,12 @@ void Rigidbody::gravity(float value) {
 }
 
 void Rigidbody::AddForce(Vector3 inForce) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
+
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate() || m_onPhysicsUpdate) {
+		m_initForce = inForce;
+		m_updateForce = true;
 		return;
+	}
 
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
@@ -183,8 +268,12 @@ void Rigidbody::AddForce(Vector3 inForce) {
 }
 
 void Rigidbody::AddForce(Vector3 inForce, Vector3 inPosition) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate()) {
+		m_initForceAtPoint = inForce;
+		m_initForcePosition = inPosition;
+		m_updateForceAtPoint = true;
 		return;
+	}
 
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
@@ -197,14 +286,17 @@ void Rigidbody::AddForce(Vector3 inForce, Vector3 inPosition) {
 
 Vector3 Rigidbody::GetLinearVelocity() const {
 	if (m_body == nullptr)
-		return Vector3::Zero;
+		return m_initVelsity;
 
 	return FromJolt(m_body->GetLinearVelocity());
 }
 
 void Rigidbody::SetLinearVelocityClamped(Vector3 inLinearVelocity) {
-	if (m_body == nullptr || m_body->IsStatic() || !simulate())
+	if (m_body == nullptr || m_body->IsStatic() || !simulate()) {
+		m_initVelsity = inLinearVelocity;
+		m_updateVelsity = true;
 		return;
+	}
 
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
 
@@ -215,8 +307,11 @@ void Rigidbody::SetLinearVelocityClamped(Vector3 inLinearVelocity) {
 }
 
 void Rigidbody::AddImpulse(Vector3 inImpulse) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate()) {
+		m_initImpulse = inImpulse;
+		m_updateImpulse = true;
 		return;
+	}
 
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
@@ -228,8 +323,12 @@ void Rigidbody::AddImpulse(Vector3 inImpulse) {
 }
 
 void Rigidbody::AddImpulse(Vector3 inImpulse, Vector3 inPosition) {
-	if (m_body == nullptr || !m_body->IsDynamic() || !simulate())
+	if (m_body == nullptr || !m_body->IsDynamic() || !simulate()) {
+		m_initImpulseAtPoint = inImpulse;
+		m_initImpulsePosition = inPosition;
+		m_updateImpulseAtPoint = true;
 		return;
+	}
 
 	auto physicsScene = scene()->physicsScene();
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
@@ -243,8 +342,19 @@ void Rigidbody::AddImpulse(Vector3 inImpulse, Vector3 inPosition) {
 float Rigidbody::GetFriction() const {
 	if (m_body)
 		return m_body->GetFriction();
+	else
+		return friction;
 }
+
 void Rigidbody::SetFriction(float inFriction) {
+	if (m_onPhysicsUpdate) {
+		m_initFriction = inFriction;
+		m_updateFriction = true;
+		return;
+	}
+
+	friction = inFriction;
+
 	if (m_body == nullptr || !simulate())
 		return;
 

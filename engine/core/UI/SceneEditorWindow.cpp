@@ -25,7 +25,7 @@ void SceneEditorWindow::AfterDrawScene() {
 		m_HandleSelection();
 	}
 	if (scene()->isEditor()) {
-		if (game()->hotkeys()->GetButtonDown(Keys::S, Keys::Ctrl)) {
+		if (game()->hotkeys()->GetButtonDownEd(Keys::S, Keys::Ctrl)) {
 			game()->assets()->Save(scene()->assetIdHash());
 		}
 	}
@@ -33,7 +33,7 @@ void SceneEditorWindow::AfterDrawScene() {
 		auto vpos = viewportPosition();
 		auto vsize = viewportSize();
 
-		game()->window()->ClipCursor(vpos.x, vpos.y + 18, vsize.x, vsize.y);
+		game()->window()->ClipCursor(vpos.x, vpos.y + 23, vsize.x, vsize.y);
 	}
 	else if (game()->window()->IsCursorClipped()) {
 		game()->window()->UnclipCursor();
@@ -158,16 +158,16 @@ void SceneEditorWindow::m_ToggleGizmoMode() {
 }
 
 void SceneEditorWindow::m_HandleToolsInput() {
-	if (game()->hotkeys()->GetButtonDown(Keys::Q))
+	if (game()->hotkeys()->GetButtonDownEd(Keys::Q))
 		m_ToggleGizmoMode();
 
-	if (game()->hotkeys()->GetButtonDown(Keys::E))
+	if (game()->hotkeys()->GetButtonDownEd(Keys::E))
 		m_CurrentGizmoOperation = ImGuizmo::TRANSLATE;
 
-	if (game()->hotkeys()->GetButtonDown(Keys::R))
+	if (game()->hotkeys()->GetButtonDownEd(Keys::R))
 		m_CurrentGizmoOperation = ImGuizmo::ROTATE;
 
-	if (game()->hotkeys()->GetButtonDown(Keys::T))
+	if (game()->hotkeys()->GetButtonDownEd(Keys::T))
 		m_CurrentGizmoOperation = ImGuizmo::SCALE;
 
 	//if (game()->hotkeys()->GetButtonDown(Keys::L))

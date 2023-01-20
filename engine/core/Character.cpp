@@ -210,6 +210,9 @@ public:
 
 void FireCharacter::HandleInput(Vector3 movementDirection, bool jump, bool run, float deltaTime)
 {
+	if (m_ñharacter == nullptr)
+		return;
+
 	using GroundState = Character::EGroundState;
 
 	auto direction = ToJolt(movementDirection.Normalized());
@@ -220,11 +223,16 @@ void FireCharacter::HandleInput(Vector3 movementDirection, bool jump, bool run, 
 	if (ground_state == GroundState::OnSteepGround
 		|| ground_state == GroundState::NotSupported)
 	{
-		auto normal = m_ñharacter->GetGroundNormal();
-		normal.SetY(0.0f);
-		float dot = normal.Dot(direction);
-		if (dot < 0.0f)
-			direction -= (dot * normal) / normal.LengthSq();
+		auto actorPtr = (Actor*)m_ñharacter->GetGroundUserData();
+		assert(actorPtr != nullptr);
+
+		if (actorPtr->bodyTag != BodyTag::Trigger) {
+			auto normal = m_ñharacter->GetGroundNormal();
+			normal.SetY(0.0f);
+			float dot = normal.Dot(direction);
+			if (dot < 0.0f)
+				direction -= (dot * normal) / normal.LengthSq();
+		}
 	}
 
 	// Update velocity
@@ -239,6 +247,10 @@ void FireCharacter::HandleInput(Vector3 movementDirection, bool jump, bool run, 
 
 	if (jump && ground_state == Character::EGroundState::OnGround)
 		new_velocity += {0, jumpSpeed, 0};
+
+	auto vel = FromJolt(new_velocity);
+	FixNaN(vel);
+	new_velocity = ToJolt(vel);
 
 	// Update the velocity
 	m_ñharacter->SetLinearVelocity(new_velocity);

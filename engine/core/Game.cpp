@@ -304,21 +304,16 @@ void Game::m_EndUpdate() {
 
 	m_hotkeys->LateUpdate();
 
-	bool Ctrl = m_hotkeys->GetButtonDown(Keys::Ctrl);
-	bool Tilda = m_hotkeys->GetButtonDown(Keys::Tilda);
-	bool S = m_hotkeys->GetButtonDown(Keys::S);
-	bool R = m_hotkeys->GetButtonDown(Keys::S);
-
-	if (m_hotkeys->GetButtonDown(Keys::Tilda))
+	if (m_hotkeys->GetButtonDown(Keys::Tilda) || m_hotkeys->GetButtonDownEd(Keys::Tilda))
 		ToggleGameFocus();
 
-	if (m_hotkeys->GetButtonDown(Keys::R, Keys::Ctrl)) {
+	if (m_hotkeys->GetButtonDownEd(Keys::R, Keys::Ctrl)) {
 		shaderAsset()->RecompileShaders();
 		meshAsset()->ReloadMaterials();
 		std::cout << std::endl;
 	}
 
-	if (m_hotkeys->GetButtonDown(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
+	if (m_hotkeys->GetButtonDownEd(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
 		/// TODO: Сохранить все ассеты
 	}
 }

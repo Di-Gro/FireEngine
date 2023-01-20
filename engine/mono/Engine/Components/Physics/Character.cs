@@ -7,6 +7,9 @@ namespace Engine {
     [GUID("481ac014-eb4a-4a25-8ef8-c40db6efbb02")]
     public class Character : CppComponent {
 
+        [Close] public ComponentCallbacks.ContactEnter TriggerEnterEvent;
+        [Close] public ComponentCallbacks.ContactExit TriggerExitEvent;
+
         public bool simulate {
             get => Dll.Character.simulate_get(cppRef);
             set => Dll.Character.simulate_set(cppRef, value);
@@ -50,13 +53,13 @@ namespace Engine {
         private Prop<Vector3> prop_velosity = new Prop<Vector3>(5);
         private Prop<float> prop_runSpeed = new Prop<float>(6);
 
-        // public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
-        //     Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
-        // }
+        public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
+            TriggerEnterEvent?.Invoke(otherActor, in contact);
+        }
 
-        // public override void OnTriggerExit(Actor otherActor) {
-        //     Console.WriteLine($"OnTriggerExit: {actor.Name} -> {otherActor.Name}");
-        // }
+        public override void OnTriggerExit(Actor otherActor) {
+            TriggerExitEvent?.Invoke(otherActor);
+        }
 
         // public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
         //     Console.WriteLine($"OnCollisionEnter: {actor.Name} -> {otherActor.Name}");

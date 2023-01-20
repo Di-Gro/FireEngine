@@ -645,6 +645,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "MeshComponent_SetPreInitMaterials")]
 		    public static extern void SetPreInitMaterials(CppRef compRef, size_t[] matRefs, int count);
 
+            [DllImport(Paths.Exe, EntryPoint = "MeshComponent_OnPreInit")]
+		    public static extern void OnPreInit(CppRef compRef);
+
 		}
 
 		public static class UI_Inspector {

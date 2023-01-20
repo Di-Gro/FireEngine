@@ -1,8 +1,11 @@
+.file0.assetId: {AssetId: 788fc731-6ae7-45db-986f-c8d8fe0f3b79}
+.file0.files: {Var: 23}
+
 .file1!script: {Var: Actor}
 .file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file1.prefabId: {Var: 788fc731-6ae7-45db-986f-c8d8fe0f3b79}
 .file1.Name: {Var: Player}
-.file1.ActiveSelf: {Var: False}
+.file1.ActiveSelf: {Var: True}
 .file1.localPosition.X: {Var: 0}
 .file1.localPosition.Y: {Var: 0}
 .file1.localPosition.Z: {Var: 0}
@@ -113,9 +116,9 @@
 .file7.localRotationQ.Y: {Var: 0}
 .file7.localRotationQ.Z: {Var: 0}
 .file7.localRotationQ.W: {Var: 1}
-.file7.localScale.X: {Var: 0.9999684}
+.file7.localScale.X: {Var: 0.9999714}
 .file7.localScale.Y: {Var: 0.9999772}
-.file7.localScale.Z: {Var: 0.9999468}
+.file7.localScale.Z: {Var: 0.9999498}
 .file7.m_flags: {Var: 0}
 .file7.m_components: {Null: }
 .file7.m_children.0: {Ref: file8}
@@ -247,10 +250,10 @@
 .file15.localPosition.X: {Var: 0}
 .file15.localPosition.Y: {Var: 4.382043}
 .file15.localPosition.Z: {Var: 0.4747841}
-.file15.localRotationQ.X: {Var: -0.7015998}
+.file15.localRotationQ.X: {Var: -0.7015997}
 .file15.localRotationQ.Y: {Var: 0}
 .file15.localRotationQ.Z: {Var: 0}
-.file15.localRotationQ.W: {Var: 0.7125713}
+.file15.localRotationQ.W: {Var: 0.7125712}
 .file15.localScale.X: {Var: 1.005}
 .file15.localScale.Y: {Var: 0.165}
 .file15.localScale.Z: {Var: 8.093004}

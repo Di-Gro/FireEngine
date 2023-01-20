@@ -62,9 +62,29 @@ bool ObjectLayerPairFilterImpl::ShouldCollide(JPH::ObjectLayer inObject1, JPH::O
 	case Layers::NON_MOVING:
 		return inObject2 == Layers::MOVING; // Non moving only collides with moving
 	case Layers::MOVING:
-		return true; // Moving collides with everything
+		return true; // inObject2 != Layers::TRIGGER; // Moving collides with everything
 	case Layers::TRIGGER:
 		return inObject2 == Layers::MOVING;
+	default:
+		JPH_ASSERT(false);
+		return false;
+	}
+}
+
+#pragma endregion
+
+#pragma region ObjectVsBroadPhaseLayerFilterImpl
+
+bool ObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(JPH::ObjectLayer inLayer1, JPH::BroadPhaseLayer inLayer2) const
+{
+	switch (inLayer1)
+	{
+	case Layers::NON_MOVING:
+		return inLayer2 == BroadPhaseLayers::MOVING;
+	case Layers::MOVING:
+		return true;
+	case Layers::TRIGGER:
+		return inLayer2 == BroadPhaseLayers::MOVING;
 	default:
 		JPH_ASSERT(false);
 		return false;
@@ -106,22 +126,4 @@ const char* BPLayerInterfaceImpl::GetBroadPhaseLayerName(JPH::BroadPhaseLayer in
 
 #pragma endregion
 
-#pragma region ObjectVsBroadPhaseLayerFilterImpl
 
-bool ObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(JPH::ObjectLayer inLayer1, JPH::BroadPhaseLayer inLayer2) const
-{
-	switch (inLayer1)
-	{
-	case Layers::NON_MOVING:
-		return inLayer2 == BroadPhaseLayers::MOVING;
-	case Layers::MOVING:
-		return true;
-	case Layers::TRIGGER:
-		return inLayer2 == BroadPhaseLayers::MOVING;
-	default:
-		JPH_ASSERT(false);
-		return false;
-	}
-}
-
-#pragma endregion

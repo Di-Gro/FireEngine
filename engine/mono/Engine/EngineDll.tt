@@ -242,6 +242,8 @@ namespace EngineDll {
 			FUNC("MeshComponent", "SetPreInitMesh", "void", "CppRef compRef, CppRef meshRef");
 			FUNC("MeshComponent", "SetPreInitMaterials", "void", "CppRef compRef, size_t[] matRefs, int count");
 
+			FUNC("MeshComponent", "OnPreInit", "void", "CppRef compRef");
+
 #>
 		}
 

@@ -24,6 +24,11 @@ class Game;
 class Scene;
 class FireContactListener;
 
+enum class BodyTag {
+	Null = 0,
+	Trigger = 1,
+};
+
 class Actor : public ActorBase {
 	OBJECT;
 
@@ -38,6 +43,7 @@ class Actor : public ActorBase {
 
 public:
 	size_t flags = 0;
+	BodyTag bodyTag = BodyTag::Null;
 
 	bool isSelectable = true;
 	//int prefabIdHash = 0;
@@ -154,10 +160,15 @@ private:
 	static void m_SetComponentCallbacks(Component* component, ComponentCallbacks callbacks);
 
 	inline void m_OnInitComponent(Component* component);
+	inline void m_OnInitDisabledComponent(Component* component);
+
 	inline void m_OnStartComponent(Component* component);
 	inline void m_OnUpdateComponent(Component* component);
 	inline void m_OnFixedUpdateComponent(Component* component);
+
 	inline void m_OnDestroyComponent(Component* component);
+	inline void m_OnDestroyDisabledComponent(Component* component);
+
 	inline void m_OnActivateComponent(Component* component);
 	inline void m_OnDeactivateComponent(Component* component);
 

@@ -20,6 +20,9 @@ public:
 	virtual void OnUpdate() { };
 	virtual void OnDestroy() { };
 
+	virtual void OnInitDisabled() { };
+	virtual void OnDestroyDisabled() { };
+
 	virtual void OnFixedUpdate() { };
 
 	virtual void OnDraw() { };

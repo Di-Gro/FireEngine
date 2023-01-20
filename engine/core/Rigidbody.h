@@ -41,7 +41,29 @@ private:
 	std::list<IFixedUpdateListener*>::iterator m_rigidbodyIter;
 
 	Vector3 m_lastScale;
-	//Vector3 m_center;
+	bool m_onPhysicsUpdate = false;
+
+	bool m_initSimulate = 0;
+	JPH::EMotionType m_initMotion;
+	float m_initGravity = 0;
+	float m_initFriction = 0;
+	Vector3 m_initForce = Vector3::Zero;
+	Vector3 m_initForceAtPoint = Vector3::Zero;
+	Vector3 m_initForcePosition = Vector3::Zero;
+	Vector3 m_initImpulse = Vector3::Zero;
+	Vector3 m_initImpulseAtPoint = Vector3::Zero;
+	Vector3 m_initImpulsePosition = Vector3::Zero;
+	Vector3 m_initVelsity = Vector3::Zero;
+		
+	bool m_updateSimulate = false;
+	bool m_updateMotion = false;
+	bool m_updateGravity = false;
+	bool m_updateFriction = false;
+	bool m_updateForce = false;
+	bool m_updateForceAtPoint = false;
+	bool m_updateImpulse = false;
+	bool m_updateImpulseAtPoint = false;
+	bool m_updateVelsity = false;
 
 public:
 	bool simulate() const { return m_simulate; };
@@ -61,6 +83,9 @@ public:
 	void OnDestroy() override;
 	void OnFixedUpdate() override;
 	void BeforePhysicsUpdate() override;
+
+	void OnInitDisabled() override { OnInit(); }
+	void OnDestroyDisabled() override { OnDestroy(); }
 
 	void OnActivate() override;
 	void OnDeactivate() override;
@@ -87,6 +112,8 @@ public:
 private:
 	void m_CreateBody();
 	void m_RemoveBody();
+
+	void m_UpdateState();
 };
 DEC_COMPONENT(Rigidbody);
 
