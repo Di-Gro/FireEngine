@@ -423,6 +423,9 @@
     <ClCompile Include="AIComponent.cpp">
       <Filter>AI</Filter>
     </ClCompile>
+    <ClCompile Include="NavMesh.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -841,6 +844,9 @@
     </ClInclude>
     <ClInclude Include="Contact.h">
       <Filter>FirePhysics</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMesh.h">
+      <Filter>AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

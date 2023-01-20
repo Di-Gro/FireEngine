@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MeshComponent.h"
+#include "Assets.h"
 
 class LineComponent : public MeshComponent {
 public:
@@ -40,6 +41,24 @@ public:
 		vertex2.color = color;
 
 		this->AddShape(&verteces, &indeces);
+		this->SetMaterial(0, Assets::ShaderVertexColor);
+		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+	}
+
+
+	void SetVector(std::vector<Vector3>& path, Vector4 color)
+	{
+		std::vector<Mesh4::Vertex> vertexes;
+		std::vector<int> indeces;
+		for (auto i = 0; i < path.size(); i++)
+		{
+			auto& vert = vertexes.emplace_back();
+			vert.position = Vector4(path[i]);
+			vert.color = color;
+			indeces.push_back(i);
+		}
+
+		this->AddShape(&vertexes, &indeces);
 		this->SetMaterial(0, Assets::ShaderVertexColor);
 		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
