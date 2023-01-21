@@ -29,6 +29,16 @@ void AIComponent::OnDestroy() {
 	m_decisions.clear();
 }
 
+void AIComponent::UpdateRete() {
+	Rete new_rete;
+	new_rete.alpha_top = ConstTestNode::dummy();
+	new_rete.const_test_nodes.push_back(new_rete.alpha_top);
+	for (auto i = 0; i < m_rete.working_memory.size(); i++) {
+		new_rete.addWME(m_rete.working_memory[i]);
+	}
+	m_rete = (std::move(new_rete));
+}
+
 int AIComponent::AddWME(const char* id, const char* attr, const char* value) {
 	return m_rete.addWME(new WME(id, attr, value));
 }
@@ -130,4 +140,8 @@ DEF_FUNC(AIComponent, Decide, bool)(CppRef compRef, int decisionHash) {
 
 DEF_FUNC(AIComponent, GetText, size_t)(CppRef compRef, int decisionHash) {
 	return (size_t)CppRefs::ThrowPointer<AIComponent>(compRef)->GetText(decisionHash);
+}
+
+DEF_FUNC(AIComponent, UpdateRete, void)(CppRef compRef) {
+       CppRefs::ThrowPointer<AIComponent>(compRef)->UpdateRete();
 }

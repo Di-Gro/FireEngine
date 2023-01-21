@@ -7,10 +7,10 @@
 .file1.CameraPos.X: {Var: 207.715}
 .file1.CameraPos.Y: {Var: 119.62}
 .file1.CameraPos.Z: {Var: -116.8995}
-.file1.CameraRot.X: {Var: -0.1534563}
-.file1.CameraRot.Y: {Var: 0.6133776}
-.file1.CameraRot.Z: {Var: 0.123057}
-.file1.CameraRot.W: {Var: 0.7649027}
+.file1.CameraRot.X: {Var: -0.1743052}
+.file1.CameraRot.Y: {Var: 0.1872113}
+.file1.CameraRot.Z: {Var: 0.03377551}
+.file1.CameraRot.W: {Var: 0.9661412}
 .file1.CameraSpeed: {Var: 100}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file6}
