@@ -34,7 +34,7 @@ void NavMesh::Init(Game* game) {
 
     RecastCleanup();
 
-    m_scale = 20;
+    m_scale = 15;
 
     mExtents[0] = 2 * m_scale;
     mExtents[1] = 4 * m_scale;
@@ -65,7 +65,7 @@ void NavMesh::LoadStaticMeshes()
     uint64_t vertsIndex = 0;
     uint64_t prevVerticiesCount = 0;
     uint64_t prevIndexCountTotal = 0;
-    auto flag = 1 << 7;
+    auto flag = 1 << 6;
     auto scene = game->currentScene();
     for (auto actor_it = scene->GetNextRootActors(scene->BeginActor()); actor_it != scene->EndActor(); ++actor_it) {
         auto actor = *actor_it;
@@ -262,8 +262,8 @@ void NavMesh::Configure()
 bool NavMesh::NavMeshBuild()
 {
     LoadStaticMeshes();
-
-
+    if (StaticMeshesVert.size() == 0)
+        return false;
     rcCalcBounds(&StaticMeshesVert[0], StaticMeshesVert.size() / 3, rc_bmin, rc_bmax);
     rcVcopy(m_cfg.bmin, rc_bmin);
     rcVcopy(m_cfg.bmax, rc_bmax);
