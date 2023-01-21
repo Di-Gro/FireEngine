@@ -580,8 +580,10 @@ void NavMesh::GetPath(size_t* vertexes, int* count, int pathSlot) {
         return;
     pathdata*path = &(m_PathStore[pathSlot]);
     for (auto i = 0; i < path->MaxVertex; i++) {
-       
+        vertex_buffer[i] = { path->pX[i], path->pY[i], path->pZ[i]};
     }
+    *count = path->MaxVertex;
+    *vertexes = (size_t)vertex_buffer;
 }
 
 int NavMesh::PointsCount(int pathSlot) {
