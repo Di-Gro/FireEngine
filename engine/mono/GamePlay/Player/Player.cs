@@ -32,15 +32,17 @@ public class Player : CSComponent, IPlayer {
 
     private Vector3 m_handsPosition;
 
-    [Open] private Prefab itemPrefab;
-    private AttractedParticle particle;
+    [Open] private Prefab m_itemPrefab;
+    [Open] private Prefab m_particlePrefab;
+
+    public float particleDropImpulse = 0.0f;
 
     private Random rnd = new Random();
 
     [Close] public Vector3 CharacterPosititon => m_character.actor.worldPosition;
 
     public override void OnInit() {
-        if (m_hands == null || m_itemSlot == null)
+        if (m_hands == null || m_itemSlot == null || m_itemPrefab == null || m_particlePrefab == null)
             throw new NullFieldException(this);
 
         m_character = actor.GetComponentInChild<Character>();
@@ -70,10 +72,7 @@ public class Player : CSComponent, IPlayer {
     {
         m_RotateBodyToViewDirection();
         if (m_health <= 0)
-        {
             Death();
-            actor.Destroy();
-        }
     }
     public void Pickup() {
         if(!HasItemOnGround)
@@ -107,18 +106,32 @@ public class Player : CSComponent, IPlayer {
         Item = null;
     }
 
-    public void Death() {
+    public void DropStaff(Vector3 pos)
+    {
         var direction = Vector3.Forward.RotateY(rnd.Next(1, 361));
-        var item = itemPrefab.Instanciate().GetComponent<Item>();
-        item.Drop(direction);
+        var item = m_itemPrefab.Instanciate().GetComponent<Item>();
         
-        particle.Drop(direction);
+        item.m_simulateOnStart = false;
+        item.actor.worldPosition = pos;
+        item.Drop(direction);
+
+        //int count = 1;//rnd.Next(2, 3);
+        //
+        //for (int i = 0; i < count; i++)
+        //    m_DropParticle(pos);
+    }
+
+    public void Death() {
+        m_character.simulate = false;
+        DropStaff(m_character.actor.worldPosition);
+        actor.Destroy();
     }
 
     public void AddDamage(int damage) {
         m_health -= damage;
         if (m_health < 0)
             m_health = 0;
+        Console.WriteLine($"Health: {m_health}");
     }
 
     public void AddEnergy(int value) {
@@ -242,8 +255,26 @@ public class Player : CSComponent, IPlayer {
     }
     public override void OnCollisionExit(Actor otherActor) {}
 
-    private void m_ThowObjectAnimation() {
-        //m_pickupedSlot.GetChild(0).localRotation.Lerp((m_pickupedSlot.GetChild(0).localRotation.X, (m_pickupedSlot.GetChild(0).localRotation.Y + 90.0f), m_pickupedSlot.GetChild(0).localRotation.Z), 10);
-        m_itemSlot.GetChild(0).worldRotationQ.SetY(m_itemSlot.GetChild(0).worldRotationQ.Y + 90.0f);
+    private void m_DropParticle(Vector3 pos)
+    {
+        var particle = m_particlePrefab.Instanciate().GetComponent<AttractedParticle>();
+        if (particle == null)
+            throw new NullFieldException(this, $"m_particlePrefab not contains {nameof(AttractedParticle)}");
+        
+        float characterScale = m_character.actor.localScale.Y / 2;
+        float randFloat = (float)rnd.NextDouble();
+        float deltaHeight = randFloat * characterScale * 2;
+        float height = (deltaHeight - characterScale);
+        Vector3 particlePos = pos + new Vector3(0, height, 0);
+        
+        var direction = Vector3.Forward.RotateY(rnd.Next(1, 361));
+        
+        /*var impulse = particleDropImpulse;*///particleDropImpulse * 0.5f + (float)rnd.NextDouble() / 2;
+        var impulse = particleDropImpulse * 0.5f + (float)rnd.NextDouble() / 2;
+        
+        particle.actor.worldPosition = particlePos;
+        //particle.rigidbody.AddImpulse(direction * impulse);
+        
+        particle.target = SceneData.playerCharacter;
     }
 }

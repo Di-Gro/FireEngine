@@ -24,6 +24,9 @@ public class PlayerController : CSComponent {
             else if (m_player.CanPickup)
                 m_player.Pickup();
         }
+
+        //if(Input.GetButtonDown(Key.RightButton))
+        //    m_player.DropStaff(new Vector3(0, 30, 0));
     }
 
     public override void OnFixedUpdate() {
