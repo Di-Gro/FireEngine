@@ -1,17 +1,17 @@
-.file0.assetId: {AssetId: 3fe00c12-5e31-47cc-8274-b5ab43cbb49f}
+.file0.assetId: {AssetId: fda5cc12-08fa-4ca8-b397-7635a490ceba}
 .file0.files: {Var: 81}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
-.file1.Name: {Var: AItest}
-.file1.CameraPos.X: {Var: 207.715}
-.file1.CameraPos.Y: {Var: 119.62}
-.file1.CameraPos.Z: {Var: -116.8995}
-.file1.CameraRot.X: {Var: -0.1743052}
-.file1.CameraRot.Y: {Var: 0.1872113}
-.file1.CameraRot.Z: {Var: 0.03377551}
-.file1.CameraRot.W: {Var: 0.9661412}
-.file1.CameraSpeed: {Var: 100}
+.file1.Name: {Var: Scene_3}
+.file1.CameraPos.X: {Var: 141.4631}
+.file1.CameraPos.Y: {Var: 218.7814}
+.file1.CameraPos.Z: {Var: 153.1239}
+.file1.CameraRot.X: {Var: -0.3151565}
+.file1.CameraRot.Y: {Var: 0.2507121}
+.file1.CameraRot.Z: {Var: 0.08671293}
+.file1.CameraRot.W: {Var: 0.9112083}
+.file1.CameraSpeed: {Var: 337}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file5}
 .file1.m_roots.2: {Ref: file7}
