@@ -262,7 +262,8 @@ void NavMesh::Configure()
 bool NavMesh::NavMeshBuild()
 {
     LoadStaticMeshes();
-
+    if (StaticMeshesVert.size() == 0)
+        return false;
 
     rcCalcBounds(&StaticMeshesVert[0], StaticMeshesVert.size() / 3, rc_bmin, rc_bmax);
     rcVcopy(m_cfg.bmin, rc_bmin);

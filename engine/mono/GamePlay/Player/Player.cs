@@ -8,6 +8,9 @@ public class Player : CSComponent, IPlayer {
     [Open] private Actor m_body;
     [Open] private Actor m_hands;
     [Open] private Actor m_itemSlot;
+    [Space]
+    [Open] private Prefab m_projectilePrefab;
+    public float projectileSpeed = 400;
 
     [Space]
     public float shootImpulse = 200;
@@ -44,7 +47,7 @@ public class Player : CSComponent, IPlayer {
     [Close] public Vector3 CharacterPosititon => m_character.actor.worldPosition;
 
     public override void OnInit() {
-        if (m_hands == null || m_itemSlot == null || m_itemPrefab == null || m_particlePrefab == null)
+        if (m_hands == null || m_itemSlot == null || m_itemPrefab == null || m_particlePrefab == null || m_projectilePrefab == null)
             throw new NullFieldException(this);
 
         m_character = actor.GetComponentInChild<Character>();
@@ -76,6 +79,7 @@ public class Player : CSComponent, IPlayer {
         if (m_health <= 0)
             Death();
     }
+
     public void Pickup() {
         if(!HasItemOnGround)
             return;
@@ -106,6 +110,15 @@ public class Player : CSComponent, IPlayer {
         Item.actor.parent = null;
         Item.Drop(direction);
         Item = null;
+    }
+
+    public void Shoot() {
+        var projectile = m_projectilePrefab.Instanciate().GetComponent<Projectile>();
+        projectile.actor.worldPosition = m_itemSlot.worldPosition;
+
+        projectile.destroy = Projectile.DestroyRule.DestroyAfterTime;
+        projectile.speed = projectileSpeed;
+        projectile.Shoot(ViewDirection);
     }
 
     public void DropStaff(Vector3 pos)

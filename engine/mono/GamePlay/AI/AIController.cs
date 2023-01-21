@@ -55,7 +55,7 @@ public class AIController : CSComponent {
     public override void OnFixedUpdate() {
         /// Здесь можно установить вектор движения
         /// 
-        var direction = (next_point - m_player.CharacterPosititon).Normalize();
+        var direction = (m_player.CharacterPosititon - next_point).Normalized();
 
         bool jump = false;
         bool run = false;
