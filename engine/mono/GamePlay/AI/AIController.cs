@@ -28,14 +28,10 @@ public class AIController : CSComponent {
         m_ai["Random roam"].Add(this, tag_in_senses_radius, "False");
         m_ai["Move to player"].Add(this, tag_in_senses_radius, "True");
         m_ai["OnAttack"].Add(this, tag_in_attack_range, "True");
-
     }
 
     public override void OnUpdate() {
         /// Здесь можно раздать команды
-        distance_to_player = m_player.CharacterPosititon.Distance(m_target.CharacterPosititon);
-        Console.WriteLine($"Direction { m_target.CharacterPosititon - m_player.CharacterPosititon}");
-        Console.WriteLine($"Distance {distance_to_player}");
         m_ai.DecideAll();
     }
 
