@@ -51,7 +51,7 @@
 .file4.Mass: {Var: 1}
 .file4.gravity: {Var: 1}
 .file4.MaxLinearVelocity: {Var: 500}
-.file4.LinearDamping: {Var: 0.5}
+.file4.LinearDamping: {Var: 0.8}
 .file4.AgularDamping: {Var: 0.05}
 .file4.Friction: {Var: 1}
 .file4.Bounciness: {Var: 0.2}
