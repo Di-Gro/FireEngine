@@ -25,7 +25,7 @@ private:
 public:
 	void OnInit() override;
 	void OnDestroy() override;
-
+	void UpdateRete();
 	int AddWME(const char* id, const char* attr, const char* value);
 	void SetWMEValue(int index, const char* value);
 
@@ -43,6 +43,7 @@ public:
 DEC_COMPONENT(AIComponent);
 
 FUNC(AIComponent, AddWME, int)(CppRef compRef, const char* id, const char* attr, const char* value);
+FUNC(AIComponent, UpdateRete, void)(CppRef compRef);
 FUNC(AIComponent, SetWMEValue, void)(CppRef compRef, int index, const char* value);
 
 FUNC(AIComponent, AddCondition, void)(CppRef compRef, 

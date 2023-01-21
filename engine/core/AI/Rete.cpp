@@ -32,9 +32,53 @@ int Rete::addWME(WME* wme)
     return working_memory.size() - 1;
 }
 
-void Rete::setWMEvalue(int index, const char* value) 
+void Rete::updateWME(WME* wme)
 {
-    working_memory[index]->SetValue(value);
+    auto id = wme->fields[0];
+    auto attr = wme->fields[1];
+    auto value = wme->fields[2];
+
+    for (auto& w : working_memory)
+    {
+        auto current_id = w->get_field(FieldType::id);
+        auto current_attr = w->get_field(FieldType::attr);
+        if (id == current_id && attr == current_attr)
+        {
+            w->fields[2] = value;
+        }
+    }
+    const_test_activation(alpha_top, wme);
+}
+
+
+void Rete::removeWME(WME* wme)
+{
+    auto id = wme->fields[0];
+    auto attr = wme->fields[1];
+    auto value = wme->fields[2];
+
+    auto w_it = std::begin(working_memory);
+
+    while (w_it != std::end(working_memory))
+    {
+        auto curr_id = (*w_it)->get_field(FieldType::id);
+        auto curr_attr = (*w_it)->get_field(FieldType::attr);
+        auto curr_value = (*w_it)->get_field(FieldType::value);
+        if (id == curr_id && attr == curr_attr && value == curr_value) {
+            w_it = working_memory.erase(w_it);
+        }
+        else
+        {
+            w_it++;
+        }
+    }
+    const_test_activation(alpha_top, wme);
+
+}
+
+void Rete::setWMEvalue(int index, const char* new_value) 
+{
+    working_memory[index]->SetValue(new_value);
 }
 
 void Rete::update_new_node_with_matches(BetaMemory* beta)

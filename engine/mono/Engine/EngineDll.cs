@@ -1028,6 +1028,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "AIComponent_AddWME", CharSet = CharSet.Ansi)]
 		    public static extern int AddWME(CppRef compRef, string id, string attr, string value);
 
+            [DllImport(Paths.Exe, EntryPoint = "AIComponent_UpdateRete")]
+		    public static extern void UpdateRete(CppRef compRef);
+
             [DllImport(Paths.Exe, EntryPoint = "AIComponent_SetWMEValue", CharSet = CharSet.Ansi)]
 		    public static extern void SetWMEValue(CppRef compRef, int index, string value);
 
@@ -1040,6 +1043,7 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "AIComponent_GetText")]
 		    public static extern size_t GetText(CppRef compRef, int decisionHash);
 
+			
 		}
 
 		

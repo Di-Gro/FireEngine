@@ -577,11 +577,23 @@ std::vector<Vector3>NavMesh::GetPath(int pathSlot)
     for (int i = 0; i < path->MaxVertex; i++) {
         result.push_back(Vector3(path->pX[i], path->pY[i], path->pZ[i]));
     }
-    auto actor = game->currentScene()->CreateActor("PathLine");
-    auto line = actor->AddComponent<LineComponent>();
-    Vector4 color(1, 1, 1, 1);
-    line->SetVector(result, color);
     return result;
+}
+
+void NavMesh::GethPath(size_t* vertexes, int* count, int pathSlot) {
+    if (pathSlot < 0 || pathSlot >= MAX_PATHS || m_PathStore[pathSlot].MaxVertex <= 0)
+        return;
+    pathdata*path = &(m_PathStore[pathSlot]);
+    for (auto i = 0; i < path->MaxVertex; i++) {
+       
+    }
+}
+
+int NavMesh::PointsCount(int pathSlot) {
+    if (pathSlot < 0 || pathSlot >= MAX_PATHS || m_PathStore[pathSlot].MaxVertex <= 0)
+        return 0;
+    pathdata* path = &(m_PathStore[pathSlot]);
+    return path->MaxVertex;
 }
 
 static float frand()

@@ -66,8 +66,10 @@ public:
 	bool NavMeshBuild();
 	DirectX::SimpleMath::Vector3 getRandomNavMeshPoint(); /// TODO C#
 	std::vector<DirectX::SimpleMath::Vector3> GetPath(int pathSlot);/// TODO C#
+	void GethPath(size_t* vector, int* count, int pathSlot);
 	int FindPath(DirectX::SimpleMath::Vector3 pStartPos, DirectX::SimpleMath::Vector3 pEndPos, int nPathSlot, int nTarget);/// TODO C#
 	int FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarget);/// TODO C#
+	int PointsCount(int nPathSlot);
 	NavMesh(Game* game);
 	void DebugDrawPolyMesh();
 protected:
@@ -120,7 +122,7 @@ protected:
 	pathdata m_PathStore[MAX_PATHS];
 	float m_scale;
 private:
-
+	Vector3 vertex_buffer[MAX_VERT];
 	Game* game;
 	std::vector<float> StaticMeshesVert;
 	std::vector <int> StaticMeshesTris;
