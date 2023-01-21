@@ -1,27 +1,26 @@
 .file0.assetId: {AssetId: 7a58f68f-8c33-409c-ae07-eb60cb9e512c}
-.file0.files: {Var: 284}
+.file0.files: {Var: 288}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: PrefabScene}
-.file1.CameraPos.X: {Var: 191.3149}
-.file1.CameraPos.Y: {Var: 148.0493}
-.file1.CameraPos.Z: {Var: -94.15497}
-.file1.CameraRot.X: {Var: -0.1352575}
-.file1.CameraRot.Y: {Var: 0.8005776}
-.file1.CameraRot.Z: {Var: 0.1970604}
-.file1.CameraRot.W: {Var: 0.5494979}
+.file1.CameraPos.X: {Var: 59.36865}
+.file1.CameraPos.Y: {Var: 63.64924}
+.file1.CameraPos.Z: {Var: 19.9798}
+.file1.CameraRot.X: {Var: -0.1948863}
+.file1.CameraRot.Y: {Var: 0.6755651}
+.file1.CameraRot.Z: {Var: 0.1923215}
+.file1.CameraRot.W: {Var: 0.6845755}
 .file1.CameraSpeed: {Var: 105}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file49}
 .file1.m_roots.2: {Ref: file5}
 .file1.m_roots.3: {Ref: file18}
-.file1.m_roots.4: {Ref: file23}
-.file1.m_roots.5: {Ref: file87}
-.file1.m_roots.6: {Ref: file110}
-.file1.m_roots.7: {Ref: file152}
-.file1.m_roots.8: {Ref: file154}
-.file1.m_roots.9: {Ref: file164}
+.file1.m_roots.4: {Ref: file87}
+.file1.m_roots.5: {Ref: file110}
+.file1.m_roots.6: {Ref: file152}
+.file1.m_roots.7: {Ref: file154}
+.file1.m_roots.8: {Ref: file164}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -102,6 +101,7 @@
 .file7.Friction: {Var: 0.2}
 .file7.Bounciness: {Var: 0.2}
 .file7.AllowSleeping: {Var: True}
+.file7.KeepLocal: {Var: False}
 .file7.Quality: {Var: Discrete}
 
 .file8!script: {Var: BoxCollider}
@@ -164,6 +164,7 @@
 .file20.Friction: {Var: 0.2}
 .file20.Bounciness: {Var: 0.2}
 .file20.AllowSleeping: {Var: True}
+.file20.KeepLocal: {Var: False}
 .file20.Quality: {Var: Discrete}
 
 .file21!script: {Var: BoxCollider}
@@ -183,29 +184,6 @@
 .file22.IsVisible: {Var: True}
 .file22.m_mesh: {Null: }
 .file22.m_materials: {Null: }
-
-.file23!script: {Var: Actor}
-.file23!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file23.prefabId: {Var: 3d81536a-970e-418c-9e41-6d70794f7753}
-.file23.Name: {Var: Character}
-.file23.ActiveSelf: {Var: False}
-.file23.localPosition.X: {Var: 67.45373}
-.file23.localPosition.Y: {Var: 24.00282}
-.file23.localPosition.Z: {Var: -76.1252}
-.file23.localRotationQ.X: {Var: 0}
-.file23.localRotationQ.Y: {Var: 0}
-.file23.localRotationQ.Z: {Var: 0}
-.file23.localRotationQ.W: {Var: 1}
-.file23.localScale.X: {Var: 30}
-.file23.localScale.Y: {Var: 30}
-.file23.localScale.Z: {Var: 30}
-.file23.m_flags: {Var: 0}
-.file23.m_children.0: {Ref: file180}
-.file23.m_components.0: {Ref: file191}
-.file23.m_components.1: {Ref: file192}
-.file23.m_components.2: {Ref: file193}
-.file23.m_components.3: {Ref: file194}
-.file23.m_components.4: {Ref: file195}
 
 .file49!script: {Var: Actor}
 .file49!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -229,6 +207,7 @@
 
 .file50!script: {Var: PlayerCamera}
 .file50!scriptId: {AssetId: a49b6d24-fe71-4965-a421-36645951c2c3}
+.file50.m_cameraTarget: {Null: }
 .file50.rotationSense: {Var: 1}
 .file50.scrollSense: {Var: 1}
 .file50.distance: {Var: 100}
@@ -236,7 +215,6 @@
 .file50.m_angles.Y: {Var: 0}
 .file50.m_angles.Z: {Var: 0}
 .file50.m_camera: {Ref: file51}
-.file50.m_cameraTarget: {Ref: file23}
 
 .file51!script: {Var: CameraComponent}
 .file51!scriptId: {AssetId: e7ebcd63-c96c-4cc1-b7c5-e755696c98b1}
@@ -265,7 +243,7 @@
 .file87.localScale.X: {Var: 1}
 .file87.localScale.Y: {Var: 1}
 .file87.localScale.Z: {Var: 1}
-.file87.m_flags: {Var: 0}
+.file87.m_flags: {Var: 1}
 .file87.m_children.0: {Ref: file241}
 .file87.m_children.1: {Ref: file244}
 .file87.m_components.0: {Ref: file261}
@@ -306,6 +284,7 @@
 .file111.Friction: {Var: 4.8}
 .file111.Bounciness: {Var: 0.2}
 .file111.AllowSleeping: {Var: False}
+.file111.KeepLocal: {Var: False}
 .file111.Quality: {Var: LinearCast}
 
 .file113!script: {Var: MeshComponent}
@@ -373,6 +352,7 @@
 .file138.Friction: {Var: 0.2}
 .file138.Bounciness: {Var: 0.2}
 .file138.AllowSleeping: {Var: True}
+.file138.KeepLocal: {Var: False}
 .file138.Quality: {Var: Discrete}
 
 .file139!script: {Var: BoxCollider}
@@ -390,10 +370,10 @@
 .file140.localPosition.X: {Var: 2.232155}
 .file140.localPosition.Y: {Var: -26.70156}
 .file140.localPosition.Z: {Var: -396.2341}
-.file140.localRotationQ.X: {Var: 0.7071069}
+.file140.localRotationQ.X: {Var: 0.7071068}
 .file140.localRotationQ.Y: {Var: 0}
 .file140.localRotationQ.Z: {Var: 0}
-.file140.localRotationQ.W: {Var: 0.7071068}
+.file140.localRotationQ.W: {Var: 0.7071067}
 .file140.localScale.X: {Var: 799.9303}
 .file140.localScale.Y: {Var: 2}
 .file140.localScale.Z: {Var: 800}
@@ -427,6 +407,7 @@
 .file142.Friction: {Var: 0.2}
 .file142.Bounciness: {Var: 0.2}
 .file142.AllowSleeping: {Var: True}
+.file142.KeepLocal: {Var: False}
 .file142.Quality: {Var: Discrete}
 
 .file143!script: {Var: BoxCollider}
@@ -481,6 +462,7 @@
 .file146.Friction: {Var: 0.2}
 .file146.Bounciness: {Var: 0.2}
 .file146.AllowSleeping: {Var: True}
+.file146.KeepLocal: {Var: False}
 .file146.Quality: {Var: Discrete}
 
 .file147!script: {Var: BoxCollider}
@@ -535,6 +517,7 @@
 .file150.Friction: {Var: 0.2}
 .file150.Bounciness: {Var: 0.2}
 .file150.AllowSleeping: {Var: True}
+.file150.KeepLocal: {Var: False}
 .file150.Quality: {Var: Discrete}
 
 .file151!script: {Var: BoxCollider}
@@ -604,6 +587,7 @@
 .file161.Friction: {Var: 4.8}
 .file161.Bounciness: {Var: 0.2}
 .file161.AllowSleeping: {Var: False}
+.file161.KeepLocal: {Var: False}
 .file161.Quality: {Var: Discrete}
 
 .file162!script: {Var: SphereCollider}
@@ -622,7 +606,7 @@
 .file164!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file164.prefabId: {Var: 303a34fe-9030-4426-ab8f-523af7a3f8db}
 .file164.Name: {Var: Item}
-.file164.ActiveSelf: {Var: False}
+.file164.ActiveSelf: {Var: True}
 .file164.localPosition.X: {Var: 0}
 .file164.localPosition.Y: {Var: 0}
 .file164.localPosition.Z: {Var: 0}
@@ -665,6 +649,7 @@
 .file167.Friction: {Var: 1}
 .file167.Bounciness: {Var: 0}
 .file167.AllowSleeping: {Var: False}
+.file167.KeepLocal: {Var: False}
 .file167.Quality: {Var: LinearCast}
 
 .file168!script: {Var: MeshComponent}
@@ -712,12 +697,13 @@
 .file170.Friction: {Var: 0.2}
 .file170.Bounciness: {Var: 0.2}
 .file170.AllowSleeping: {Var: False}
+.file170.KeepLocal: {Var: False}
 .file170.Quality: {Var: Discrete}
 
 .file171!script: {Var: SphereCollider}
 .file171!scriptId: {AssetId: aa06e9b3-f75f-4982-976b-a6f57568d6f0}
 .file171.Radius: {Var: 1.5}
-.file171.DrawDebug: {Var: True}
+.file171.DrawDebug: {Var: False}
 
 .file172!script: {Var: Retarget}
 .file172!scriptId: {AssetId: df4d594d-2fe2-4902-8b8a-08232a172eb4}
@@ -738,224 +724,6 @@
 .file174.sleepVelosity: {Var: 5}
 .file174.notSleepTime: {Var: 1}
 .file174.canAwake: {Var: True}
-
-.file180!script: {Var: Actor}
-.file180!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file180.prefabId: {Var: }
-.file180.Name: {Var: Hands}
-.file180.ActiveSelf: {Var: True}
-.file180.localPosition.X: {Var: 0}
-.file180.localPosition.Y: {Var: -5.364418E-07}
-.file180.localPosition.Z: {Var: 0}
-.file180.localRotationQ.X: {Var: 0}
-.file180.localRotationQ.Y: {Var: 0}
-.file180.localRotationQ.Z: {Var: 0}
-.file180.localRotationQ.W: {Var: 1}
-.file180.localScale.X: {Var: 0.9999967}
-.file180.localScale.Y: {Var: 0.9999757}
-.file180.localScale.Z: {Var: 0.9999757}
-.file180.m_flags: {Var: 0}
-.file180.m_components: {Null: }
-.file180.m_children.0: {Ref: file181}
-.file180.m_children.1: {Ref: file186}
-
-.file181!script: {Var: Actor}
-.file181!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file181.prefabId: {Var: }
-.file181.Name: {Var: Left}
-.file181.ActiveSelf: {Var: True}
-.file181.localPosition.X: {Var: 0}
-.file181.localPosition.Y: {Var: -9.477139E-06}
-.file181.localPosition.Z: {Var: 0}
-.file181.localRotationQ.X: {Var: 0}
-.file181.localRotationQ.Y: {Var: 0}
-.file181.localRotationQ.Z: {Var: 0}
-.file181.localRotationQ.W: {Var: 1}
-.file181.localScale.X: {Var: 1}
-.file181.localScale.Y: {Var: 0.99999}
-.file181.localScale.Z: {Var: 0.99999}
-.file181.m_flags: {Var: 0}
-.file181.m_components: {Null: }
-.file181.m_children.0: {Ref: file182}
-
-.file182!script: {Var: Actor}
-.file182!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file182.prefabId: {Var: }
-.file182.Name: {Var: Mesh}
-.file182.ActiveSelf: {Var: True}
-.file182.localPosition.X: {Var: -0.4595569}
-.file182.localPosition.Y: {Var: 0.04323471}
-.file182.localPosition.Z: {Var: 0.02955513}
-.file182.localRotationQ.X: {Var: 0.6743388}
-.file182.localRotationQ.Y: {Var: 0}
-.file182.localRotationQ.Z: {Var: 0}
-.file182.localRotationQ.W: {Var: 0.7384221}
-.file182.localScale.X: {Var: 0.08161971}
-.file182.localScale.Y: {Var: 0.08740146}
-.file182.localScale.Z: {Var: 0.6349204}
-.file182.m_flags: {Var: 0}
-.file182.m_children.0: {Ref: file183}
-.file182.m_components.0: {Ref: file185}
-
-.file183!script: {Var: Actor}
-.file183!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file183.prefabId: {Var: }
-.file183.Name: {Var: Mesh2}
-.file183.ActiveSelf: {Var: True}
-.file183.localPosition.X: {Var: 0.01137161}
-.file183.localPosition.Y: {Var: 4.368442}
-.file183.localPosition.Z: {Var: 0.4780835}
-.file183.localRotationQ.X: {Var: -0.7015975}
-.file183.localRotationQ.Y: {Var: 0}
-.file183.localRotationQ.Z: {Var: 0}
-.file183.localRotationQ.W: {Var: 0.7125734}
-.file183.localScale.X: {Var: 1.004658}
-.file183.localScale.Y: {Var: 0.164838}
-.file183.localScale.Z: {Var: 8.092941}
-.file183.m_children: {Null: }
-.file183.m_flags: {Var: 0}
-.file183.m_components.0: {Ref: file184}
-
-.file184!script: {Var: MeshComponent}
-.file184!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file184.MeshScale.X: {Var: 1}
-.file184.MeshScale.Y: {Var: 1}
-.file184.MeshScale.Z: {Var: 1}
-.file184.IsDebug: {Var: False}
-.file184.CastShadow: {Var: True}
-.file184.IsVisible: {Var: True}
-.file184.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file184.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file185!script: {Var: MeshComponent}
-.file185!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file185.MeshScale.X: {Var: 1}
-.file185.MeshScale.Y: {Var: 1}
-.file185.MeshScale.Z: {Var: 1}
-.file185.IsDebug: {Var: False}
-.file185.CastShadow: {Var: True}
-.file185.IsVisible: {Var: True}
-.file185.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file185.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file186!script: {Var: Actor}
-.file186!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file186.prefabId: {Var: }
-.file186.Name: {Var: Right}
-.file186.ActiveSelf: {Var: True}
-.file186.localPosition.X: {Var: 0}
-.file186.localPosition.Y: {Var: -8.159876E-05}
-.file186.localPosition.Z: {Var: 0}
-.file186.localRotationQ.X: {Var: 0}
-.file186.localRotationQ.Y: {Var: 0}
-.file186.localRotationQ.Z: {Var: 0}
-.file186.localRotationQ.W: {Var: 1}
-.file186.localScale.X: {Var: 1}
-.file186.localScale.Y: {Var: 0.9999135}
-.file186.localScale.Z: {Var: 0.9999135}
-.file186.m_flags: {Var: 0}
-.file186.m_components: {Null: }
-.file186.m_children.0: {Ref: file187}
-
-.file187!script: {Var: Actor}
-.file187!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file187.prefabId: {Var: }
-.file187.Name: {Var: Mesh}
-.file187.ActiveSelf: {Var: True}
-.file187.localPosition.X: {Var: 0.4754995}
-.file187.localPosition.Y: {Var: 0.04300719}
-.file187.localPosition.Z: {Var: 0.03}
-.file187.localRotationQ.X: {Var: 0.6743409}
-.file187.localRotationQ.Y: {Var: 0}
-.file187.localRotationQ.Z: {Var: 0}
-.file187.localRotationQ.W: {Var: 0.7384202}
-.file187.localScale.X: {Var: 0.08199988}
-.file187.localScale.Y: {Var: 0.08699995}
-.file187.localScale.Z: {Var: 0.6349998}
-.file187.m_flags: {Var: 0}
-.file187.m_children.0: {Ref: file188}
-.file187.m_components.0: {Ref: file190}
-
-.file188!script: {Var: Actor}
-.file188!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file188.prefabId: {Var: }
-.file188.Name: {Var: Mesh2}
-.file188.ActiveSelf: {Var: True}
-.file188.localPosition.X: {Var: 0}
-.file188.localPosition.Y: {Var: 4.382043}
-.file188.localPosition.Z: {Var: 0.4747841}
-.file188.localRotationQ.X: {Var: -0.7015998}
-.file188.localRotationQ.Y: {Var: 0}
-.file188.localRotationQ.Z: {Var: 0}
-.file188.localRotationQ.W: {Var: 0.7125713}
-.file188.localScale.X: {Var: 1.005}
-.file188.localScale.Y: {Var: 0.165}
-.file188.localScale.Z: {Var: 8.093004}
-.file188.m_children: {Null: }
-.file188.m_flags: {Var: 0}
-.file188.m_components.0: {Ref: file189}
-
-.file189!script: {Var: MeshComponent}
-.file189!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file189.MeshScale.X: {Var: 1}
-.file189.MeshScale.Y: {Var: 1}
-.file189.MeshScale.Z: {Var: 1}
-.file189.IsDebug: {Var: False}
-.file189.CastShadow: {Var: True}
-.file189.IsVisible: {Var: True}
-.file189.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file189.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file190!script: {Var: MeshComponent}
-.file190!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file190.MeshScale.X: {Var: 1}
-.file190.MeshScale.Y: {Var: 1}
-.file190.MeshScale.Z: {Var: 1}
-.file190.IsDebug: {Var: False}
-.file190.CastShadow: {Var: True}
-.file190.IsVisible: {Var: True}
-.file190.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file190.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file191!script: {Var: Character}
-.file191!scriptId: {AssetId: 481ac014-eb4a-4a25-8ef8-c40db6efbb02}
-.file191.simulate: {Var: True}
-.file191.MaxSlopeAngle: {Var: 45}
-.file191.Mass: {Var: 1}
-.file191.gravity: {Var: 1}
-.file191.WalkSpeed: {Var: 100}
-.file191.RunSpeed: {Var: 200}
-.file191.JumpSpeed: {Var: 100}
-.file191.Friction: {Var: 0.2}
-
-.file192!script: {Var: CapsuleCollider}
-.file192!scriptId: {AssetId: 6124c3d2-97b5-4b8f-882e-7be50df9016b}
-.file192.Radius: {Var: 0.5}
-.file192.Height: {Var: 0.5}
-.file192.DrawDebug: {Var: True}
-
-.file193!script: {Var: Player}
-.file193!scriptId: {AssetId: 416a2b38-e34a-44fd-aa1e-429d30c44ba2}
-.file193.m_body: {Null: }
-.file193.m_hands: {Null: }
-.file193.m_itemSlot: {Null: }
-.file193.shootImpulse: {Var: 20}
-
-.file194!script: {Var: PlayerController}
-.file194!scriptId: {AssetId: 1cd3c575-0b05-4a62-b0dd-3b326c3f7608}
-.file194.m_playerCamera: {Null: }
-.file194.m_player: {Null: }
-
-.file195!script: {Var: MeshComponent}
-.file195!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file195.MeshScale.X: {Var: 1}
-.file195.MeshScale.Y: {Var: 1}
-.file195.MeshScale.Z: {Var: 1}
-.file195.IsDebug: {Var: False}
-.file195.CastShadow: {Var: True}
-.file195.IsVisible: {Var: True}
-.file195.m_mesh.assetId: {AssetId: fcebda45-6fae-4d9e-86e2-0e3ac87b879f}
-.file195.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
 
 .file241!script: {Var: Actor}
 .file241!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -1017,6 +785,7 @@
 .file244.localScale.Z: {Var: 30}
 .file244.m_flags: {Var: 1}
 .file244.m_children.0: {Ref: file245}
+.file244.m_children.1: {Ref: file285}
 .file244.m_components.0: {Ref: file259}
 .file244.m_components.1: {Ref: file260}
 
@@ -1090,7 +859,7 @@
 .file248.localRotationQ.X: {Var: 0.6743388}
 .file248.localRotationQ.Y: {Var: 0}
 .file248.localRotationQ.Z: {Var: 0}
-.file248.localRotationQ.W: {Var: 0.7384221}
+.file248.localRotationQ.W: {Var: 0.738422}
 .file248.localScale.X: {Var: 0.08161971}
 .file248.localScale.Y: {Var: 0.08740146}
 .file248.localScale.Z: {Var: 0.6349204}
@@ -1109,7 +878,7 @@
 .file249.localRotationQ.X: {Var: -0.7015975}
 .file249.localRotationQ.Y: {Var: 0}
 .file249.localRotationQ.Z: {Var: 0}
-.file249.localRotationQ.W: {Var: 0.7125734}
+.file249.localRotationQ.W: {Var: 0.7125735}
 .file249.localScale.X: {Var: 1.004658}
 .file249.localScale.Y: {Var: 0.164838}
 .file249.localScale.Z: {Var: 8.092941}
@@ -1185,7 +954,7 @@
 .file254.localPosition.X: {Var: 0}
 .file254.localPosition.Y: {Var: 4.382043}
 .file254.localPosition.Z: {Var: 0.4747841}
-.file254.localRotationQ.X: {Var: -0.7015998}
+.file254.localRotationQ.X: {Var: -0.7015997}
 .file254.localRotationQ.Y: {Var: 0}
 .file254.localRotationQ.Z: {Var: 0}
 .file254.localRotationQ.W: {Var: 0.7125713}
@@ -1276,4 +1045,51 @@
 .file262!scriptId: {AssetId: 1cd3c575-0b05-4a62-b0dd-3b326c3f7608}
 .file262.m_playerCamera: {Ref: file242}
 .file262.m_player: {Ref: file261}
+
+.file285!script: {Var: Actor}
+.file285!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file285.prefabId: {Var: }
+.file285.Name: {Var: Trigger}
+.file285.ActiveSelf: {Var: True}
+.file285.localPosition.X: {Var: 0}
+.file285.localPosition.Y: {Var: -1.430511E-06}
+.file285.localPosition.Z: {Var: 0}
+.file285.localRotationQ.X: {Var: 0}
+.file285.localRotationQ.Y: {Var: 0}
+.file285.localRotationQ.Z: {Var: 0}
+.file285.localRotationQ.W: {Var: 1}
+.file285.localScale.X: {Var: 0.9999986}
+.file285.localScale.Y: {Var: 0.9999986}
+.file285.localScale.Z: {Var: 0.9999986}
+.file285.m_children: {Null: }
+.file285.m_flags: {Var: 17}
+.file285.m_components.0: {Ref: file286}
+.file285.m_components.1: {Ref: file287}
+.file285.m_components.2: {Ref: file288}
+
+.file286!script: {Var: CapsuleCollider}
+.file286!scriptId: {AssetId: 6124c3d2-97b5-4b8f-882e-7be50df9016b}
+.file286.Radius: {Var: 0.8}
+.file286.Height: {Var: 0.5}
+.file286.DrawDebug: {Var: False}
+
+.file287!script: {Var: Rigidbody}
+.file287!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file287.simulate: {Var: True}
+.file287.isSensor: {Var: True}
+.file287.motion: {Var: Kinematic}
+.file287.Mass: {Var: 1}
+.file287.gravity: {Var: 1}
+.file287.MaxLinearVelocity: {Var: 500}
+.file287.LinearDamping: {Var: 0.05}
+.file287.AgularDamping: {Var: 0.05}
+.file287.Friction: {Var: 0.2}
+.file287.Bounciness: {Var: 0.2}
+.file287.AllowSleeping: {Var: False}
+.file287.KeepLocal: {Var: True}
+.file287.Quality: {Var: Discrete}
+
+.file288!script: {Var: Retarget}
+.file288!scriptId: {AssetId: df4d594d-2fe2-4902-8b8a-08232a172eb4}
+.file288.target: {Ref: file87}
 

@@ -59,6 +59,9 @@ public class Player : CSComponent, IPlayer {
     }
 
     public void Pickup() {
+        if(!HasItemOnGround)
+            return;
+
         Item = ItemOnGrpund;
         ItemOnGrpund = null;
 
@@ -97,6 +100,10 @@ public class Player : CSComponent, IPlayer {
             m_health -= damage;
         else
             m_health = 0;
+    }
+
+    public void AddEnergy(int value) {
+        Console.WriteLine($"AddEnergy: {value}");
     }
 
     public void SetMovementVector(Vector3 direction, bool jump, bool run, float deltaTime) {

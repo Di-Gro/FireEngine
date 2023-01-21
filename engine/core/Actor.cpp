@@ -115,6 +115,10 @@ void Actor::f_Update() {
 			else
 				m_RunOrCrash(component, &Actor::m_OnUpdateComponent);
 		}
+
+		if (IsDestroyed())
+			break;
+
 		it++;
 	}
 };
