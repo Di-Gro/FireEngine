@@ -415,6 +415,14 @@ namespace EngineDll {
 #>			
 		}
 
+		public static class NavMesh {
+<#
+			FUNC("NavMesh", "GethPath", "void", "CppRef gameRef, ref size_t pointsPtr, ref int count, int pathSlot");
+			FUNC("NavMesh", "FindPath", "int", "CppRef gameRef, Vector3 pStartPos, Vector3 pEndPos, int nPathSlot, int nTarget");
+			FUNC("NavMesh", "RandomPoint", "Vector3", "CppRef gameRef");
+#>			
+		}
+
 		
 	}
 }

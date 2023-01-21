@@ -13,9 +13,12 @@
 #include "DirectXCollision.h"
 
 
+NavMesh::NavMesh() {
 
-NavMesh::NavMesh(Game* game) :game(game)
-{
+}
+
+void NavMesh::Init(Game* game) {
+    this->game = game;
 
     m_solid = NULL;
     m_chf = NULL;
@@ -31,12 +34,7 @@ NavMesh::NavMesh(Game* game) :game(game)
 
     RecastCleanup();
 
-
     m_scale = 20;
-
-
-
-
 
     mExtents[0] = 2 * m_scale;
     mExtents[1] = 4 * m_scale;
@@ -50,18 +48,15 @@ NavMesh::NavMesh(Game* game) :game(game)
     mFilter->setAreaCost(SAMPLE_POLYAREA_GROUND, 1.0f);       // TODO have a way of configuring the filter
     mFilter->setAreaCost(DT_TILECACHE_WALKABLE_AREA, 1.0f);
 
-
     // Init path store. MaxVertex 0 means empty path slot
     for (int i = 0; i < MAX_PATHS; i++) {
         m_PathStore[i].MaxVertex = 0;
         m_PathStore[i].Target = 0;
     }
 
-
     // Set configuration
     Configure();
 }
-
 
 
 void NavMesh::LoadStaticMeshes()
@@ -580,7 +575,7 @@ std::vector<Vector3>NavMesh::GetPath(int pathSlot)
     return result;
 }
 
-void NavMesh::GethPath(size_t* vertexes, int* count, int pathSlot) {
+void NavMesh::GetPath(size_t* vertexes, int* count, int pathSlot) {
     if (pathSlot < 0 || pathSlot >= MAX_PATHS || m_PathStore[pathSlot].MaxVertex <= 0)
         return;
     pathdata*path = &(m_PathStore[pathSlot]);
@@ -612,3 +607,14 @@ Vector3 NavMesh::getRandomNavMeshPoint() {
     return Vector3(resultPoint[0], resultPoint[1], resultPoint[2]);
 }
 
+DEF_FUNC(NavMesh, GethPath, void)(CppRef gameRef, size_t* vector, int* count, int pathSlot) {
+    CppRefs::ThrowPointer<Game>(gameRef)->navMesh()->GetPath(vector, count, pathSlot);
+}
+
+DEF_FUNC(NavMesh, FindPath, int)(CppRef gameRef, Vector3 pStartPos, Vector3 pEndPos, int nPathSlot, int nTarget) {
+    return CppRefs::ThrowPointer<Game>(gameRef)->navMesh()->FindPath(pStartPos, pEndPos, nPathSlot, nTarget);
+}
+
+DEF_FUNC(NavMesh, RandomPoint, Vector3)(CppRef gameRef) {
+    return CppRefs::ThrowPointer<Game>(gameRef)->navMesh()->getRandomNavMeshPoint();
+}
