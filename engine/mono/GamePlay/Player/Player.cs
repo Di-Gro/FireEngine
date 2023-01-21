@@ -26,6 +26,8 @@ public class Player : CSComponent, IPlayer {
 
     [Close] public Vector3 ViewDirection { get; set; } = Vector3.Zero;
 
+    [Close] public Character PlayerCharacter => m_character;
+
     private int m_health = 100;
 
     private Character m_character;

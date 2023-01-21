@@ -1,22 +1,24 @@
 .file0.assetId: {AssetId: fda5cc12-08fa-4ca8-b397-7635a490ceba}
-.file0.files: {Var: 81}
+.file0.files: {Var: 84}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: Scene_3}
-.file1.CameraPos.X: {Var: 141.4631}
-.file1.CameraPos.Y: {Var: 218.7814}
-.file1.CameraPos.Z: {Var: 153.1239}
-.file1.CameraRot.X: {Var: -0.3151565}
-.file1.CameraRot.Y: {Var: 0.2507121}
-.file1.CameraRot.Z: {Var: 0.08671293}
-.file1.CameraRot.W: {Var: 0.9112083}
+.file1.CameraPos.X: {Var: 95.15101}
+.file1.CameraPos.Y: {Var: 128.656}
+.file1.CameraPos.Z: {Var: 198.9096}
+.file1.CameraRot.X: {Var: -0.2364219}
+.file1.CameraRot.Y: {Var: 0.1003525}
+.file1.CameraRot.Z: {Var: 0.02455699}
+.file1.CameraRot.W: {Var: 0.9661424}
 .file1.CameraSpeed: {Var: 337}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file5}
 .file1.m_roots.2: {Ref: file7}
 .file1.m_roots.3: {Ref: file11}
 .file1.m_roots.4: {Ref: file38}
+.file1.m_roots.5: {Ref: file82}
+.file1.m_roots.6: {Ref: file84}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -285,7 +287,7 @@
 .file19.localRotationQ.X: {Var: 0.6743388}
 .file19.localRotationQ.Y: {Var: 0}
 .file19.localRotationQ.Z: {Var: 0}
-.file19.localRotationQ.W: {Var: 0.7384221}
+.file19.localRotationQ.W: {Var: 0.738422}
 .file19.localScale.X: {Var: 0.08161971}
 .file19.localScale.Y: {Var: 0.08740146}
 .file19.localScale.Z: {Var: 0.6349204}
@@ -304,7 +306,7 @@
 .file20.localRotationQ.X: {Var: -0.7015975}
 .file20.localRotationQ.Y: {Var: 0}
 .file20.localRotationQ.Z: {Var: 0}
-.file20.localRotationQ.W: {Var: 0.7125734}
+.file20.localRotationQ.W: {Var: 0.7125735}
 .file20.localScale.X: {Var: 1.004658}
 .file20.localScale.Y: {Var: 0.164838}
 .file20.localScale.Z: {Var: 8.092941}
@@ -380,7 +382,7 @@
 .file25.localPosition.X: {Var: 0}
 .file25.localPosition.Y: {Var: 4.382043}
 .file25.localPosition.Z: {Var: 0.4747841}
-.file25.localRotationQ.X: {Var: -0.7015998}
+.file25.localRotationQ.X: {Var: -0.7015997}
 .file25.localRotationQ.Y: {Var: 0}
 .file25.localRotationQ.Z: {Var: 0}
 .file25.localRotationQ.W: {Var: 0.7125713}
@@ -528,12 +530,12 @@
 .file38.localPosition.Y: {Var: 0}
 .file38.localPosition.Z: {Var: 17.92143}
 .file38.localRotationQ.X: {Var: 0}
-.file38.localRotationQ.Y: {Var: -0.2485537}
+.file38.localRotationQ.Y: {Var: -0.2485536}
 .file38.localRotationQ.Z: {Var: 0}
 .file38.localRotationQ.W: {Var: 0.9686181}
-.file38.localScale.X: {Var: 0.9999999}
+.file38.localScale.X: {Var: 0.9999998}
 .file38.localScale.Y: {Var: 1}
-.file38.localScale.Z: {Var: 0.9999999}
+.file38.localScale.Z: {Var: 0.9999998}
 .file38.m_flags: {Var: 0}
 .file38.m_children.0: {Ref: file39}
 .file38.m_children.1: {Ref: file43}
@@ -551,13 +553,13 @@
 .file39.prefabId: {Var: }
 .file39.Name: {Var: Ramp 1}
 .file39.ActiveSelf: {Var: True}
-.file39.localPosition.X: {Var: -15.88894}
+.file39.localPosition.X: {Var: -15.88893}
 .file39.localPosition.Y: {Var: -1.937582}
-.file39.localPosition.Z: {Var: 0}
+.file39.localPosition.Z: {Var: 3.814697E-06}
 .file39.localRotationQ.X: {Var: 0.2236852}
 .file39.localRotationQ.Y: {Var: 0.9746265}
-.file39.localRotationQ.Z: {Var: 0.001846654}
-.file39.localRotationQ.W: {Var: 0.008048486}
+.file39.localRotationQ.Z: {Var: 0.001846652}
+.file39.localRotationQ.W: {Var: 0.008048466}
 .file39.localScale.X: {Var: 71.9827}
 .file39.localScale.Y: {Var: 39.43256}
 .file39.localScale.Z: {Var: 48.11065}
@@ -808,7 +810,7 @@
 .file56.localRotationQ.X: {Var: 0.2286348}
 .file56.localRotationQ.Y: {Var: 0.666285}
 .file56.localRotationQ.Z: {Var: 0.230374}
-.file56.localRotationQ.W: {Var: 0.6713556}
+.file56.localRotationQ.W: {Var: 0.6713555}
 .file56.localScale.X: {Var: 42.73572}
 .file56.localScale.Y: {Var: 21.09282}
 .file56.localScale.Z: {Var: 6.524858}
@@ -984,7 +986,7 @@
 .file68.ActiveSelf: {Var: True}
 .file68.localPosition.X: {Var: -36.26964}
 .file68.localPosition.Y: {Var: 17.40636}
-.file68.localPosition.Z: {Var: -3.428078}
+.file68.localPosition.Z: {Var: -3.428074}
 .file68.localRotationQ.X: {Var: 0}
 .file68.localRotationQ.Y: {Var: 0}
 .file68.localRotationQ.Z: {Var: 0}
@@ -1002,7 +1004,7 @@
 .file69.Size.X: {Var: 1}
 .file69.Size.Y: {Var: 1}
 .file69.Size.Z: {Var: 1}
-.file69.DrawDebug: {Var: True}
+.file69.DrawDebug: {Var: False}
 
 .file70!script: {Var: Rigidbody}
 .file70!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
@@ -1027,12 +1029,12 @@
 .file71.ActiveSelf: {Var: True}
 .file71.localPosition.X: {Var: 25.89217}
 .file71.localPosition.Y: {Var: -1.382573}
-.file71.localPosition.Z: {Var: 1.118255}
+.file71.localPosition.Z: {Var: 1.118252}
 .file71.localRotationQ.X: {Var: 0}
-.file71.localRotationQ.Y: {Var: 0}
+.file71.localRotationQ.Y: {Var: -2.148954E-08}
 .file71.localRotationQ.Z: {Var: 0}
 .file71.localRotationQ.W: {Var: 1}
-.file71.localScale.X: {Var: 80.99999}
+.file71.localScale.X: {Var: 80.99998}
 .file71.localScale.Y: {Var: 10}
 .file71.localScale.Z: {Var: 49.07862}
 .file71.m_children: {Null: }
@@ -1082,7 +1084,7 @@
 .file75.ActiveSelf: {Var: True}
 .file75.localPosition.X: {Var: 25.89217}
 .file75.localPosition.Y: {Var: 22.85851}
-.file75.localPosition.Z: {Var: 1.118255}
+.file75.localPosition.Z: {Var: 1.118252}
 .file75.localRotationQ.X: {Var: 0}
 .file75.localRotationQ.Y: {Var: 0}
 .file75.localRotationQ.Z: {Var: 0}
@@ -1101,7 +1103,7 @@
 .file76.Size.X: {Var: 1}
 .file76.Size.Y: {Var: 1}
 .file76.Size.Z: {Var: 1}
-.file76.DrawDebug: {Var: True}
+.file76.DrawDebug: {Var: False}
 
 .file77!script: {Var: Rigidbody}
 .file77!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
@@ -1173,4 +1175,47 @@
 .file81.m_platform: {Ref: file73}
 .file81.m_attractionPoint: {Ref: file79}
 .file81.m_extractionPoint: {Ref: file80}
+
+.file82!script: {Var: Actor}
+.file82!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file82.prefabId: {Var: 0e0d9f05-c4a6-4183-a03d-78f40c6f2f1e}
+.file82.Name: {Var: TileMap}
+.file82.ActiveSelf: {Var: True}
+.file82.localPosition.X: {Var: 0}
+.file82.localPosition.Y: {Var: 0}
+.file82.localPosition.Z: {Var: 0}
+.file82.localRotationQ.X: {Var: 0}
+.file82.localRotationQ.Y: {Var: 0}
+.file82.localRotationQ.Z: {Var: 0}
+.file82.localRotationQ.W: {Var: 1}
+.file82.localScale.X: {Var: 1}
+.file82.localScale.Y: {Var: 1}
+.file82.localScale.Z: {Var: 1}
+.file82.m_children: {Null: }
+.file82.m_flags: {Var: 0}
+.file82.m_components.0: {Ref: file83}
+
+.file83!script: {Var: TileMap}
+.file83!scriptId: {AssetId: d1a15b62-0f3a-4466-a4ac-a98d0640e35e}
+.file83.m_playerPrefab.assetId: {AssetId: 788fc731-6ae7-45db-986f-c8d8fe0f3b79}
+.file83.m_playerStart: {Null: }
+
+.file84!script: {Var: Actor}
+.file84!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file84.prefabId: {Var: }
+.file84.Name: {Var: Player Start Point}
+.file84.ActiveSelf: {Var: True}
+.file84.localPosition.X: {Var: 0}
+.file84.localPosition.Y: {Var: 0}
+.file84.localPosition.Z: {Var: 0}
+.file84.localRotationQ.X: {Var: 0}
+.file84.localRotationQ.Y: {Var: 0}
+.file84.localRotationQ.Z: {Var: 0}
+.file84.localRotationQ.W: {Var: 1}
+.file84.localScale.X: {Var: 1}
+.file84.localScale.Y: {Var: 1}
+.file84.localScale.Z: {Var: 1}
+.file84.m_children: {Null: }
+.file84.m_flags: {Var: 0}
+.file84.m_components: {Null: }
 
