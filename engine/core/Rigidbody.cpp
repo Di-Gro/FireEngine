@@ -16,7 +16,7 @@
 using namespace JPH;
 
 
-DEF_COMPONENT(Rigidbody, Engine.Rigidbody, 8, RunMode::PlayOnly) {
+DEF_COMPONENT(Rigidbody, Engine.Rigidbody, 9, RunMode::PlayOnly) {
 	OFFSET(0, Rigidbody, mass);
 	OFFSET(1, Rigidbody, maxLinearVelocity);
 	OFFSET(2, Rigidbody, linearDamping);
@@ -25,6 +25,7 @@ DEF_COMPONENT(Rigidbody, Engine.Rigidbody, 8, RunMode::PlayOnly) {
 	OFFSET(5, Rigidbody, bounciness);
 	OFFSET(6, Rigidbody, mAllowSleeping);
 	OFFSET(7, Rigidbody, isSensor);
+	OFFSET(8, Rigidbody, keepLocal);
 }
 
 void Rigidbody::OnInit() {
@@ -137,6 +138,11 @@ void Rigidbody::BeforePhysicsUpdate() {
 void Rigidbody::OnFixedUpdate() {
 	if (m_body == nullptr || m_body->IsStatic() || !simulate())
 		return;
+
+	if (isSensor && m_body->IsKinematic() && keepLocal) {
+		m_onPhysicsUpdate = false;
+		return;
+	}
 
 	auto bodyInterface = scene()->physicsScene()->bodyInterface();
 	 

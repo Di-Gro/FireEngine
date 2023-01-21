@@ -37,6 +37,8 @@ public class Player : CSComponent, IPlayer {
 
     private Random rnd = new Random();
 
+    [Close] public Vector3 CharacterPosititon => m_character.actor.worldPosition;
+
     public override void OnInit() {
         if (m_hands == null || m_itemSlot == null)
             throw new NullFieldException(this);
@@ -74,6 +76,9 @@ public class Player : CSComponent, IPlayer {
         }
     }
     public void Pickup() {
+        if(!HasItemOnGround)
+            return;
+
         Item = ItemOnGrpund;
         ItemOnGrpund = null;
 
@@ -114,6 +119,10 @@ public class Player : CSComponent, IPlayer {
         m_health -= damage;
         if (m_health < 0)
             m_health = 0;
+    }
+
+    public void AddEnergy(int value) {
+        Console.WriteLine($"AddEnergy: {value}");
     }
 
     public void SetMovementVector(Vector3 direction, bool jump, bool run, float deltaTime) {
@@ -232,4 +241,9 @@ public class Player : CSComponent, IPlayer {
         m_body.localRotationQ = Quaternion.Lerp(m_body.localRotationQ, bodyRotation, 0.3f);
     }
     public override void OnCollisionExit(Actor otherActor) {}
+
+    private void m_ThowObjectAnimation() {
+        //m_pickupedSlot.GetChild(0).localRotation.Lerp((m_pickupedSlot.GetChild(0).localRotation.X, (m_pickupedSlot.GetChild(0).localRotation.Y + 90.0f), m_pickupedSlot.GetChild(0).localRotation.Z), 10);
+        m_itemSlot.GetChild(0).worldRotationQ.SetY(m_itemSlot.GetChild(0).worldRotationQ.Y + 90.0f);
+    }
 }
