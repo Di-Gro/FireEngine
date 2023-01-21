@@ -32,6 +32,7 @@ public class Player : CSComponent, IPlayer {
 
     private Vector3 m_handsPosition;
 
+    [Close] public Vector3 CharacterPosititon => m_character.actor.worldPosition;
 
     public override void OnInit() {
         if (m_hands == null || m_itemSlot == null)
@@ -196,4 +197,5 @@ public class Player : CSComponent, IPlayer {
         //m_pickupedSlot.GetChild(0).localRotation.Lerp((m_pickupedSlot.GetChild(0).localRotation.X, (m_pickupedSlot.GetChild(0).localRotation.Y + 90.0f), m_pickupedSlot.GetChild(0).localRotation.Z), 10);
         m_itemSlot.GetChild(0).worldRotationQ.SetY(m_itemSlot.GetChild(0).worldRotationQ.Y + 90.0f);
     }
+
 }
