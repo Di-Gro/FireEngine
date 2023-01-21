@@ -3,10 +3,11 @@ using System;
 [Flags]
 public enum Flag : ulong {
     Null = 0,
-    Player = 0b1,
-    Enemy = 0b10,
-    IsItem = 0b100,
-    EMPTY_1 = 0b1000,
-    IsRetarget = 0b10000,
-    IsDropTarget = 0b100000,
+    Player = 1 << 1,
+    Enemy = 1 << 2,
+    IsItem = 1 << 3,
+    EMPTY_1 = 1 << 4,
+    IsRetarget = 1 << 5,
+    IsDropTarget = 1 << 6,
+    NavMesh = 1 << 7,
 }
