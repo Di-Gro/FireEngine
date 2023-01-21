@@ -438,7 +438,12 @@
 
 .file30!script: {Var: Player}
 .file30!scriptId: {AssetId: 416a2b38-e34a-44fd-aa1e-429d30c44ba2}
+.file30.m_projectilePrefab: {Null: }
+.file30.projectileSpeed: {Var: 400}
 .file30.shootImpulse: {Var: 200}
+.file30.m_itemPrefab: {Null: }
+.file30.m_particlePrefab: {Null: }
+.file30.particleDropImpulse: {Var: 0}
 .file30.m_body: {Ref: file14}
 .file30.m_hands: {Ref: file15}
 .file30.m_itemSlot: {Ref: file26}
@@ -456,9 +461,9 @@
 .file32.localPosition.X: {Var: -281.2024}
 .file32.localPosition.Y: {Var: 0}
 .file32.localPosition.Z: {Var: 340.0753}
-.file32.localRotationQ.X: {Var: -4.980193E-07}
+.file32.localRotationQ.X: {Var: -4.980192E-07}
 .file32.localRotationQ.Y: {Var: 0.9256579}
-.file32.localRotationQ.Z: {Var: -4.980193E-07}
+.file32.localRotationQ.Z: {Var: -4.980192E-07}
 .file32.localRotationQ.W: {Var: 0.3783616}
 .file32.localScale.X: {Var: 1}
 .file32.localScale.Y: {Var: 1}
@@ -784,7 +789,12 @@
 
 .file54!script: {Var: Player}
 .file54!scriptId: {AssetId: 416a2b38-e34a-44fd-aa1e-429d30c44ba2}
+.file54.m_projectilePrefab: {Null: }
+.file54.projectileSpeed: {Var: 400}
 .file54.shootImpulse: {Var: 200}
+.file54.m_itemPrefab: {Null: }
+.file54.m_particlePrefab: {Null: }
+.file54.particleDropImpulse: {Var: 0}
 .file54.m_body: {Ref: file34}
 .file54.m_hands: {Ref: file35}
 .file54.m_itemSlot: {Ref: file46}
