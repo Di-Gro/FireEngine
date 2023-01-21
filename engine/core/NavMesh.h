@@ -7,6 +7,7 @@
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMeshQuery.h"
 #include "CSBridge.h"
+#include "SimpleMath.h"
 
 class dtNavMesh;
 class dtNavMeshQuery;
@@ -127,7 +128,7 @@ protected:
 	pathdata m_PathStore[MAX_PATHS];
 	float m_scale;
 private:
-	Vector3 vertex_buffer[MAX_VERT];
+	DirectX::SimpleMath::Vector3 vertex_buffer[MAX_VERT];
 	Game* game;
 	std::vector<float> StaticMeshesVert;
 	std::vector <int> StaticMeshesTris;

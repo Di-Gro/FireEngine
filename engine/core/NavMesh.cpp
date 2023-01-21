@@ -65,7 +65,7 @@ void NavMesh::LoadStaticMeshes()
     uint64_t vertsIndex = 0;
     uint64_t prevVerticiesCount = 0;
     uint64_t prevIndexCountTotal = 0;
-
+    auto flag = 1 << 7;
     auto scene = game->currentScene();
     for (auto actor_it = scene->GetNextRootActors(scene->BeginActor()); actor_it != scene->EndActor(); ++actor_it) {
         auto actor = *actor_it;
@@ -76,7 +76,8 @@ void NavMesh::LoadStaticMeshes()
             auto meshComppnent = dynamic_cast<MeshComponent*>(component);
             if (meshComppnent != nullptr) {
                 auto mesh = meshComppnent->mesh();
-                if (mesh == nullptr || mesh->topology != D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+                bool flag_chek = flag == (actor->flags & flag);
+                if (mesh == nullptr || mesh->topology != D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST || !flag_chek)
                     continue;
                 std::cout << actor->name() << std::endl;
                 auto world_matrix = Matrix::CreateScale(meshComppnent->meshScale) * meshComppnent->GetWorldMatrix();

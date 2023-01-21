@@ -3,7 +3,7 @@
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
-.file1.Name: {Var: !!!This scene can not be saved!!!}
+.file1.Name: {Var: AItest}
 .file1.CameraPos.X: {Var: 207.715}
 .file1.CameraPos.Y: {Var: 119.62}
 .file1.CameraPos.Z: {Var: -116.8995}
@@ -21,7 +21,7 @@
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
 .file2.prefabId: {Var: }
-.file2.Name: {Var: Enemy}
+.file2.Name: {Var: Plain}
 .file2.ActiveSelf: {Var: True}
 .file2.localPosition.X: {Var: 0}
 .file2.localPosition.Y: {Var: 25.8422}
@@ -52,6 +52,7 @@
 .file3.Friction: {Var: 0.2}
 .file3.Bounciness: {Var: 0.2}
 .file3.AllowSleeping: {Var: True}
+.file3.KeepLocal: {Var: False}
 .file3.Quality: {Var: Discrete}
 
 .file4!script: {Var: BoxCollider}
@@ -279,7 +280,7 @@
 .file18.localRotationQ.X: {Var: -0.7015975}
 .file18.localRotationQ.Y: {Var: 0}
 .file18.localRotationQ.Z: {Var: 0}
-.file18.localRotationQ.W: {Var: 0.7125735}
+.file18.localRotationQ.W: {Var: 0.7125734}
 .file18.localScale.X: {Var: 1.004658}
 .file18.localScale.Y: {Var: 0.164838}
 .file18.localScale.Z: {Var: 8.092941}
@@ -358,7 +359,7 @@
 .file23.localRotationQ.X: {Var: -0.7015998}
 .file23.localRotationQ.Y: {Var: 0}
 .file23.localRotationQ.Z: {Var: 0}
-.file23.localRotationQ.W: {Var: 0.7125713}
+.file23.localRotationQ.W: {Var: 0.7125712}
 .file23.localScale.X: {Var: 1.004992}
 .file23.localScale.Y: {Var: 0.1650002}
 .file23.localScale.Z: {Var: 8.093004}
@@ -628,7 +629,7 @@
 .file53.localRotationQ.X: {Var: -0.7015975}
 .file53.localRotationQ.Y: {Var: 0}
 .file53.localRotationQ.Z: {Var: 0}
-.file53.localRotationQ.W: {Var: 0.7125734}
+.file53.localRotationQ.W: {Var: 0.7125735}
 .file53.localScale.X: {Var: 1.004658}
 .file53.localScale.Y: {Var: 0.164838}
 .file53.localScale.Z: {Var: 8.092941}
