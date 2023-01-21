@@ -26,7 +26,11 @@ public class AIController : CSComponent {
         m_ai = actor.AddComponent<AIComponent>();
         if (m_player == null || m_target == null || m_ai == null)
             throw new NullFieldException(this);
+    }
+
+    public override void OnStart() {
         next_point = m_player.CharacterPosititon;
+
         id = count_ai;
         count_ai++;
         old_target_pos = m_target.CharacterPosititon;
