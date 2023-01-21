@@ -1046,6 +1046,19 @@ namespace EngineDll {
 			
 		}
 
+		public static class NavMesh {
+            [DllImport(Paths.Exe, EntryPoint = "NavMesh_GethPath")]
+		    public static extern void GethPath(CppRef gameRef, ref size_t pointsPtr, ref int count, int pathSlot);
+
+            [DllImport(Paths.Exe, EntryPoint = "NavMesh_FindPath")]
+		    public static extern int FindPath(CppRef gameRef, Vector3 pStartPos, Vector3 pEndPos, int nPathSlot, int nTarget);
+
+            [DllImport(Paths.Exe, EntryPoint = "NavMesh_RandomPoint")]
+		    public static extern Vector3 RandomPoint(CppRef gameRef);
+
+			
+		}
+
 		
 	}
 }

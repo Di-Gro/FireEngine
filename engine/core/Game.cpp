@@ -24,6 +24,7 @@
 #include "ImageAsset.h"
 #include "UI/UserInterface.h"
 #include "Actor.h"
+#include "NavMesh.h"
 
 #include "RenderTarget.h"
 #include "FPSCounter.h"
@@ -87,6 +88,8 @@ Game::Game() {
 	m_assets = new Assets();
 	m_assetStore = new AssetStore();
 	m_ui = new UserInterface();
+
+	m_NavMesh = new NavMesh();
 }
 
 Game::~Game() {
@@ -101,6 +104,8 @@ Game::~Game() {
 	delete m_assets;
 	delete m_assetStore;
 	delete m_ui;
+
+	delete m_NavMesh;
 }
 
 void Game::Init(MonoInst* imono) {
@@ -118,6 +123,7 @@ void Game::Init(MonoInst* imono) {
 	m_hotkeys->Init(this);
 	m_assets->Init(this);
 	m_assetStore->Init(this);
+	m_NavMesh->Init(this);
 
 	for (auto& path : game_shaderPaths)
 		m_shaderAsset->CompileShader(path);

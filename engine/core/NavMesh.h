@@ -6,6 +6,7 @@
 #include "DetourNavMesh.h"
 #include "DetourNavMeshBuilder.h"
 #include "DetourNavMeshQuery.h"
+#include "CSBridge.h"
 
 class dtNavMesh;
 class dtNavMeshQuery;
@@ -65,12 +66,16 @@ public:
 	bool SaveNavmesh();
 	bool NavMeshBuild();
 	DirectX::SimpleMath::Vector3 getRandomNavMeshPoint(); /// TODO C#
-	std::vector<DirectX::SimpleMath::Vector3> GetPath(int pathSlot);/// TODO C#
-	void GethPath(size_t* vector, int* count, int pathSlot);
-	int FindPath(DirectX::SimpleMath::Vector3 pStartPos, DirectX::SimpleMath::Vector3 pEndPos, int nPathSlot, int nTarget);/// TODO C#
-	int FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarget);/// TODO C#
+	std::vector<DirectX::SimpleMath::Vector3> GetPath(int pathSlot);
+	void GetPath(size_t* vector, int* count, int pathSlot);
+	int FindPath(DirectX::SimpleMath::Vector3 pStartPos, DirectX::SimpleMath::Vector3 pEndPos, int nPathSlot, int nTarget);
+	int FindPath(float* pStartPos, float* pEndPos, int nPathSlot, int nTarget);
 	int PointsCount(int nPathSlot);
-	NavMesh(Game* game);
+
+	NavMesh();
+
+	void Init(Game* game);
+
 	void DebugDrawPolyMesh();
 protected:
 
@@ -131,3 +136,7 @@ private:
 	float	           rc_bmin[3];
 	float	           rc_bmax[3];
 };
+
+FUNC(NavMesh, GethPath, void)(CppRef gameRef, size_t* vector, int* count, int pathSlot);
+FUNC(NavMesh, FindPath, int)(CppRef gameRef, DirectX::SimpleMath::Vector3 pStartPos, DirectX::SimpleMath::Vector3 pEndPos, int nPathSlot, int nTarget);
+FUNC(NavMesh, RandomPoint, DirectX::SimpleMath::Vector3)(CppRef gameRef);

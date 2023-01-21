@@ -31,6 +31,7 @@ class AssetStore;
 class Material;
 class SceneWindow;
 class Physics;
+class NavMesh;
 
 extern std::vector<std::string> game_shaderPaths;
 
@@ -58,6 +59,8 @@ private:
 	ImageAsset* m_imageAsset;
 	Assets* m_assets;
 	AssetStore* m_assetStore;
+
+	NavMesh* m_NavMesh;
 
 	UserInterface* m_ui;
 
@@ -110,6 +113,8 @@ public:
 	inline ShaderAsset* shaderAsset() { return m_shaderAsset; }
 	inline MeshAsset* meshAsset() { return m_meshAsset; }
 	ImageAsset* imageAsset() { return m_imageAsset; }
+
+	inline NavMesh* navMesh() { return m_NavMesh; };
 
 	//inline bool isEditor() { return m_isEditor; }
 
