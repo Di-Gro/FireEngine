@@ -23,9 +23,10 @@ public class Item : CSComponent {
     [Open] private Actor m_trigger;
 
     private Projectile m_projectile;
-    
-    public bool InHands { get; private set; } = false;
 
+    [Close] public bool m_simulateOnStart = true;
+    public bool InHands { get; private set; } = false;
+    public bool OnFly { get => m_projectile.OnFly; }
 
     public override void OnInit() {
         m_projectile = actor.GetComponent<Projectile>();
@@ -39,13 +40,14 @@ public class Item : CSComponent {
         actor.Flags |= Flag.IsItem;
 
         m_trigger.ActiveSelf = false;
+
+        m_projectile.SleepEvent += m_OnProjectileSleep;
+        m_projectile.AwakeEvent += m_OnProjectileAwake;
     }
 
     public override void OnStart() {
-        m_projectile.SleepEvent += m_OnProjectileSleep;
-        m_projectile.AwakeEvent += m_OnProjectileAwake;
-
-        Simulate(true);
+        if (m_simulateOnStart)
+            Simulate(true);
     }
 
     public void Simulate(bool value) {

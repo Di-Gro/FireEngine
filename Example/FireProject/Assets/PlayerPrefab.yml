@@ -254,7 +254,7 @@
 .file15.localRotationQ.X: {Var: -0.7015997}
 .file15.localRotationQ.Y: {Var: 0}
 .file15.localRotationQ.Z: {Var: 0}
-.file15.localRotationQ.W: {Var: 0.7125712}
+.file15.localRotationQ.W: {Var: 0.7125713}
 .file15.localScale.X: {Var: 1.005}
 .file15.localScale.Y: {Var: 0.165}
 .file15.localScale.Z: {Var: 8.093004}
@@ -381,6 +381,9 @@
 .file26!script: {Var: Player}
 .file26!scriptId: {AssetId: 416a2b38-e34a-44fd-aa1e-429d30c44ba2}
 .file26.shootImpulse: {Var: 200}
+.file26.m_itemPrefab.assetId: {AssetId: 303a34fe-9030-4426-ab8f-523af7a3f8db}
+.file26.m_particlePrefab.assetId: {AssetId: cbfbfa1c-35b6-4247-a055-8fa2ce7813c0}
+.file26.extractionImpulse: {Var: 50}
 .file26.m_body: {Ref: file6}
 .file26.m_hands: {Ref: file7}
 .file26.m_itemSlot: {Ref: file18}
