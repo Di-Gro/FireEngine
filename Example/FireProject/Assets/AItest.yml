@@ -319,7 +319,7 @@
 .file146.localRotationQ.X: {Var: 0.6743388}
 .file146.localRotationQ.Y: {Var: 0}
 .file146.localRotationQ.Z: {Var: 0}
-.file146.localRotationQ.W: {Var: 0.7384221}
+.file146.localRotationQ.W: {Var: 0.738422}
 .file146.localScale.X: {Var: 0.08161971}
 .file146.localScale.Y: {Var: 0.08740146}
 .file146.localScale.Z: {Var: 0.6349204}
@@ -338,7 +338,7 @@
 .file147.localRotationQ.X: {Var: -0.7015975}
 .file147.localRotationQ.Y: {Var: 0}
 .file147.localRotationQ.Z: {Var: 0}
-.file147.localRotationQ.W: {Var: 0.7125734}
+.file147.localRotationQ.W: {Var: 0.7125735}
 .file147.localScale.X: {Var: 1.004658}
 .file147.localScale.Y: {Var: 0.164838}
 .file147.localScale.Z: {Var: 8.092941}
@@ -414,7 +414,7 @@
 .file152.localPosition.X: {Var: 0}
 .file152.localPosition.Y: {Var: 4.382043}
 .file152.localPosition.Z: {Var: 0.4747841}
-.file152.localRotationQ.X: {Var: -0.7015998}
+.file152.localRotationQ.X: {Var: -0.7015997}
 .file152.localRotationQ.Y: {Var: 0}
 .file152.localRotationQ.Z: {Var: 0}
 .file152.localRotationQ.W: {Var: 0.7125712}
@@ -650,7 +650,7 @@
 .file169.localRotationQ.X: {Var: 0.6743388}
 .file169.localRotationQ.Y: {Var: 0}
 .file169.localRotationQ.Z: {Var: 0}
-.file169.localRotationQ.W: {Var: 0.7384221}
+.file169.localRotationQ.W: {Var: 0.738422}
 .file169.localScale.X: {Var: 0.08161971}
 .file169.localScale.Y: {Var: 0.08740146}
 .file169.localScale.Z: {Var: 0.6349204}
@@ -669,7 +669,7 @@
 .file170.localRotationQ.X: {Var: -0.7015975}
 .file170.localRotationQ.Y: {Var: 0}
 .file170.localRotationQ.Z: {Var: 0}
-.file170.localRotationQ.W: {Var: 0.7125734}
+.file170.localRotationQ.W: {Var: 0.7125735}
 .file170.localScale.X: {Var: 1.004658}
 .file170.localScale.Y: {Var: 0.164838}
 .file170.localScale.Z: {Var: 8.092941}
@@ -745,7 +745,7 @@
 .file175.localPosition.X: {Var: 0}
 .file175.localPosition.Y: {Var: 4.382043}
 .file175.localPosition.Z: {Var: 0.4747841}
-.file175.localRotationQ.X: {Var: -0.7015998}
+.file175.localRotationQ.X: {Var: -0.7015997}
 .file175.localRotationQ.Y: {Var: 0}
 .file175.localRotationQ.Z: {Var: 0}
 .file175.localRotationQ.W: {Var: 0.7125712}
@@ -1030,7 +1030,7 @@
 .file196.localRotationQ.X: {Var: 0.6743388}
 .file196.localRotationQ.Y: {Var: 0}
 .file196.localRotationQ.Z: {Var: 0}
-.file196.localRotationQ.W: {Var: 0.738422}
+.file196.localRotationQ.W: {Var: 0.7384221}
 .file196.localScale.X: {Var: 0.08161971}
 .file196.localScale.Y: {Var: 0.08740146}
 .file196.localScale.Z: {Var: 0.6349204}
@@ -1049,7 +1049,7 @@
 .file197.localRotationQ.X: {Var: -0.7015975}
 .file197.localRotationQ.Y: {Var: 0}
 .file197.localRotationQ.Z: {Var: 0}
-.file197.localRotationQ.W: {Var: 0.7125735}
+.file197.localRotationQ.W: {Var: 0.7125734}
 .file197.localScale.X: {Var: 1.004658}
 .file197.localScale.Y: {Var: 0.164838}
 .file197.localScale.Z: {Var: 8.092941}
@@ -1128,7 +1128,7 @@
 .file202.localRotationQ.X: {Var: -0.7015997}
 .file202.localRotationQ.Y: {Var: 0}
 .file202.localRotationQ.Z: {Var: 0}
-.file202.localRotationQ.W: {Var: 0.7125712}
+.file202.localRotationQ.W: {Var: 0.7125713}
 .file202.localScale.X: {Var: 1.005}
 .file202.localScale.Y: {Var: 0.165}
 .file202.localScale.Z: {Var: 8.093004}
