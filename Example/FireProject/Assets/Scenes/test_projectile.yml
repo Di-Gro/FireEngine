@@ -1,16 +1,16 @@
 .file0.assetId: {AssetId: f8c4dcf5-7c90-4a78-ac76-fff94be2d6bc}
-.file0.files: {Var: 563}
+.file0.files: {Var: 687}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: test_projectile}
-.file1.CameraPos.X: {Var: 308.7237}
-.file1.CameraPos.Y: {Var: 193.6504}
-.file1.CameraPos.Z: {Var: -157.4213}
-.file1.CameraRot.X: {Var: -0.04774044}
-.file1.CameraRot.Y: {Var: 0.9405119}
-.file1.CameraRot.Z: {Var: 0.3016701}
-.file1.CameraRot.W: {Var: 0.1488396}
+.file1.CameraPos.X: {Var: 399.7651}
+.file1.CameraPos.Y: {Var: 317.5396}
+.file1.CameraPos.Z: {Var: -86.53005}
+.file1.CameraRot.X: {Var: -0.04204042}
+.file1.CameraRot.Y: {Var: 0.9368309}
+.file1.CameraRot.Z: {Var: 0.3254817}
+.file1.CameraRot.W: {Var: 0.1210045}
 .file1.CameraSpeed: {Var: 502}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file211}
@@ -22,6 +22,7 @@
 .file1.m_roots.7: {Ref: file543}
 .file1.m_roots.8: {Ref: file553}
 .file1.m_roots.9: {Ref: file563}
+.file1.m_roots.10: {Ref: file642}
 
 .file2!script: {Var: Actor}
 .file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -91,6 +92,7 @@
 .file8.Friction: {Var: 0.2}
 .file8.Bounciness: {Var: 0.2}
 .file8.AllowSleeping: {Var: True}
+.file8.KeepLocal: {Var: False}
 .file8.Quality: {Var: Discrete}
 
 .file9!script: {Var: MeshComponent}
@@ -120,9 +122,9 @@
 .file139.localPosition.Y: {Var: 108.732}
 .file139.localPosition.Z: {Var: 527.7794}
 .file139.localRotationQ.X: {Var: 0.5000007}
-.file139.localRotationQ.Y: {Var: 0.4999965}
-.file139.localRotationQ.Z: {Var: 0.5000004}
-.file139.localRotationQ.W: {Var: 0.5000023}
+.file139.localRotationQ.Y: {Var: 0.4999964}
+.file139.localRotationQ.Z: {Var: 0.5000002}
+.file139.localRotationQ.W: {Var: 0.5000026}
 .file139.localScale.X: {Var: 210.9663}
 .file139.localScale.Y: {Var: 5}
 .file139.localScale.Z: {Var: 1083.376}
@@ -145,6 +147,7 @@
 .file140.Friction: {Var: 0.2}
 .file140.Bounciness: {Var: 0.2}
 .file140.AllowSleeping: {Var: True}
+.file140.KeepLocal: {Var: False}
 .file140.Quality: {Var: Discrete}
 
 .file141!script: {Var: MeshComponent}
@@ -199,6 +202,7 @@
 .file144.Friction: {Var: 0.2}
 .file144.Bounciness: {Var: 0.2}
 .file144.AllowSleeping: {Var: True}
+.file144.KeepLocal: {Var: False}
 .file144.Quality: {Var: Discrete}
 
 .file145!script: {Var: MeshComponent}
@@ -253,6 +257,7 @@
 .file200.Friction: {Var: 0.2}
 .file200.Bounciness: {Var: 0.2}
 .file200.AllowSleeping: {Var: True}
+.file200.KeepLocal: {Var: False}
 .file200.Quality: {Var: Discrete}
 
 .file201!script: {Var: MeshComponent}
@@ -284,7 +289,7 @@
 .file207.localRotationQ.X: {Var: 0.5000007}
 .file207.localRotationQ.Y: {Var: 0.4999965}
 .file207.localRotationQ.Z: {Var: 0.5000004}
-.file207.localRotationQ.W: {Var: 0.5000023}
+.file207.localRotationQ.W: {Var: 0.5000024}
 .file207.localScale.X: {Var: 210.9663}
 .file207.localScale.Y: {Var: 4.999999}
 .file207.localScale.Z: {Var: 1095.775}
@@ -307,6 +312,7 @@
 .file208.Friction: {Var: 0.2}
 .file208.Bounciness: {Var: 0.2}
 .file208.AllowSleeping: {Var: True}
+.file208.KeepLocal: {Var: False}
 .file208.Quality: {Var: Discrete}
 
 .file209!script: {Var: MeshComponent}
@@ -365,11 +371,11 @@
 .file241.localScale.X: {Var: 0.9999989}
 .file241.localScale.Y: {Var: 1}
 .file241.localScale.Z: {Var: 0.9999989}
-.file241.m_flags: {Var: 0}
-.file241.m_children.0: {Ref: file455}
-.file241.m_children.1: {Ref: file458}
-.file241.m_components.0: {Ref: file475}
-.file241.m_components.1: {Ref: file476}
+.file241.m_flags: {Var: 1}
+.file241.m_children.0: {Ref: file616}
+.file241.m_children.1: {Ref: file619}
+.file241.m_components.0: {Ref: file640}
+.file241.m_components.1: {Ref: file641}
 
 .file368!script: {Var: Actor}
 .file368!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -393,329 +399,6 @@
 .file368.m_components.2: {Ref: file513}
 .file368.m_components.3: {Ref: file514}
 .file368.m_components.4: {Ref: file515}
-
-.file455!script: {Var: Actor}
-.file455!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file455.prefabId: {Var: }
-.file455.Name: {Var: Camera}
-.file455.ActiveSelf: {Var: True}
-.file455.localPosition.X: {Var: 3.051758E-05}
-.file455.localPosition.Y: {Var: 0}
-.file455.localPosition.Z: {Var: 3.814697E-06}
-.file455.localRotationQ.X: {Var: 0}
-.file455.localRotationQ.Y: {Var: 0}
-.file455.localRotationQ.Z: {Var: 0}
-.file455.localRotationQ.W: {Var: 1}
-.file455.localScale.X: {Var: 0.9999995}
-.file455.localScale.Y: {Var: 0.9999995}
-.file455.localScale.Z: {Var: 0.9999995}
-.file455.m_children: {Null: }
-.file455.m_flags: {Var: 0}
-.file455.m_components.0: {Ref: file456}
-.file455.m_components.1: {Ref: file457}
-
-.file456!script: {Var: PlayerCamera}
-.file456!scriptId: {AssetId: a49b6d24-fe71-4965-a421-36645951c2c3}
-.file456.rotationSense: {Var: 0.2}
-.file456.scrollSense: {Var: 1}
-.file456.distance: {Var: 100}
-.file456.m_angles.X: {Var: 0}
-.file456.m_angles.Y: {Var: 0}
-.file456.m_angles.Z: {Var: 0}
-.file456.m_camera: {Ref: file457}
-.file456.m_cameraTarget: {Ref: file458}
-
-.file457!script: {Var: CameraComponent}
-.file457!scriptId: {AssetId: e7ebcd63-c96c-4cc1-b7c5-e755696c98b1}
-.file457.IsPlayerCamera: {Var: True}
-.file457.OrthoWidth: {Var: 600}
-.file457.OrthoHeight: {Var: 600}
-.file457.OrthoNearPlane: {Var: 50}
-.file457.OrthoFarPlane: {Var: 1000}
-.file457.NearPlane: {Var: 0.1}
-.file457.FarPlane: {Var: 10000}
-.file457.DrawDebug: {Var: True}
-.file457.Orthographic: {Var: False}
-
-.file458!script: {Var: Actor}
-.file458!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file458.prefabId: {Var: 3d81536a-970e-418c-9e41-6d70794f7753}
-.file458.Name: {Var: Character}
-.file458.ActiveSelf: {Var: True}
-.file458.localPosition.X: {Var: 0}
-.file458.localPosition.Y: {Var: 24}
-.file458.localPosition.Z: {Var: 0}
-.file458.localRotationQ.X: {Var: 0}
-.file458.localRotationQ.Y: {Var: 0}
-.file458.localRotationQ.Z: {Var: 0}
-.file458.localRotationQ.W: {Var: 1}
-.file458.localScale.X: {Var: 30}
-.file458.localScale.Y: {Var: 30}
-.file458.localScale.Z: {Var: 30}
-.file458.m_flags: {Var: 1}
-.file458.m_children.0: {Ref: file459}
-.file458.m_components.0: {Ref: file473}
-.file458.m_components.1: {Ref: file474}
-
-.file459!script: {Var: Actor}
-.file459!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file459.prefabId: {Var: }
-.file459.Name: {Var: Body}
-.file459.ActiveSelf: {Var: True}
-.file459.localPosition.X: {Var: 0}
-.file459.localPosition.Y: {Var: -1.430511E-06}
-.file459.localPosition.Z: {Var: 0}
-.file459.localRotationQ.X: {Var: 0}
-.file459.localRotationQ.Y: {Var: 0}
-.file459.localRotationQ.Z: {Var: 0}
-.file459.localRotationQ.W: {Var: 1}
-.file459.localScale.X: {Var: 0.9999356}
-.file459.localScale.Y: {Var: 0.9999871}
-.file459.localScale.Z: {Var: 0.9999356}
-.file459.m_flags: {Var: 0}
-.file459.m_children.0: {Ref: file460}
-.file459.m_components.0: {Ref: file472}
-
-.file460!script: {Var: Actor}
-.file460!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file460.prefabId: {Var: }
-.file460.Name: {Var: Hands}
-.file460.ActiveSelf: {Var: True}
-.file460.localPosition.X: {Var: 0}
-.file460.localPosition.Y: {Var: 9.536743E-07}
-.file460.localPosition.Z: {Var: 0}
-.file460.localRotationQ.X: {Var: 0}
-.file460.localRotationQ.Y: {Var: 0}
-.file460.localRotationQ.Z: {Var: 0}
-.file460.localRotationQ.W: {Var: 1}
-.file460.localScale.X: {Var: 0.9999794}
-.file460.localScale.Y: {Var: 0.9999772}
-.file460.localScale.Z: {Var: 0.999958}
-.file460.m_flags: {Var: 0}
-.file460.m_components: {Null: }
-.file460.m_children.0: {Ref: file461}
-.file460.m_children.1: {Ref: file466}
-.file460.m_children.2: {Ref: file471}
-
-.file461!script: {Var: Actor}
-.file461!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file461.prefabId: {Var: }
-.file461.Name: {Var: Left}
-.file461.ActiveSelf: {Var: True}
-.file461.localPosition.X: {Var: 0}
-.file461.localPosition.Y: {Var: -9.477139E-06}
-.file461.localPosition.Z: {Var: 0}
-.file461.localRotationQ.X: {Var: 0}
-.file461.localRotationQ.Y: {Var: 0}
-.file461.localRotationQ.Z: {Var: 0}
-.file461.localRotationQ.W: {Var: 1}
-.file461.localScale.X: {Var: 1}
-.file461.localScale.Y: {Var: 0.99999}
-.file461.localScale.Z: {Var: 0.99999}
-.file461.m_flags: {Var: 0}
-.file461.m_components: {Null: }
-.file461.m_children.0: {Ref: file462}
-
-.file462!script: {Var: Actor}
-.file462!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file462.prefabId: {Var: }
-.file462.Name: {Var: Mesh}
-.file462.ActiveSelf: {Var: True}
-.file462.localPosition.X: {Var: -0.4595569}
-.file462.localPosition.Y: {Var: 0.04323471}
-.file462.localPosition.Z: {Var: 0.02955513}
-.file462.localRotationQ.X: {Var: 0.6743388}
-.file462.localRotationQ.Y: {Var: 0}
-.file462.localRotationQ.Z: {Var: 0}
-.file462.localRotationQ.W: {Var: 0.738422}
-.file462.localScale.X: {Var: 0.08161971}
-.file462.localScale.Y: {Var: 0.08740146}
-.file462.localScale.Z: {Var: 0.6349204}
-.file462.m_flags: {Var: 0}
-.file462.m_children.0: {Ref: file463}
-.file462.m_components.0: {Ref: file465}
-
-.file463!script: {Var: Actor}
-.file463!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file463.prefabId: {Var: }
-.file463.Name: {Var: Mesh2}
-.file463.ActiveSelf: {Var: True}
-.file463.localPosition.X: {Var: 0.01137161}
-.file463.localPosition.Y: {Var: 4.368442}
-.file463.localPosition.Z: {Var: 0.4780835}
-.file463.localRotationQ.X: {Var: -0.7015975}
-.file463.localRotationQ.Y: {Var: 0}
-.file463.localRotationQ.Z: {Var: 0}
-.file463.localRotationQ.W: {Var: 0.7125735}
-.file463.localScale.X: {Var: 1.004658}
-.file463.localScale.Y: {Var: 0.164838}
-.file463.localScale.Z: {Var: 8.092941}
-.file463.m_children: {Null: }
-.file463.m_flags: {Var: 0}
-.file463.m_components.0: {Ref: file464}
-
-.file464!script: {Var: MeshComponent}
-.file464!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file464.MeshScale.X: {Var: 1}
-.file464.MeshScale.Y: {Var: 1}
-.file464.MeshScale.Z: {Var: 1}
-.file464.IsDebug: {Var: False}
-.file464.CastShadow: {Var: True}
-.file464.IsVisible: {Var: True}
-.file464.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file464.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file465!script: {Var: MeshComponent}
-.file465!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file465.MeshScale.X: {Var: 1}
-.file465.MeshScale.Y: {Var: 1}
-.file465.MeshScale.Z: {Var: 1}
-.file465.IsDebug: {Var: False}
-.file465.CastShadow: {Var: True}
-.file465.IsVisible: {Var: True}
-.file465.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file465.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file466!script: {Var: Actor}
-.file466!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file466.prefabId: {Var: }
-.file466.Name: {Var: Right}
-.file466.ActiveSelf: {Var: True}
-.file466.localPosition.X: {Var: 0}
-.file466.localPosition.Y: {Var: -8.159876E-05}
-.file466.localPosition.Z: {Var: 0}
-.file466.localRotationQ.X: {Var: 0}
-.file466.localRotationQ.Y: {Var: 0}
-.file466.localRotationQ.Z: {Var: 0}
-.file466.localRotationQ.W: {Var: 1}
-.file466.localScale.X: {Var: 1}
-.file466.localScale.Y: {Var: 0.9999135}
-.file466.localScale.Z: {Var: 0.9999135}
-.file466.m_flags: {Var: 0}
-.file466.m_components: {Null: }
-.file466.m_children.0: {Ref: file467}
-
-.file467!script: {Var: Actor}
-.file467!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file467.prefabId: {Var: }
-.file467.Name: {Var: Mesh}
-.file467.ActiveSelf: {Var: True}
-.file467.localPosition.X: {Var: 0.4754995}
-.file467.localPosition.Y: {Var: 0.04300719}
-.file467.localPosition.Z: {Var: 0.03}
-.file467.localRotationQ.X: {Var: 0.6743409}
-.file467.localRotationQ.Y: {Var: 0}
-.file467.localRotationQ.Z: {Var: 0}
-.file467.localRotationQ.W: {Var: 0.7384202}
-.file467.localScale.X: {Var: 0.08199988}
-.file467.localScale.Y: {Var: 0.08699995}
-.file467.localScale.Z: {Var: 0.6349998}
-.file467.m_flags: {Var: 0}
-.file467.m_children.0: {Ref: file468}
-.file467.m_components.0: {Ref: file470}
-
-.file468!script: {Var: Actor}
-.file468!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file468.prefabId: {Var: }
-.file468.Name: {Var: Mesh2}
-.file468.ActiveSelf: {Var: True}
-.file468.localPosition.X: {Var: 0}
-.file468.localPosition.Y: {Var: 4.382043}
-.file468.localPosition.Z: {Var: 0.4747841}
-.file468.localRotationQ.X: {Var: -0.7015997}
-.file468.localRotationQ.Y: {Var: 0}
-.file468.localRotationQ.Z: {Var: 0}
-.file468.localRotationQ.W: {Var: 0.7125713}
-.file468.localScale.X: {Var: 1.005}
-.file468.localScale.Y: {Var: 0.165}
-.file468.localScale.Z: {Var: 8.093004}
-.file468.m_children: {Null: }
-.file468.m_flags: {Var: 0}
-.file468.m_components.0: {Ref: file469}
-
-.file469!script: {Var: MeshComponent}
-.file469!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file469.MeshScale.X: {Var: 1}
-.file469.MeshScale.Y: {Var: 1}
-.file469.MeshScale.Z: {Var: 1}
-.file469.IsDebug: {Var: False}
-.file469.CastShadow: {Var: True}
-.file469.IsVisible: {Var: True}
-.file469.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file469.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file470!script: {Var: MeshComponent}
-.file470!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file470.MeshScale.X: {Var: 1}
-.file470.MeshScale.Y: {Var: 1}
-.file470.MeshScale.Z: {Var: 1}
-.file470.IsDebug: {Var: False}
-.file470.CastShadow: {Var: True}
-.file470.IsVisible: {Var: True}
-.file470.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
-.file470.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file471!script: {Var: Actor}
-.file471!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
-.file471.prefabId: {Var: }
-.file471.Name: {Var: Item Slot}
-.file471.ActiveSelf: {Var: True}
-.file471.localPosition.X: {Var: 0}
-.file471.localPosition.Y: {Var: 0.2135334}
-.file471.localPosition.Z: {Var: 0.8979663}
-.file471.localRotationQ.X: {Var: 0}
-.file471.localRotationQ.Y: {Var: 0}
-.file471.localRotationQ.Z: {Var: 0}
-.file471.localRotationQ.W: {Var: 1}
-.file471.localScale.X: {Var: 1}
-.file471.localScale.Y: {Var: 1}
-.file471.localScale.Z: {Var: 1}
-.file471.m_children: {Null: }
-.file471.m_flags: {Var: 0}
-.file471.m_components: {Null: }
-
-.file472!script: {Var: MeshComponent}
-.file472!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
-.file472.MeshScale.X: {Var: 1}
-.file472.MeshScale.Y: {Var: 1}
-.file472.MeshScale.Z: {Var: 1}
-.file472.IsDebug: {Var: False}
-.file472.CastShadow: {Var: True}
-.file472.IsVisible: {Var: True}
-.file472.m_mesh.assetId: {AssetId: fcebda45-6fae-4d9e-86e2-0e3ac87b879f}
-.file472.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
-
-.file473!script: {Var: Character}
-.file473!scriptId: {AssetId: 481ac014-eb4a-4a25-8ef8-c40db6efbb02}
-.file473.simulate: {Var: True}
-.file473.MaxSlopeAngle: {Var: 45}
-.file473.Mass: {Var: 1}
-.file473.gravity: {Var: 1}
-.file473.WalkSpeed: {Var: 100}
-.file473.RunSpeed: {Var: 200}
-.file473.JumpSpeed: {Var: 100}
-.file473.Friction: {Var: 0.2}
-
-.file474!script: {Var: CapsuleCollider}
-.file474!scriptId: {AssetId: 6124c3d2-97b5-4b8f-882e-7be50df9016b}
-.file474.Radius: {Var: 0.5}
-.file474.Height: {Var: 0.5}
-.file474.DrawDebug: {Var: True}
-
-.file475!script: {Var: Player}
-.file475!scriptId: {AssetId: 416a2b38-e34a-44fd-aa1e-429d30c44ba2}
-.file475.shootImpulse: {Var: 200}
-.file475.ItemOnGrpund: {Null: }
-.file475.m_camera: {Ref: file456}
-.file475.m_movement: {Ref: file476}
-.file475.m_body: {Ref: file459}
-.file475.m_hands: {Ref: file460}
-.file475.m_itemSlot: {Ref: file471}
-
-.file476!script: {Var: PlayerController}
-.file476!scriptId: {AssetId: 1cd3c575-0b05-4a62-b0dd-3b326c3f7608}
-.file476.m_character: {Ref: file473}
-.file476.m_playerCamera: {Ref: file456}
 
 .file477!script: {Var: Actor}
 .file477!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -820,6 +503,7 @@
 .file508.Friction: {Var: 0.2}
 .file508.Bounciness: {Var: 0.2}
 .file508.AllowSleeping: {Var: False}
+.file508.KeepLocal: {Var: False}
 .file508.Quality: {Var: Discrete}
 
 .file509!script: {Var: SphereCollider}
@@ -833,11 +517,13 @@
 
 .file511!script: {Var: Item}
 .file511!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file511.type: {Var: Trash}
 .file511.throwSpeed: {Var: 300}
 .file511.throwDistance: {Var: 150}
 .file511.dropSpeed: {Var: 50}
 .file511.dropDistance: {Var: 0}
 .file511.canThrow: {Var: True}
+.file511.canPickup: {Var: True}
 .file511.m_trigger: {Ref: file507}
 
 .file512!script: {Var: Rigidbody}
@@ -853,6 +539,7 @@
 .file512.Friction: {Var: 1}
 .file512.Bounciness: {Var: 0}
 .file512.AllowSleeping: {Var: False}
+.file512.KeepLocal: {Var: False}
 .file512.Quality: {Var: LinearCast}
 
 .file513!script: {Var: MeshComponent}
@@ -881,6 +568,7 @@
 .file515.sleepVelosity: {Var: 5}
 .file515.notSleepTime: {Var: 1}
 .file515.canAwake: {Var: True}
+.file515.ignorePlayer: {Var: True}
 
 .file516!script: {Var: Actor}
 .file516!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -916,6 +604,7 @@
 .file517.Friction: {Var: 0.2}
 .file517.Bounciness: {Var: 0.2}
 .file517.AllowSleeping: {Var: False}
+.file517.KeepLocal: {Var: False}
 .file517.Quality: {Var: Discrete}
 
 .file518!script: {Var: SphereCollider}
@@ -929,11 +618,13 @@
 
 .file520!script: {Var: Item}
 .file520!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file520.type: {Var: Trash}
 .file520.throwSpeed: {Var: 300}
 .file520.throwDistance: {Var: 150}
 .file520.dropSpeed: {Var: 50}
 .file520.dropDistance: {Var: 0}
 .file520.canThrow: {Var: True}
+.file520.canPickup: {Var: True}
 .file520.m_trigger: {Ref: file516}
 
 .file521!script: {Var: Rigidbody}
@@ -949,6 +640,7 @@
 .file521.Friction: {Var: 1}
 .file521.Bounciness: {Var: 0}
 .file521.AllowSleeping: {Var: False}
+.file521.KeepLocal: {Var: False}
 .file521.Quality: {Var: LinearCast}
 
 .file522!script: {Var: MeshComponent}
@@ -977,6 +669,7 @@
 .file524.sleepVelosity: {Var: 5}
 .file524.notSleepTime: {Var: 1}
 .file524.canAwake: {Var: True}
+.file524.ignorePlayer: {Var: True}
 
 .file525!script: {Var: Actor}
 .file525!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -1012,6 +705,7 @@
 .file526.Friction: {Var: 0.2}
 .file526.Bounciness: {Var: 0.2}
 .file526.AllowSleeping: {Var: False}
+.file526.KeepLocal: {Var: False}
 .file526.Quality: {Var: Discrete}
 
 .file527!script: {Var: SphereCollider}
@@ -1025,11 +719,13 @@
 
 .file529!script: {Var: Item}
 .file529!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file529.type: {Var: Trash}
 .file529.throwSpeed: {Var: 300}
 .file529.throwDistance: {Var: 150}
 .file529.dropSpeed: {Var: 50}
 .file529.dropDistance: {Var: 0}
 .file529.canThrow: {Var: True}
+.file529.canPickup: {Var: True}
 .file529.m_trigger: {Ref: file525}
 
 .file530!script: {Var: Rigidbody}
@@ -1045,6 +741,7 @@
 .file530.Friction: {Var: 1}
 .file530.Bounciness: {Var: 0}
 .file530.AllowSleeping: {Var: False}
+.file530.KeepLocal: {Var: False}
 .file530.Quality: {Var: LinearCast}
 
 .file531!script: {Var: MeshComponent}
@@ -1073,6 +770,7 @@
 .file533.sleepVelosity: {Var: 5}
 .file533.notSleepTime: {Var: 1}
 .file533.canAwake: {Var: True}
+.file533.ignorePlayer: {Var: True}
 
 .file534!script: {Var: Actor}
 .file534!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -1108,6 +806,7 @@
 .file535.Friction: {Var: 0.2}
 .file535.Bounciness: {Var: 0.2}
 .file535.AllowSleeping: {Var: False}
+.file535.KeepLocal: {Var: False}
 .file535.Quality: {Var: Discrete}
 
 .file536!script: {Var: SphereCollider}
@@ -1121,11 +820,13 @@
 
 .file538!script: {Var: Item}
 .file538!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file538.type: {Var: Trash}
 .file538.throwSpeed: {Var: 300}
 .file538.throwDistance: {Var: 150}
 .file538.dropSpeed: {Var: 50}
 .file538.dropDistance: {Var: 0}
 .file538.canThrow: {Var: True}
+.file538.canPickup: {Var: True}
 .file538.m_trigger: {Ref: file534}
 
 .file539!script: {Var: Rigidbody}
@@ -1141,6 +842,7 @@
 .file539.Friction: {Var: 1}
 .file539.Bounciness: {Var: 0}
 .file539.AllowSleeping: {Var: False}
+.file539.KeepLocal: {Var: False}
 .file539.Quality: {Var: LinearCast}
 
 .file540!script: {Var: MeshComponent}
@@ -1169,6 +871,7 @@
 .file542.sleepVelosity: {Var: 5}
 .file542.notSleepTime: {Var: 1}
 .file542.canAwake: {Var: True}
+.file542.ignorePlayer: {Var: True}
 
 .file543!script: {Var: Actor}
 .file543!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -1227,6 +930,7 @@
 .file545.Friction: {Var: 0.2}
 .file545.Bounciness: {Var: 0.2}
 .file545.AllowSleeping: {Var: False}
+.file545.KeepLocal: {Var: False}
 .file545.Quality: {Var: Discrete}
 
 .file546!script: {Var: SphereCollider}
@@ -1240,11 +944,13 @@
 
 .file548!script: {Var: Item}
 .file548!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file548.type: {Var: Trash}
 .file548.throwSpeed: {Var: 300}
 .file548.throwDistance: {Var: 150}
 .file548.dropSpeed: {Var: 50}
 .file548.dropDistance: {Var: 0}
 .file548.canThrow: {Var: False}
+.file548.canPickup: {Var: True}
 .file548.m_trigger: {Ref: file544}
 
 .file549!script: {Var: Rigidbody}
@@ -1260,6 +966,7 @@
 .file549.Friction: {Var: 1}
 .file549.Bounciness: {Var: 0}
 .file549.AllowSleeping: {Var: False}
+.file549.KeepLocal: {Var: False}
 .file549.Quality: {Var: LinearCast}
 
 .file550!script: {Var: MeshComponent}
@@ -1288,6 +995,7 @@
 .file552.sleepVelosity: {Var: 5}
 .file552.notSleepTime: {Var: 1}
 .file552.canAwake: {Var: True}
+.file552.ignorePlayer: {Var: True}
 
 .file553!script: {Var: Actor}
 .file553!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -1346,6 +1054,7 @@
 .file555.Friction: {Var: 0.2}
 .file555.Bounciness: {Var: 0.2}
 .file555.AllowSleeping: {Var: False}
+.file555.KeepLocal: {Var: False}
 .file555.Quality: {Var: Discrete}
 
 .file556!script: {Var: SphereCollider}
@@ -1359,11 +1068,13 @@
 
 .file558!script: {Var: Item}
 .file558!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file558.type: {Var: Trash}
 .file558.throwSpeed: {Var: 300}
 .file558.throwDistance: {Var: 150}
 .file558.dropSpeed: {Var: 50}
 .file558.dropDistance: {Var: 0}
 .file558.canThrow: {Var: False}
+.file558.canPickup: {Var: True}
 .file558.m_trigger: {Ref: file554}
 
 .file559!script: {Var: Rigidbody}
@@ -1379,6 +1090,7 @@
 .file559.Friction: {Var: 1}
 .file559.Bounciness: {Var: 0}
 .file559.AllowSleeping: {Var: False}
+.file559.KeepLocal: {Var: False}
 .file559.Quality: {Var: LinearCast}
 
 .file560!script: {Var: MeshComponent}
@@ -1407,6 +1119,7 @@
 .file562.sleepVelosity: {Var: 5}
 .file562.notSleepTime: {Var: 1}
 .file562.canAwake: {Var: True}
+.file562.ignorePlayer: {Var: True}
 
 .file563!script: {Var: Actor}
 .file563!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
@@ -1426,4 +1139,727 @@
 .file563.m_children: {Null: }
 .file563.m_flags: {Var: 0}
 .file563.m_components: {Null: }
+
+.file616!script: {Var: Actor}
+.file616!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file616.prefabId: {Var: }
+.file616.Name: {Var: Camera}
+.file616.ActiveSelf: {Var: True}
+.file616.localPosition.X: {Var: 3.051758E-05}
+.file616.localPosition.Y: {Var: 0}
+.file616.localPosition.Z: {Var: 3.814697E-06}
+.file616.localRotationQ.X: {Var: 0}
+.file616.localRotationQ.Y: {Var: 0}
+.file616.localRotationQ.Z: {Var: 0}
+.file616.localRotationQ.W: {Var: 1}
+.file616.localScale.X: {Var: 0.9999995}
+.file616.localScale.Y: {Var: 0.9999995}
+.file616.localScale.Z: {Var: 0.9999995}
+.file616.m_children: {Null: }
+.file616.m_flags: {Var: 0}
+.file616.m_components.0: {Ref: file617}
+.file616.m_components.1: {Ref: file618}
+
+.file617!script: {Var: PlayerCamera}
+.file617!scriptId: {AssetId: a49b6d24-fe71-4965-a421-36645951c2c3}
+.file617.rotationSense: {Var: 0.2}
+.file617.scrollSense: {Var: 1}
+.file617.distance: {Var: 100}
+.file617.m_angles.X: {Var: 0}
+.file617.m_angles.Y: {Var: 0}
+.file617.m_angles.Z: {Var: 0}
+.file617.m_camera: {Ref: file618}
+.file617.m_cameraTarget: {Ref: file619}
+
+.file618!script: {Var: CameraComponent}
+.file618!scriptId: {AssetId: e7ebcd63-c96c-4cc1-b7c5-e755696c98b1}
+.file618.IsPlayerCamera: {Var: True}
+.file618.OrthoWidth: {Var: 600}
+.file618.OrthoHeight: {Var: 600}
+.file618.OrthoNearPlane: {Var: 50}
+.file618.OrthoFarPlane: {Var: 1000}
+.file618.NearPlane: {Var: 0.1}
+.file618.FarPlane: {Var: 10000}
+.file618.DrawDebug: {Var: True}
+.file618.Orthographic: {Var: False}
+
+.file619!script: {Var: Actor}
+.file619!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file619.prefabId: {Var: 3d81536a-970e-418c-9e41-6d70794f7753}
+.file619.Name: {Var: Character}
+.file619.ActiveSelf: {Var: True}
+.file619.localPosition.X: {Var: 0}
+.file619.localPosition.Y: {Var: 24}
+.file619.localPosition.Z: {Var: 0}
+.file619.localRotationQ.X: {Var: 0}
+.file619.localRotationQ.Y: {Var: 0}
+.file619.localRotationQ.Z: {Var: 0}
+.file619.localRotationQ.W: {Var: 1}
+.file619.localScale.X: {Var: 30}
+.file619.localScale.Y: {Var: 30}
+.file619.localScale.Z: {Var: 30}
+.file619.m_flags: {Var: 1}
+.file619.m_children.0: {Ref: file620}
+.file619.m_children.1: {Ref: file634}
+.file619.m_components.0: {Ref: file638}
+.file619.m_components.1: {Ref: file639}
+
+.file620!script: {Var: Actor}
+.file620!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file620.prefabId: {Var: }
+.file620.Name: {Var: Body}
+.file620.ActiveSelf: {Var: True}
+.file620.localPosition.X: {Var: 0}
+.file620.localPosition.Y: {Var: -1.430511E-06}
+.file620.localPosition.Z: {Var: 0}
+.file620.localRotationQ.X: {Var: 0}
+.file620.localRotationQ.Y: {Var: 0}
+.file620.localRotationQ.Z: {Var: 0}
+.file620.localRotationQ.W: {Var: 1}
+.file620.localScale.X: {Var: 0.9999356}
+.file620.localScale.Y: {Var: 0.9999871}
+.file620.localScale.Z: {Var: 0.9999356}
+.file620.m_flags: {Var: 0}
+.file620.m_children.0: {Ref: file621}
+.file620.m_components.0: {Ref: file633}
+
+.file621!script: {Var: Actor}
+.file621!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file621.prefabId: {Var: }
+.file621.Name: {Var: Hands}
+.file621.ActiveSelf: {Var: True}
+.file621.localPosition.X: {Var: 0}
+.file621.localPosition.Y: {Var: 9.536743E-07}
+.file621.localPosition.Z: {Var: 0}
+.file621.localRotationQ.X: {Var: 0}
+.file621.localRotationQ.Y: {Var: 0}
+.file621.localRotationQ.Z: {Var: 0}
+.file621.localRotationQ.W: {Var: 1}
+.file621.localScale.X: {Var: 0.9999684}
+.file621.localScale.Y: {Var: 0.9999772}
+.file621.localScale.Z: {Var: 0.9999468}
+.file621.m_flags: {Var: 0}
+.file621.m_components: {Null: }
+.file621.m_children.0: {Ref: file622}
+.file621.m_children.1: {Ref: file627}
+.file621.m_children.2: {Ref: file632}
+
+.file622!script: {Var: Actor}
+.file622!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file622.prefabId: {Var: }
+.file622.Name: {Var: Left}
+.file622.ActiveSelf: {Var: True}
+.file622.localPosition.X: {Var: 0}
+.file622.localPosition.Y: {Var: -9.477139E-06}
+.file622.localPosition.Z: {Var: 0}
+.file622.localRotationQ.X: {Var: 0}
+.file622.localRotationQ.Y: {Var: 0}
+.file622.localRotationQ.Z: {Var: 0}
+.file622.localRotationQ.W: {Var: 1}
+.file622.localScale.X: {Var: 1}
+.file622.localScale.Y: {Var: 0.99999}
+.file622.localScale.Z: {Var: 0.99999}
+.file622.m_flags: {Var: 0}
+.file622.m_components: {Null: }
+.file622.m_children.0: {Ref: file623}
+
+.file623!script: {Var: Actor}
+.file623!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file623.prefabId: {Var: }
+.file623.Name: {Var: Mesh}
+.file623.ActiveSelf: {Var: True}
+.file623.localPosition.X: {Var: -0.4595569}
+.file623.localPosition.Y: {Var: 0.04323471}
+.file623.localPosition.Z: {Var: 0.02955513}
+.file623.localRotationQ.X: {Var: 0.6743388}
+.file623.localRotationQ.Y: {Var: 0}
+.file623.localRotationQ.Z: {Var: 0}
+.file623.localRotationQ.W: {Var: 0.7384221}
+.file623.localScale.X: {Var: 0.08161971}
+.file623.localScale.Y: {Var: 0.08740146}
+.file623.localScale.Z: {Var: 0.6349204}
+.file623.m_flags: {Var: 0}
+.file623.m_children.0: {Ref: file624}
+.file623.m_components.0: {Ref: file626}
+
+.file624!script: {Var: Actor}
+.file624!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file624.prefabId: {Var: }
+.file624.Name: {Var: Mesh2}
+.file624.ActiveSelf: {Var: True}
+.file624.localPosition.X: {Var: 0.01137161}
+.file624.localPosition.Y: {Var: 4.368442}
+.file624.localPosition.Z: {Var: 0.4780835}
+.file624.localRotationQ.X: {Var: -0.7015975}
+.file624.localRotationQ.Y: {Var: 0}
+.file624.localRotationQ.Z: {Var: 0}
+.file624.localRotationQ.W: {Var: 0.7125734}
+.file624.localScale.X: {Var: 1.004658}
+.file624.localScale.Y: {Var: 0.164838}
+.file624.localScale.Z: {Var: 8.092941}
+.file624.m_children: {Null: }
+.file624.m_flags: {Var: 0}
+.file624.m_components.0: {Ref: file625}
+
+.file625!script: {Var: MeshComponent}
+.file625!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file625.MeshScale.X: {Var: 1}
+.file625.MeshScale.Y: {Var: 1}
+.file625.MeshScale.Z: {Var: 1}
+.file625.IsDebug: {Var: False}
+.file625.CastShadow: {Var: True}
+.file625.IsVisible: {Var: True}
+.file625.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file625.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file626!script: {Var: MeshComponent}
+.file626!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file626.MeshScale.X: {Var: 1}
+.file626.MeshScale.Y: {Var: 1}
+.file626.MeshScale.Z: {Var: 1}
+.file626.IsDebug: {Var: False}
+.file626.CastShadow: {Var: True}
+.file626.IsVisible: {Var: True}
+.file626.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file626.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file627!script: {Var: Actor}
+.file627!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file627.prefabId: {Var: }
+.file627.Name: {Var: Right}
+.file627.ActiveSelf: {Var: True}
+.file627.localPosition.X: {Var: 0}
+.file627.localPosition.Y: {Var: -8.159876E-05}
+.file627.localPosition.Z: {Var: 0}
+.file627.localRotationQ.X: {Var: 0}
+.file627.localRotationQ.Y: {Var: 0}
+.file627.localRotationQ.Z: {Var: 0}
+.file627.localRotationQ.W: {Var: 1}
+.file627.localScale.X: {Var: 1}
+.file627.localScale.Y: {Var: 0.9999135}
+.file627.localScale.Z: {Var: 0.9999135}
+.file627.m_flags: {Var: 0}
+.file627.m_components: {Null: }
+.file627.m_children.0: {Ref: file628}
+
+.file628!script: {Var: Actor}
+.file628!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file628.prefabId: {Var: }
+.file628.Name: {Var: Mesh}
+.file628.ActiveSelf: {Var: True}
+.file628.localPosition.X: {Var: 0.4754995}
+.file628.localPosition.Y: {Var: 0.04300719}
+.file628.localPosition.Z: {Var: 0.03}
+.file628.localRotationQ.X: {Var: 0.6743409}
+.file628.localRotationQ.Y: {Var: 0}
+.file628.localRotationQ.Z: {Var: 0}
+.file628.localRotationQ.W: {Var: 0.7384202}
+.file628.localScale.X: {Var: 0.08199988}
+.file628.localScale.Y: {Var: 0.08699995}
+.file628.localScale.Z: {Var: 0.6349998}
+.file628.m_flags: {Var: 0}
+.file628.m_children.0: {Ref: file629}
+.file628.m_components.0: {Ref: file631}
+
+.file629!script: {Var: Actor}
+.file629!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file629.prefabId: {Var: }
+.file629.Name: {Var: Mesh2}
+.file629.ActiveSelf: {Var: True}
+.file629.localPosition.X: {Var: 0}
+.file629.localPosition.Y: {Var: 4.382043}
+.file629.localPosition.Z: {Var: 0.4747841}
+.file629.localRotationQ.X: {Var: -0.7015997}
+.file629.localRotationQ.Y: {Var: 0}
+.file629.localRotationQ.Z: {Var: 0}
+.file629.localRotationQ.W: {Var: 0.7125713}
+.file629.localScale.X: {Var: 1.005}
+.file629.localScale.Y: {Var: 0.165}
+.file629.localScale.Z: {Var: 8.093004}
+.file629.m_children: {Null: }
+.file629.m_flags: {Var: 0}
+.file629.m_components.0: {Ref: file630}
+
+.file630!script: {Var: MeshComponent}
+.file630!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file630.MeshScale.X: {Var: 1}
+.file630.MeshScale.Y: {Var: 1}
+.file630.MeshScale.Z: {Var: 1}
+.file630.IsDebug: {Var: False}
+.file630.CastShadow: {Var: True}
+.file630.IsVisible: {Var: True}
+.file630.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file630.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file631!script: {Var: MeshComponent}
+.file631!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file631.MeshScale.X: {Var: 1}
+.file631.MeshScale.Y: {Var: 1}
+.file631.MeshScale.Z: {Var: 1}
+.file631.IsDebug: {Var: False}
+.file631.CastShadow: {Var: True}
+.file631.IsVisible: {Var: True}
+.file631.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file631.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file632!script: {Var: Actor}
+.file632!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file632.prefabId: {Var: }
+.file632.Name: {Var: Item Slot}
+.file632.ActiveSelf: {Var: True}
+.file632.localPosition.X: {Var: 0}
+.file632.localPosition.Y: {Var: 0.2135334}
+.file632.localPosition.Z: {Var: 0.8979663}
+.file632.localRotationQ.X: {Var: 0}
+.file632.localRotationQ.Y: {Var: 0}
+.file632.localRotationQ.Z: {Var: 0}
+.file632.localRotationQ.W: {Var: 1}
+.file632.localScale.X: {Var: 1}
+.file632.localScale.Y: {Var: 1}
+.file632.localScale.Z: {Var: 1}
+.file632.m_children: {Null: }
+.file632.m_flags: {Var: 0}
+.file632.m_components: {Null: }
+
+.file633!script: {Var: MeshComponent}
+.file633!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file633.MeshScale.X: {Var: 1}
+.file633.MeshScale.Y: {Var: 1}
+.file633.MeshScale.Z: {Var: 1}
+.file633.IsDebug: {Var: False}
+.file633.CastShadow: {Var: True}
+.file633.IsVisible: {Var: True}
+.file633.m_mesh.assetId: {AssetId: fcebda45-6fae-4d9e-86e2-0e3ac87b879f}
+.file633.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file634!script: {Var: Actor}
+.file634!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file634.prefabId: {Var: }
+.file634.Name: {Var: Trigger}
+.file634.ActiveSelf: {Var: True}
+.file634.localPosition.X: {Var: 0}
+.file634.localPosition.Y: {Var: -1.430511E-06}
+.file634.localPosition.Z: {Var: 0}
+.file634.localRotationQ.X: {Var: 0}
+.file634.localRotationQ.Y: {Var: 0}
+.file634.localRotationQ.Z: {Var: 0}
+.file634.localRotationQ.W: {Var: 1}
+.file634.localScale.X: {Var: 0.9999986}
+.file634.localScale.Y: {Var: 0.9999986}
+.file634.localScale.Z: {Var: 0.9999986}
+.file634.m_children: {Null: }
+.file634.m_flags: {Var: 17}
+.file634.m_components.0: {Ref: file635}
+.file634.m_components.1: {Ref: file636}
+.file634.m_components.2: {Ref: file637}
+
+.file635!script: {Var: CapsuleCollider}
+.file635!scriptId: {AssetId: 6124c3d2-97b5-4b8f-882e-7be50df9016b}
+.file635.Radius: {Var: 0.8}
+.file635.Height: {Var: 0.5}
+.file635.DrawDebug: {Var: False}
+
+.file636!script: {Var: Rigidbody}
+.file636!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file636.simulate: {Var: True}
+.file636.isSensor: {Var: True}
+.file636.motion: {Var: Kinematic}
+.file636.Mass: {Var: 1}
+.file636.gravity: {Var: 1}
+.file636.MaxLinearVelocity: {Var: 500}
+.file636.LinearDamping: {Var: 0.05}
+.file636.AgularDamping: {Var: 0.05}
+.file636.Friction: {Var: 0.2}
+.file636.Bounciness: {Var: 0.2}
+.file636.AllowSleeping: {Var: False}
+.file636.KeepLocal: {Var: True}
+.file636.Quality: {Var: Discrete}
+
+.file637!script: {Var: Retarget}
+.file637!scriptId: {AssetId: df4d594d-2fe2-4902-8b8a-08232a172eb4}
+.file637.target: {Ref: file241}
+
+.file638!script: {Var: Character}
+.file638!scriptId: {AssetId: 481ac014-eb4a-4a25-8ef8-c40db6efbb02}
+.file638.simulate: {Var: True}
+.file638.MaxSlopeAngle: {Var: 45}
+.file638.Mass: {Var: 1}
+.file638.gravity: {Var: 1}
+.file638.WalkSpeed: {Var: 100}
+.file638.RunSpeed: {Var: 200}
+.file638.JumpSpeed: {Var: 100}
+.file638.Friction: {Var: 0.2}
+
+.file639!script: {Var: CapsuleCollider}
+.file639!scriptId: {AssetId: 6124c3d2-97b5-4b8f-882e-7be50df9016b}
+.file639.Radius: {Var: 0.5}
+.file639.Height: {Var: 0.5}
+.file639.DrawDebug: {Var: True}
+
+.file640!script: {Var: Player}
+.file640!scriptId: {AssetId: 416a2b38-e34a-44fd-aa1e-429d30c44ba2}
+.file640.m_projectilePrefab.assetId: {AssetId: 03000320-9769-4d41-b938-7ec9759fcb7d}
+.file640.projectileSpeed: {Var: 400}
+.file640.shootImpulse: {Var: 200}
+.file640.igroreBullets: {Var: False}
+.file640.m_itemPrefab.assetId: {AssetId: 303a34fe-9030-4426-ab8f-523af7a3f8db}
+.file640.m_particlePrefab.assetId: {AssetId: cbfbfa1c-35b6-4247-a055-8fa2ce7813c0}
+.file640.particleDropImpulse: {Var: 0}
+.file640.m_body: {Ref: file620}
+.file640.m_hands: {Ref: file621}
+.file640.m_itemSlot: {Ref: file632}
+
+.file641!script: {Var: PlayerController}
+.file641!scriptId: {AssetId: 1cd3c575-0b05-4a62-b0dd-3b326c3f7608}
+.file641.m_playerCamera: {Ref: file617}
+.file641.m_player: {Ref: file640}
+
+.file642!script: {Var: Actor}
+.file642!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file642.prefabId: {Var: ac0fb98d-6f43-496a-8a79-deedea1ee17c}
+.file642.Name: {Var: Enemy}
+.file642.ActiveSelf: {Var: True}
+.file642.localPosition.X: {Var: 314.0457}
+.file642.localPosition.Y: {Var: 53.24323}
+.file642.localPosition.Z: {Var: 310.6654}
+.file642.localRotationQ.X: {Var: 0}
+.file642.localRotationQ.Y: {Var: 0}
+.file642.localRotationQ.Z: {Var: 0}
+.file642.localRotationQ.W: {Var: 1}
+.file642.localScale.X: {Var: 0.9999989}
+.file642.localScale.Y: {Var: 1}
+.file642.localScale.Z: {Var: 0.9999989}
+.file642.m_flags: {Var: 1}
+.file642.m_children.0: {Ref: file665}
+.file642.m_components.0: {Ref: file686}
+.file642.m_components.1: {Ref: file687}
+
+.file665!script: {Var: Actor}
+.file665!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file665.prefabId: {Var: 3d81536a-970e-418c-9e41-6d70794f7753}
+.file665.Name: {Var: Character}
+.file665.ActiveSelf: {Var: True}
+.file665.localPosition.X: {Var: 0}
+.file665.localPosition.Y: {Var: 24}
+.file665.localPosition.Z: {Var: 0}
+.file665.localRotationQ.X: {Var: 0}
+.file665.localRotationQ.Y: {Var: 0}
+.file665.localRotationQ.Z: {Var: 0}
+.file665.localRotationQ.W: {Var: 1}
+.file665.localScale.X: {Var: 30}
+.file665.localScale.Y: {Var: 30}
+.file665.localScale.Z: {Var: 30}
+.file665.m_flags: {Var: 1}
+.file665.m_children.0: {Ref: file666}
+.file665.m_children.1: {Ref: file680}
+.file665.m_components.0: {Ref: file684}
+.file665.m_components.1: {Ref: file685}
+
+.file666!script: {Var: Actor}
+.file666!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file666.prefabId: {Var: }
+.file666.Name: {Var: Body}
+.file666.ActiveSelf: {Var: True}
+.file666.localPosition.X: {Var: 0}
+.file666.localPosition.Y: {Var: -1.430511E-06}
+.file666.localPosition.Z: {Var: 0}
+.file666.localRotationQ.X: {Var: 0}
+.file666.localRotationQ.Y: {Var: 0}
+.file666.localRotationQ.Z: {Var: 0}
+.file666.localRotationQ.W: {Var: 1}
+.file666.localScale.X: {Var: 0.9999356}
+.file666.localScale.Y: {Var: 0.9999871}
+.file666.localScale.Z: {Var: 0.9999356}
+.file666.m_flags: {Var: 0}
+.file666.m_children.0: {Ref: file667}
+.file666.m_components.0: {Ref: file679}
+
+.file667!script: {Var: Actor}
+.file667!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file667.prefabId: {Var: }
+.file667.Name: {Var: Hands}
+.file667.ActiveSelf: {Var: True}
+.file667.localPosition.X: {Var: 0}
+.file667.localPosition.Y: {Var: 9.536743E-07}
+.file667.localPosition.Z: {Var: 0}
+.file667.localRotationQ.X: {Var: 0}
+.file667.localRotationQ.Y: {Var: 0}
+.file667.localRotationQ.Z: {Var: 0}
+.file667.localRotationQ.W: {Var: 1}
+.file667.localScale.X: {Var: 0.9999684}
+.file667.localScale.Y: {Var: 0.9999772}
+.file667.localScale.Z: {Var: 0.9999468}
+.file667.m_flags: {Var: 0}
+.file667.m_components: {Null: }
+.file667.m_children.0: {Ref: file668}
+.file667.m_children.1: {Ref: file673}
+.file667.m_children.2: {Ref: file678}
+
+.file668!script: {Var: Actor}
+.file668!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file668.prefabId: {Var: }
+.file668.Name: {Var: Left}
+.file668.ActiveSelf: {Var: True}
+.file668.localPosition.X: {Var: 0}
+.file668.localPosition.Y: {Var: -9.477139E-06}
+.file668.localPosition.Z: {Var: 0}
+.file668.localRotationQ.X: {Var: 0}
+.file668.localRotationQ.Y: {Var: 0}
+.file668.localRotationQ.Z: {Var: 0}
+.file668.localRotationQ.W: {Var: 1}
+.file668.localScale.X: {Var: 1}
+.file668.localScale.Y: {Var: 0.99999}
+.file668.localScale.Z: {Var: 0.99999}
+.file668.m_flags: {Var: 0}
+.file668.m_components: {Null: }
+.file668.m_children.0: {Ref: file669}
+
+.file669!script: {Var: Actor}
+.file669!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file669.prefabId: {Var: }
+.file669.Name: {Var: Mesh}
+.file669.ActiveSelf: {Var: True}
+.file669.localPosition.X: {Var: -0.4595569}
+.file669.localPosition.Y: {Var: 0.04323471}
+.file669.localPosition.Z: {Var: 0.02955513}
+.file669.localRotationQ.X: {Var: 0.6743388}
+.file669.localRotationQ.Y: {Var: 0}
+.file669.localRotationQ.Z: {Var: 0}
+.file669.localRotationQ.W: {Var: 0.7384221}
+.file669.localScale.X: {Var: 0.08161971}
+.file669.localScale.Y: {Var: 0.08740146}
+.file669.localScale.Z: {Var: 0.6349204}
+.file669.m_flags: {Var: 0}
+.file669.m_children.0: {Ref: file670}
+.file669.m_components.0: {Ref: file672}
+
+.file670!script: {Var: Actor}
+.file670!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file670.prefabId: {Var: }
+.file670.Name: {Var: Mesh2}
+.file670.ActiveSelf: {Var: True}
+.file670.localPosition.X: {Var: 0.01137161}
+.file670.localPosition.Y: {Var: 4.368442}
+.file670.localPosition.Z: {Var: 0.4780835}
+.file670.localRotationQ.X: {Var: -0.7015975}
+.file670.localRotationQ.Y: {Var: 0}
+.file670.localRotationQ.Z: {Var: 0}
+.file670.localRotationQ.W: {Var: 0.7125734}
+.file670.localScale.X: {Var: 1.004658}
+.file670.localScale.Y: {Var: 0.164838}
+.file670.localScale.Z: {Var: 8.092941}
+.file670.m_children: {Null: }
+.file670.m_flags: {Var: 0}
+.file670.m_components.0: {Ref: file671}
+
+.file671!script: {Var: MeshComponent}
+.file671!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file671.MeshScale.X: {Var: 1}
+.file671.MeshScale.Y: {Var: 1}
+.file671.MeshScale.Z: {Var: 1}
+.file671.IsDebug: {Var: False}
+.file671.CastShadow: {Var: True}
+.file671.IsVisible: {Var: True}
+.file671.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file671.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file672!script: {Var: MeshComponent}
+.file672!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file672.MeshScale.X: {Var: 1}
+.file672.MeshScale.Y: {Var: 1}
+.file672.MeshScale.Z: {Var: 1}
+.file672.IsDebug: {Var: False}
+.file672.CastShadow: {Var: True}
+.file672.IsVisible: {Var: True}
+.file672.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file672.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file673!script: {Var: Actor}
+.file673!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file673.prefabId: {Var: }
+.file673.Name: {Var: Right}
+.file673.ActiveSelf: {Var: True}
+.file673.localPosition.X: {Var: 0}
+.file673.localPosition.Y: {Var: -8.159876E-05}
+.file673.localPosition.Z: {Var: 0}
+.file673.localRotationQ.X: {Var: 0}
+.file673.localRotationQ.Y: {Var: 0}
+.file673.localRotationQ.Z: {Var: 0}
+.file673.localRotationQ.W: {Var: 1}
+.file673.localScale.X: {Var: 1}
+.file673.localScale.Y: {Var: 0.9999135}
+.file673.localScale.Z: {Var: 0.9999135}
+.file673.m_flags: {Var: 0}
+.file673.m_components: {Null: }
+.file673.m_children.0: {Ref: file674}
+
+.file674!script: {Var: Actor}
+.file674!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file674.prefabId: {Var: }
+.file674.Name: {Var: Mesh}
+.file674.ActiveSelf: {Var: True}
+.file674.localPosition.X: {Var: 0.4754995}
+.file674.localPosition.Y: {Var: 0.04300719}
+.file674.localPosition.Z: {Var: 0.03}
+.file674.localRotationQ.X: {Var: 0.6743409}
+.file674.localRotationQ.Y: {Var: 0}
+.file674.localRotationQ.Z: {Var: 0}
+.file674.localRotationQ.W: {Var: 0.7384202}
+.file674.localScale.X: {Var: 0.08199988}
+.file674.localScale.Y: {Var: 0.08699995}
+.file674.localScale.Z: {Var: 0.6349998}
+.file674.m_flags: {Var: 0}
+.file674.m_children.0: {Ref: file675}
+.file674.m_components.0: {Ref: file677}
+
+.file675!script: {Var: Actor}
+.file675!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file675.prefabId: {Var: }
+.file675.Name: {Var: Mesh2}
+.file675.ActiveSelf: {Var: True}
+.file675.localPosition.X: {Var: 0}
+.file675.localPosition.Y: {Var: 4.382043}
+.file675.localPosition.Z: {Var: 0.4747841}
+.file675.localRotationQ.X: {Var: -0.7015997}
+.file675.localRotationQ.Y: {Var: 0}
+.file675.localRotationQ.Z: {Var: 0}
+.file675.localRotationQ.W: {Var: 0.7125713}
+.file675.localScale.X: {Var: 1.005}
+.file675.localScale.Y: {Var: 0.165}
+.file675.localScale.Z: {Var: 8.093004}
+.file675.m_children: {Null: }
+.file675.m_flags: {Var: 0}
+.file675.m_components.0: {Ref: file676}
+
+.file676!script: {Var: MeshComponent}
+.file676!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file676.MeshScale.X: {Var: 1}
+.file676.MeshScale.Y: {Var: 1}
+.file676.MeshScale.Z: {Var: 1}
+.file676.IsDebug: {Var: False}
+.file676.CastShadow: {Var: True}
+.file676.IsVisible: {Var: True}
+.file676.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file676.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file677!script: {Var: MeshComponent}
+.file677!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file677.MeshScale.X: {Var: 1}
+.file677.MeshScale.Y: {Var: 1}
+.file677.MeshScale.Z: {Var: 1}
+.file677.IsDebug: {Var: False}
+.file677.CastShadow: {Var: True}
+.file677.IsVisible: {Var: True}
+.file677.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file677.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file678!script: {Var: Actor}
+.file678!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file678.prefabId: {Var: }
+.file678.Name: {Var: Item Slot}
+.file678.ActiveSelf: {Var: True}
+.file678.localPosition.X: {Var: 0}
+.file678.localPosition.Y: {Var: 0.2135334}
+.file678.localPosition.Z: {Var: 0.8979663}
+.file678.localRotationQ.X: {Var: 0}
+.file678.localRotationQ.Y: {Var: 0}
+.file678.localRotationQ.Z: {Var: 0}
+.file678.localRotationQ.W: {Var: 1}
+.file678.localScale.X: {Var: 1}
+.file678.localScale.Y: {Var: 1}
+.file678.localScale.Z: {Var: 1}
+.file678.m_children: {Null: }
+.file678.m_flags: {Var: 0}
+.file678.m_components: {Null: }
+
+.file679!script: {Var: MeshComponent}
+.file679!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file679.MeshScale.X: {Var: 1}
+.file679.MeshScale.Y: {Var: 1}
+.file679.MeshScale.Z: {Var: 1}
+.file679.IsDebug: {Var: False}
+.file679.CastShadow: {Var: True}
+.file679.IsVisible: {Var: True}
+.file679.m_mesh.assetId: {AssetId: fcebda45-6fae-4d9e-86e2-0e3ac87b879f}
+.file679.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file680!script: {Var: Actor}
+.file680!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file680.prefabId: {Var: }
+.file680.Name: {Var: Trigger}
+.file680.ActiveSelf: {Var: True}
+.file680.localPosition.X: {Var: 0}
+.file680.localPosition.Y: {Var: -1.430511E-06}
+.file680.localPosition.Z: {Var: 0}
+.file680.localRotationQ.X: {Var: 0}
+.file680.localRotationQ.Y: {Var: 0}
+.file680.localRotationQ.Z: {Var: 0}
+.file680.localRotationQ.W: {Var: 1}
+.file680.localScale.X: {Var: 0.9999986}
+.file680.localScale.Y: {Var: 0.9999986}
+.file680.localScale.Z: {Var: 0.9999986}
+.file680.m_children: {Null: }
+.file680.m_flags: {Var: 17}
+.file680.m_components.0: {Ref: file681}
+.file680.m_components.1: {Ref: file682}
+.file680.m_components.2: {Ref: file683}
+
+.file681!script: {Var: CapsuleCollider}
+.file681!scriptId: {AssetId: 6124c3d2-97b5-4b8f-882e-7be50df9016b}
+.file681.Radius: {Var: 0.8}
+.file681.Height: {Var: 0.5}
+.file681.DrawDebug: {Var: False}
+
+.file682!script: {Var: Rigidbody}
+.file682!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file682.simulate: {Var: True}
+.file682.isSensor: {Var: True}
+.file682.motion: {Var: Kinematic}
+.file682.Mass: {Var: 1}
+.file682.gravity: {Var: 1}
+.file682.MaxLinearVelocity: {Var: 500}
+.file682.LinearDamping: {Var: 0.05}
+.file682.AgularDamping: {Var: 0.05}
+.file682.Friction: {Var: 0.2}
+.file682.Bounciness: {Var: 0.2}
+.file682.AllowSleeping: {Var: False}
+.file682.KeepLocal: {Var: True}
+.file682.Quality: {Var: Discrete}
+
+.file683!script: {Var: Retarget}
+.file683!scriptId: {AssetId: df4d594d-2fe2-4902-8b8a-08232a172eb4}
+.file683.target: {Ref: file642}
+
+.file684!script: {Var: Character}
+.file684!scriptId: {AssetId: 481ac014-eb4a-4a25-8ef8-c40db6efbb02}
+.file684.simulate: {Var: True}
+.file684.MaxSlopeAngle: {Var: 45}
+.file684.Mass: {Var: 1}
+.file684.gravity: {Var: 1}
+.file684.WalkSpeed: {Var: 100}
+.file684.RunSpeed: {Var: 200}
+.file684.JumpSpeed: {Var: 100}
+.file684.Friction: {Var: 0.2}
+
+.file685!script: {Var: CapsuleCollider}
+.file685!scriptId: {AssetId: 6124c3d2-97b5-4b8f-882e-7be50df9016b}
+.file685.Radius: {Var: 0.5}
+.file685.Height: {Var: 0.5}
+.file685.DrawDebug: {Var: True}
+
+.file686!script: {Var: Player}
+.file686!scriptId: {AssetId: 416a2b38-e34a-44fd-aa1e-429d30c44ba2}
+.file686.m_projectilePrefab.assetId: {AssetId: 03000320-9769-4d41-b938-7ec9759fcb7d}
+.file686.projectileSpeed: {Var: 400}
+.file686.shootImpulse: {Var: 200}
+.file686.igroreBullets: {Var: True}
+.file686.m_itemPrefab.assetId: {AssetId: 303a34fe-9030-4426-ab8f-523af7a3f8db}
+.file686.m_particlePrefab.assetId: {AssetId: cbfbfa1c-35b6-4247-a055-8fa2ce7813c0}
+.file686.particleDropImpulse: {Var: 0}
+.file686.m_body: {Ref: file666}
+.file686.m_hands: {Ref: file667}
+.file686.m_itemSlot: {Ref: file678}
+
+.file687!script: {Var: AIComponent}
+.file687!scriptId: {AssetId: 3a378a5f-c500-48e2-9dcc-330cca2e22e1}
 

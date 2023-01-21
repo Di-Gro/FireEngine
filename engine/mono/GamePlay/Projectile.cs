@@ -5,7 +5,7 @@ namespace Engine {
     [GUID("c6f30bd4-5f87-4417-9682-51d56f404a02")]
     public class Projectile : CSComponent {
 
-        public enum DestroyRule { NonDestroy, DestroyOnCollide, DestroyOnSleep, DestroyAfterTime }
+        public enum DestroyRule { NonDestroy, DestroyOnCollide, DestroyOnSleep, DestroyAfterTime, DestroyAfterTimeAndCollide }
 
         public Action DestroyEvent;
         public Action SleepEvent;
@@ -20,6 +20,7 @@ namespace Engine {
         public float sleepVelosity = 1;
         public float notSleepTime = 1;
         public bool canAwake = true;
+        public bool ignorePlayer = true;
 
         public bool IsSleep { get; private set; } = true;
 
@@ -117,7 +118,7 @@ namespace Engine {
             if (!Enabled)
                 return;
 
-            if (otherActor.Has(Flag.Player))
+            if (ignorePlayer && otherActor.Has(Flag.Player))
                 return;
 
             m_rigidbody.gravity = m_startGravity;
@@ -153,11 +154,11 @@ namespace Engine {
 
 
         private bool m_HandleDestroy() {
-            if (hasCollide && destroy == DestroyRule.DestroyOnCollide) {
+            if (hasCollide && (destroy == DestroyRule.DestroyOnCollide || destroy == DestroyRule.DestroyAfterTimeAndCollide)) {
                 actor.Destroy();
                 return true;
             }
-            if (m_timeFromShoot >= notSleepTime && destroy == DestroyRule.DestroyAfterTime) {
+            if (m_timeFromShoot >= notSleepTime && (destroy == DestroyRule.DestroyAfterTime || destroy == DestroyRule.DestroyAfterTimeAndCollide)) {
                 actor.Destroy();
                 return true;
             }

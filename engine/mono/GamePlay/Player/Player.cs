@@ -8,12 +8,16 @@ public class Player : CSComponent, IPlayer {
     [Open] private Actor m_body;
     [Open] private Actor m_hands;
     [Open] private Actor m_itemSlot;
+
     [Space]
     [Open] private Prefab m_projectilePrefab;
     public float projectileSpeed = 400;
 
     [Space]
     public float shootImpulse = 200;
+
+    [Space]
+    public bool igroreBullets = false;
 
     [Close] public Item Item { get; protected set; } = null;
     [Close] public Item ItemOnGrpund { get; protected set; } = null;
@@ -114,10 +118,8 @@ public class Player : CSComponent, IPlayer {
 
     public void Shoot() {
         var projectile = m_projectilePrefab.Instanciate().GetComponent<Projectile>();
+        
         projectile.actor.worldPosition = m_itemSlot.worldPosition;
-
-        projectile.destroy = Projectile.DestroyRule.DestroyAfterTime;
-        projectile.speed = projectileSpeed;
         projectile.Shoot(ViewDirection);
     }
 
@@ -146,6 +148,7 @@ public class Player : CSComponent, IPlayer {
         m_health -= damage;
         if (m_health < 0)
             m_health = 0;
+
         Console.WriteLine($"Health: {m_health}");
     }
 
@@ -174,7 +177,7 @@ public class Player : CSComponent, IPlayer {
     public override void OnCollisionEnter(Actor otherActor, in Contact contact)
     {
         m_HandleItemDamaged(otherActor);
-        Console.WriteLine("OnCollisionEnter");
+        m_HandleBulletCollision(otherActor);
     }
 
     private void m_HandleItemEnter(Actor otherActor) {
@@ -230,6 +233,18 @@ public class Player : CSComponent, IPlayer {
             AddDamage(55);
 
         Console.WriteLine("m_HandleItemDamaged");
+    }
+
+    private void m_HandleBulletCollision(Actor otherActor) {
+        if(igroreBullets)
+            return;
+
+        if (!otherActor.Has(Flag.IsBullet))
+            return;
+
+        AddDamage(5);
+        
+        Console.WriteLine("On Bullet Collision");
     }
 
     private void m_HandleDropTargetEnter(Actor otherActor) {

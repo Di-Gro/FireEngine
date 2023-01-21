@@ -10,4 +10,5 @@ public enum Flag : ulong {
     IsRetarget = 1 << 4,
     IsDropTarget = 1 << 5,
     NavMesh = 1 << 6,
+    IsBullet = 1 << 7,
 }
