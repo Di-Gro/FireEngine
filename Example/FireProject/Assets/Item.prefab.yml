@@ -58,12 +58,13 @@
 .file3.Friction: {Var: 0.2}
 .file3.Bounciness: {Var: 0.2}
 .file3.AllowSleeping: {Var: False}
+.file3.KeepLocal: {Var: False}
 .file3.Quality: {Var: Discrete}
 
 .file4!script: {Var: SphereCollider}
 .file4!scriptId: {AssetId: aa06e9b3-f75f-4982-976b-a6f57568d6f0}
 .file4.Radius: {Var: 1.5}
-.file4.DrawDebug: {Var: True}
+.file4.DrawDebug: {Var: False}
 
 .file5!script: {Var: Retarget}
 .file5!scriptId: {AssetId: df4d594d-2fe2-4902-8b8a-08232a172eb4}
@@ -71,11 +72,13 @@
 
 .file6!script: {Var: Item}
 .file6!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file6.type: {Var: Trash}
 .file6.throwSpeed: {Var: 300}
 .file6.throwDistance: {Var: 150}
 .file6.dropSpeed: {Var: 50}
 .file6.dropDistance: {Var: 0}
 .file6.canThrow: {Var: True}
+.file6.canPickup: {Var: True}
 .file6.m_trigger: {Ref: file2}
 
 .file7!script: {Var: Rigidbody}
@@ -91,6 +94,7 @@
 .file7.Friction: {Var: 1}
 .file7.Bounciness: {Var: 0}
 .file7.AllowSleeping: {Var: False}
+.file7.KeepLocal: {Var: False}
 .file7.Quality: {Var: LinearCast}
 
 .file8!script: {Var: MeshComponent}

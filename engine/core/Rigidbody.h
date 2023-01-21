@@ -24,6 +24,7 @@ public:
 	float bounciness = 0.2f;
 	bool mAllowSleeping = true;
 	bool isSensor = false;
+	bool keepLocal = false;
 
 private:
 	bool m_simulate = true;

@@ -39,6 +39,7 @@ namespace Engine {
         public float Friction { get => prop_Friction.value; set => prop_Friction.value = value; }
         public float Bounciness { get => prop_Bounciness.value; set => prop_Bounciness.value = value; }
         public bool AllowSleeping { get => prop_AllowSleeping.value; set => prop_AllowSleeping.value = value; }
+        public bool KeepLocal { get => prop_keepLocal.value; set => prop_keepLocal.value = value; }
 
         public MotionQuality Quality {
             get => (MotionQuality)Dll.Rigidbody.quality_get(cppRef);
@@ -68,6 +69,7 @@ namespace Engine {
         private Prop<float> prop_Bounciness = new Prop<float>(5);
         private Prop<bool> prop_AllowSleeping = new Prop<bool>(6);
         private Prop<bool> prop_isSensor = new Prop<bool>(7);
+        private Prop<bool> prop_keepLocal = new Prop<bool>(8);
 
         public override void OnTriggerEnter(Actor otherActor, in Contact contact) {
             // Console.WriteLine($"OnTriggerEnter: {actor.Name} -> {otherActor.Name}");
