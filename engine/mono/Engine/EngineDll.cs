@@ -1056,6 +1056,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "NavMesh_RandomPoint")]
 		    public static extern Vector3 RandomPoint(CppRef gameRef);
 
+            [DllImport(Paths.Exe, EntryPoint = "NavMesh_NavMeshBuild")]
+		    public static extern bool NavMeshBuild(CppRef gameRef);
+
 			
 		}
 

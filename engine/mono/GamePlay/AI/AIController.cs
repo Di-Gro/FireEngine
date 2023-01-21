@@ -9,8 +9,10 @@ public class AIController : CSComponent {
     [Open] private Player m_target;
     [Open] private AIComponent m_ai;
     private Vector3 next_point;
+    private Vector3 old_target_pos;
     int index_in_path = 0;
-    List<Vector3> path = new List<Vector3>();
+    private static bool build_navmesh = false; 
+    Vector3[] path;
 
     private static int count_ai = 0;
     int id = 0;
@@ -24,9 +26,10 @@ public class AIController : CSComponent {
         m_ai = actor.AddComponent<AIComponent>();
         if (m_player == null || m_target == null || m_ai == null)
             throw new NullFieldException(this);
-        //next_point = m_player.CharacterPosititon;
-        //id = count_ai;
-        //count_ai++;
+        next_point = m_player.CharacterPosititon;
+        id = count_ai;
+        count_ai++;
+        old_target_pos = m_target.CharacterPosititon;
         var tag_in_attack_range = nameof(in_attack_range);
         var tag_in_senses_radius = nameof(in_senses_radius);
         m_ai.Add(this, tag_in_senses_radius);
@@ -58,14 +61,24 @@ public class AIController : CSComponent {
     void move_to_player()
     {
         Console.WriteLine("move_to_player");
-        
+        if (old_target_pos != m_target.CharacterPosititon || path.Length == 0)
+        {
+            int Vertexes = NavMesh.FindPath(m_player.CharacterPosititon, m_target.CharacterPosititon, id, 0);
+            path = NavMesh.GetPath(id);
+            index_in_path = 0;
+        }
+        else if (next_point == m_player.CharacterPosititon)
+        {
+            next_point = path[index_in_path];
+            index_in_path++;
+        }
     }
 
 
     void random_roam()
     {
         Console.WriteLine("random_roam");
-        if(next_point !=m_player.CharacterPosititon)
+        if(next_point ==m_player.CharacterPosititon)
             next_point = NavMesh.RandomPoint();
 
     }

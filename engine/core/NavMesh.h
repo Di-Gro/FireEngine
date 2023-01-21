@@ -141,3 +141,4 @@ private:
 FUNC(NavMesh, GethPath, void)(CppRef gameRef, size_t* vector, int* count, int pathSlot);
 FUNC(NavMesh, FindPath, int)(CppRef gameRef, DirectX::SimpleMath::Vector3 pStartPos, DirectX::SimpleMath::Vector3 pEndPos, int nPathSlot, int nTarget);
 FUNC(NavMesh, RandomPoint, DirectX::SimpleMath::Vector3)(CppRef gameRef);
+FUNC(NavMesh, NavMeshBuild,bool)(CppRef gameRef);

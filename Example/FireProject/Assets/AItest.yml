@@ -34,7 +34,7 @@
 .file2.localScale.Y: {Var: 5}
 .file2.localScale.Z: {Var: 2647.466}
 .file2.m_children: {Null: }
-.file2.m_flags: {Var: 0}
+.file2.m_flags: {Var: 128}
 .file2.m_components.0: {Ref: file3}
 .file2.m_components.1: {Ref: file4}
 .file2.m_components.2: {Ref: file5}
@@ -280,7 +280,7 @@
 .file18.localRotationQ.X: {Var: -0.7015975}
 .file18.localRotationQ.Y: {Var: 0}
 .file18.localRotationQ.Z: {Var: 0}
-.file18.localRotationQ.W: {Var: 0.7125734}
+.file18.localRotationQ.W: {Var: 0.7125735}
 .file18.localScale.X: {Var: 1.004658}
 .file18.localScale.Y: {Var: 0.164838}
 .file18.localScale.Z: {Var: 8.092941}
@@ -356,7 +356,7 @@
 .file23.localPosition.X: {Var: 0}
 .file23.localPosition.Y: {Var: 4.382042}
 .file23.localPosition.Z: {Var: 0.4747844}
-.file23.localRotationQ.X: {Var: -0.7015998}
+.file23.localRotationQ.X: {Var: -0.7015997}
 .file23.localRotationQ.Y: {Var: 0}
 .file23.localRotationQ.Z: {Var: 0}
 .file23.localRotationQ.W: {Var: 0.7125712}
@@ -629,7 +629,7 @@
 .file53.localRotationQ.X: {Var: -0.7015975}
 .file53.localRotationQ.Y: {Var: 0}
 .file53.localRotationQ.Z: {Var: 0}
-.file53.localRotationQ.W: {Var: 0.7125735}
+.file53.localRotationQ.W: {Var: 0.7125734}
 .file53.localScale.X: {Var: 1.004658}
 .file53.localScale.Y: {Var: 0.164838}
 .file53.localScale.Z: {Var: 8.092941}

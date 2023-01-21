@@ -619,3 +619,7 @@ DEF_FUNC(NavMesh, FindPath, int)(CppRef gameRef, Vector3 pStartPos, Vector3 pEnd
 DEF_FUNC(NavMesh, RandomPoint, Vector3)(CppRef gameRef) {
     return CppRefs::ThrowPointer<Game>(gameRef)->navMesh()->getRandomNavMeshPoint();
 }
+
+DEF_FUNC(NavMesh, NavMeshBuild, bool)(CppRef gameRef) {
+   return CppRefs::ThrowPointer<Game>(gameRef)->navMesh()->NavMeshBuild();
+}

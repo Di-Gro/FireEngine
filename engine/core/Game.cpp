@@ -285,7 +285,7 @@ void Game::m_BeginUpdate() {
 	m_hotkeys->Update(input());
 
 	m_BeginUpdateImGui();
-
+	
 	if (m_nextScene != nullptr) {
 		bool isSelected = ui()->selectedScene() == m_editorScene;
 
@@ -486,6 +486,9 @@ void Game::TogglePlayMode() {
 
 				if (!inFocus)
 					ToggleGameFocus();
+				PushScene(m_gameScene);
+				m_NavMesh->NavMeshBuild();
+				PopScene();
 			}
 		}
 		if (!wasLoaded)

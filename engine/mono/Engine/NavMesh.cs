@@ -35,6 +35,10 @@ namespace Engine {
             return Dll.NavMesh.RandomPoint(Game.gameRef);
         }
 
+        public static bool NavMeshBuild()
+        {
+           return Dll.NavMesh.NavMeshBuild(Game.gameRef);
+        }
     }
 
 }
