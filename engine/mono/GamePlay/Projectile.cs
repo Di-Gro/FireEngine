@@ -23,6 +23,8 @@ namespace Engine {
 
         public bool IsSleep { get; private set; } = true;
 
+        [Close] public bool OnFly { get => m_onFly; }
+
         [Close] public bool Enabled { 
             get => m_enabled; 
             set {

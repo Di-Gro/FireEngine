@@ -10,6 +10,9 @@ namespace Engine {
         [Close] public ComponentCallbacks.ContactEnter TriggerEnterEvent;
         [Close] public ComponentCallbacks.ContactExit TriggerExitEvent;
 
+        [Close] public ComponentCallbacks.ContactEnter CollisionEnterEvent;
+        [Close] public ComponentCallbacks.ContactExit CollisionExitEvent;
+
         public bool simulate {
             get => Dll.Character.simulate_get(cppRef);
             set => Dll.Character.simulate_set(cppRef, value);
@@ -61,12 +64,12 @@ namespace Engine {
             TriggerExitEvent?.Invoke(otherActor);
         }
 
-        // public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
-        //     Console.WriteLine($"OnCollisionEnter: {actor.Name} -> {otherActor.Name}");
-        // }
+        public override void OnCollisionEnter(Actor otherActor, in Contact contact) {
+            CollisionEnterEvent?.Invoke(otherActor, in contact);
+        }
 
-        // public override void OnCollisionExit(Actor otherActor) {
-        //     Console.WriteLine($"OnCollisionExit: {actor.Name} -> {otherActor.Name}");
-        // }
+        public override void OnCollisionExit(Actor otherActor) {
+            CollisionExitEvent?.Invoke(otherActor);
+        }
     }
 }

@@ -25,7 +25,7 @@ public class Item : CSComponent {
     private Projectile m_projectile;
     
     public bool InHands { get; private set; } = false;
-
+    public bool OnFly { get => m_projectile.OnFly; }
 
     public override void OnInit() {
         m_projectile = actor.GetComponent<Projectile>();

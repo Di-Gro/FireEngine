@@ -8,14 +8,12 @@ public class PlayerController : CSComponent {
     [Open] private PlayerCamera m_playerCamera;
     [Open] private Player m_player;
 
-
     public override void OnInit() {
         if (m_playerCamera == null || m_player == null)
             throw new NullFieldException(this);
     }
 
     public override void OnUpdate() {
-    
         if (Input.GetButtonDown(Key.LeftButton)) {
             if (m_player.CanThrow)
                 m_player.Throw();

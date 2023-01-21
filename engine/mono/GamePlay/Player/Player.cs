@@ -1,5 +1,5 @@
 using System;
-
+using System.Collections.Generic;
 using Engine;
 
 [GUID("416a2b38-e34a-44fd-aa1e-429d30c44ba2")]
@@ -32,6 +32,10 @@ public class Player : CSComponent, IPlayer {
 
     private Vector3 m_handsPosition;
 
+    [Open] private Prefab itemPrefab;
+    private AttractedParticle particle;
+
+    private Random rnd = new Random();
 
     public override void OnInit() {
         if (m_hands == null || m_itemSlot == null)
@@ -44,6 +48,9 @@ public class Player : CSComponent, IPlayer {
         m_character.TriggerEnterEvent += OnTriggerEnter;
         m_character.TriggerExitEvent += OnTriggerExit;
 
+        m_character.CollisionEnterEvent += OnCollisionEnter;
+        m_character.CollisionExitEvent += OnCollisionExit;
+
         m_handsPosition = m_hands.localRotation;
     }
 
@@ -51,13 +58,21 @@ public class Player : CSComponent, IPlayer {
         if (!m_character.IsDestroyed) {
             m_character.TriggerEnterEvent -= OnTriggerEnter;
             m_character.TriggerExitEvent -= OnTriggerExit;
+
+            m_character.CollisionEnterEvent -= OnCollisionEnter;
+            m_character.CollisionExitEvent -= OnCollisionExit;
         }
     }
 
-    public override void OnUpdate() {
+    public override void OnUpdate()
+    {
         m_RotateBodyToViewDirection();
+        if (m_health <= 0)
+        {
+            Death();
+            actor.Destroy();
+        }
     }
-
     public void Pickup() {
         Item = ItemOnGrpund;
         ItemOnGrpund = null;
@@ -88,14 +103,16 @@ public class Player : CSComponent, IPlayer {
     }
 
     public void Death() {
-        if (m_health == 0)
-            actor.Destroy();
+        var direction = Vector3.Forward.RotateY(rnd.Next(1, 361));
+        var item = itemPrefab.Instanciate().GetComponent<Item>();
+        item.Drop(direction);
+        
+        particle.Drop(direction);
     }
 
     public void AddDamage(int damage) {
-        if (m_health > 0)
-            m_health -= damage;
-        else
+        m_health -= damage;
+        if (m_health < 0)
             m_health = 0;
     }
 
@@ -111,9 +128,16 @@ public class Player : CSComponent, IPlayer {
         m_HandleDropTargetEnter(otherActor);
     }
 
-    public override void OnTriggerExit(Actor otherActor) {
+    public override void OnTriggerExit(Actor otherActor)
+    {
         m_HandleItemExit(otherActor);
         m_HandleDropTargetExit(otherActor);
+    }
+
+    public override void OnCollisionEnter(Actor otherActor, in Contact contact)
+    {
+        m_HandleItemDamaged(otherActor);
+        Console.WriteLine("OnCollisionEnter");
     }
 
     private void m_HandleItemEnter(Actor otherActor) {
@@ -142,7 +166,7 @@ public class Player : CSComponent, IPlayer {
         if (!otherActor.Has(Flag.IsItem))
             return;
 
-        if (!HasItemOnGround)
+        if (HasItemOnGround)
             return;
 
         var newItem = m_GetItemFromTrigger(otherActor);
@@ -153,6 +177,22 @@ public class Player : CSComponent, IPlayer {
             ItemOnGrpund = null;
             Console.WriteLine("null");
         }
+    }
+
+    private void m_HandleItemDamaged(Actor otherActor)
+    {
+        if (!otherActor.Has(Flag.IsItem))
+            return;
+
+        var OnFlyItemComponent = otherActor.GetComponent<Item>();
+
+        if (OnFlyItemComponent == null)
+            return;
+
+        if(OnFlyItemComponent.OnFly)
+            AddDamage(55);
+
+        Console.WriteLine("m_HandleItemDamaged");
     }
 
     private void m_HandleDropTargetEnter(Actor otherActor) {
@@ -191,9 +231,5 @@ public class Player : CSComponent, IPlayer {
         bodyRotation = Quaternion.CreateFromEulerAngles(bodyRotation.ToEulerAngles().deg());
         m_body.localRotationQ = Quaternion.Lerp(m_body.localRotationQ, bodyRotation, 0.3f);
     }
-
-    private void m_ThowObjectAnimation() {
-        //m_pickupedSlot.GetChild(0).localRotation.Lerp((m_pickupedSlot.GetChild(0).localRotation.X, (m_pickupedSlot.GetChild(0).localRotation.Y + 90.0f), m_pickupedSlot.GetChild(0).localRotation.Z), 10);
-        m_itemSlot.GetChild(0).worldRotationQ.SetY(m_itemSlot.GetChild(0).worldRotationQ.Y + 90.0f);
-    }
+    public override void OnCollisionExit(Actor otherActor) {}
 }

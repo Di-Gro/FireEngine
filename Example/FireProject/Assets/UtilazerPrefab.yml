@@ -1,16 +1,16 @@
 .file0.assetId: {AssetId: bb042717-734b-4b94-ab9c-e09144ab6fa1}
-.file0.files: {Var: 234}
+.file0.files: {Var: 287}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: UtilazerPrefab}
-.file1.CameraPos.X: {Var: -100.007}
-.file1.CameraPos.Y: {Var: 98.70062}
-.file1.CameraPos.Z: {Var: -160.8448}
-.file1.CameraRot.X: {Var: 0.1516906}
-.file1.CameraRot.Y: {Var: 0.797689}
-.file1.CameraRot.Z: {Var: 0.2246036}
-.file1.CameraRot.W: {Var: -0.5387352}
+.file1.CameraPos.X: {Var: -253.8261}
+.file1.CameraPos.Y: {Var: 238.5293}
+.file1.CameraPos.Z: {Var: 195.6454}
+.file1.CameraRot.X: {Var: -0.2749278}
+.file1.CameraRot.Y: {Var: -0.452223}
+.file1.CameraRot.Z: {Var: -0.1488399}
+.file1.CameraRot.W: {Var: 0.8353178}
 .file1.CameraSpeed: {Var: 186}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file6}
@@ -1018,10 +1018,10 @@
 .file101.localPosition.X: {Var: 2.232155}
 .file101.localPosition.Y: {Var: -26.70156}
 .file101.localPosition.Z: {Var: -396.2341}
-.file101.localRotationQ.X: {Var: 0.7071069}
+.file101.localRotationQ.X: {Var: 0.7071068}
 .file101.localRotationQ.Y: {Var: 0}
 .file101.localRotationQ.Z: {Var: 0}
-.file101.localRotationQ.W: {Var: 0.7071068}
+.file101.localRotationQ.W: {Var: 0.7071067}
 .file101.localScale.X: {Var: 799.9303}
 .file101.localScale.Y: {Var: 2}
 .file101.localScale.Z: {Var: 800}
@@ -1072,10 +1072,10 @@
 .file105.localPosition.X: {Var: 2.232155}
 .file105.localPosition.Y: {Var: -26.70169}
 .file105.localPosition.Z: {Var: 391.3682}
-.file105.localRotationQ.X: {Var: 0.7071069}
+.file105.localRotationQ.X: {Var: 0.7071068}
 .file105.localRotationQ.Y: {Var: 0}
 .file105.localRotationQ.Z: {Var: 0}
-.file105.localRotationQ.W: {Var: 0.7071068}
+.file105.localRotationQ.W: {Var: 0.7071067}
 .file105.localScale.X: {Var: 799.9296}
 .file105.localScale.Y: {Var: 2}
 .file105.localScale.Z: {Var: 800}
@@ -1952,7 +1952,7 @@
 .file217.prefabId: {Var: }
 .file217.Name: {Var: Body}
 .file217.ActiveSelf: {Var: True}
-.file217.localPosition.X: {Var: 0}
+.file217.localPosition.X: {Var: -1.192093E-07}
 .file217.localPosition.Y: {Var: -1.430511E-06}
 .file217.localPosition.Z: {Var: 0}
 .file217.localRotationQ.X: {Var: 0}
@@ -2017,7 +2017,7 @@
 .file220.localRotationQ.X: {Var: 0.6743388}
 .file220.localRotationQ.Y: {Var: 0}
 .file220.localRotationQ.Z: {Var: 0}
-.file220.localRotationQ.W: {Var: 0.738422}
+.file220.localRotationQ.W: {Var: 0.7384221}
 .file220.localScale.X: {Var: 0.08161971}
 .file220.localScale.Y: {Var: 0.08740146}
 .file220.localScale.Z: {Var: 0.6349204}
@@ -2036,7 +2036,7 @@
 .file221.localRotationQ.X: {Var: -0.7015975}
 .file221.localRotationQ.Y: {Var: 0}
 .file221.localRotationQ.Z: {Var: 0}
-.file221.localRotationQ.W: {Var: 0.7125735}
+.file221.localRotationQ.W: {Var: 0.7125734}
 .file221.localScale.X: {Var: 1.004658}
 .file221.localScale.Y: {Var: 0.164838}
 .file221.localScale.Z: {Var: 8.092941}
@@ -2115,7 +2115,7 @@
 .file226.localRotationQ.X: {Var: -0.7015997}
 .file226.localRotationQ.Y: {Var: 0}
 .file226.localRotationQ.Z: {Var: 0}
-.file226.localRotationQ.W: {Var: 0.7125713}
+.file226.localRotationQ.W: {Var: 0.7125712}
 .file226.localScale.X: {Var: 1.005}
 .file226.localScale.Y: {Var: 0.165}
 .file226.localScale.Z: {Var: 8.093004}
