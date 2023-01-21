@@ -12,6 +12,9 @@ public class Player : CSComponent, IPlayer {
     [Space]
     [Open] private Prefab m_projectilePrefab;
     public float projectileSpeed = 400;
+    public float energy = 100;
+    public float energy_dt = 20;
+    public float energy_leak = 0.75F;
 
     [Space]
     public float shootImpulse = 200;
@@ -80,8 +83,10 @@ public class Player : CSComponent, IPlayer {
     public override void OnUpdate()
     {
         m_RotateBodyToViewDirection();
-        if (m_health <= 0)
+        if (m_health <= 0 || energy <= 0)
             Death();
+        Console.WriteLine($"energy{energy}");
+        energy -= Game.DeltaTime * energy_leak;
     }
 
     public void Pickup() {
@@ -153,7 +158,7 @@ public class Player : CSComponent, IPlayer {
     }
 
     public void AddEnergy(int value) {
-        Console.WriteLine($"AddEnergy: {value}");
+        energy += energy_dt;
     }
 
     public void SetMovementVector(Vector3 direction, bool jump, bool run, float deltaTime) {
