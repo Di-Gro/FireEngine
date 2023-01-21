@@ -12,7 +12,7 @@ public class AIController : CSComponent {
     private Vector3 old_target_pos;
     int index_in_path = 0;
     private static bool build_navmesh = false;
-    Vector3[] path;
+    Vector3[] path = new Vector3[0];
 
     private static int count_ai = 0;
     int id = 0;
@@ -35,6 +35,7 @@ public class AIController : CSComponent {
 
         id = count_ai;
         count_ai++;
+        
         old_target_pos = m_target.CharacterPosititon;
         var tag_in_attack_range = nameof(in_attack_range);
         var tag_in_senses_radius = nameof(in_senses_radius);
@@ -74,7 +75,7 @@ public class AIController : CSComponent {
     void move_to_player()
     {
         Console.WriteLine("move_to_player");
-        if (old_target_pos.Distance(m_target.CharacterPosititon)>10 || path.Length == 0)
+        if (old_target_pos.Distance(m_target.CharacterPosititon) > 10 || path.Length == 0)
         {
             var scale_direction = (m_target.CharacterPosititon - m_player.CharacterPosititon).Normalized() * 200;
             var end_point = m_player.CharacterPosititon + scale_direction;
@@ -86,9 +87,9 @@ public class AIController : CSComponent {
             next_point = path[index_in_path];
 
         }
-        if (next_point.Distance(m_player.CharacterPosititon)<=10)
+        if (next_point.Distance(m_player.CharacterPosititon) <= 10)
         {
-            if(path.Length >= index_in_path + 1)
+            if(index_in_path + 1 < path.Length)
             {
                 index_in_path++;
                 next_point = path[index_in_path];
