@@ -77,7 +77,9 @@ public class AIController : CSComponent {
         Console.WriteLine("move_to_player");
         if (old_target_pos.Distance(m_target.CharacterPosititon) > 10 || path.Length == 0)
         {
-            int Vertexes = NavMesh.FindPath(m_player.CharacterPosititon, m_target.CharacterPosititon, id, 0);
+            var scale_direction = (m_target.CharacterPosititon - m_player.CharacterPosititon).Normalized() * 200;
+            var end_point = m_player.CharacterPosititon + scale_direction;
+            int Vertexes = NavMesh.FindPath(m_player.CharacterPosititon, end_point, id, 0);
             path = NavMesh.GetPath(id);
 
             old_target_pos = m_target.CharacterPosititon;
