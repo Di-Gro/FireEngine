@@ -25,8 +25,8 @@ public class PlayerController : CSComponent {
                 m_player.Pickup();
         }
 
-        if(Input.GetButtonDown(Key.RightButton))
-            m_player.Shoot();
+        // if(Input.GetButtonDown(Key.RightButton))
+        //     m_player.Shoot();
     }
 
     public override void OnFixedUpdate() {

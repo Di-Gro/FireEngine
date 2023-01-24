@@ -76,8 +76,8 @@ public class AIController : CSComponent {
         {
             return;
         }
-        Console.WriteLine($"TargetPos {next_point}");
-        Console.WriteLine($"MyPos {m_player.CharacterPosititon}");
+        // Console.WriteLine($"TargetPos {next_point}");
+        // Console.WriteLine($"MyPos {m_player.CharacterPosititon}");
         next_point.Y = m_player.CharacterPosititon.Y;
         if (next_point.Distance(m_player.CharacterPosititon) > 15)
         {
@@ -92,7 +92,7 @@ public class AIController : CSComponent {
 
     void move_to_player()
     {
-        Console.WriteLine("move_to_player");
+        // Console.WriteLine("move_to_player");
         if (old_target_pos.Distance(m_target.CharacterPosititon) > 10 || path.Length == 0)
         {
             
@@ -120,8 +120,8 @@ public class AIController : CSComponent {
 
     void random_roam()
     {
-        Console.WriteLine("random_roam");
-        if(next_point ==m_player.CharacterPosititon)
+        // Console.WriteLine("random_roam");
+        if(next_point == m_player.CharacterPosititon)
             next_point = NavMesh.RandomPoint();
 
     }
@@ -132,6 +132,6 @@ public class AIController : CSComponent {
 
         can_shoot_dt = 0 - (float)rnd.NextDouble() * 3;
         m_player.Shoot();
-        Console.WriteLine("Attack");
+        // Console.WriteLine("Attack");
     }
 }

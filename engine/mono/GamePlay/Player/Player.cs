@@ -15,6 +15,7 @@ public class Player : CSComponent, IPlayer {
     public float energy = 100;
     public float energy_dt = 20;
     public float energy_leak = 0.75F;
+    public bool ignoreEnergy = true;
 
     [Space]
     public float shootImpulse = 200;
@@ -38,7 +39,7 @@ public class Player : CSComponent, IPlayer {
 
     [Close] public Character PlayerCharacter => m_character;
 
-    private int m_health = 100;
+    public int m_health = 100;
 
     private Character m_character;
 
@@ -85,8 +86,11 @@ public class Player : CSComponent, IPlayer {
         m_RotateBodyToViewDirection();
         if (m_health <= 0 || energy <= 0)
             Death();
-        Console.WriteLine($"energy{energy}");
-        energy -= Game.DeltaTime * energy_leak;
+
+        if (!ignoreEnergy) {
+            energy -= Game.DeltaTime * energy_leak;
+            Console.WriteLine($"energy: {energy}");
+        }
     }
 
     public void Pickup() {
@@ -158,7 +162,8 @@ public class Player : CSComponent, IPlayer {
     }
 
     public void AddEnergy(int value) {
-        energy += energy_dt;
+        if(!ignoreEnergy)
+            energy += energy_dt;
     }
 
     public void SetMovementVector(Vector3 direction, bool jump, bool run, float deltaTime) {

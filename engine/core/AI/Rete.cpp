@@ -232,7 +232,7 @@ ProductionNode* Rete::addProduction(const std::vector<Condition>& lhs, const std
     ProductionNode* prod = new ProductionNode;
 	production_nodes.push_back(prod);
     prod->parent = currentJoin; 
-    printf("%s prod: %p | parent: %p\n", __FUNCTION__, prod, prod->parent);
+    //printf("%s prod: %p | parent: %p\n", __FUNCTION__, prod, prod->parent);
     prod->rhs = rhs;
     currentJoin->children.push_back(prod);
   

@@ -71,7 +71,7 @@ namespace Engine {
             bool need_update = false; 
             for (int i = m_fields.Count - 1; i >= 0; i--) {
                 var field = m_fields[i];
-                Console.WriteLine($"filed: {field.name}");
+                // Console.WriteLine($"filed: {field.name}");
                 object value = null;
                 need_update = true;
                 bool isValid = field.GetValue(out value);
@@ -80,7 +80,7 @@ namespace Engine {
                     value = ((CppLinked)value).csRef;
 
                 var valueStr = value == null ? "null" : $"{value}";
-                Console.WriteLine($"valueStr: {valueStr}");
+                // Console.WriteLine($"valueStr: {valueStr}");
                 Dll.AIComponent.SetWMEValue(cppRef, field.index, valueStr);
 
                 if (!isValid)

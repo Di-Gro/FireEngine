@@ -77,4 +77,3 @@ public class PlayerCamera : CSComponent {
         return (actor.forward * new Vector3(1, 0, 1)).Normalized();
     }
 }
-// #endif

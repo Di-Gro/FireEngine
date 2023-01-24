@@ -71,7 +71,11 @@ public class Utilizer : CSComponent {
 
         if(m_waitedParticles > 0) {
             m_particlesTime -= Game.DeltaTime;
-            
+
+            var player = SceneData.playerCharacter;
+            if(player != null && player.IsDestroyed)
+                m_waitedParticles = 0;
+
             if(m_particlesTime <= 0) {
                 m_ExtrudeParticle();
                 m_waitedParticles--;

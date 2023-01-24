@@ -21,6 +21,10 @@ public class AttractedParticle : CSComponent {
             throw new NullFieldException(this);
     }
 
+    public override void OnStart() {
+        target = SceneData.playerCharacter;
+    }
+
     public override void OnUpdate() {
         if(m_needDestroy) {
             actor.Destroy();
