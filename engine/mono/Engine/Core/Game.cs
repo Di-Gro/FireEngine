@@ -114,7 +114,7 @@ namespace Engine {
 
         private static void LoadAssets() {
             AssetStore.Instance = new AssetStore();
-            AssetStore.Instance.Init("../../Example/FireProject");
+            AssetStore.Instance.Init("../../project");
 
             editorSettings = InstanciateAsset<EditorSettings>(Assets.editor_settings);
             editorSettings.UpdateInCpp();

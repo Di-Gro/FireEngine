@@ -1,0 +1,18 @@
+.file0.assetId: {AssetId: cd882168-97ef-4799-98a2-c48a0955ba32}
+.file0.files: {Var: 1}
+
+.file1!script: {Var: StaticMaterial}
+.file1!scriptId: {AssetId: 110065f7-ed95-4fca-8a09-288b7ec17500}
+.file1.Name: {Var: M_Default}
+.file1.Shader: {Var: ../../engine/data/shaders/opaque_defuse_color.hlsl}
+.file1.CullMode: {Var: Back}
+.file1.FillMode: {Var: Solid}
+.file1.Priority: {Var: 2000}
+.file1.DiffuseColor.X: {Var: 0.4}
+.file1.DiffuseColor.Y: {Var: 0.4}
+.file1.DiffuseColor.Z: {Var: 0.4}
+.file1.Diffuse: {Var: 0.5}
+.file1.Ambient: {Var: 0.5}
+.file1.Specular: {Var: 0.5}
+.file1.Shininess: {Var: 10}
+.file1.m_textures: {Null: }

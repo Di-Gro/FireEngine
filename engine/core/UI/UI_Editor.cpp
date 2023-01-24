@@ -75,7 +75,7 @@ void UI_Editor::Draw_Tools()
 	{
 		auto currentMode = m_CurrentGizmoMode == ImGuizmo::LOCAL ? "Local" : "World";
 
-		/// TODO: Сделать с правой стороны
+		/// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		ImGui::PushItemWidth(30.0f);
 		if (ImGui::Button(currentMode))
 			m_ToggleGizmoMode();
@@ -100,9 +100,9 @@ void UI_Editor::Init(Game* game)
 }
 
 void UI_Editor::m_InitIcons() {
-	_game->imageAsset()->InitImage(&m_icMove, "../../data/engine/icons/ic_move.png");
-	_game->imageAsset()->InitImage(&m_icRotate, "../../data/engine/icons/ic_rotate.png");
-	_game->imageAsset()->InitImage(&m_icScale, "../../data/engine/icons/ic_scale.png");
+	_game->imageAsset()->InitImage(&m_icMove, "../../engine/data/icons/ic_move.png");
+	_game->imageAsset()->InitImage(&m_icRotate, "../../engine/data/icons/ic_rotate.png");
+	_game->imageAsset()->InitImage(&m_icScale, "../../engine/data/icons/ic_scale.png");
 
 	m_moveTex = Texture::CreateFromImage(_game->render(), &m_icMove);
 	m_rotateTex = Texture::CreateFromImage(_game->render(), &m_icRotate);

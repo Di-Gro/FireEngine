@@ -115,13 +115,13 @@ void UserInterface::m_InitStyles() {
 }
 
 void UserInterface::m_InitIcons() {
-	_game->imageAsset()->InitImage(&m_imgMove, "../../data/engine/icons/ic_move.png");
-	_game->imageAsset()->InitImage(&m_imgRotate, "../../data/engine/icons/ic_rotate.png");
-	_game->imageAsset()->InitImage(&m_imgScale, "../../data/engine/icons/ic_scale.png");
-	_game->imageAsset()->InitImage(&m_imgPickup, "../../data/engine/icons/ic_pickup.png");
-	_game->imageAsset()->InitImage(&m_imgPickupActor, "../../data/engine/icons/ic_pickup_actor.png");
-	_game->imageAsset()->InitImage(&m_imgPickupComponent, "../../data/engine/icons/ic_pickup_component.png");
-	_game->imageAsset()->InitImage(&m_imgPickupAsset, "../../data/engine/icons/ic_pickup_asset.png");
+	_game->imageAsset()->InitImage(&m_imgMove, "../../engine/data/icons/ic_move.png");
+	_game->imageAsset()->InitImage(&m_imgRotate, "../../engine/data/icons/ic_rotate.png");
+	_game->imageAsset()->InitImage(&m_imgScale, "../../engine/data/icons/ic_scale.png");
+	_game->imageAsset()->InitImage(&m_imgPickup, "../../engine/data/icons/ic_pickup.png");
+	_game->imageAsset()->InitImage(&m_imgPickupActor, "../../engine/data/icons/ic_pickup_actor.png");
+	_game->imageAsset()->InitImage(&m_imgPickupComponent, "../../engine/data/icons/ic_pickup_component.png");
+	_game->imageAsset()->InitImage(&m_imgPickupAsset, "../../engine/data/icons/ic_pickup_asset.png");
 
 	m_texMove = Texture::CreateFromImage(_game->render(), &m_imgMove);
 	m_texRotate = Texture::CreateFromImage(_game->render(), &m_imgRotate);

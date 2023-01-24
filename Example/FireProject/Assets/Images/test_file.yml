@@ -1,9 +1,0 @@
-.file0.assetId: {AssetId: c182aa47-4f21-4659-98aa-3d4843fe2f97}
-.file0.files: {Var: 1}
-
-.file1!script: {Var: Texture}
-.file1!scriptId: {AssetId: 81b31ac1-86d8-4d99-aff6-324c5f987b15}
-.file1.image: {Null: }
-.file1.width: {Var: 0}
-.file1.height: {Var: 0}
-

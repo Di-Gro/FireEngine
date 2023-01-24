@@ -48,7 +48,7 @@ namespace Engine {
         public List<Vector3> vecList = null;
 
 
-        [Range(0f, 10f)] public float floatField = 4.56f;
+        [Range(0f, 10f)] public float floatField = 4.56f; // Overlap is for test
         [Close] public float floatField2 = 5.56f;
 
         [Range(1, 100)] 
@@ -107,81 +107,4 @@ namespace Engine {
 
     }
 
-}
-
-namespace EngineMono {
-
-	class CSClass : CppLinked {
-        static string pathOut = @"C:\Users\Dmitry\Desktop\Пример\out.yml";
-
-        /// Связывание с C++ объектом
-        public override CsRef Link(CppRef classInfoRef, CppRef objRef) {
-			CsRef csRef = base.Link(classInfoRef, objRef);
-
-            var assetStore = AssetStore.Instance;
-
-            // var actor = new Actor();
-            // actor.AddComponent<TestMesh>();
-            // actor.AddComponent<UI.TestImGui>();
-            // assetStore.CreateAsset("TestMesh.yml", actor, "TestMesh");
-            var actor = new Prefab("TestMeshPrefab").Instanciate();
-            // var textMesh = actor.GetComponent<TestMesh>();
-            // var meshComp = actor.GetComponent<MeshComponent>();
-
-            // var actor = new Actor();
-            // actor.AddComponent<TestPrefab>();
-            // assetStore.CreateAsset("TestPrefab.yml", actor, "TestPrefab");
-            //var actor2 = new Prefab("TestPrefab").Instanciate();
-
-            // var texture = new Texture();
-            // texture.width = 128;
-            // texture.height = 128;
-            // assetStore.CreateAsset("TestTexture1.yml", texture, "TestTexture1");
-            // var texture = new FireYaml.Deserializer("TestTexture1").Instanciate();
-
-            // var image = new Image();
-            // image.ext = "png";
-            // assetStore.CreateAsset("TestImage1.yml", image, "TestImage1");
-            // var image = new FireYaml.Deserializer("TestImage1").Instanciate();
-
-            // var meshComp = new Actor().AddComponent<MeshComponent>();
-            // meshComp.mesh = new StaticMesh("../../data/assets/levels/farm/meshes/House_Red.obj");
-            // var material = meshComp.GetMaterial(0);
-            // assetStore.CreateAsset("TestMaterial1.yml", material, "TestMaterial1");
-            // var material = new FireYaml.Deserializer("TestMaterial1").Instanciate();
-
-            // var meshComp = new Actor().AddComponent<MeshComponent>();
-            // meshComp.mesh = new StaticMesh("../../data/assets/levels/farm/meshes/House_Red.obj");
-
-            // var mesh = new FireYaml.Deserializer("TestMesh1").Instanciate();
-
-            // var actor = new Actor();
-            // var meshComp = actor.AddComponent<MeshComponent>();
-            // meshComp.mesh = new StaticMesh().LoadFromAsset("TestMesh1");
-            // meshComp.SetMaterial(0, new StaticMaterial().LoadFromAsset(AssetStore.M_Default));
-            // assetStore.CreateAsset("TestPrefab2.yml", actor, "TestPrefab2");
-
-            // var actor = new Prefab("TestPrefab2").Instanciate();
-            // var meshComp = actor.GetComponent<MeshComponent>();
-
-            // var asset = mesh as FireYaml.IAsset;
-            // EngineDll.Dll.Assets.Reload(Game.gameRef, asset.assetIdHash);
-
-            // var dirLight = new Actor("CS DirLight").AddComponent<DirectionalLight>();
-            // var dirLight = new Actor("CS AmbientLight").AddComponent<AmbientLight>();
-            // var pointLight = new Actor("CS Point Light").AddComponent<PointLight>();
-            // pointLight.Radius = 300;
-            // var spotLight = new Actor("CS Spot Light").AddComponent<SpotLight>();
-
-
-            // object scene = new Scene(0);
-            // new FireYaml.Deserializer("TestMesh1").InstanciateTo(ref scene);
-
-            // var scene = Game.CreateScene();
-
-
-            return csRef;
-		}
-
-	};
 }

@@ -1,7 +1,0 @@
-.file0.assetId: {AssetId: P0000000003}
-.file0.files: {Scalar: 1}
-
-.file1!scriptId: {AssetId: 00000010000}
-.file1!prefabId: {AssetId: P0000000002}
-.file1!.file1!.file1.name: {Scalar: Prefab 3}
-.file1!.file1!.file1.matList.1.assetId: {AssetId: 00100000402}

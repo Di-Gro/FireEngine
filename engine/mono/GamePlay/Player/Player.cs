@@ -89,7 +89,7 @@ public class Player : CSComponent, IPlayer {
 
         if (!ignoreEnergy) {
             energy -= Game.DeltaTime * energy_leak;
-            Console.WriteLine($"energy: {energy}");
+            // Console.WriteLine($"energy: {energy}");
         }
     }
 
@@ -158,7 +158,7 @@ public class Player : CSComponent, IPlayer {
         if (m_health < 0)
             m_health = 0;
 
-        Console.WriteLine($"Health: {m_health}");
+        // Console.WriteLine($"Health: {m_health}");
     }
 
     public void AddEnergy(int value) {
@@ -225,7 +225,7 @@ public class Player : CSComponent, IPlayer {
 
         if (ItemOnGrpund == newItem) {
             ItemOnGrpund = null;
-            Console.WriteLine("null");
+            // Console.WriteLine("null");
         }
     }
 
@@ -242,7 +242,7 @@ public class Player : CSComponent, IPlayer {
         if(OnFlyItemComponent.OnFly)
             AddDamage(55);
 
-        Console.WriteLine("m_HandleItemDamaged");
+        // Console.WriteLine("m_HandleItemDamaged");
     }
 
     private void m_HandleBulletCollision(Actor otherActor) {
@@ -254,7 +254,7 @@ public class Player : CSComponent, IPlayer {
 
         AddDamage(5);
         
-        Console.WriteLine("On Bullet Collision");
+        // Console.WriteLine("On Bullet Collision");
     }
 
     private void m_HandleDropTargetEnter(Actor otherActor) {

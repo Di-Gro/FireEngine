@@ -70,10 +70,10 @@ std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderEditorOutline,
 	Assets::ShaderBlur,
 	Assets::ShaderWorldGride,
-	"../../data/engine/shaders/rp_image.hlsl",
-	"../../data/engine/shaders/shadow_map.hlsl",
-	"../../data/engine/shaders/rp_screen_quad.hlsl",
-	"../../data/engine/shaders/screen.hlsl",
+	"../../engine/data/shaders/rp_image.hlsl",
+	"../../engine/data/shaders/shadow_map.hlsl",
+	"../../engine/data/shaders/rp_screen_quad.hlsl",
+	"../../engine/data/shaders/screen.hlsl",
 };
 
 Game::Game() {
@@ -111,7 +111,7 @@ Game::~Game() {
 void Game::Init(MonoInst* imono) {
 	m_InitMono(imono);
 
-	m_window->Init(this, L"CGLab6 - Shadow Map", 1920, 1080);
+	m_window->Init(this, L"FireEngine", 1920, 1080);
 	m_window->Create();
 
 	m_render->Init(this, m_window);

@@ -3,21 +3,21 @@
 
 //#include <monopp\mono_method_invoker.h>
 
-std::string Assets::ShaderDefault = "../../data/engine/shaders/opaque_default.hlsl";
-std::string Assets::ShaderDiffuseColor = "../../data/engine/shaders/opaque_defuse_color.hlsl";
-std::string Assets::ShaderVertexColor = "../../data/engine/shaders/opaque_vertex_color.hlsl";
+std::string Assets::ShaderDefault = "../../engine/data/shaders/opaque_default.hlsl";
+std::string Assets::ShaderDiffuseColor = "../../engine/data/shaders/opaque_defuse_color.hlsl";
+std::string Assets::ShaderVertexColor = "../../engine/data/shaders/opaque_vertex_color.hlsl";
 
-std::string Assets::ShaderAmbientLight = "../../data/engine/shaders/AmbientLight.hlsl";
-std::string Assets::ShaderDirectionLight = "../../data/engine/shaders/DirectionLight.hlsl";
-std::string Assets::ShaderPointLight = "../../data/engine/shaders/PointLight.hlsl";
-std::string Assets::ShaderPointLightMesh = "../../data/engine/shaders/PointLightMesh.hlsl";
-std::string Assets::ShaderSpotLight = "../../data/engine/shaders/SpotLight.hlsl";
+std::string Assets::ShaderAmbientLight = "../../engine/data/shaders/AmbientLight.hlsl";
+std::string Assets::ShaderDirectionLight = "../../engine/data/shaders/DirectionLight.hlsl";
+std::string Assets::ShaderPointLight = "../../engine/data/shaders/PointLight.hlsl";
+std::string Assets::ShaderPointLightMesh = "../../engine/data/shaders/PointLightMesh.hlsl";
+std::string Assets::ShaderSpotLight = "../../engine/data/shaders/SpotLight.hlsl";
 
-std::string Assets::ShaderEditorHihglight = "../../data/engine/shaders/EditorHihglight.hlsl";
-std::string Assets::ShaderEditorOutline = "../../data/engine/shaders/EditorOutline.hlsl";
-std::string Assets::ShaderBlur = "../../data/engine/shaders/Blur.hlsl";
+std::string Assets::ShaderEditorHihglight = "../../engine/data/shaders/EditorHihglight.hlsl";
+std::string Assets::ShaderEditorOutline = "../../engine/data/shaders/EditorOutline.hlsl";
+std::string Assets::ShaderBlur = "../../engine/data/shaders/Blur.hlsl";
 
-std::string Assets::ShaderWorldGride = "../../data/engine/shaders/WorldGride.hlsl";
+std::string Assets::ShaderWorldGride = "../../engine/data/shaders/WorldGride.hlsl";
 
 
 void Assets::Init(Game* game) {

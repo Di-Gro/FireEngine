@@ -250,7 +250,7 @@ namespace Engine {
         }
 
         private string m_Name = "";
-        private string m_Shader = "../../data/engine/shaders/opaque_defuse_color.hlsl";
+        private string m_Shader = "../../engine/data/shaders/opaque_defuse_color.hlsl";
         private CullMode m_CullMode = CullMode.Back;
         private FillMode m_FillMode = FillMode.Solid;
         private ulong m_Priority = 2000;

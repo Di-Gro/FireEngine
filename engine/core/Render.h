@@ -94,13 +94,13 @@ private:
 	//bool m_viewportChanged = false;
 
 private:
-	comptr<ID3D11RasterizerState> m_ñullSolidBack;
-	comptr<ID3D11RasterizerState> m_ñullSolidFront;
-	comptr<ID3D11RasterizerState> m_ñullSolidNone;
+	comptr<ID3D11RasterizerState> m_cullSolidBack;
+	comptr<ID3D11RasterizerState> m_cullSolidFront;
+	comptr<ID3D11RasterizerState> m_cullSolidNone;
 
-	comptr<ID3D11RasterizerState> m_ñullWireframeBack;
-	comptr<ID3D11RasterizerState> m_ñullWireframeFront;
-	comptr<ID3D11RasterizerState> m_ñullWireframeNone;
+	comptr<ID3D11RasterizerState> m_cullWireframeBack;
+	comptr<ID3D11RasterizerState> m_cullWireframeFront;
+	comptr<ID3D11RasterizerState> m_cullWireframeNone;
 
 public:
 	//inline CameraComponent* camera() { return m_camera; }
