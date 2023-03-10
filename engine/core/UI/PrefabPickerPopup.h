@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_internal.h"
@@ -9,6 +10,19 @@
 class Actor;
 
 class PrefabPickerPopup {
+private:
+	struct MenuAction {
+		const char* label;
+		bool condition;
+		const std::function<void()> action;
+
+		MenuAction(
+			const char* label,
+			bool condition,
+			const std::function<void()>& action
+		) : label(label) , condition(condition) , action(action) { }
+	};
+
 public:
 	std::string header = "Prefab";
 	int selected;
@@ -28,6 +42,7 @@ public:
 private:
 	static bool IsMatch(std::string source, std::string target);
 
-	bool m_DrawMenu(Actor* actor);
+	void m_DrawMenu(Actor* actor);
+	void m_DrawMenuActions(int count, MenuAction* actions);
 };
 
