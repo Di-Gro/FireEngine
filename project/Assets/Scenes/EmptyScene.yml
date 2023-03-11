@@ -3,13 +3,14 @@
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
-.file1.Name: {Var: }
+.file1.Name: {Var: EmptyScene}
 .file1.CameraPos.X: {Var: 0}
 .file1.CameraPos.Y: {Var: 0}
 .file1.CameraPos.Z: {Var: 0}
 .file1.CameraRot.X: {Var: 0}
 .file1.CameraRot.Y: {Var: 0}
 .file1.CameraRot.Z: {Var: 0}
-.file1.CameraRot.W: {Var: 0}
+.file1.CameraRot.W: {Var: 1}
 .file1.CameraSpeed: {Var: 100}
+.file1.m_roots: {Null: }
 
