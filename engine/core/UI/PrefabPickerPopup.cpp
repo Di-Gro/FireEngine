@@ -29,11 +29,13 @@ bool PrefabPickerPopup::Open(Actor* actor) {
 
 	m_prefabIdHash = store->prefabTypeIdHash;
 
-	if (!store->assets.contains(m_prefabIdHash))
-		return false;
+	//if (!store->assets.contains(m_prefabIdHash))
+	//	return false;
 
-	const auto* content = &store->assets[m_prefabIdHash];
-
+	const std::vector<int>* content = &m_emptyContent;
+	if (store->assets.contains(m_prefabIdHash))
+		content = &store->assets[m_prefabIdHash];
+	
 	bool hasSelected = false;
 
 	ComponentPicker::PushPopupStyles();

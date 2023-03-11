@@ -10,6 +10,6 @@
             "request": "attach",
             "address": "localhost",
             "port": 55555
-        }
+        },
     ]
 }

@@ -109,6 +109,7 @@ private:
 
 	void m_DrawComponentContextMenu(Component* component);
 	bool m_DrawComponentFieldContextMenu(int scriptIdHash, CsRef* compRef);
+	bool m_DrawActorFieldContextMenu(CsRef* compRef);
 
 };
 

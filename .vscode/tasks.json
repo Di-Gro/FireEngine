@@ -1,0 +1,47 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "FireProject_Build",
+            "type": "shell",
+            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
+            "args": ["${workspaceFolder}/FireProject.sln"],
+        },
+        {
+            "label": "FireProject_Run",
+            "type": "shell",
+            "command": "${workspaceFolder}/engine/launcher/bin/Debug/net6.0/launcher.exe",
+            "args": ["${workspaceFolder}"],
+        },
+        {
+            "label": "FireProject_Run_Debug",
+            "type": "shell",
+            "command": "${workspaceFolder}/engine/launcher/bin/Debug/net6.0/launcher.exe",
+            "args": ["${workspaceFolder}", "FireMode.WaitDebugger"],
+        },
+        {
+            "label": "FireProject_Build_Run",
+            "dependsOn": [
+                "FireProject_Build",
+                "FireProject_Run"
+            ],
+            "dependsOrder": "sequence",
+        },
+        {
+            "label": "FireProject_Build_Run_Debug",
+            "dependsOn": [
+                "FireProject_Build",
+                "FireProject_Run_Debug"
+            ],
+            "dependsOrder": "sequence",
+        },
+        {
+            "label": "FireGUID",
+            "type": "shell",
+            "command": "${workspaceFolder}/engine/launcher/bin/Debug/net6.0/launcher.exe",
+            "args": ["${workspaceFolder}", "FireGUID"],
+        },
+    ]
+}

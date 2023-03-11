@@ -506,6 +506,9 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 
 	ImGui::Columns(1);
 
+	if (m_DrawActorFieldContextMenu(csRef))
+		return true;
+
 	bool changed = AcceptDroppedActor(csRef);
 
 	return changed;
@@ -732,6 +735,35 @@ void UI_Inspector::m_DrawComponentContextMenu(Component* component)
 
 	ImGui::PopStyleVar(6);
 	ImGui::PopStyleColor(3);
+}
+
+bool UI_Inspector::m_DrawActorFieldContextMenu(CsRef* compRef) {
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 10.0f, 10.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 3.0f });
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f, 5.0f });
+
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, { 0.7f, 0.7f, 0.7f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_Text, { 0.0f, 0.0f, 0.0f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.8f, 0.8f, 0.9f, 1.0f });
+
+	bool changed = false;
+
+	if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
+	{
+		if (ImGui::Selectable("Set Null")) {
+			*compRef = CsRef(0);
+			changed = true;
+		}
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopStyleVar(6);
+	ImGui::PopStyleColor(3);
+
+	return changed;
 }
 
 bool UI_Inspector::m_DrawComponentFieldContextMenu(int scriptIdHash, CsRef* compRef) {

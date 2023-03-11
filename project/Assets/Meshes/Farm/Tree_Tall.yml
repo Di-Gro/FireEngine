@@ -1,8 +1,0 @@
-.file0.assetId: {AssetId: 7d297206-5ca2-440c-b333-607b947570c3}
-.file0.files: {Var: 1}
-
-.file1!script: {Var: StaticMesh}
-.file1!scriptId: {AssetId: bad8395e-7c27-4697-ba7a-2e7556af5423}
-.file1.ext: {Var: .obj}
-.file1.m_materials: {Null: }
-

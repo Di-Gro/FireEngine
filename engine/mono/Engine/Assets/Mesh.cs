@@ -9,7 +9,7 @@ using FireYaml;
 
 namespace Engine {
 
-    class Mesh  {
+    public class Mesh  {
         public CppRef cppRef { get; protected set; } = CppRef.NullRef;
         public int ShapeCount => Dll.Mesh4.ShapeCount(cppRef);
         public int MaxMaterialIndex => Dll.Mesh4.MaterialMaxIndex(cppRef);
@@ -21,7 +21,7 @@ namespace Engine {
     }
 
     [GUID("bad8395e-7c27-4697-ba7a-2e7556af5423", typeof(StaticMesh))]
-    class StaticMesh : Mesh, IFile, IAsset, ISourceAsset {
+    public class StaticMesh : Mesh, IFile, IAsset, ISourceAsset {
         /// IAsset ->
         [Open] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }

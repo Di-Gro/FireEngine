@@ -10,7 +10,7 @@ using FireYaml;
 namespace Engine {
 
     [GUID("acec5527-e867-41b9-a852-ecfbf26e4491", typeof(MeshComponent))]
-    sealed class MeshComponent : CppComponent {
+    public sealed class MeshComponent : CppComponent {
 
         private Prop<bool> prop_IsDebug = new Prop<bool>(0);
         private Prop<bool> prop_Visible = new Prop<bool>(1);

@@ -10,7 +10,7 @@ namespace Engine {
     public enum CullMode { Front, Back, None };
     public enum FillMode { Solid, Wireframe };
 
-    interface IMaterial {
+    public interface IMaterial {
         bool IsDynamic { get; }
 
         CppRef cppRef { get; }
@@ -32,7 +32,7 @@ namespace Engine {
     }
 
     [GUID("110065f7-ed95-4fca-8a09-288b7ec17500", typeof(StaticMaterial))]
-    class StaticMaterial : IMaterial, FireYaml.IFile, FireYaml.IAsset {
+    public class StaticMaterial : IMaterial, FireYaml.IFile, FireYaml.IAsset {
 
         /// IFile ->
         [Close] public ulong assetInstance { get; set; } = 0;
@@ -140,7 +140,7 @@ namespace Engine {
 
     }
 
-    class DynamicMaterial : IMaterial {
+    public class DynamicMaterial : IMaterial {
 
         /// IMaterial ->
         public CppRef cppRef { get => m_proxy.cppRef; protected set => m_proxy.cppRef = value; }

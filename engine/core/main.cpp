@@ -1,5 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
 #include <string>
+#include <cstdlib>
 
 #include "monopp/mono_jit.h"
 #include "monopp/mono_domain.h"
@@ -50,8 +53,32 @@ static void InsideMono() {
 	InsideAssemply(&imono);
 }
 
-int main() {	
-	bool useMonoDebug = false;
+enum class FireMode { None, WaitDebugger, };
+
+FireMode GetFireModeArg(int argc, char* argv[]) {
+	std::string fireModeTag = "FireMode.";
+
+	for (int i = 1; i < argc; i++) {
+		auto arg = std::string(argv[i]);
+		if (arg.starts_with(fireModeTag)) {
+
+			auto tagSize = fireModeTag.size();
+			auto value = arg.substr(tagSize, arg.size() - tagSize);
+
+			if (value == "WaitDebugger")
+				return FireMode::WaitDebugger;
+		}
+	}
+	return FireMode::None;
+}
+
+int main(int argc, char* argv[]) {
+	FireMode mode = GetFireModeArg(argc, argv);
+
+	bool useMonoDebug = mode == FireMode::WaitDebugger;
+
+	if(useMonoDebug)
+		std::cout << "Waiting for debagger" << std::endl;
 
 	if (!mono::init("mono", useMonoDebug))
 		return 1;
