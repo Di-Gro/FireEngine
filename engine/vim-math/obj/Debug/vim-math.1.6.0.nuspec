@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>vim-math</id>
+    <version>1.6.0</version>
+    <authors>vim-math</authors>
+    <description>Package Description</description>
+    <repository type="git" url="https://github.com/Di-Gro/FireEngine.git" commit="92f2d4e2a01b6ba5bb1395c9a9dfcf5b98b30454" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+    <contentFiles>
+      <files include="any/netstandard2.0/MathOps.tt" buildAction="Content" />
+      <files include="any/netstandard2.0/Structs.tt" buildAction="Content" />
+      <files include="any/netstandard2.0/TemplateHelpers.tt" buildAction="Content" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="C:\GitHub\FireEngine (test2)\engine\vim-math\bin\Debug\netstandard2.0\vim-math.dll" target="lib\netstandard2.0\vim-math.dll" />
+    <file src="C:\GitHub\FireEngine (test2)\engine\vim-math\MathOps.tt" target="content\MathOps.tt" />
+    <file src="C:\GitHub\FireEngine (test2)\engine\vim-math\MathOps.tt" target="contentFiles\any\netstandard2.0\MathOps.tt" />
+    <file src="C:\GitHub\FireEngine (test2)\engine\vim-math\Structs.tt" target="content\Structs.tt" />
+    <file src="C:\GitHub\FireEngine (test2)\engine\vim-math\Structs.tt" target="contentFiles\any\netstandard2.0\Structs.tt" />
+    <file src="C:\GitHub\FireEngine (test2)\engine\vim-math\TemplateHelpers.tt" target="content\TemplateHelpers.tt" />
+    <file src="C:\GitHub\FireEngine (test2)\engine\vim-math\TemplateHelpers.tt" target="contentFiles\any\netstandard2.0\TemplateHelpers.tt" />
+  </files>
+</package>
