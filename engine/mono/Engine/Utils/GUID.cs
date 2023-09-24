@@ -5,7 +5,7 @@ using System.Reflection;
 namespace Engine {
 
     [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    sealed class GUIDAttribute : System.Attribute {
+    public sealed class GUIDAttribute : System.Attribute {
 
         public static Dictionary<int, Type> types = null;
 

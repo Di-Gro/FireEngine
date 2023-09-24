@@ -81,11 +81,15 @@ namespace Engine {
             return true;
         }
 
+        /// TODO: Переименовать в Write/ReadExtraFields
         public virtual void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) { }
 
         public virtual void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) { }
 
         public virtual void OnDrawGui(Type type, ref object instance) { }
+
+        public virtual List<string> GetNamesOfExtraFields() { return null; }
+        public virtual void WriteExtraFields() { }
     }
 
     public class ActorSerializer : SerializerBase {

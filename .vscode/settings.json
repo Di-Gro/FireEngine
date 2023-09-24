@@ -1,0 +1,8 @@
+{
+    "cmake.configureOnOpen": false,
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
+    },
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+}

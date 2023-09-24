@@ -136,7 +136,7 @@ namespace FireYaml {
         public int FilesCount => m_nextDocIndex - 1;
 
 
-        static BindingFlags s_flags =
+        public static BindingFlags s_flags =
                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
                BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty |
                BindingFlags.SetProperty;
@@ -284,7 +284,7 @@ namespace FireYaml {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
 
-            if (canSaveAsLink && m_NeedSaveAsLink(type)) {
+            if (canSaveAsLink && NeedSaveAsLink(type)) {
                 var link = new InnerLink();
                 link.type = type;
                 link.instance = obj;
@@ -465,7 +465,7 @@ namespace FireYaml {
         //     return assetId;
         // }
 
-        private bool m_NeedSaveAsLink(Type type) {
+        public static bool NeedSaveAsLink(Type type) {
             if (type == typeof(Engine.Actor))
                 return true;
 
@@ -536,7 +536,7 @@ namespace FireYaml {
 
         private string ToYamlString(object value) {
             if (value == null)
-                throw new ArgumentNullException("ConvertToString");
+                throw new ArgumentNullException("ToYamlString");
 
             var type = value.GetType();
 

@@ -15,6 +15,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monopp", "engine\monopp\mon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vim-math", "engine\vim-math\vim-math.csproj", "{866F0AEA-4729-43D0-A5C2-1736545FB165}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FireBinEditor", "engine\FireSave\FireBinEditor.csproj", "{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8B056E76-48F7-44FA-9E0B-AFAC2A29DA54} = {8B056E76-48F7-44FA-9E0B-AFAC2A29DA54}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FireGUID", "engine\FireGUID\FireGUID.csproj", "{D90CE588-5A9B-4431-ADBC-C377380115A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +76,30 @@ Global
 		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|x64.Build.0 = Release|Any CPU
 		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|x86.ActiveCfg = Release|Any CPU
 		{866F0AEA-4729-43D0-A5C2-1736545FB165}.Release|x86.Build.0 = Release|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Debug|x64.Build.0 = Debug|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Debug|x86.Build.0 = Debug|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Release|x64.ActiveCfg = Release|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Release|x64.Build.0 = Release|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Release|x86.ActiveCfg = Release|Any CPU
+		{8DC43AF2-E7A2-4DF1-943C-7151A50BA486}.Release|x86.Build.0 = Release|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Debug|x64.Build.0 = Debug|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Debug|x86.Build.0 = Debug|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Release|x64.ActiveCfg = Release|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Release|x64.Build.0 = Release|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Release|x86.ActiveCfg = Release|Any CPU
+		{D90CE588-5A9B-4431-ADBC-C377380115A1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

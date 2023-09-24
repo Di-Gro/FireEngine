@@ -40,8 +40,7 @@
         {
             "label": "FireGUID",
             "type": "shell",
-            "command": "${workspaceFolder}/engine/launcher/bin/Debug/net6.0/launcher.exe",
-            "args": ["${workspaceFolder}", "FireGUID"],
+            "command": "${workspaceFolder}/engine/FireGuid/bin/Debug/net6.0/FireGUID.exe",
         },
     ]
 }

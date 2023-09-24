@@ -1,0 +1,39 @@
+.file1!script: {Var: Actor}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file1.prefabId: {Var: }
+.file1.Name: {Var: Actor 3}
+.file1.ActiveSelf: {Var: True}
+.file1.localPosition.X: {Var: 54.53232}
+.file1.localPosition.Y: {Var: 50}
+.file1.localPosition.Z: {Var: 81.47746}
+.file1.localRotationQ.X: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Z: {Var: 0}
+.file1.localRotationQ.W: {Var: 1}
+.file1.localScale.X: {Var: 100}
+.file1.localScale.Y: {Var: 100}
+.file1.localScale.Z: {Var: 100}
+.file1.m_children: {Null: }
+.file1.m_flags: {Var: 0}
+.file1.m_components.0: {Ref: file2}
+.file1.m_components.1: {Ref: file3}
+
+.file2!script: {Var: MeshComponent}
+.file2!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file2.MeshScale.X: {Var: 1}
+.file2.MeshScale.Y: {Var: 1}
+.file2.MeshScale.Z: {Var: 1}
+.file2.IsDebug: {Var: False}
+.file2.CastShadow: {Var: True}
+.file2.IsVisible: {Var: True}
+.file2.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file2.m_materials.0.assetId: {AssetId: bca7088f-eef7-46a3-9803-0a652eedba0e}
+
+.file3!script: {Var: FirstComponent}
+.file3!scriptId: {AssetId: b1aa2283-6a0f-44f8-a2de-2abefa76175f}
+.file3.publicFloat: {Var: 1}
+.file3.privateOpenFloat: {Var: 6.25}
+.file3.component: {Null: }
+.file3.meshComponent: {Null: }
+.file3.actorField: {Null: }
+

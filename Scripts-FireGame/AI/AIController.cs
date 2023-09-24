@@ -29,6 +29,7 @@ public class AIController : CSComponent {
     public float distance_to_player => (m_player.CharacterPosititon.Distance(m_target.CharacterPosititon));
     public override void OnInit() {
         m_ai = actor.AddComponent<AIComponent>();
+
         if (m_player == null || m_ai == null)
             throw new NullFieldException(this);
     }
@@ -40,47 +41,41 @@ public class AIController : CSComponent {
         count_ai++;
         
         old_target_pos = m_target.CharacterPosititon;
+        
         var tag_can_shoot = nameof(can_shoot);
         var tag_in_senses_radius = nameof(in_senses_radius);
         var tag_out_range = nameof(out_range);
+
         m_ai.Add(this, tag_in_senses_radius);
         m_ai.Add(this, tag_can_shoot);
+
         m_ai.AddDecision("Random roam", random_roam);
         m_ai.AddDecision("Move to player", move_to_player);
         m_ai.AddDecision("OnAttack", attack);
+
         m_ai["Random roam"].Add(this, tag_out_range, "True");
         m_ai["Move to player"].Add(this, tag_in_senses_radius, "True");
         m_ai["OnAttack"].Add(this, tag_can_shoot, "True");
     }
 
     public override void OnUpdate() {
-        /// Здесь можно раздать команды
-        if (m_target!= null && m_target.IsDestroyed)
-        {
+        if (m_target != null && m_target.IsDestroyed) 
             m_target = null;
-            
-        }
-        if(m_target == null)
-        {
+        
+        if (m_target == null) 
             return;
-        }
+        
         m_ai.DecideAll();
+        
         can_shoot_dt += Game.DeltaTime;
-
     }
 
     public override void OnFixedUpdate() {
-        /// Здесь можно установить вектор движения
-        ///
-        if(m_target == null)
-        {
+        if (m_target == null) {
             return;
         }
-        // Console.WriteLine($"TargetPos {next_point}");
-        // Console.WriteLine($"MyPos {m_player.CharacterPosititon}");
         next_point.Y = m_player.CharacterPosititon.Y;
-        if (next_point.Distance(m_player.CharacterPosititon) > 15)
-        {
+        if (next_point.Distance(m_player.CharacterPosititon) > 15) {
             var direction = (next_point - m_player.CharacterPosititon).Normalized();
             bool jump = false;
             bool run = false;
@@ -90,14 +85,12 @@ public class AIController : CSComponent {
         m_player.ViewDirection = (m_target.CharacterPosititon - m_player.CharacterPosititon).Normalized();
     }
 
-    void move_to_player()
-    {
-        // Console.WriteLine("move_to_player");
-        if (old_target_pos.Distance(m_target.CharacterPosititon) > 10 || path.Length == 0)
-        {
-            
+    void move_to_player() {
+        
+        if (old_target_pos.Distance(m_target.CharacterPosititon) > 10 || path.Length == 0) {
+
             var scale_direction = (m_target.CharacterPosititon - m_player.CharacterPosititon).Normalized() * 200;
-            scale_direction = scale_direction.RotateY(22-rnd.Next(1, 46));
+            scale_direction = scale_direction.RotateY(22 - rnd.Next(1, 46));
             var end_point = m_player.CharacterPosititon + scale_direction;
             int Vertexes = NavMesh.FindPath(m_player.CharacterPosititon, end_point, id, 0);
             path = NavMesh.GetPath(id);
@@ -107,10 +100,8 @@ public class AIController : CSComponent {
             next_point = path[index_in_path];
 
         }
-        if (next_point.Distance(m_player.CharacterPosititon) <= 10)
-        {
-            if(index_in_path + 1 < path.Length)
-            {
+        if (next_point.Distance(m_player.CharacterPosititon) <= 10) {
+            if (index_in_path + 1 < path.Length) {
                 index_in_path++;
                 next_point = path[index_in_path];
             }
@@ -118,20 +109,15 @@ public class AIController : CSComponent {
     }
 
 
-    void random_roam()
-    {
-        // Console.WriteLine("random_roam");
+    void random_roam() {
         if(next_point == m_player.CharacterPosititon)
             next_point = NavMesh.RandomPoint();
 
     }
 
 
-    void attack()
-    {
-
+    void attack() {
         can_shoot_dt = 0 - (float)rnd.NextDouble() * 3;
         m_player.Shoot();
-        // Console.WriteLine("Attack");
     }
 }
