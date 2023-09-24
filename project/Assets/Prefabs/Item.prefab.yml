@@ -1,0 +1,126 @@
+.file0.assetId: {AssetId: 303a34fe-9030-4426-ab8f-523af7a3f8db}
+.file0.files: {Var: 10}
+
+.file1!script: {Var: Actor}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file1.prefabId: {Var: 303a34fe-9030-4426-ab8f-523af7a3f8db}
+.file1.Name: {Var: Item}
+.file1.ActiveSelf: {Var: True}
+.file1.localPosition.X: {Var: 0}
+.file1.localPosition.Y: {Var: 0}
+.file1.localPosition.Z: {Var: 0}
+.file1.localRotationQ.X: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Z: {Var: 0}
+.file1.localRotationQ.W: {Var: 1}
+.file1.localScale.X: {Var: 20}
+.file1.localScale.Y: {Var: 20}
+.file1.localScale.Z: {Var: 20}
+.file1.m_flags: {Var: 4}
+.file1.m_children.0: {Ref: file2}
+.file1.m_components.0: {Ref: file6}
+.file1.m_components.1: {Ref: file7}
+.file1.m_components.2: {Ref: file8}
+.file1.m_components.3: {Ref: file9}
+.file1.m_components.4: {Ref: file10}
+
+.file2!script: {Var: Actor}
+.file2!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file2.prefabId: {Var: }
+.file2.Name: {Var: Trigger}
+.file2.ActiveSelf: {Var: False}
+.file2.localPosition.X: {Var: 0}
+.file2.localPosition.Y: {Var: 0}
+.file2.localPosition.Z: {Var: 0}
+.file2.localRotationQ.X: {Var: 0}
+.file2.localRotationQ.Y: {Var: 0}
+.file2.localRotationQ.Z: {Var: 0}
+.file2.localRotationQ.W: {Var: 1}
+.file2.localScale.X: {Var: 1}
+.file2.localScale.Y: {Var: 1}
+.file2.localScale.Z: {Var: 1}
+.file2.m_children: {Null: }
+.file2.m_flags: {Var: 20}
+.file2.m_components.0: {Ref: file3}
+.file2.m_components.1: {Ref: file4}
+.file2.m_components.2: {Ref: file5}
+
+.file3!script: {Var: Rigidbody}
+.file3!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file3.simulate: {Var: True}
+.file3.isSensor: {Var: True}
+.file3.motion: {Var: Kinematic}
+.file3.Mass: {Var: 1}
+.file3.gravity: {Var: 1}
+.file3.MaxLinearVelocity: {Var: 500}
+.file3.LinearDamping: {Var: 0.05}
+.file3.AgularDamping: {Var: 0.05}
+.file3.Friction: {Var: 0.2}
+.file3.Bounciness: {Var: 0.2}
+.file3.AllowSleeping: {Var: False}
+.file3.KeepLocal: {Var: False}
+.file3.Quality: {Var: Discrete}
+
+.file4!script: {Var: SphereCollider}
+.file4!scriptId: {AssetId: aa06e9b3-f75f-4982-976b-a6f57568d6f0}
+.file4.Radius: {Var: 1.5}
+.file4.DrawDebug: {Var: False}
+
+.file5!script: {Var: Retarget}
+.file5!scriptId: {AssetId: df4d594d-2fe2-4902-8b8a-08232a172eb4}
+.file5.target: {Ref: file1}
+
+.file6!script: {Var: Item}
+.file6!scriptId: {AssetId: ad1f3f81-75c1-4794-a9ea-cbb7463b1885}
+.file6.type: {Var: Trash}
+.file6.throwSpeed: {Var: 300}
+.file6.throwDistance: {Var: 150}
+.file6.dropSpeed: {Var: 50}
+.file6.dropDistance: {Var: 0}
+.file6.canThrow: {Var: True}
+.file6.canPickup: {Var: True}
+.file6.m_trigger: {Ref: file2}
+
+.file7!script: {Var: Rigidbody}
+.file7!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file7.simulate: {Var: False}
+.file7.isSensor: {Var: False}
+.file7.motion: {Var: Dynamic}
+.file7.Mass: {Var: 1}
+.file7.gravity: {Var: 1}
+.file7.MaxLinearVelocity: {Var: 500}
+.file7.LinearDamping: {Var: 0.05}
+.file7.AgularDamping: {Var: 0.05}
+.file7.Friction: {Var: 1}
+.file7.Bounciness: {Var: 0}
+.file7.AllowSleeping: {Var: False}
+.file7.KeepLocal: {Var: False}
+.file7.Quality: {Var: LinearCast}
+
+.file8!script: {Var: MeshComponent}
+.file8!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file8.MeshScale.X: {Var: 1}
+.file8.MeshScale.Y: {Var: 1}
+.file8.MeshScale.Z: {Var: 1}
+.file8.IsDebug: {Var: False}
+.file8.CastShadow: {Var: True}
+.file8.IsVisible: {Var: True}
+.file8.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file8.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file9!script: {Var: BoxCollider}
+.file9!scriptId: {AssetId: 73d3cbc8-cb32-4e71-a8bb-570b6e71ac45}
+.file9.Size.X: {Var: 1}
+.file9.Size.Y: {Var: 1}
+.file9.Size.Z: {Var: 1}
+.file9.DrawDebug: {Var: False}
+
+.file10!script: {Var: Projectile}
+.file10!scriptId: {AssetId: c6f30bd4-5f87-4417-9682-51d56f404a02}
+.file10.speed: {Var: 300}
+.file10.distance: {Var: 300}
+.file10.destroy: {Var: NonDestroy}
+.file10.sleepVelosity: {Var: 5}
+.file10.notSleepTime: {Var: 1}
+.file10.canAwake: {Var: True}
+

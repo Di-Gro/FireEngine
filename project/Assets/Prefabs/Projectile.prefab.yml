@@ -1,0 +1,66 @@
+.file0.assetId: {AssetId: 5a9d3ac8-1bac-4c58-9127-35aa6d373d7f}
+.file0.files: {Var: 5}
+
+.file1!script: {Var: Actor}
+.file1!scriptId: {AssetId: b0730a53-16c4-4943-bd7d-666f402617d5}
+.file1.prefabId: {Var: 5a9d3ac8-1bac-4c58-9127-35aa6d373d7f}
+.file1.Name: {Var: Projectile}
+.file1.ActiveSelf: {Var: True}
+.file1.localPosition.X: {Var: 0}
+.file1.localPosition.Y: {Var: 0}
+.file1.localPosition.Z: {Var: 0}
+.file1.localRotationQ.X: {Var: 0}
+.file1.localRotationQ.Y: {Var: 0}
+.file1.localRotationQ.Z: {Var: 0}
+.file1.localRotationQ.W: {Var: 1}
+.file1.localScale.X: {Var: 20}
+.file1.localScale.Y: {Var: 20}
+.file1.localScale.Z: {Var: 20}
+.file1.m_children: {Null: }
+.file1.m_flags: {Var: 12}
+.file1.m_components.0: {Ref: file2}
+.file1.m_components.1: {Ref: file3}
+.file1.m_components.2: {Ref: file4}
+.file1.m_components.3: {Ref: file5}
+
+.file2!script: {Var: Rigidbody}
+.file2!scriptId: {AssetId: 6338b2f1-49da-4a86-8c6b-a2a975e644c4}
+.file2.simulate: {Var: False}
+.file2.isSensor: {Var: False}
+.file2.motion: {Var: Dynamic}
+.file2.Mass: {Var: 1}
+.file2.gravity: {Var: 1}
+.file2.MaxLinearVelocity: {Var: 1000}
+.file2.LinearDamping: {Var: 0.05}
+.file2.AgularDamping: {Var: 0.05}
+.file2.Friction: {Var: 4.8}
+.file2.Bounciness: {Var: 0.2}
+.file2.AllowSleeping: {Var: False}
+.file2.Quality: {Var: LinearCast}
+
+.file3!script: {Var: MeshComponent}
+.file3!scriptId: {AssetId: acec5527-e867-41b9-a852-ecfbf26e4491}
+.file3.MeshScale.X: {Var: 1}
+.file3.MeshScale.Y: {Var: 1}
+.file3.MeshScale.Z: {Var: 1}
+.file3.IsDebug: {Var: False}
+.file3.CastShadow: {Var: True}
+.file3.IsVisible: {Var: True}
+.file3.m_mesh.assetId: {AssetId: 0d0717f4-17e1-435a-ad3a-61d082f6b2a2}
+.file3.m_materials.0.assetId: {AssetId: 418dccc8-cf33-4f3e-b401-ae42cb9cc7f7}
+
+.file4!script: {Var: Projectile}
+.file4!scriptId: {AssetId: c6f30bd4-5f87-4417-9682-51d56f404a02}
+.file4.speed: {Var: 500}
+.file4.distance: {Var: 150}
+.file4.destroy: {Var: NonDestroy}
+.file4.sleepVelosity: {Var: 1}
+.file4.notSleepTime: {Var: 0.3}
+
+.file5!script: {Var: BoxCollider}
+.file5!scriptId: {AssetId: 73d3cbc8-cb32-4e71-a8bb-570b6e71ac45}
+.file5.Size.X: {Var: 1}
+.file5.Size.Y: {Var: 1}
+.file5.Size.Z: {Var: 1}
+.file5.DrawDebug: {Var: False}
+

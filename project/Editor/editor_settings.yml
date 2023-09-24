@@ -3,5 +3,5 @@
 
 .file1!script: {Var: EditorSettings}
 .file1!scriptId: {AssetId: 3dfd7ca5-2750-4783-b7ef-9fced505568d}
-.file1.StartupScene.assetId: {AssetId: cc9bf98b-d93b-4e9f-bcd8-a5aeb6f02a25}
+.file1.StartupScene.assetId: {AssetId: 38be6f9b-74bf-4f0d-a6fa-3178740196c2}
 
