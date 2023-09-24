@@ -1,0 +1,15 @@
+C:\GitHub\FireEngine\engine\FireGUID\bin\Debug\net6.0\FireGUID.exe
+C:\GitHub\FireEngine\engine\FireGUID\bin\Debug\net6.0\FireGUID.deps.json
+C:\GitHub\FireEngine\engine\FireGUID\bin\Debug\net6.0\FireGUID.runtimeconfig.json
+C:\GitHub\FireEngine\engine\FireGUID\bin\Debug\net6.0\FireGUID.dll
+C:\GitHub\FireEngine\engine\FireGUID\bin\Debug\net6.0\FireGUID.pdb
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.csproj.AssemblyReference.cache
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.GeneratedMSBuildEditorConfig.editorconfig
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.AssemblyInfoInputs.cache
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.AssemblyInfo.cs
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.csproj.CoreCompileInputs.cache
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.dll
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\refint\FireGUID.dll
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.pdb
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\FireGUID.genruntimeconfig.cache
+C:\GitHub\FireEngine\engine\FireGUID\obj\Debug\net6.0\ref\FireGUID.dll

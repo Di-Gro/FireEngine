@@ -8,3 +8,13 @@ C:\GitHub\FireEngine (test2)\engine\vim-math\obj\Debug\netstandard2.0\vim-math.s
 C:\GitHub\FireEngine (test2)\engine\vim-math\obj\Debug\netstandard2.0\vim-math.dll
 C:\GitHub\FireEngine (test2)\engine\vim-math\obj\Debug\netstandard2.0\vim-math.pdb
 C:\GitHub\FireEngine (test2)\engine\vim-math\obj\Debug\netstandard2.0\vim-math.csprojAssemblyReference.cache
+C:\GitHub\FireEngine\engine\vim-math\bin\Debug\netstandard2.0\vim-math.deps.json
+C:\GitHub\FireEngine\engine\vim-math\bin\Debug\netstandard2.0\vim-math.dll
+C:\GitHub\FireEngine\engine\vim-math\bin\Debug\netstandard2.0\vim-math.pdb
+C:\GitHub\FireEngine\engine\vim-math\obj\Debug\netstandard2.0\vim-math.csprojAssemblyReference.cache
+C:\GitHub\FireEngine\engine\vim-math\obj\Debug\netstandard2.0\vim-math.AssemblyInfoInputs.cache
+C:\GitHub\FireEngine\engine\vim-math\obj\Debug\netstandard2.0\vim-math.AssemblyInfo.cs
+C:\GitHub\FireEngine\engine\vim-math\obj\Debug\netstandard2.0\vim-math.csproj.CoreCompileInputs.cache
+C:\GitHub\FireEngine\engine\vim-math\obj\Debug\netstandard2.0\vim-math.sourcelink.json
+C:\GitHub\FireEngine\engine\vim-math\obj\Debug\netstandard2.0\vim-math.dll
+C:\GitHub\FireEngine\engine\vim-math\obj\Debug\netstandard2.0\vim-math.pdb

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\GitHub\\FireEngine (test2)\\engine\\launcher\\launcher.csproj": {}
+    "C:\\GitHub\\FireEngine\\engine\\launcher\\launcher.csproj": {}
   },
   "projects": {
-    "C:\\GitHub\\FireEngine (test2)\\engine\\launcher\\launcher.csproj": {
+    "C:\\GitHub\\FireEngine\\engine\\launcher\\launcher.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\GitHub\\FireEngine (test2)\\engine\\launcher\\launcher.csproj",
+        "projectUniqueName": "C:\\GitHub\\FireEngine\\engine\\launcher\\launcher.csproj",
         "projectName": "launcher",
-        "projectPath": "C:\\GitHub\\FireEngine (test2)\\engine\\launcher\\launcher.csproj",
+        "projectPath": "C:\\GitHub\\FireEngine\\engine\\launcher\\launcher.csproj",
         "packagesPath": "C:\\Users\\Dmitry\\.nuget\\packages\\",
-        "outputPath": "C:\\GitHub\\FireEngine (test2)\\engine\\launcher\\obj\\",
+        "outputPath": "C:\\GitHub\\FireEngine\\engine\\launcher\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Dmitry\\AppData\\Roaming\\NuGet\\NuGet.Config",

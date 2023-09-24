@@ -1,0 +1,144 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0": {
+      "YamlDotNet/12.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/YamlDotNet.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/YamlDotNet.dll": {}
+        }
+      },
+      "Mono/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "YamlDotNet": "12.2.0",
+          "vim-math": "1.6.0"
+        },
+        "compile": {
+          "bin/placeholder/Mono.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Mono.dll": {}
+        }
+      },
+      "vim-math/1.6.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "compile": {
+          "bin/placeholder/vim-math.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/vim-math.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "YamlDotNet/12.2.0": {
+      "sha512": "2pK57YadH9mdL2mZLxAEfJf3JxWnkNR4GPBl895oJSkKbYl6jut/69lH/Lwkyo6Uc5OV92uOSs++nnAxXdDhWA==",
+      "type": "package",
+      "path": "yamldotnet/12.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "images/yamldotnet.png",
+        "lib/net35/YamlDotNet.dll",
+        "lib/net35/YamlDotNet.xml",
+        "lib/net45/YamlDotNet.dll",
+        "lib/net45/YamlDotNet.xml",
+        "lib/net47/YamlDotNet.dll",
+        "lib/net47/YamlDotNet.xml",
+        "lib/net6.0/YamlDotNet.dll",
+        "lib/net6.0/YamlDotNet.xml",
+        "lib/netstandard2.0/YamlDotNet.dll",
+        "lib/netstandard2.0/YamlDotNet.xml",
+        "lib/netstandard2.1/YamlDotNet.dll",
+        "lib/netstandard2.1/YamlDotNet.xml",
+        "yamldotnet.12.2.0.nupkg.sha512",
+        "yamldotnet.nuspec"
+      ]
+    },
+    "Mono/1.0.0": {
+      "type": "project",
+      "path": "../mono/Mono.csproj",
+      "msbuildProject": "../mono/Mono.csproj"
+    },
+    "vim-math/1.6.0": {
+      "type": "project",
+      "path": "../vim-math/vim-math.csproj",
+      "msbuildProject": "../vim-math/vim-math.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0": [
+      "Mono >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Dmitry\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\GitHub\\FireEngine\\engine\\FireSave\\FireBinEditor.csproj",
+      "projectName": "FireBinEditor",
+      "projectPath": "C:\\GitHub\\FireEngine\\engine\\FireSave\\FireBinEditor.csproj",
+      "packagesPath": "C:\\Users\\Dmitry\\.nuget\\packages\\",
+      "outputPath": "C:\\GitHub\\FireEngine\\engine\\FireSave\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\Dmitry\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "projectReferences": {
+            "C:\\GitHub\\FireEngine\\engine\\mono\\Mono.csproj": {
+              "projectPath": "C:\\GitHub\\FireEngine\\engine\\mono\\Mono.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net6.0": {
+        "targetAlias": "net6.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
