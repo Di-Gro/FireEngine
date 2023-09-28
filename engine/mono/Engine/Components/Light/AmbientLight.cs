@@ -3,6 +3,21 @@ using EngineDll;
 namespace Engine {
 
     [GUID("ddad5ce5-4472-41f9-a8ce-d8da895d2e56")]
+
+#if DETACHED
+
+    /// <summary> Detached ready </summary>
+    public class AmbientLight : CppComponent {
+        [Range(0f, 1f)] [Color] public Vector3 Color { get; set; }
+        [Range(0f, 1f)] public float Intensity { get; set; }
+
+        public override CppObjectInfo CppConstructor() {
+            throw new System.NotImplementedException();
+        }
+    }
+
+#else
+
     public class AmbientLight : CppComponent {
 
         private Prop<Vector3> prop_Color = new Prop<Vector3>(0);
@@ -15,4 +30,7 @@ namespace Engine {
             return Dll.AmbientLight.Create(csRef);
         }
     }
+
+#endif
+
 }

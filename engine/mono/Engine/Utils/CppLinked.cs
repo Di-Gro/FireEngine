@@ -31,7 +31,12 @@ namespace Engine {
 		public ClassInfo classInfo { get; private set; }
 
 		public CppRef cppRef { get; private set; }
+
+#if DETACHED
+		public CsRef csRef { get; set; }
+#else
 		public CsRef csRef { get; private set; }
+#endif
 
 		public CppLinked() {
 			csRef = s_nextRefId.value;

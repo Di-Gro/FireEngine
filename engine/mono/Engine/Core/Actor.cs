@@ -10,6 +10,8 @@ using EngineDll;
 namespace Engine {
 
     [GUID("b0730a53-16c4-4943-bd7d-666f402617d5", typeof(Actor))]
+
+#if DETACHED
     public sealed class Actor : CppLinked, FireYaml.IFile {
 
         /// FireYaml.IFile ->
@@ -17,8 +19,217 @@ namespace Engine {
 
         [Close] public int fileId { get; set; } = -1;
 
-        [Close] public Flag Flags { 
-            get => (Flag) Dll.Actor.flags_get(cppRef);
+        [Close] public Flag Flags { get; set; }
+        public string prefabId { get; set; }
+        public string Name { get; set; }
+        public bool IsActive { get; private set; }
+        public bool ActiveSelf { get; set; }
+        public Vector3 localPosition { get; set; }
+        [Close] public Vector3 localRotation { get; set; }
+        public Quaternion localRotationQ { get; set; }
+        public Vector3 localScale { get; set; }
+        [Close] public Vector3 worldPosition { get; set; }
+        [Close] public Quaternion worldRotationQ { get; set; }
+        [Close] public Vector3 worldScale { get; set; }
+
+        public Vector3 localForward { get; private set; }
+        public Vector3 localUp { get; private set; }
+        public Vector3 localRight { get; private set; }
+
+        public Vector3 forward { get; private set; }
+        public Vector3 up { get; private set; }
+        public Vector3 right { get; private set; }
+
+        public bool HasParent => parent != null;
+
+        public Scene scene { get; set; }
+
+        [Close]
+        public Actor parent { get; set; }
+
+        public bool IsDestroyed => GetObjectByRef(csRef) == null;
+
+        /// <summary> Detached ready </summary>
+        public int GetChildrenCount() => detached_children.Count;
+
+
+        [Close] public List<Actor> detached_children = new List<Actor>();
+        [Close] public List<Component> detached_components = new List<Component>();
+
+
+        #region Public
+
+        /// <summary> Detached ready </summary>
+        public Actor() : this("Actor", null) { }
+
+        /// <summary> Detached ready </summary>
+        public Actor(string name) : this(name, null) { }
+
+        /// <summary> Detached ready </summary>
+        public Actor(Actor targetParent) : this("Actor", targetParent) { }
+
+        /// <summary> Detached ready </summary>
+        public Actor(string name, Actor targetParent) {
+            if (targetParent != null)
+                targetParent.detached_children.Add(this);
+
+            parent = targetParent;
+            Name = name;
+
+            scene = Game.GetScene();
+        }
+
+        /// <summary> Detached ready </summary>
+        public void Destroy() {
+            if (parent != null) {
+                parent.detached_children.Remove(this);
+                parent = null;
+            }
+            RemoveCsRef(csRef);
+            csRef = 0;
+        }
+
+        ~Actor() { }
+
+        /// <summary> Detached ready </summary>
+        public TComponent AddComponent<TComponent>() where TComponent : Component, new() {
+            /// Create
+            var component = new TComponent();
+            //var info = component.CppConstructor();
+            /// Bind
+            //component.CsBindComponent(csRef, info);
+            //Dll.Actor.BindComponent(cppRef, component.cppRef);
+            /// PostBind
+            /// Init
+            //Dll.Actor.InitComponent(cppRef, component.cppRef);
+
+            detached_components.Add(component);
+
+            return component;
+        }
+
+        /// <summary> Detached ready </summary>
+        public TComponent GetComponent<TComponent>() where TComponent : Component {
+            foreach (var component in detached_components) {
+                if (component is TComponent)
+                    return component as TComponent;
+            }
+            return null;
+        }
+
+        /// <summary> Detached ready </summary>
+        public List<TComponent> GetComponents<TComponent>() where TComponent : Component {
+            var list = new List<TComponent>();
+            m_GetComponents(ref list);
+            return list;
+        }
+
+        /// <summary> Detached ready </summary>
+        public TComponent GetComponentInChild<TComponent>() where TComponent : Component {
+            var component = GetComponent<TComponent>();
+            if (component != null)
+                return component;
+
+            int count = GetChildrenCount();
+            for (int i = 0; i < count; i++) {
+                var child = GetChild(i);
+                if (child != null) {
+                    component = child.GetComponentInChild<TComponent>();
+                    if (component != null)
+                        return component;
+                }
+            }
+            return null;
+        }
+
+        /// <summary> Detached ready </summary>
+        public List<TComponent> GetComponentsInChild<TComponent>() where TComponent : Component {
+            var list = new List<TComponent>();
+            m_GetComponentsInChild(ref list);
+            return list;
+        }
+
+        /// <summary> Detached ready </summary>
+        public Actor GetChild(int index) {
+            if (index < 0 || index >= GetChildrenCount())
+                return null;
+
+            return detached_children[index];
+        }
+
+        /// <summary> Detached ready </summary>
+        public List<Actor> GetChildren() {
+            var list = new List<Actor>();
+            list.AddRange(detached_children);
+
+            return list;
+        }
+
+        /// <summary> Detached ready </summary>
+        public List<Component> GetComponentsList() {
+            var list = new List<Component>();
+            list.AddRange(detached_components);
+
+            return list;
+        }
+
+        /// <summary> Detached ready </summary>
+        public bool Has(Flag flags) {
+            return (Flags & flags) == flags;
+        }
+
+        #endregion
+        #region Private
+
+        /// <summary> Detached ready </summary>
+        private void m_GetComponents<TComponent>(ref List<TComponent> list) where TComponent : Component {
+            foreach (var component in detached_components) {
+                if (component is TComponent)
+                    list.Add(component as TComponent);
+            }
+        }
+
+        /// <summary> Detached ready </summary>
+        private void m_GetComponentsInChild<TComponent>(ref List<TComponent> list) where TComponent : Component {
+            m_GetComponents(ref list);
+
+            int count = GetChildrenCount();
+            for (int i = 0; i < count; i++) {
+                var child = GetChild(i);
+                if (child != null)
+                    m_GetComponentsInChild(ref list);
+            }
+        }
+
+        /// <summary> Detached ready </summary>
+        public static void SetPrefabId(CsRef actorRef, int prefabGuidHash) {
+            var actor = CppLinked.GetObjectByRef(actorRef) as Actor;
+
+            var prefabGuid = "";
+            if (prefabGuidHash != 0)
+                prefabGuid = FireYaml.AssetStore.Instance.GetAssetGuid(prefabGuidHash);
+
+            actor.prefabId = prefabGuid;
+        }
+
+        #endregion
+        #region Cpp
+        #endregion
+
+    }
+
+#else
+
+    public sealed class Actor : CppLinked, FireYaml.IFile {
+
+        /// FireYaml.IFile ->
+        [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
+
+        [Close] public int fileId { get; set; } = -1;
+
+        [Close]
+        public Flag Flags {
+            get => (Flag)Dll.Actor.flags_get(cppRef);
             set => Dll.Actor.flags_set(cppRef, (ulong)value);
         }
 
@@ -89,7 +300,8 @@ namespace Engine {
 
         public Scene scene => new Scene(Dll.Actor.scene_get(cppRef));
 
-        [Close] public Actor parent {
+        [Close]
+        public Actor parent {
             get => (Actor)GetObjectByRef(Dll.Actor.parent_get(cppRef));
             set => Dll.Actor.parent_set(cppRef, value == null ? 0 : value.cppRef);
         }
@@ -99,13 +311,13 @@ namespace Engine {
         public int GetChildrenCount() => Dll.Actor.GetChildrenCount(cppRef);
 
 
-        #region Public
+    #region Public
 
         public Actor() : this("Actor", null) { }
         public Actor(string name) : this(name, null) { }
         public Actor(Actor targetParent) : this("Actor", targetParent) { }
-        
-        public Actor(string name, Actor targetParent) {           
+
+        public Actor(string name, Actor targetParent) {
             CppRef parentRef = targetParent != null ? targetParent.cppRef : 0;
 
             var info = Dll.Game.CreateGameObjectFromCS(Game.sceneRef, csRef, parentRef);
@@ -174,7 +386,7 @@ namespace Engine {
             int count = GetChildrenCount();
             for (int i = 0; i < count; i++) {
                 var child = GetChild(i);
-                if(child != null) {
+                if (child != null) {
                     component = child.GetComponentInChild<TComponent>();
                     if (component != null)
                         return component;
@@ -226,8 +438,8 @@ namespace Engine {
             return (Flags & flags) == flags;
         }
 
-        #endregion
-        #region Private
+    #endregion
+    #region Private
 
         private void m_GetComponents<TComponent>(ref List<TComponent> list) where TComponent : Component {
             var refs = m_GetComponentRefs();
@@ -277,8 +489,18 @@ namespace Engine {
             return refs;
         }
 
-        #endregion
-        #region Cpp
+        public static void SetPrefabId(CsRef actorRef, int prefabGuidHash) {
+            var actor = CppLinked.GetObjectByRef(actorRef) as Actor;
+
+            var prefabGuid = "";
+            if (prefabGuidHash != 0)
+                prefabGuid = FireYaml.AssetStore.Instance.GetAssetGuid(prefabGuidHash);
+
+            actor.prefabId = prefabGuid;
+        }
+
+    #endregion
+    #region Cpp
 
         private static CppRef cpp_Create() {
             //Console.WriteLine($"#: GameObject.cpp_Create()");
@@ -287,7 +509,7 @@ namespace Engine {
             return gameObject.cppRef;
         }
 
-  
+
         private static CsRef cpp_AddComponent(CsRef objRef, ulong ptr, ulong length, CppObjectInfo info) {
 
             string name = Assets.ReadCString(ptr, length);
@@ -326,16 +548,6 @@ namespace Engine {
             //Console.WriteLine($"#: -> {csRef}, {cppRef} ");
 
             return cppRef;
-        }
-
-        public static void SetPrefabId(CsRef actorRef, int prefabGuidHash) {
-            var actor = CppLinked.GetObjectByRef(actorRef) as Actor;
-
-            var prefabGuid = "";
-            if(prefabGuidHash != 0)
-                prefabGuid = FireYaml.AssetStore.Instance.GetAssetGuid(prefabGuidHash);
-
-            actor.prefabId = prefabGuid;
         }
 
         //private static void cpp_SetName(CsRef objRef, ulong ptr, ulong length) {
@@ -378,13 +590,17 @@ namespace Engine {
 
         // private static void cpp_DestroyComponent(CsRef compRef) {
         //     var component = GetObjectByRef(compRef) as Component;
-            
+
         //     component.OnDestroy();
 
         //     RemoveCsRef(compRef);
         // }
 
-        #endregion
+    #endregion
     }
+
+#endif
+
+
 
 }

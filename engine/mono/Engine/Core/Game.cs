@@ -139,6 +139,24 @@ namespace Engine {
         private static void SetAssetStoreRef(CppRef value) => assetStoreRef = value;
         private static void SetUpdateData(GameUpdateData value) => m_updateData = value;
 
+#if DETACHED
+        public static Stack<Scene> detached_scenes = new Stack<Scene>();
+
+        /// <summary> Detached ready </summary>
+        public static void PushScene(Scene scene) {
+            detached_scenes.Push(scene);
+        }
+
+        /// <summary> Detached ready </summary>
+        public static void PopScene() {
+            detached_scenes.Pop();
+        }
+
+        /// <summary> Detached ready </summary>
+        public static Scene GetScene() => detached_scenes.Peek();
+
+#else
+
         public static void PushScene(Scene scene){
             Dll.Game.PushScene(gameRef, scene.cppRef);
         }
@@ -146,6 +164,8 @@ namespace Engine {
         public static void PopScene() {
             Dll.Game.PopScene(gameRef);
         }
+
+#endif
 
         private static int SaveScene(CppRef cppSceneRef, ulong pathPtr) {
             var path = Assets.ReadCString(pathPtr);

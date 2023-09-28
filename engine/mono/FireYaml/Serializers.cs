@@ -13,6 +13,7 @@ using System.Diagnostics;
 using FireYaml;
 using EngineDll;
 using UI;
+using FireBin;
 
 namespace Engine {
     public class CloseAttribute : Attribute { }
@@ -43,6 +44,7 @@ namespace Engine {
 namespace Engine {
 
     public class SerializerBase {
+        private static readonly List<Address> s_emptyAdresses = new List<Address>();
 
         public virtual bool NeedIncludeBase(Type type) => false;
 
@@ -89,7 +91,8 @@ namespace Engine {
         public virtual void OnDrawGui(Type type, ref object instance) { }
 
         public virtual List<string> GetNamesOfExtraFields() { return null; }
-        public virtual void WriteExtraFields() { }
+        public virtual List<FireBin.Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) { return s_emptyAdresses; }
+        public virtual void ReadExtraFields(FireBin.Deserializer reader, object instance, PtrList list) { }
     }
 
     public class ActorSerializer : SerializerBase {
@@ -101,10 +104,103 @@ namespace Engine {
             public Component component;
             public LinkedListNode<WaitedComponent> node;
 
+
             public void OnEndLoad() {
+#if DETACHED
+                m_waitedComponents.Remove(node);
+#else
                 Dll.Actor.InitComponent(actor.cppRef, component.cppRef);
                 m_waitedComponents.Remove(node);
+#endif
             }
+        }
+
+        private static readonly List<string> s_extraFields = new List<string>() {
+            "m_flags",
+            "m_children",
+            "m_components",
+        };
+
+        public override List<string> GetNamesOfExtraFields() => s_extraFields;
+
+        public override List<FireBin.Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
+            var res = new List<FireBin.Address>();
+
+            var actor = instance as Engine.Actor;
+            var children = actor.GetChildren();
+            var allComponents = actor.GetComponentsList();
+            var components = new List<Component>();
+
+            foreach (var component in allComponents) {
+                if (!component.runtimeOnly)
+                    components.Add(component);
+            }
+            res.Add(writer.AddAsScalar(typeof(ulong), (ulong)actor.Flags));
+            res.Add(writer.AddAsList(children.GetType(), children));
+            res.Add(writer.AddAsList(components.GetType(), components));
+
+            foreach (var child in children)
+                writer.AddAsNamedList(child.GetType(), child);
+
+            foreach (var component in components)
+                writer.AddAsNamedList(component.GetType(), component);
+
+            return res;
+        }
+
+        public override void ReadExtraFields(FireBin.Deserializer reader, object instance, FireBin.PtrList list) {
+            var actor = instance as Engine.Actor;
+            var data = list.data;
+
+            var flagsPtr = list[0];
+            var childrenPtr = list[1];
+            var componentsPtr = list[2];
+
+            var flags = (Flag)data.ReadScalar<ulong>(flagsPtr);
+            var children = data.ReadList(childrenPtr);
+            var components = data.ReadList(componentsPtr);
+
+            actor.Flags = flags;
+
+            for (int i = 0; i < children.Count; i++) {
+                var childPtr = data.ReadReference(children[i]);
+                object child = new Actor(actor);
+                reader.FromNamedList(typeof(Actor), ref child, childPtr);
+            }
+            for (int i = 0; i < components.Count; i++) {
+                var compPtr = data.ReadReference(components[i]);
+                LoadComponent(reader, data, actor, compPtr);
+            }
+        }
+
+        public void LoadComponent(FireBin.Deserializer reader, FireBin.Data data, Engine.Actor actor, FireBin.Pointer compPtr) {
+
+            var scriptId = data.ReadScriptId(compPtr);
+            var componentType = FireBin.Deserializer.GetTypeOf(scriptId);
+
+            /// Create
+            var componentObj = Activator.CreateInstance(componentType);
+            var component = componentObj as Component;
+
+#if DETACHED
+            actor.detached_components.Add(component);
+#else
+            var info = component.CppConstructor();
+
+            /// Bind
+            component.CsBindComponent(actor.csRef, info);
+            Dll.Actor.BindComponent(actor.cppRef, component.cppRef);
+#endif
+            /// PostBind
+            reader.FromNamedList(componentType, ref componentObj, compPtr);
+
+            /// Init (Delayed Init - wait for the end of load all documents)
+            var waited = new WaitedComponent();
+            waited.actor = actor;
+            waited.component = component;
+            waited.node = m_waitedComponents.AddLast(waited);
+
+            reader.EndLoadEvent += waited.OnEndLoad;
         }
 
         public override void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) {
@@ -258,6 +354,28 @@ namespace Engine {
 
             serializer.AddField($"{selfPath}.m_mesh", staticMeshType, needSave ? mesh : null);
             serializer.AddField($"{selfPath}.m_materials", materials.GetType(), materials);
+        }
+
+        private static readonly List<string> s_extraFields = new List<string>() {
+            "m_mesh",
+            "m_materials",
+        };
+
+        public override List<string> GetNamesOfExtraFields() => s_extraFields;
+
+        public override List<Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
+            var res = new List<FireBin.Address>();
+
+            var meshComponent = instance as Engine.MeshComponent;
+            var mesh = meshComponent.mesh;
+            var materials = m_GetMaterialsList(meshComponent);
+            var staticMeshType = typeof(Engine.StaticMesh);
+            var needSave = mesh != null && mesh.GetType() == staticMeshType;
+
+            res.Add(writer.AddAsAssetRef(staticMeshType, needSave ? mesh : null));
+            res.Add(writer.AddAsList(materials.GetType(), materials));
+
+            return res;
         }
 
         public override void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) {

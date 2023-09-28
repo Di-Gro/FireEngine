@@ -51,7 +51,7 @@ namespace FireYaml {
             Dll.AssetStore.assetsPath_set(Game.assetStoreRef, AssetsPath);
             Dll.AssetStore.editorPath_set(Game.assetStoreRef, EditorPath);
 
-            m_CollectTypes();
+            CollectTypes();
 
             m_UpdateAssets(EditorPath, in DateTime.UnixEpoch);
             m_UpdateAssets(AssetsPath, in DateTime.UnixEpoch);
@@ -271,15 +271,21 @@ namespace FireYaml {
                 ext == ".jpg";
         }
 
-        private void m_CollectTypes() {
+        public void CollectTypes(Assembly[] additionalAssemblies = null) {
             GUIDAttribute.types = m_guidHash_type;
 
-            var assembly = Assembly.GetAssembly(typeof(AssetStore));
-            var types = assembly.GetTypes();
+            var assemblies = new List<Assembly>();
+            assemblies.Add(Assembly.GetAssembly(typeof(AssetStore)));
+            if (additionalAssemblies != null)
+                assemblies.AddRange(additionalAssemblies);
 
-            foreach (var type in types) {
-                if (GUIDAttribute.HasGuid(type))
-                    m_guidHash_type.Add(GUIDAttribute.GetGuidHash(type), type);
+            foreach (var assembly in assemblies) {
+                var types = assembly.GetTypes();
+
+                foreach (var type in types) {
+                    if (GUIDAttribute.HasGuid(type))
+                        m_guidHash_type.Add(GUIDAttribute.GetGuidHash(type), type);
+                }
             }
         }
 

@@ -3,6 +3,22 @@ using EngineDll;
 namespace Engine {
 
     [GUID("73d3cbc8-cb32-4e71-a8bb-570b6e71ac45")]
+
+#if DETACHED
+
+    /// <summary> Detached ready </summary>
+    class BoxCollider : CppComponent {
+
+        public Vector3 Size { get; set; }
+        public bool DrawDebug { get; set; }
+
+        public override CppObjectInfo CppConstructor() {
+            throw new System.NotImplementedException();
+        }
+    }
+
+#else
+
     class BoxCollider : CppComponent {
 
         // public Vector3 Center { get => prop_Center.value; set => prop_Center.value = value; }
@@ -18,6 +34,8 @@ namespace Engine {
             return Dll.BoxCollider.Create(csRef);
         }
     }
+
+#endif
 
     [GUID("aa06e9b3-f75f-4982-976b-a6f57568d6f0")]
     class SphereCollider : CppComponent {

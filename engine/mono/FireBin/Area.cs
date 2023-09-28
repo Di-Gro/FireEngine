@@ -1,13 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using PointerType = System.Int32;
 
 namespace FireBin {
     public class Area {
-        private List<Pointer> m_pointers;
+        public readonly AreaId areaId;
+
+        /// TODO: Shrink(), Extension(), Cut()
+
+        private List<Reference> m_references;
 
         public MemoryStream stream = new MemoryStream();
         public BinaryWriter writer;
@@ -16,55 +19,99 @@ namespace FireBin {
         /// <summary>
         /// Offset from area start.
         /// </summary>
-        public long Offset {
-            get => stream.Position;
+        public PointerType Offset {
+            get => (PointerType)stream.Position;
             set => stream.Position = value;
         }
-        
+
+        public PointerType Length => (PointerType)stream.Length;
+
         /// <summary>
         /// Offset from file start.
         /// </summary>
-        public long Position { get; set; }
+        public PointerType Position { get; set; }
 
-        public Area(List<Pointer> links) {
-            m_pointers = links;
+        public Area(AreaId areaId, List<Reference> references) {
+            this.areaId = areaId;
+            m_references = references;
 
             writer = new BinaryWriter(stream);
             reader = new BinaryReader(stream);
         }
 
-        public void Write(long offset, Action<BinaryWriter> writeAction) {
-            long prevOffset = Offset;
-
-            Offset = offset;
-            writeAction(writer);
-            Offset = prevOffset;
-        }
-
-
-        public void WritePointer(Address? toAdress, long fromOffset = -1) {
+        public int WritePointer(Address? toAdress, PointerType fromOffset = -1) {
             if (toAdress != null)
-                WritePointer(toAdress.area, toAdress.offset, fromOffset);
-            else if (fromOffset >= 0)
-                Write(fromOffset, (w) => w.Write(FireBin.Pointer.NullPointer));
-            else
-                writer.Write(FireBin.Pointer.NullPointer);
+                return WritePointer(toAdress.area, toAdress.offset, fromOffset);
+
+            return WritePointer(null, Pointer.NullOffset, fromOffset);
         }
 
-        public void WritePointer(Area toArea, long toOffset, long fromOffset = -1) {
-            bool useOffset = fromOffset >= 0;
+        public int WritePointer(Area toArea, PointerType toOffset, PointerType fromOffset = -1) {
+            bool pushBack = fromOffset < 0;
 
-            m_pointers.Add(new Pointer() {
-                fromArea = this,
-                toArea = toArea,
-                fromOffset = useOffset ? fromOffset : Offset,
-                toOffset = toOffset,
+            var offset = pushBack ? Offset : fromOffset;
+            var toAreaId = toArea != null ? toArea.areaId : AreaId.Structs;
+            var referenceIndex = m_references.Count;
+
+            m_references.Add(new Reference() {
+                from = new Pointer { areaId = this.areaId, offset = offset },
+                to = new Pointer { areaId = toAreaId, offset = toOffset }
             });
 
-            if (useOffset)
-                Write(fromOffset, (w) => w.Write(FireBin.Pointer.NullPointer));
+            if (pushBack)
+                WritePointerData(writer, (byte)toAreaId, Pointer.NullOffset);
             else
-                writer.Write(FireBin.Pointer.NullPointer);
+                SaveOffset(fromOffset, (r, w) => WritePointerData(w, (byte)toAreaId, Pointer.NullOffset));
+
+            return referenceIndex;
         }
+
+        public Pointer ReadPointer(int fromOffset = -1) {
+            if (fromOffset < 0)
+                return ReadPointerData(reader);
+
+            return SaveOffset(fromOffset, (r, w) => ReadPointerData(r));
+        }
+
+        public static void WritePointerData(BinaryWriter w, Pointer pointer) {
+            WritePointerData(w, (byte)pointer.areaId, pointer.offset);
+        }
+
+        public static void WritePointerData(BinaryWriter w, byte toAreaId, int toOffset) {
+            w.Write(toAreaId);
+            w.Write(toOffset);
+        }
+
+        public static Pointer ReadPointerData(BinaryReader r) {
+            var ptr = new Pointer() { };
+
+            var areaIdIndex = r.ReadByte();
+            if (areaIdIndex < 0 || areaIdIndex >= (byte)AreaId._Count)
+                throw new FireBinException($"Invalid pointer (areaId:{areaIdIndex}).");
+
+            ptr.areaId = (AreaId)areaIdIndex;
+            ptr.offset = r.ReadInt32();
+
+            return ptr;
+        }
+
+        public T SaveOffset<T>(int offset, Func<BinaryReader, BinaryWriter, T> action) {
+            var prevPos = Offset;
+
+            Offset = offset;
+            var res = action(reader, writer);
+            Offset = prevPos;
+
+            return res;
+        }
+
+        public void SaveOffset(int offset, Action<BinaryReader, BinaryWriter> action) {
+            var prevPos = Offset;
+
+            Offset = offset;
+            action(reader, writer);
+            Offset = prevPos;
+        }
+
     }
 }
