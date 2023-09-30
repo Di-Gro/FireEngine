@@ -37,9 +37,28 @@ namespace FireBinEditor {
     [GUID("49c0a90b-720e-4d84-817a-ce61006a4bbf")]
     public class TestClass_Lists {
         public List<int> intList = new List<int>() { 1, 2, 3 };
+        public List<Component> compList = new List<Component>();
         public char[] charsList = new char[] { 'a', 'b', 'c' };
 
         public TestClass_Lists() { }
+    }
+
+    [GUID("7457851b-2185-488b-b597-ed69731f0587")]
+    public struct TestStruct {
+        public float floatValue = 1.1f;
+
+        public TestStruct() { }
+    }
+
+    [GUID("e03c02ef-b658-428b-a880-7a2f154c82a8")]
+    public class TestComponent1 : Engine.CSComponent {
+        public TestComponent2 comp2Ref;
+        public StaticMaterial material;
+    }
+
+    [GUID("55d675f0-06b9-4f53-a337-4537a33284b4")]
+    public class TestComponent2 : Engine.CSComponent {
+        public TestComponent1 comp1Ref;
     }
 
     [GUID("7f875e0c-e212-4f11-9ff4-041ebe932699")]
@@ -48,8 +67,11 @@ namespace FireBinEditor {
         //public uint uintValue = 2;
 
         //public TestClass_Scalars scalars = new TestClass_Scalars();
-        public TestClass_Scalars nullField = null;
-        public TestClass_Scalars? nullableField = null;
+        //public TestClass_Scalars nullField = null;
+        //public TestClass_Scalars? nullableField = null;
+        //public TestStruct testStruct1 = new TestStruct() { floatValue = 5.555f };
+        //public TestStruct testStruct2;
+        public TestClass_Lists lists;
 
         public TestClass() { }
     }

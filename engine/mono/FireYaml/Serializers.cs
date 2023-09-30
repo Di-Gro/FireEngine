@@ -44,7 +44,7 @@ namespace Engine {
 namespace Engine {
 
     public class SerializerBase {
-        private static readonly List<Address> s_emptyAdresses = new List<Address>();
+        private static readonly List<FireBin.Pointer?> s_emptyPointers = new List<FireBin.Pointer?>();
 
         public virtual bool NeedIncludeBase(Type type) => false;
 
@@ -91,7 +91,7 @@ namespace Engine {
         public virtual void OnDrawGui(Type type, ref object instance) { }
 
         public virtual List<string> GetNamesOfExtraFields() { return null; }
-        public virtual List<FireBin.Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) { return s_emptyAdresses; }
+        public virtual List<FireBin.Pointer?> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) { return s_emptyPointers; }
         public virtual void ReadExtraFields(FireBin.Deserializer reader, object instance, PtrList list) { }
     }
 
@@ -123,8 +123,8 @@ namespace Engine {
 
         public override List<string> GetNamesOfExtraFields() => s_extraFields;
 
-        public override List<FireBin.Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
-            var res = new List<FireBin.Address>();
+        public override List<FireBin.Pointer?> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
+            var res = new List<FireBin.Pointer?>();
 
             var actor = instance as Engine.Actor;
             var children = actor.GetChildren();
@@ -148,34 +148,33 @@ namespace Engine {
             return res;
         }
 
-        public override void ReadExtraFields(FireBin.Deserializer reader, object instance, FireBin.PtrList list) {
+        public override void ReadExtraFields(FireBin.Deserializer des, object instance, FireBin.PtrList list) {
             var actor = instance as Engine.Actor;
-            var data = list.data;
 
-            var flagsPtr = list[0];
-            var childrenPtr = list[1];
-            var componentsPtr = list[2];
+            var flagsPtr = list[0].Value;
+            var childrenPtr = list[1].Value;
+            var componentsPtr = list[2].Value;
 
-            var flags = (Flag)data.ReadScalar<ulong>(flagsPtr);
-            var children = data.ReadList(childrenPtr);
-            var components = data.ReadList(componentsPtr);
+            var flags = (Flag)des.Reader.ReadScalar<ulong>(flagsPtr);
+            var children = des.Reader.ReadList(childrenPtr);
+            var components = des.Reader.ReadList(componentsPtr);
 
             actor.Flags = flags;
 
             for (int i = 0; i < children.Count; i++) {
-                var childPtr = data.ReadReference(children[i]);
+                var childPtr = des.Reader.ReadReference(children[i].Value);
                 object child = new Actor(actor);
-                reader.FromNamedList(typeof(Actor), ref child, childPtr);
+                des.LoadAsNamedList(typeof(Actor), childPtr, child);
             }
             for (int i = 0; i < components.Count; i++) {
-                var compPtr = data.ReadReference(components[i]);
-                LoadComponent(reader, data, actor, compPtr);
+                var compPtr = des.Reader.ReadReference(components[i].Value);
+                LoadComponent(des, actor, compPtr);
             }
         }
 
-        public void LoadComponent(FireBin.Deserializer reader, FireBin.Data data, Engine.Actor actor, FireBin.Pointer compPtr) {
+        public void LoadComponent(FireBin.Deserializer des, Engine.Actor actor, FireBin.Pointer compPtr) {
 
-            var scriptId = data.ReadScriptId(compPtr);
+            var scriptId = des.Reader.ReadScriptId(compPtr);
             var componentType = FireBin.Deserializer.GetTypeOf(scriptId);
 
             /// Create
@@ -192,7 +191,7 @@ namespace Engine {
             Dll.Actor.BindComponent(actor.cppRef, component.cppRef);
 #endif
             /// PostBind
-            reader.FromNamedList(componentType, ref componentObj, compPtr);
+            des.LoadAsNamedList(componentType, compPtr, componentObj);
 
             /// Init (Delayed Init - wait for the end of load all documents)
             var waited = new WaitedComponent();
@@ -200,7 +199,7 @@ namespace Engine {
             waited.component = component;
             waited.node = m_waitedComponents.AddLast(waited);
 
-            reader.EndLoadEvent += waited.OnEndLoad;
+            des.EndLoadEvent += waited.OnEndLoad;
         }
 
         public override void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) {
@@ -363,8 +362,8 @@ namespace Engine {
 
         public override List<string> GetNamesOfExtraFields() => s_extraFields;
 
-        public override List<Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
-            var res = new List<FireBin.Address>();
+        public override List<FireBin.Pointer?> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
+            var res = new List<FireBin.Pointer?>();
 
             var meshComponent = instance as Engine.MeshComponent;
             var mesh = meshComponent.mesh;

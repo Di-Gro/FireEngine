@@ -91,11 +91,14 @@ namespace Engine {
         public void LoadAsset() {
             assetIdHash = assetId.GetHashCode();
 
+#if DETACHED
+#else
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
                 cppRef = Dll.Material.PushAsset(Game.gameRef, assetId, assetIdHash);
                 ReloadAsset();
             }
+#endif
         }
 
         public void ReloadAsset() {

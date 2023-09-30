@@ -38,7 +38,7 @@ public class FireBinTest : CSComponent
 
         var fbinData = new FireBin.Data();
         var serializer = new FireBin.Serializer(fbinData);
-        var fbinWriter = new FireBin.Writer(fbinData);
+        var fbinWriter = new FireBin.FileWriter(fbinData);
 
         var saveTarget = actor.scene;
 

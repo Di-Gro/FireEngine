@@ -7,12 +7,12 @@ using System.Text;
 
 namespace FireBin {
 
-    public class Reader {
+    public class FileReader {
 
         private FireBin.Data m_data;
         private BinaryReader m_reader;
 
-        public Reader() { }
+        public FileReader() { }
 
         public FireBin.Data Read(FileStream fileStream) {
             m_data = new Data();
@@ -20,19 +20,19 @@ namespace FireBin {
 
             var fbinHeader = new string(m_reader.ReadChars(8));
 
-            for (int i = 0; i < m_data.areas.Length; i++) {
-                var area = m_data.areas[i];
+            for (int i = 0; i < m_data.AreasCount; i++) {
+                var area = m_data[i];
 
-                area.Position = m_reader.ReadInt32();
+                area.InfilePosition = m_reader.ReadInt32();
                 var length = m_reader.ReadInt32();
 
-                area.writer.Write(m_reader.SaveOffset(area.Position, r => r.ReadBytes(length)));
+                area.writer.Write(m_reader.SaveOffset(area.InfilePosition, r => r.ReadBytes(length)));
             }
 
-            var lastArea = m_data.areas[m_data.areas.Length - 1];
-            var ptrsPos = lastArea.Position + lastArea.Length;
+            var lastArea = m_data[m_data.AreasCount - 1];
+            var ptrsPos = lastArea.InfilePosition + lastArea.Length;
 
-            ReadReferences(ptrsPos);
+            ReadPointers(ptrsPos);
 
             m_data.CollectNames();
             m_data.CollectAssetRefs();
@@ -60,8 +60,8 @@ namespace FireBin {
             //Console.WriteLine();
 
 
-            foreach (var area in m_data.areas)
-                area.Position = 0;
+            for (int i = 0; i < m_data.AreasCount; i++)
+                m_data[i].InfilePosition = 0;
 
             var res = m_data;
 
@@ -71,7 +71,7 @@ namespace FireBin {
             return res;
         }
 
-        public void ReadReferences(int position) {
+        public void ReadPointers(int position) {
             var length = m_reader.BaseStream.Length;
             var count = (length - position) / Pointer.Size;
 
@@ -80,19 +80,8 @@ namespace FireBin {
 
             for (int i = 0; i < count; i++) {
                 var fromPtr = Area.ReadPointerData(m_reader);
-                var toPtr = m_reader.SaveOffset(fromPtr.offset, r => Area.ReadPointerData(r));
 
-                var fromArea = m_data[fromPtr.areaId];
-                var toArea = m_data[toPtr.areaId];
-
-                fromPtr = fromPtr.TranslateTo(fromArea);
-                toPtr = toPtr.TranslateTo(toArea);
-
-                fromArea.writer.SaveOffset(fromPtr.offset, w => Area.WritePointerData(w, toPtr));
-
-                //Console.WriteLine($"pointer[{i}]: {fromAddress.offset} -> {toAddress.offset}");
-
-                m_data.references.Add(new Reference { from = fromPtr, to = toPtr });
+                m_data.AddPointer(fromPtr);
             }
 
             m_reader.BaseStream.Position = prevPos;

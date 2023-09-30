@@ -133,8 +133,8 @@ namespace Engine {
 
         public override List<string> GetNamesOfExtraFields() => s_extraFields;
 
-        public override List<FireBin.Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
-            var res = new List<FireBin.Address>();
+        public override List<FireBin.Pointer?> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
+            var res = new List<FireBin.Pointer?>();
 
             var scene = instance as Engine.Scene;
 
@@ -150,21 +150,20 @@ namespace Engine {
             return res;
         }
 
-        public override void ReadExtraFields(FireBin.Deserializer reader, object instance, FireBin.PtrList list) {
+        public override void ReadExtraFields(FireBin.Deserializer des, object instance, FireBin.PtrList list) {
             var scene = instance as Engine.Scene;
-            var data = list.data;
 
-            var roots = data.ReadList(list[0]);
+            var roots = des.Reader.ReadList(list[0].Value);
 
             Game.PushScene(scene);
             for (int i = 0; i < roots.Count; i++) {
-                var actorPtr = data.ReadReference(roots[i]);
+                var actorPtr = des.Reader.ReadReference(roots[i].Value);
 
                 object actor = new Actor();
 #if DETACHED
                 scene.detached_rootActors.Add((Actor)actor);
 #endif
-                reader.FromNamedList(typeof(Actor), ref actor, actorPtr);
+                des.LoadAsNamedList(typeof(Actor), actorPtr, actor);
             }
             Game.PopScene();
         }

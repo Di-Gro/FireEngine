@@ -6,8 +6,41 @@ using System.Text;
 
 using YamlWriter = FireYaml.FireWriter;
 
-/// TODO: Ассеты, сохраненные как AssetRef загружать только в поле с нужным типом ассета. 
-/// Сейчас Mesh попробует загрузиться в Material. 
+/// TODO: CsRefs 
+/// TODO: InstanciateComponent
+/// TODO: решить нужны ли m_assetInst, m_writeIDs, IFile.assetInstance, IFile.fileId
+/// TODO: assetInstance
+/// 
+/// TODO: Сделать проверку на тип ассета. 
+/// ----: Сейчас Mesh попробует загрузиться в Material. 
+/// 
+/// ASK: Что если genericType в списке это интерфейс?
+/// ---: Если genericType это интерфейс, то такой список не сохранится. 
+/// 
+/// ASK: Что если genericType в списке это структура?
+/// ---: Тогда список сохранится, если у структуры есть GUID и new().
+/// 
+/// ASK: Что если genericType в списке это базовый класс?
+/// ---: Тогда список сохранится, если у базового класса есть GUID и new().
+/// ---: Элементы списка у классов которых нет GUID и new(), сохранятся как null.
+/// ---: По GUID будет создан экземпляр нужного типа и записан в ссылку на базовый класс.
+/// 
+/// ASK: Что если поле класса будет ссылкой на базовый класс?
+/// ---: По GUID будет создан экземпляр нужного типа и записан в ссылку на базовый класс.
+/// 
+/// ASK: Какие типы могут быть сохранены? 
+/// ---: 1) Component-ы и Actor-ы. Если они являются полями или эллементами списка, 
+/// ---: то сохраняются как ссылки и востанавливают связи после загрузки. 
+/// ---: 2) string, Vector2, Vector3, Vector4, Quaternion.
+/// ---: 3) List<genericType>, если genericType тоже может быть сохранен, кроме списка. 
+/// ---:    То есть не может быть вложенных списков. 
+/// ---: 4) Примитивные типы, кроме decimal.
+/// ---: 5) Перечисления.
+/// ---: 5) Классы и структуры, у которых есть GUID и new().
+/// ---: 6) StaticAsset-ы. После загрузки нужные ассеты будут загружены в память.
+///
+/// ASK: Сохранится ли структура если она будет не ValueType?
+/// 
 
 namespace FireBin {
     public class FireBinException : Exception {
@@ -15,69 +48,107 @@ namespace FireBin {
     }
 
     public class Deserializer {
+        private struct Ref {
+            public Pointer refPtr;
+            public FireYaml.Field field;
+
+            public Ref(Pointer refPtr, FireYaml.Field field) { 
+                this.refPtr = refPtr;
+                this.field = field;
+            }
+        }
+
         public event Action EndLoadEvent;
 
-        private FireBin.Data m_data;
+        public DataReader Reader { get; private set; }
 
-        public delegate void FromDelegate(Type type, ref object target, Pointer ptr);
+        public delegate object LoadAsDelegate(Type type, Pointer dataPtr, object target = null);
 
-        private readonly FromDelegate[] m_deserializers;
+        private readonly LoadAsDelegate[] m_deserializers;
+
+        private Dictionary<Pointer, object> m_loadedStructs = new Dictionary<Pointer, object>();
+        private List<Ref> m_refs = new List<Ref>();
+        private List<FireYaml.IAsset> m_assets = new List<FireYaml.IAsset>();
 
         private string m_typeConflicts = "";
         private string m_nameConflicts = "";
 
         public Deserializer(FireBin.Data data) {
-            m_data = data;
+            Reader = new FireBin.DataReader(data);
 
-            m_deserializers = new FromDelegate[(int)ValueType._Count] {
-                FromList,
-                FromNamedList,
-                FromEnum,
-                FromAssetRef,
-                FromRef,
-                FromScalar,
-                FromString,
-                FromVector2,
-                FromVector3,
-                FromQuaternion,
+            m_deserializers = new LoadAsDelegate[(int)BinType._Count] {
+                LoadAsList,
+                LoadAsNamedList,
+                LoadAsEnum,
+                LoadAsAssetRef,
+                (Type type, Pointer dataPtr, object target) => null,
+                (Type type, Pointer dataPtr, object target) => Reader.ReadScalar(dataPtr).value,
+                (Type type, Pointer dataPtr, object target) => Reader.ReadString(dataPtr),
+                (Type type, Pointer dataPtr, object target) => Reader.ReadVector(dataPtr, type, 2),
+                (Type type, Pointer dataPtr, object target) => Reader.ReadVector(dataPtr, type, 3),
+                (Type type, Pointer dataPtr, object target) => Reader.ReadVector(dataPtr, type, 4),
             };
         }
 
-        public object Deserialize() {
+        public object Load() {
             var structPtr = new Pointer { areaId = AreaId.Structs, offset = 0 };
 
-            var scriptId = GetScriptId(structPtr);
+            var scriptId = Reader.ReadScriptId(structPtr);
             if(scriptId == "")
                 throw new FireBinException("Struct not contains scriptId");
 
             var type = GetTypeOf(scriptId);
             var target = CreateInstance(type);
 
-            Deserialize(type, ref target);
+            Load(target);
+            EndLoad();
 
             return target;
         }
 
-        public void Deserialize(Type type, ref object target) {
-            var structPtr = new Pointer { areaId = AreaId.Structs, offset = 0 };
+        public Deserializer Load(object target, int tmp_offset = 0) {
+            var structPtr = new Pointer { areaId = AreaId.Structs, offset = tmp_offset };
 
-            FromNamedList(type, ref target, structPtr);
+            var scriptId = Reader.ReadScriptId(structPtr);
+            if (scriptId == "")
+                throw new FireBinException("Struct not contains scriptId");
 
+            var type = GetTypeOf(scriptId);
+
+            LoadAsNamedList(type, structPtr, target);
+
+            return this;
+        }
+
+        public void EndLoad() {
+            m_ResolveRefs();
+
+            foreach (var asset in m_assets)
+                asset.LoadAsset();
+#if DETACHED
+#else
+#endif
             EndLoadEvent?.Invoke();
         }
 
-        public void FromNamedList(Type type, ref object target, Pointer ptr) {
-            var structArea = m_data[AreaId.Structs];
-
+        public object LoadAsNamedList(Type type, Pointer dataPtr, object target = null) {
             var serializer = YamlWriter.GetSerializer(type);
-            var header = m_data.ReadNamedList(ptr);
 
-            for(int i = 0; i< header.fields.Count; i++) {
-                var fieldName = header.names.GetName(i);
-                var valuePtr = header.fields[i];
+            var valueObj = target != null ? target : CreateInstance(type);
+            var data = Reader.ReadNamedList(dataPtr);
 
-                var field = GetSupportedField(fieldName, valuePtr, type, target, serializer);
-                if(field == null)
+            if (Data.ThrowBinType(type) == BinType.Ref)
+                m_loadedStructs.Add(dataPtr, valueObj);
+
+            if (serializer.NeedIncludeBase(type))
+                valueObj = LoadAsNamedList(type.BaseType, dataPtr, valueObj);
+
+            for (int i = 0; i < data.fields.Count; i++) {
+                var fieldName = data.names.GetName(i);
+                var valuePtr = data.fields[i].Value;
+
+                var field = GetSupportedField(fieldName, valuePtr, type, valueObj, serializer);
+                if (field == null)
                     continue;
 
                 Console.WriteLine($"names[{i}]: {fieldName}");
@@ -86,104 +157,103 @@ namespace FireBin {
                     field.SetValue(null);
                     continue;
                 }
+                var binType = Data.ThrowBinType(field.type);
+                var valueType = field.type;
 
-                /// Что если это список сомпонентов? 
-                /// Не нужно создавать экземпляр
-                if (field.Value == null)
-                    field.SetValue(CreateInstance(field.type));
-
-                var fieldReader = m_GetReader(field.type);
-                var fieldValue = field.Value;
-
-                fieldReader.Invoke(field.type, ref fieldValue, valuePtr);
-
-                if (field.type.IsValueType)
-                    field.SetValue(fieldValue);
-            }
-            if (header.extra.Count > 0)
-                serializer.ReadExtraFields(this, target, header.extra);
-
-        }
-
-        public void FromList(Type type, ref object target, Pointer ptr) {
-            var structArea = m_data[AreaId.Structs];
-            var header = m_data.ReadList(ptr);
-
-            var targetList = target as IList;
-            targetList.Clear();
-
-            var genericType = type.GetGenericArguments()[0];
-            var itemReader = m_GetReader(genericType);
-
-            for (int i = 0; i < header.Count; i++) {
-                var valuePtr = header[i];
-
-                if (valuePtr.offset == Pointer.NullOffset) {
-                    targetList.Add(null);
+                if (binType == BinType.Ref) {
+                    m_refs.Add(new Ref(valuePtr, field));
+                    field.SetValue(null);
                     continue;
                 }
-                /// Что если это список сомпонентов? 
-                var fieldValue = CreateInstance(genericType);
+                if (binType == BinType.NamedList) {
+                    var scriptId = Reader.ReadScriptId(valuePtr);
+                    valueType = GetTypeOf(scriptId);
+                }
+                               
+                var fieldReader = m_GetLoader(binType);
+                var fieldValue = fieldReader.Invoke(valueType, valuePtr);
 
-                itemReader.Invoke(genericType, ref fieldValue, valuePtr);
-
-                if (field.type.IsValueType)
-                    field.SetValue(fieldValue);
+                field.SetValue(fieldValue);
             }
+            if (data.extraFields.Count > 0)
+                serializer.ReadExtraFields(this, valueObj, data.extraFields);
 
+            return valueObj;
         }
 
-        public void FromEnum(Type type, ref object target, Pointer ptr) {
+        public object LoadAsList(Type type, Pointer dataPtr, object target = null) {
+            var valueObj = target != null ? target : CreateInstance(type);
+            var data = Reader.ReadList(dataPtr);
+
+            var list = valueObj as IList;
+            list.Clear();
+
+            var genericType = type.GetGenericArguments()[0];
+            var genericBinType = Data.ThrowBinType(genericType);
+            var itemReader = m_GetLoader(genericBinType);
+
+            for (int i = 0; i < data.Count; i++) {
+                var valuePtr = data[i].Value;
+                var valueType = genericType;
+                var valueBinType = Reader.ThrowBinType(valuePtr);
+
+                if (genericBinType != valueBinType) {
+                    m_WriteTypeConflict(genericBinType, valueBinType, $"List<{genericType.Name}>[{i}]");
+                    list.Add(null);
+                    continue;
+                }
+                if (valuePtr.offset == Pointer.NullOffset) {
+                    list.Add(null);
+                    continue;
+                }
+                if (genericBinType == BinType.Ref) {
+                    m_refs.Add(new Ref(valuePtr, new FireYaml.Field(list, genericType, i)));
+                    list.Add(null);
+                    continue;
+                }                
+                if (genericBinType == BinType.NamedList) {
+                    var scriptId = Reader.ReadScriptId(valuePtr);
+                    valueType = GetTypeOf(scriptId);
+                }
+
+                var fieldValue = itemReader.Invoke(valueType, valuePtr);
+
+                list.Add(fieldValue);
+            }
+            return valueObj;
         }
 
-        public void FromAssetRef(Type type, ref object target, Pointer ptr) {
+        public object LoadAsEnum(Type type, Pointer dataPtr, object target = null) {
+            var binEnum = Reader.ReadEnum(dataPtr);
+
+            var strValue = Enum.GetName(type, binEnum.intValue);
+            if (strValue == null) {
+                m_WriteEnumIntConflict(type, binEnum.intValue, binEnum.strValue);
+                return Enum.ToObject(type, Enum.GetNames(type)[0]);
+            }
+            if(strValue != binEnum.strValue)
+                m_WriteEnumStrConflict(type, binEnum.intValue, binEnum.strValue, strValue);
+
+            return Enum.ToObject(type, binEnum.intValue);
         }
 
-        public void FromRef(Type type, ref object target, Pointer ptr) {
+        public object LoadAsAssetRef(Type type, Pointer dataPtr, object target = null) {
+            var valueObj = target != null ? target : CreateInstance(type);
+
+            var fieldName = nameof(FireYaml.IAsset.assetId);
+            var serializer = new Engine.SerializerBase();
+            var field = YamlWriter.GetField(fieldName, type, valueObj, serializer);
+
+            var assetId = Reader.ReadAssetRef(dataPtr);
+            field.SetValue(assetId);
+
+            m_assets.Add((FireYaml.IAsset)field.Instance);
+
+            return valueObj;
         }
 
-        public void FromScalar(Type type, ref object target, Pointer ptr) {
-            var scalarsArea = m_data[AreaId.Scalars];
-            var scalar = scalarsArea.SaveOffset(ptr.offset, (r, w) => m_data.ReadScalar());
-
-            target = scalar.value;
-        }
-
-        public void FromString(Type type, ref object target, Pointer ptr) {
-        }
-
-        public void FromVector2(Type type, ref object target, Pointer ptr) {
-        }
-
-        public void FromVector3(Type type, ref object target, Pointer ptr) {
-        }
-
-        public void FromQuaternion(Type type, ref object target, Pointer ptr) {
-        }
-
-        private FromDelegate m_GetReader(Type type) {
-            var valueType = Data.GetValueType(type);
-            if (valueType == null)
-                throw new FireBinException($"Unsupported type: {type.Name}");
-
+        private LoadAsDelegate m_GetLoader(BinType valueType) {
             return m_deserializers[(int)valueType];
-        }
-
-        public string GetScriptId(Pointer structPtr) {
-            var structsArea = m_data[AreaId.Structs];
-            var assetRefArea = m_data[AreaId.AssetRefs];
-
-            var header = m_data.ReadNamedList(structPtr);
-
-            if (header.structType != StructType.NamedList)
-                throw new FireBinException($"Struct type: {header.structType} is not {StructType.NamedList} type.");
-
-            if (header.scriptIdPtr.offset == Pointer.NullOffset)
-                return "";
-
-            var scriptId = assetRefArea.SaveOffset(header.scriptIdPtr.offset, (r, w) => r.ReadString());
-
-            return scriptId;
         }
 
         public static Type GetTypeOf(string scriptId) {
@@ -205,36 +275,53 @@ namespace FireBin {
             return instance;
         }
 
+        private void m_ResolveRefs() {
+            foreach(var iRef in m_refs) {
+                var structPtr = Reader.ReadReference(iRef.refPtr);
+
+                if(m_loadedStructs.ContainsKey(structPtr))
+                    iRef.field.SetValue(m_loadedStructs[structPtr]);
+                else 
+                    iRef.field.SetValue(null);
+            }
+        }
+
         private FireYaml.Field GetSupportedField(string fieldName, Pointer valuePtr, Type type, object target, Engine.SerializerBase serializer) {
             var field = YamlWriter.GetField(fieldName, type, target, serializer);
             if (field == null) {
                 m_WriteNameConflict(type, fieldName);
                 return null;
             }
-            var fieldType = Data.GetValueType(field.type);
+            var fieldType = Data.GetBinType(field.type);
             if (fieldType == null)
                 return null;
 
             if (valuePtr.offset == Pointer.NullOffset)
                 return field;
 
-            var valueType = m_data.GetValueType(valuePtr);
-            if (valueType == null)
-                throw new FireBinException($"Unsupported type: {type.Name}");
+            var valueType = Reader.ThrowBinType(valuePtr);
 
             if (valueType != fieldType) {
-                m_WriteTypeConflict(fieldType.Value, valueType.Value, fieldName);
+                m_WriteTypeConflict(fieldType.Value, valueType, fieldName);
                 return null;
             }
             return field;
+        }
+
+        private void m_WriteEnumStrConflict(Type enumType, int intValue, string expectedName, string name) {
+            m_nameConflicts += $"The name: '{name}' of the value at index: {intValue} in the enum: {enumType.Name} does not match the previous name: '{expectedName}'.";
+        }
+
+        private void m_WriteEnumIntConflict(Type enumType, int intValue, string expectedName) {
+            m_nameConflicts += $"Enum: {enumType.Name} does not contain a value at index: '{intValue}'. The expected name is '{expectedName}'.\n";
         }
 
         private void m_WriteNameConflict(Type type, string fieldName) {
             m_nameConflicts += $"Field: '{fieldName}' not found in type: '{type.FullName}'.\n";
         }
 
-        private void m_WriteTypeConflict(ValueType fieldType, ValueType valueType, string fieldName) {
-            m_typeConflicts += $"Field '{fieldName}' has FireBinType: '{fieldType}', but the value has type: '{valueType}'.\n";
+        private void m_WriteTypeConflict(BinType fieldType, BinType valueType, string fieldName) {
+            m_typeConflicts += $"Field '{fieldName}' has {nameof(BinType)}: '{fieldType}', but the value has type: '{valueType}'.\n";
         }
 
     }

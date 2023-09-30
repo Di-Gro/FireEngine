@@ -4,7 +4,13 @@ using System.Reflection;
 
 namespace Engine {
 
-    [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    [System.AttributeUsage 
+        (
+            System.AttributeTargets.Class | System.AttributeTargets.Struct, 
+            Inherited = false, 
+            AllowMultiple = false
+        )
+    ]
     public sealed class GUIDAttribute : System.Attribute {
 
         public static Dictionary<int, Type> types = null;

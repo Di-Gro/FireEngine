@@ -8,92 +8,10 @@ using System.Threading.Tasks;
 
 using FireYaml;
 using YamlWriter = FireYaml.FireWriter;
-using ScalarWriters = System.Collections.Generic.Dictionary<System.Type, System.Action<System.IO.BinaryWriter, object>>;
-using ScalarTypes = System.Collections.Generic.Dictionary<FireBin.ScalarType, System.Type>;
-
-using PointerType = System.Int32;
 
 /// TODO: runtime refs (csRefs) для копирования и вставки объектов. 
 
 namespace FireBin {
-    
-
-    public enum StructType {
-        List,
-        NamedList,
-        Enum,
-        Vector2,
-        Vector3,
-        Quaternion,
-        _Count,
-    }
-
-    public enum ValueType {
-        List,
-        NamedList,
-        Enum,
-        AssetRef,
-        Ref,
-        Scalar,
-        String,
-        Vector2,
-        Vector3,
-        Quaternion,
-        _Count,
-    }
-
-    public enum AreaId {
-        Structs,
-        Names,
-        Scalars,
-        AssetRefs,
-        Refs,
-        Strings,
-        _Count,
-    }
-
-    public enum ScalarType {
-        Bool,
-        Byte,
-        Char,
-        Decimal,
-        Double,
-        Short,
-        Int,
-        Long,
-        SByte,
-        Float,
-        UShort,
-        UInt,
-        ULong,
-        _Count
-    }
-
-    public struct Pointer {
-        public static readonly int NullOffset = -1;
-        public static readonly int Size = sizeof(byte) + sizeof(int);
-
-        public AreaId areaId;
-        public int offset;
-
-        public Pointer TranslateTo(Area area) {
-            return new Pointer { areaId = areaId, offset = offset - area.Position };
-        }
-
-        public Pointer TranslateFrom(Area area) {
-            return new Pointer { areaId = areaId, offset = offset + area.Position };
-        }
-
-        public void Check(AreaId areaId) {
-            if (this.areaId != areaId)
-                throw new FireBinException($"The pointer has areaId: {this.areaId}, but the expected areaId is: {areaId}"); ;
-        }
-    }
-
-    public struct Reference {
-        public Pointer from;
-        public Pointer to; 
-    }
 
     internal struct Link {
         public Type type;
@@ -101,29 +19,27 @@ namespace FireBin {
         public int referenceIndex;
     }
 
-    /// TODO: убрать, есть Pointer
-    public class Address {
-        public Area area;
-        public PointerType offset;
-    }
-
     public class Serializer {
-        public delegate Address? AddAsDelegate(Type type, object? obj);
+        public delegate Pointer? AddAsDelegate(Type type, object? obj);
 
         public static bool showLog = false;
 
-        private Dictionary<int, PointerType> m_objectOffsets = new Dictionary<int, PointerType>();
+        private Dictionary<int, int> m_objectOffsets = new Dictionary<int, int>();
         
         private List<Link> m_links = new List<Link>();
 
         private readonly AddAsDelegate[] m_serializers;
 
         private FireBin.Data m_data;
+        private FireBin.DataWriter m_writer;
+        private FireBin.DataReader m_reader;
 
         public Serializer(FireBin.Data data) {
             m_data = data;
+            m_writer = new DataWriter(data);
+            m_reader = new DataReader(data);
 
-            m_serializers = new AddAsDelegate[(int)ValueType._Count] {
+            m_serializers = new AddAsDelegate[(int)BinType._Count] {
                 AddAsList,
                 AddAsNamedList,
                 AddAsEnum,
@@ -137,281 +53,205 @@ namespace FireBin {
             };
         }
 
-        public void Serialize() {
-            m_ResolveLinks();
-        }
-
         public void Serialize(object obj) {
             AddAsNamedList(obj.GetType(), obj);
             Serialize();
         }
 
-        public Address? AddAsNamedList(Type type, object? obj) {
-            if (obj == null)
-                return null;
+        public Serializer Add(object obj) {
+            AddAsNamedList(obj.GetType(), obj);
 
-            var structsArea = m_data[AreaId.Structs];
-            var namesArea = m_data[AreaId.Names];
-
-            /// - Может ли один объект оказаться здесь несколько раз?
-            /// - Только если пользователь запишет его несколько раз.
-
-            var scriptId = Engine.GUIDAttribute.GetGuid(type);
-            var serializer = YamlWriter.GetSerializer(type);
-            var fields = YamlWriter.GetFields(type, obj, serializer);
-
-            var structOffset = structsArea.Offset;
-            var namesOffset = m_data.AddNames(type, fields, serializer);
-            var namesCount = m_data.GetNamesCount(namesOffset);
-            var extraNamesCount = m_data.GetExtraNamesCount(namesOffset);
-            var scriptIdAddress = AddAsAssetRef(scriptId);
-
-            structsArea.writer.Write((byte)StructType.NamedList);
-            structsArea.WritePointer(namesArea, namesOffset);
-            structsArea.WritePointer(scriptIdAddress);
-
-            var baseOffset = structsArea.Offset;
-            structsArea.WritePointer(null);
-
-            /// TODO: кешировать names по сумме имен всех полей, а не только по имени типа.
-            if (fields.Count != namesCount)
-                throw new FireBinException("fields.Count != namesCount");
-
-            var fieldsOffset = structsArea.Offset;
-            for (int i = 0; i < namesCount + extraNamesCount; i++)
-                structsArea.WritePointer(null);
-
-            if (serializer.NeedIncludeBase(type) && type.BaseType != null) {
-                var address = AddAsNamedList(type.BaseType, obj);
-
-                structsArea.WritePointer(address, baseOffset);
-            }
-            for (int n = 0; n < fields.Count; ++n) {
-                var field = fields[n];
-                var valueWriter = GetWriter(field.type);
-                var address = valueWriter.Invoke(field.type, field.Value);
-                var fieldOffset = fieldsOffset + n * Pointer.Size;
-
-                structsArea.WritePointer(address, fieldOffset);
-            }
-            if (extraNamesCount > 0) {
-                var extraFieldsOffset = fieldsOffset + namesCount * Pointer.Size;
-                m_WriteExtraFields(extraFieldsOffset, extraNamesCount, serializer, type, obj);
-            }
-            if (YamlWriter.NeedSaveAsLink(type))
-                m_AddStructOffset(type, obj, structOffset);
-
-            return new Address() { area = structsArea, offset = structOffset };
+            return this;
         }
 
-        public Address? AddAsList(Type type, object? obj) {
+        public void Serialize() {
+            m_ResolveLinks();
+        }
+
+        public Pointer? AddAsNamedList(Type type, object? obj) {
             if (obj == null)
                 return null;
 
-            var list = obj as IList;
-            if (list == null)
+            /// ASK: Может ли один объект оказаться здесь несколько раз?
+            /// ---: Да, если пользователь запишет его несколько раз.
+            /// TODO: Решить что делать в таком случае.
+
+            var scriptId = Engine.GUIDAttribute.GetGuid(type);
+            if (scriptId == "")
+                throw new FireBinException($"BinType: {BinType.NamedList} must have a scriptId.");
+
+            var serializer = YamlWriter.GetSerializer(type);
+            var fields = YamlWriter.GetFields(type, obj, serializer);
+            var names = fields.Select(f => f.name);
+            var extraNames = serializer.GetNamesOfExtraFields();
+
+            var namedListPtr = m_writer.WriteNamedList(type, scriptId, names, extraNames);
+            var namedList = m_reader.ReadNamedList(namedListPtr);
+
+            if (fields.Count != namedList.fields.Count)
+                throw new FireBinException("fields.Count != namesCount");
+
+            if (serializer.NeedIncludeBase(type) && type.BaseType != null)
+                namedList.WriteBasePtr(AddAsNamedList(type.BaseType, obj));
+
+            for (int n = 0; n < fields.Count; ++n) {
+                var field = fields[n];
+
+                Console.WriteLine($"field: {field.name}");
+
+                var valueWriter = GetWriter(field.type);
+                var valuePtr = valueWriter.Invoke(field.type, field.Value);
+
+                namedList.fields[n] = valuePtr;
+            }
+            if (namedList.extraFields.Count > 0) {
+                var extraPointers = serializer.WriteExtraFields(this, type, obj);
+                if (extraPointers.Count != namedList.extraFields.Count)
+                    throw new FireBinException($"Serializer of type: {type.Name} returned an incorrect number of fields.");
+
+                for (int i = 0; i < namedList.extraFields.Count; ++i)
+                    namedList.extraFields[i] = extraPointers[i];
+            }
+            if (YamlWriter.NeedSaveAsLink(type))
+                m_AddStructOffset(type, obj, namedList.structOffset);
+
+            return namedListPtr;
+        }
+
+        public Pointer? AddAsList(Type type, object? obj) {
+            if (obj == null)
+                return null;
+
+            var listObj = obj as IList;
+            if (listObj == null)
                 throw new FireBinException("obj is not an IList");
 
-            var structsArea = m_data[AreaId.Structs];
-
-            var structOffset = structsArea.Offset;
-            structsArea.writer.Write((byte)StructType.List);
-            structsArea.writer.Write(list.Count);
-
-            var itemsOffset = structsArea.Offset;
-            for (int i = 0; i < list.Count; i++)
-                structsArea.WritePointer(null);
+            var listPtr = m_writer.WriteList(listObj.Count);
+            var list = m_reader.ReadList(listPtr);
 
             var genericType = type.GetGenericArguments()[0];
             var valueWriter = GetWriter(genericType);
 
-            for (int n = 0; n < list.Count; ++n) {
-                var value = list[n];
+            for (int n = 0; n < listObj.Count; ++n) {
+                var value = listObj[n];
                 var valueType = value != null ? value.GetType() : genericType;
-                var address = valueWriter.Invoke(valueType, value);
-                var itemOffset = itemsOffset + n * Pointer.Size;
 
-                structsArea.WritePointer(address, itemOffset);
+                Console.WriteLine($"item: {n}");
+
+                list[n] = valueWriter.Invoke(valueType, value);
             }
-
-            return new Address() { area = structsArea, offset = structOffset };
+            return listPtr;
         }
 
-        public Address? AddAsEnum(Type type, object? obj) {
+        public Pointer? AddAsEnum(Type type, object? obj) {
             if (obj == null)
                 return null;
 
             if (!type.IsEnum)
                 throw new FireBinException("obj is not an Enum");
 
-            var structsArea = m_data[AreaId.Structs];
-            var stringsArea = m_data[AreaId.Strings];
-
-            var intValue = Convert.ToInt32(obj);
-            var strValue = obj.ToString();
-            var structOffset = structsArea.Offset;
-            var stringOffset = stringsArea.Offset;
-
-            stringsArea.writer.Write(strValue);
-
-            structsArea.writer.Write((byte)StructType.Enum);
-            structsArea.writer.Write(intValue);
-            structsArea.WritePointer(stringsArea, stringOffset);
-
-            return new Address() { area = structsArea, offset = structOffset };
+            return m_writer.WriteEnum(obj);
         }
 
-        public Address? AddAsAssetRef(Type type, object? obj) {
+        public Pointer? AddAsAssetRef(Type type, object? obj) {
             if (obj == null)
                 return null;
 
             var asset = (IAsset)obj;
 
-            return m_data.AddAssetRef(asset.assetId);
+            return m_writer.WriteAssetRef(asset.assetId);
         }
 
-        public Address? AddAsAssetRef(string assetId) {
+        public Pointer? AddAsAssetRef(string assetId) {
             if (assetId == "")
                 return null;
 
-            return m_data.AddAssetRef(assetId);
+            return m_writer.WriteAssetRef(assetId);
         }
 
-        public Address? AddAsRef(Type type, object? obj) {
+        public Pointer? AddAsRef(Type type, object? obj) {
             if (obj == null)
                 return null;
 
-            var structsArea = m_data[AreaId.Structs];
-            var refsArea = m_data[AreaId.Refs];
+            int refIndex;
+            var refPtr = m_writer.WriteReference(Pointer.NullPointer, out refIndex);
 
-            var offset = refsArea.Offset;
-            var refIndex = refsArea.WritePointer(structsArea, Pointer.NullOffset);
+            Console.WriteLine($"ref.index: {refIndex}");
 
             m_links.Add(new Link { 
                 type = type, 
                 obj = obj, 
                 referenceIndex = refIndex 
             });
-
-            return new Address() { area = refsArea, offset = offset };
+            return refPtr;
         }
         
-        public Address? AddAsScalar(Type type, object? obj) {
+        public Pointer? AddAsScalar(Type type, object? obj) {
             if (obj == null)
                 return null;
 
-            var scalarsArea = m_data[AreaId.Scalars];
-            var scalarOffset = scalarsArea.Offset;
-
-            m_data.WriteScalar(type, obj);
-
-            return new Address() { area = scalarsArea, offset = scalarOffset };
+            return m_writer.WriteScalar(type, obj);
         }
 
-        public Address? AddAsString(Type type, object? obj) {
+        public Pointer? AddAsString(Type type, object? obj) {
             if (obj == null)
                 return null;
 
-            var stringsArea = m_data[AreaId.Strings];
-
-            var stringOffset = stringsArea.Offset;
-
-            stringsArea.writer.Write((string)obj);
-
-            return new Address() { area = stringsArea, offset = stringOffset };
+            return m_writer.WriteString((string)obj);
         }
 
-        public Address? AddAsVector2(Type type, object? obj) {
+        public Pointer? AddAsVector2(Type type, object? obj) {
             if (obj == null)
                 return null;
-
-            var structsArea = m_data[AreaId.Structs];
 
             var value = (Engine.Vector2)obj;
-            var structOffset = structsArea.Offset;
 
-            structsArea.writer.Write((byte)StructType.Vector2);
-            structsArea.writer.Write(value.X);
-            structsArea.writer.Write(value.Y);
-
-            return new Address() { area = structsArea, offset = structOffset };
+            return m_writer.WriteVector(StructType.Vector2, new float[] { value.X, value.Y });
         }
 
-        public Address? AddAsVector3(Type type, object? obj) {
+        public Pointer? AddAsVector3(Type type, object? obj) {
             if (obj == null)
                 return null;
-
-            var structsArea = m_data[AreaId.Structs];
 
             var value = (Engine.Vector3)obj;
-            var structOffset = structsArea.Offset;
 
-            structsArea.writer.Write((byte)StructType.Vector3);
-            structsArea.writer.Write(value.X);
-            structsArea.writer.Write(value.Y);
-            structsArea.writer.Write(value.Z);
-
-            return new Address() { area = structsArea, offset = structOffset };
+            return m_writer.WriteVector(StructType.Vector3, new float[] { value.X, value.Y, value.Z });
         }
 
-        public Address? AddAsQuaternion(Type type, object? obj) {
+        public Pointer? AddAsQuaternion(Type type, object? obj) {
             if (obj == null)
                 return null;
 
-            var structsArea = m_data[AreaId.Structs];
-
             var value = (Engine.Quaternion)obj;
-            var structOffset = structsArea.Offset;
 
-            structsArea.writer.Write((byte)StructType.Quaternion);
-            structsArea.writer.Write(value.X);
-            structsArea.writer.Write(value.Y);
-            structsArea.writer.Write(value.Z);
-            structsArea.writer.Write(value.W);
-
-            return new Address() { area = structsArea, offset = structOffset };
+            return m_writer.WriteVector(StructType.Quaternion, new float[] { value.X, value.Y, value.Z, value.W });
         }
 
         public AddAsDelegate GetWriter(Type type) {
-            var valueType = FireBin.Data.GetValueType(type);
-            if(valueType == null)
-                throw new FireBinException($"Unsupported type: {type.Name}");
-
+            var valueType = FireBin.Data.ThrowBinType(type);
             return m_serializers[(int)valueType];
-        }
-
-        private void m_WriteExtraFields(PointerType extraFieldsOffset, int extraFieldsCount, Engine.SerializerBase serializer, Type type, object obj) {
-            var extraAddresses = serializer.WriteExtraFields(this, type, obj);
-            if (extraAddresses.Count != extraFieldsCount)
-                throw new FireBinException($"Serializer of type: {type.Name} returned an incorrect number of fields.");
-
-            var structsArea = m_data[AreaId.Structs];
-
-            for (int i = 0; i < extraFieldsCount; ++i) {
-                var extraFieldOffset = extraFieldsOffset + i * Pointer.Size;
-
-                structsArea.WritePointer(extraAddresses[i], extraFieldOffset);
-            }
         }
 
         private void m_ResolveLinks() {
             foreach (var link in m_links) {
-                var reference = m_data.references[link.referenceIndex];
+                var reference = m_data.GetReference(link.referenceIndex);
 
                 reference.to.areaId = AreaId.Structs;
                 reference.to.offset = m_GetStructOffset(link.type, link.obj);
 
-                m_data.references[link.referenceIndex] = reference;
+                Console.WriteLine($"ref.index: {link.referenceIndex} to offset: {reference.to.offset}");
+
+                m_data.SetReference(link.referenceIndex, reference);
             }
         }
 
-        private void m_AddStructOffset(Type type, object obj, PointerType offset) {
+        private void m_AddStructOffset(Type type, object obj, int offset) {
             var hash = $"{obj.GetHashCode()}_{type.GetHashCode()}".GetHashCode();
 
             m_objectOffsets[hash] = offset;
         }
 
-        private PointerType m_GetStructOffset(Type type, object obj) {
+        private int m_GetStructOffset(Type type, object obj) {
             var hash = $"{obj.GetHashCode()}_{type.GetHashCode()}".GetHashCode();
 
             if (m_objectOffsets.ContainsKey(hash))
