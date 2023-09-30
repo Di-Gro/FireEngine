@@ -2,10 +2,10 @@
   "profiles": {
     "Mono": {
       "commandName": "Project",
-      "remoteDebugEnabled": false,
       "sqlDebugging": false,
-      "remoteDebugMachine": "127.0.0.1:48484",
+      "remoteDebugEnabled": true,
       "authenticationMode": "Windows",
+      "remoteDebugMachine": "127.0.0.1:55555",
       "nativeDebugging": false
     }
   }

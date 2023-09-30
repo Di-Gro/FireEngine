@@ -338,8 +338,8 @@ namespace Engine {
 
         public override List<string> GetNamesOfExtraFields() => s_extraFields;
 
-        public override List<FireBin.Address> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
-            var res = new List<FireBin.Address>();
+        public override List<FireBin.Pointer?> WriteExtraFields(FireBin.Serializer writer, Type type, object instance) {
+            var res = new List<FireBin.Pointer?>();
 
             var scene = instance as Engine.Scene;
 

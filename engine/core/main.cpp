@@ -75,7 +75,7 @@ FireMode GetFireModeArg(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
 	FireMode mode = GetFireModeArg(argc, argv);
 
-	bool useMonoDebug = mode == FireMode::WaitDebugger;
+	bool useMonoDebug = true;// mode == FireMode::WaitDebugger;
 
 	if(useMonoDebug)
 		std::cout << "Waiting for debagger" << std::endl;
