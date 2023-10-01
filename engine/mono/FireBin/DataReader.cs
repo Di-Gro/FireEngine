@@ -88,15 +88,19 @@ namespace FireBin {
             return assetRef;
         }
 
-        public Pointer ReadReference(Pointer refPtr) {
+        public Reference ReadReference(Pointer refPtr) {
             refPtr.Check(AreaId.Refs);
 
             var refsArea = m_data[AreaId.Refs];
+            var reference = new Reference() { from = refPtr };
 
-            var structPtr = ReadPointer(refsArea.areaId, refPtr.offset);
-            structPtr.Check(AreaId.Structs);
+            refsArea.SaveOffset(refPtr.offset, (r, w) => {
+                reference.to = ReadPointer(refsArea.areaId);
+                reference.csRef = r.ReadUInt64();
+            });
+            reference.to.Check(AreaId.Structs);
 
-            return structPtr;
+            return reference;
         }
 
         public NamedList ReadNamedList(Pointer structPtr) {
@@ -240,26 +244,26 @@ namespace FireBin {
             return stringsArea.SaveOffset(stringPtr.offset, (r, w) => r.ReadString());
         }
 
-        public object ReadVector(Pointer vecPtr, Type type, int size) {
+        public float[] ReadVector(Pointer vecPtr, int size) {
             vecPtr.Check(AreaId.Structs);
 
             var structsArea = m_data[AreaId.Structs];
 
-            return structsArea.SaveOffset(vecPtr.offset, (r, w) => ReadVector(type, size));
+            return structsArea.SaveOffset(vecPtr.offset, (r, w) => ReadVector(size));
         }
 
-        public object ReadVector(Type type, int size) {
+        public float[] ReadVector(int size) {
             var structsArea = m_data[AreaId.Structs];
 
             var structType = ReadStructType();
 
             Data.CheckVector(structType, size);
 
-            var args = new float[size];
+            var values = new float[size];
             for (int i = 0; i < size; i++)
-                args[i] = structsArea.reader.ReadSingle();
+                values[i] = structsArea.reader.ReadSingle();
 
-            return Activator.CreateInstance(type, args);
+            return values;
         }
 
         public BinEnum ReadEnum(Pointer enumPtr) {

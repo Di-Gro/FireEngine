@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 using EngineDll;
 using FireYaml;
@@ -25,8 +26,16 @@ namespace Engine {
             if(source == null)
                 return;
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var serializer = new FireYaml.FireWriter(ignoreExistingIds: true, writeNewIds: false, useCsRefs: true);
             serializer.Serialize(source);
+
+            stopwatch.Stop();
+
+            TimeSpan elapsedTime = stopwatch.Elapsed;
+            Console.WriteLine($"FireYaml.Serialize: {elapsedTime.TotalMilliseconds} ms");
 
             if (!serializer.Result)
                 throw new Exception($"Can not update asset: Serialization failed.");

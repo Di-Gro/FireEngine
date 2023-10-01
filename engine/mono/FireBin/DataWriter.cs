@@ -28,17 +28,30 @@ namespace FireBin {
             m_data = data;
         }
 
-        public Pointer WriteReference(Pointer toPtr, out int refIndex) {
+        public Pointer WriteReference(Pointer toPtr, ulong csRef, out int refIndex) {
             var refsArea = m_data[AreaId.Refs];
             
             var refOffset = refsArea.Offset;
-            WritePointer(refsArea.areaId, toPtr);
+            WriteReferenceData(toPtr, csRef);
 
             var fromPtr = new Pointer() { areaId = refsArea.areaId, offset = refOffset };
 
-            refIndex = m_data.AddReference(new Reference() { from = fromPtr, to = toPtr });
+            refIndex = m_data.AddReference(new Reference() { from = fromPtr, to = toPtr, csRef = csRef });
 
             return fromPtr;
+        }
+
+        public void WriteReferenceData(int fromOffset, Pointer toPtr, ulong csRef) {
+            var refsArea = m_data[AreaId.Refs];
+
+            refsArea.SaveOffset(fromOffset, (r, w) => WriteReferenceData(toPtr, csRef));
+        }
+
+        public void WriteReferenceData(Pointer toPtr, ulong csRef) {
+            var refsArea = m_data[AreaId.Refs];
+
+            WritePointer(refsArea.areaId, toPtr);
+            refsArea.writer.Write(csRef);
         }
 
         public void WriteStructType(StructType structType) {
@@ -69,16 +82,24 @@ namespace FireBin {
 
         public Pointer WriteNames(out int totalCount, Type type, IEnumerable<string> names, IEnumerable<string> extraNames = null) {
             var namesSign = Data.CreateNamesSign(type, names, extraNames);
+            int namesCount = 0;
+            int extraCount = 0; 
             totalCount = 0;
 
-            if (m_data.HasNamesOffset(namesSign))
-                return new Pointer { areaId = AreaId.Names, offset = m_data.GetNamesOffset(namesSign) };
+            if (m_data.HasNamesOffset(namesSign)) {
+                foreach (var name in names) 
+                    namesCount++;
+                    
+                if (extraNames != null)
+                    foreach (var name in extraNames) 
+                        extraCount++;
 
+                totalCount = namesCount + extraCount;
+                return new Pointer { areaId = AreaId.Names, offset = m_data.GetNamesOffset(namesSign) };
+            }
             var namesArea = m_data[AreaId.Names];
             var stringsArea = m_data[AreaId.Strings];
             var namesOffset = namesArea.Offset;
-            int namesCount = 0;
-            int extraCount = 0;
 
             m_data.AddNamesOffset(namesSign, namesOffset);
             namesArea.writer.Write(namesSign);
@@ -142,7 +163,13 @@ namespace FireBin {
 
         public Pointer WriteAssetRef(string assetId) {
             var assetRefArea = m_data[AreaId.AssetRefs];
-            var assetIdHash = Guid.Parse(assetId).GetHashCode();
+            int assetIdHash;
+
+            Guid guid;
+            if (Guid.TryParse(assetId, out guid))
+                assetIdHash = guid.GetHashCode();
+            else
+                assetIdHash = assetId.GetHashCode();
 
             if (m_data.HasAssetRefOffset(assetIdHash))
                 return new Pointer() { areaId = assetRefArea.areaId, offset = m_data.GetAssetRefOffset(assetIdHash) };
@@ -215,6 +242,8 @@ namespace FireBin {
                 area.SaveOffset(fromOffset, (r, w) => Area.WritePointerData(w, (byte)toPtr.areaId, toPtr.offset));
 
             m_data.AddPointer(fromPtr);
+
+            //Console.WriteLine($"ptr: from:({fromPtr.areaId}, {fromPtr.offset}) to:({toPtr.areaId}, {toPtr.offset})");
         }
     }
 }

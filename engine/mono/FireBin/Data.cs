@@ -161,6 +161,7 @@ namespace FireBin {
     public struct Reference {
         public Pointer from;
         public Pointer to;
+        public ulong csRef;
     }
 
     public class Data {
@@ -245,6 +246,9 @@ namespace FireBin {
 
         public int AddReference(Reference reference) {
             m_references.Add(reference);
+
+            //Console.WriteLine($"ref[{m_references.Count - 1}]: from: ({reference.from.areaId}, {reference.from.offset}) to: ({reference.to.areaId}, {reference.to.offset})");
+
             return m_references.Count - 1;
         }
 
@@ -255,17 +259,35 @@ namespace FireBin {
         public void SetReference(int index, Reference value) {
             m_references[index] = value;
 
+            //Console.WriteLine($"ref[{index}]: from: ({value.from.areaId}, {value.from.offset}) to: ({value.to.areaId}, {value.to.offset})");
+
             var dataWriter = new DataWriter(this);
-            dataWriter.WritePointer(value.from.areaId, value.to, value.from.offset);
+            dataWriter.WriteReferenceData(value.from.offset, value.to, value.csRef);
         }
 
         public int AddPointer(Pointer ptr) {
             m_pointers.Add(ptr);
+
             return m_pointers.Count - 1;
         }
 
         public Pointer GetPointer(int index) {
             return m_pointers[index];
+        }
+
+        public void PrintPointers() {
+            Console.WriteLine("PrintPointers() >");
+
+            var dataReader = new DataReader(this);
+
+            foreach (var fromPtr in m_pointers) {
+                Console.Write($"ptr: from: ({fromPtr.areaId}, {fromPtr.offset})");
+
+                var toPtr = dataReader.ReadPointer(fromPtr.areaId, fromPtr.offset);
+
+                Console.WriteLine($" to: ({toPtr.areaId}, {toPtr.offset})");
+            }
+            Console.WriteLine("<");
         }
 
         public void DistinctPointers() {
@@ -394,8 +416,8 @@ namespace FireBin {
                 throw new FireBinException($"Invalid vector size: {size}, support only a 2-4-vector or quaternion.");
 
             if (structType != StructType.Vector2
-                || structType != StructType.Vector3
-                || structType != StructType.Quaternion) {
+                && structType != StructType.Vector3
+                && structType != StructType.Quaternion) {
                 throw new FireBinException($"Struct type: '{structType}' is not a 2-4-vector or quaternion.");
             }
         }

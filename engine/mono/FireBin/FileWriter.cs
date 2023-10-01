@@ -60,7 +60,7 @@ namespace FireBin {
                 writedRefsCount++;
             }
 
-            Console.WriteLine($"Writed Refs Count: {writedRefsCount}");
+            //Console.WriteLine($"Writed Refs Count: {writedRefsCount}");
         }
     }
 }

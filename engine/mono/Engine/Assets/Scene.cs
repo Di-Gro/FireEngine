@@ -354,6 +354,19 @@ namespace Engine {
 
             return res;
         }
+        
+        public override void ReadExtraFields(FireBin.Deserializer des, object instance, FireBin.PtrList list) {
+            var scene = instance as Engine.Scene;
+
+            var rootsPtr = list[0].Value;
+            var roots = des.Reader.ReadList(rootsPtr);
+
+            Game.PushScene(scene);
+            for (int i = 0; i < roots.Count; i++) 
+                des.LoadAsNamedList(typeof(Actor), roots[i].Value);
+
+            Game.PopScene();
+        }
 
         public override void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) {
             base.OnDeserialize(deserializer, selfPath, type, ref instance);

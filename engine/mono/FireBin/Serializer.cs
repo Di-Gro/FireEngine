@@ -66,6 +66,7 @@ namespace FireBin {
 
         public void Serialize() {
             m_ResolveLinks();
+            //m_data.PrintPointers();
         }
 
         public Pointer? AddAsNamedList(Type type, object? obj) {
@@ -97,7 +98,7 @@ namespace FireBin {
             for (int n = 0; n < fields.Count; ++n) {
                 var field = fields[n];
 
-                Console.WriteLine($"field: {field.name}");
+                //Console.WriteLine($"field: {field.name}");
 
                 var valueWriter = GetWriter(field.type);
                 var valuePtr = valueWriter.Invoke(field.type, field.Value);
@@ -136,7 +137,7 @@ namespace FireBin {
                 var value = listObj[n];
                 var valueType = value != null ? value.GetType() : genericType;
 
-                Console.WriteLine($"item: {n}");
+                // Console.WriteLine($"item: {n}");
 
                 list[n] = valueWriter.Invoke(valueType, value);
             }
@@ -173,10 +174,16 @@ namespace FireBin {
             if (obj == null)
                 return null;
 
-            int refIndex;
-            var refPtr = m_writer.WriteReference(Pointer.NullPointer, out refIndex);
+            ulong csRef = Engine.CppLinked.NullRef;
 
-            Console.WriteLine($"ref.index: {refIndex}");
+            var cppLinked = obj as Engine.CppLinked;
+            if (cppLinked != null)
+                csRef = cppLinked.csRef.value;
+
+            int refIndex;
+            var refPtr = m_writer.WriteReference(Pointer.NullPointer, csRef, out refIndex);
+
+            //Console.WriteLine($"ref.index: {refIndex}");
 
             m_links.Add(new Link { 
                 type = type, 
@@ -239,7 +246,7 @@ namespace FireBin {
                 reference.to.areaId = AreaId.Structs;
                 reference.to.offset = m_GetStructOffset(link.type, link.obj);
 
-                Console.WriteLine($"ref.index: {link.referenceIndex} to offset: {reference.to.offset}");
+                //Console.WriteLine($"ref.index: {link.referenceIndex} to offset: {reference.to.offset}");
 
                 m_data.SetReference(link.referenceIndex, reference);
             }

@@ -4,43 +4,28 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "FireGUID",
+            "type": "shell",
+            "command": "${workspaceFolder}/engine/FireGuid/bin/Debug/net6.0/FireGUID.exe",
+        },
+         {
             "label": "FireProject_Build",
             "type": "shell",
-            "command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe",
-            "args": ["${workspaceFolder}/FireProject.sln"],
+            "command": "${workspaceFolder}/engine/launcher/bin/Debug/net6.0/launcher.exe",
+            "args": ["${workspaceFolder}", "Launch:Build"],
         },
         {
             "label": "FireProject_Run",
             "type": "shell",
             "command": "${workspaceFolder}/engine/launcher/bin/Debug/net6.0/launcher.exe",
-            "args": ["${workspaceFolder}"],
+            "args": ["${workspaceFolder}", "Launch:Run"],
         },
         {
-            "label": "FireProject_Run_Debug",
+            "label": "FireProject_Debug",
             "type": "shell",
             "command": "${workspaceFolder}/engine/launcher/bin/Debug/net6.0/launcher.exe",
-            "args": ["${workspaceFolder}", "FireMode.WaitDebugger"],
-        },
-        {
-            "label": "FireProject_Build_Run",
-            "dependsOn": [
-                "FireProject_Build",
-                "FireProject_Run"
-            ],
-            "dependsOrder": "sequence",
-        },
-        {
-            "label": "FireProject_Build_Run_Debug",
-            "dependsOn": [
-                "FireProject_Build",
-                "FireProject_Run_Debug"
-            ],
-            "dependsOrder": "sequence",
-        },
-        {
-            "label": "FireGUID",
-            "type": "shell",
-            "command": "${workspaceFolder}/engine/FireGuid/bin/Debug/net6.0/FireGUID.exe",
+            "args": ["${workspaceFolder}", "Launch:Debug"],
+            "isBackground": true,
         },
     ]
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using YamlWriter = FireYaml.FireWriter;
+using System.Numerics;
 
 /// TODO: CsRefs 
 /// TODO: InstanciateComponent
@@ -73,8 +74,11 @@ namespace FireBin {
         private string m_typeConflicts = "";
         private string m_nameConflicts = "";
 
-        public Deserializer(FireBin.Data data) {
+        private bool m_useCsRefs = false;
+
+        public Deserializer(FireBin.Data data, bool useCsRefs = false) {
             Reader = new FireBin.DataReader(data);
+            m_useCsRefs = useCsRefs;
 
             m_deserializers = new LoadAsDelegate[(int)BinType._Count] {
                 LoadAsList,
@@ -84,9 +88,9 @@ namespace FireBin {
                 (Type type, Pointer dataPtr, object target) => null,
                 (Type type, Pointer dataPtr, object target) => Reader.ReadScalar(dataPtr).value,
                 (Type type, Pointer dataPtr, object target) => Reader.ReadString(dataPtr),
-                (Type type, Pointer dataPtr, object target) => Reader.ReadVector(dataPtr, type, 2),
-                (Type type, Pointer dataPtr, object target) => Reader.ReadVector(dataPtr, type, 3),
-                (Type type, Pointer dataPtr, object target) => Reader.ReadVector(dataPtr, type, 4),
+                LoadAsVector2,
+                LoadAsVector3,
+                LoadAsQuaternion,
             };
         }
 
@@ -151,7 +155,7 @@ namespace FireBin {
                 if (field == null)
                     continue;
 
-                Console.WriteLine($"names[{i}]: {fieldName}");
+                // Console.WriteLine($"names[{i}]: {fieldName}");
 
                 if (valuePtr.offset == Pointer.NullOffset) {
                     field.SetValue(null);
@@ -252,6 +256,24 @@ namespace FireBin {
             return valueObj;
         }
 
+        public object LoadAsVector2(Type type, Pointer dataPtr, object target = null) {
+            var values = Reader.ReadVector(dataPtr, 2);
+
+            return new Engine.Vector2(values[0], values[1]);
+        }
+
+        public object LoadAsVector3(Type type, Pointer dataPtr, object target = null) {
+            var values = Reader.ReadVector(dataPtr, 3);
+
+            return new Engine.Vector3(values[0], values[1], values[2]);
+        }
+
+        public object LoadAsQuaternion(Type type, Pointer dataPtr, object target = null) {
+            var values = Reader.ReadVector(dataPtr, 4);
+
+            return new Engine.Quaternion(values[0], values[1], values[2], values[3]);
+        }
+
         private LoadAsDelegate m_GetLoader(BinType valueType) {
             return m_deserializers[(int)valueType];
         }
@@ -277,11 +299,13 @@ namespace FireBin {
 
         private void m_ResolveRefs() {
             foreach(var iRef in m_refs) {
-                var structPtr = Reader.ReadReference(iRef.refPtr);
+                var reference = Reader.ReadReference(iRef.refPtr);
 
-                if(m_loadedStructs.ContainsKey(structPtr))
-                    iRef.field.SetValue(m_loadedStructs[structPtr]);
-                else 
+                if (m_loadedStructs.ContainsKey(reference.to))
+                    iRef.field.SetValue(m_loadedStructs[reference.to]);
+                else if (m_useCsRefs)
+                    iRef.field.SetValue(Engine.CppLinked.GetObjectByRef(reference.csRef));
+                else
                     iRef.field.SetValue(null);
             }
         }

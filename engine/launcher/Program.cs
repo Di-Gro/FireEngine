@@ -4,46 +4,69 @@ using System.Diagnostics;
 
 class Launcher {
 
+    static string msBuildExe = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe";
+
+    static string workspaceFolder = Path.GetFullPath("../../../../../");
+    static string launchArg = "";
+
     static void Main(string[] args) {
-
-        foreach(var arg in args)
-            Console.WriteLine($"arg: {arg}");
-
-        string workspaceFolder = Path.GetFullPath("../../../../../");
-        string engineArgs = "";
 
         if (args.Length > 0)
             workspaceFolder = args[0];
 
         if (args.Length > 1) {
-            engineArgs = args[1];
+            launchArg = args[1];
 
-            if(engineArgs == "FireGUID") {
-                Console.WriteLine(Guid.NewGuid().ToString());
+            if(launchArg == "Launch:Build") {
+                Build();
+                return;
+            }
+            if (launchArg == "Launch:Run") {
+                if (Build())
+                    Run();
+                return;
+            }
+            if (launchArg == "Launch:Debug") {
+                if (Build())
+                    Run("FireMode:WaitDebugger");
                 return;
             }
         }
+        Run();
+    }
+
+    static bool Build() {
+        var buildArgs = $"{workspaceFolder}/FireProject.sln";
 
         Process cmd = new Process();
-        cmd.StartInfo.FileName = "cmd.exe";
+        cmd.StartInfo.FileName = $"\"{msBuildExe}\"";
+        cmd.StartInfo.Arguments = $"{buildArgs} /clp:ErrorsOnly;Summary";
         cmd.StartInfo.RedirectStandardInput = true;
         cmd.StartInfo.RedirectStandardOutput = false;
         cmd.StartInfo.CreateNoWindow = false;
         cmd.StartInfo.UseShellExecute = false;
         cmd.Start();
+        cmd.WaitForExit();
 
-        cmd.StandardInput.WriteLine($"cd \"{workspaceFolder}/x64/Debug\"");
-        cmd.StandardInput.Flush();
+        return cmd.ExitCode == 0;
+    }
 
-        cmd.StandardInput.WriteLine(@"SET PATH=C:\Program Files\Mono\bin");
-        cmd.StandardInput.Flush();
+    static void Run(string args = "") {
+        var path = @"C:\Program Files\Mono\bin;" + Environment.GetEnvironmentVariable("PATH");
 
-        cmd.StandardInput.WriteLine($"\"Core.exe\" {engineArgs}");
-        cmd.StandardInput.Flush();
-        cmd.StandardInput.Close();
-
+        Process cmd = new Process();
+        cmd.StartInfo.FileName = $"\"{workspaceFolder}/x64/Debug/Core.exe\"";
+        cmd.StartInfo.Arguments = args;
+        cmd.StartInfo.RedirectStandardInput = true;
+        cmd.StartInfo.RedirectStandardOutput = false;
+        cmd.StartInfo.CreateNoWindow = false;
+        cmd.StartInfo.UseShellExecute = false;
+        cmd.StartInfo.EnvironmentVariables["PATH"] = path;
+        cmd.StartInfo.WorkingDirectory = $"{workspaceFolder}\\engine\\core";
+        cmd.Start();
         cmd.WaitForExit();
     }
+        
 }
 
 

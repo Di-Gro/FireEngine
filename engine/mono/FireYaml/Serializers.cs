@@ -83,7 +83,6 @@ namespace Engine {
             return true;
         }
 
-        /// TODO: Переименовать в Write/ReadExtraFields
         public virtual void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) { }
 
         public virtual void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) { }
@@ -107,11 +106,10 @@ namespace Engine {
 
             public void OnEndLoad() {
 #if DETACHED
-                m_waitedComponents.Remove(node);
 #else
                 Dll.Actor.InitComponent(actor.cppRef, component.cppRef);
-                m_waitedComponents.Remove(node);
 #endif
+                m_waitedComponents.Remove(node);
             }
         }
 
@@ -162,13 +160,13 @@ namespace Engine {
             actor.Flags = flags;
 
             for (int i = 0; i < children.Count; i++) {
-                var childPtr = des.Reader.ReadReference(children[i].Value);
+                var childRef = des.Reader.ReadReference(children[i].Value);
                 object child = new Actor(actor);
-                des.LoadAsNamedList(typeof(Actor), childPtr, child);
+                des.LoadAsNamedList(typeof(Actor), childRef.to, child);
             }
             for (int i = 0; i < components.Count; i++) {
-                var compPtr = des.Reader.ReadReference(components[i].Value);
-                LoadComponent(des, actor, compPtr);
+                var compRef = des.Reader.ReadReference(components[i].Value);
+                LoadComponent(des, actor, compRef.to);
             }
         }
 
@@ -377,6 +375,18 @@ namespace Engine {
             return res;
         }
 
+        public override void ReadExtraFields(FireBin.Deserializer des, object instance, FireBin.PtrList list) {
+            var meshComponent = instance as MeshComponent;
+
+            var meshPtr = list[0].Value;
+            var materialsPtr = list[1].Value;
+
+            m_LoadMesh(des, meshPtr, meshComponent);
+            m_LoadMaterials(des, materialsPtr, meshComponent);
+
+            Dll.MeshComponent.OnPreInit(meshComponent.cppRef);
+        }
+
         public override void OnDeserialize(FireYaml.FireReader deserializer, string selfPath, Type type, ref object instance) {
             base.OnDeserialize(deserializer, selfPath, type, ref instance);
 
@@ -435,6 +445,26 @@ namespace Engine {
             }
         }
 
+        private void m_LoadMesh(FireBin.Deserializer des, FireBin.Pointer meshPtr, MeshComponent meshComponent) {
+            if (meshPtr.offset == FireBin.Pointer.NullOffset)
+                return;
+
+            var meshObj = des.LoadAsAssetRef(typeof(StaticMesh), meshPtr);
+            var mesh = meshObj as StaticMesh;
+
+            var isPath = m_IsPath(mesh.assetId);
+
+            if (!isPath && !AssetStore.Instance.HasAssetPath(mesh.assetId))
+                throw new Exception($"Missing AssetId: {mesh.assetId}");
+
+            if (isPath)
+                mesh = new StaticMesh().LoadFromFile(mesh.assetId);
+            else
+                mesh = new StaticMesh().LoadFromAsset(mesh.assetId);
+
+            Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
+        }
+
         private bool m_IsPath(string value) {
             return value.Contains('/') || value.Contains('\\') || value.Contains('.');
         }
@@ -469,6 +499,31 @@ namespace Engine {
                 }
                 /// Null и другое
                 matRefs.Add(defaultMaterial.cppRef.value);
+            }
+            Dll.MeshComponent.SetPreInitMaterials(meshComponent.cppRef, matRefs.ToArray(), matRefs.Count);
+        }
+
+        private void m_LoadMaterials(FireBin.Deserializer des, FireBin.Pointer materialsPtr, MeshComponent meshComponent) {
+            var materials = new List<StaticMaterial>();
+
+            des.LoadAsList(materials.GetType(), materialsPtr, materials);
+            if (materials.Count == 0)
+                return;
+
+            var matRefs = new List<ulong>();
+            var defaultMatCppRef = new StaticMaterial().LoadFromAsset(Assets.M_Default).cppRef.value;
+
+            for (int i = 0; i < materials.Count; i++) {
+                var material = materials[i];
+                if (material == null) {
+                    matRefs.Add(defaultMatCppRef);
+                    continue;
+                }
+                if (!AssetStore.Instance.HasAssetPath(material.assetId))
+                    throw new Exception($"Missing AssetId: {material.assetId}");
+
+                material.LoadFromAsset(material.assetId);
+                matRefs.Add(material.cppRef.value);
             }
             Dll.MeshComponent.SetPreInitMaterials(meshComponent.cppRef, matRefs.ToArray(), matRefs.Count);
         }

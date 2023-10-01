@@ -18,6 +18,9 @@ namespace Engine {
         private static Dictionary<CsRef, object> s_refs = new Dictionary<CsRef, object>();
 		private static CsRef s_nextRefId = 2; // NullRef = 0, MissingRef = 1
 
+		public static readonly ulong NullRef = 0;
+		public static readonly ulong MissingRef = 1;
+
         public static object GetObjectByRef(CsRef csRef) {
 			if (s_refs.ContainsKey(csRef))
 				return s_refs[csRef];

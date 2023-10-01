@@ -26,8 +26,6 @@ if (serialize) {
     //comp1.comp2Ref = comp2;
     //comp1.material = new Engine.StaticMaterial().LoadFromAsset("418dccc8-cf33-4f3e-b401-ae42cb9cc7f7");
 
-
-
     //var testClass = new TestClass();
     //testClass.floatValue = 56.475f;
     //testClass.uintValue = 8;
