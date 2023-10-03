@@ -144,8 +144,8 @@ namespace FireBin {
             if (Data.ThrowBinType(type) == BinType.Ref)
                 m_loadedStructs.Add(dataPtr, valueObj);
 
-            if (serializer.NeedIncludeBase(type))
-                valueObj = LoadAsNamedList(type.BaseType, dataPtr, valueObj);
+            if (serializer.NeedIncludeBase(type) && data.basePtr.offset != Pointer.NullOffset)
+                valueObj = LoadAsNamedList(type.BaseType, data.basePtr, valueObj);
 
             for (int i = 0; i < data.fields.Count; i++) {
                 var fieldName = data.names.GetName(i);

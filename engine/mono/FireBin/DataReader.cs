@@ -21,10 +21,63 @@ namespace FireBin {
             (r) => r.ReadUInt64()
         };
 
-        private FireBin.Data m_data;
+        private FireBin.Data m_data = new Data();
+
+        public DataReader() { }
 
         public DataReader(FireBin.Data data) {
             m_data = data;
+        }
+
+        public FireBin.Data Read(BinaryReader reader) {
+            m_data = new Data();
+
+            var dataPosition = (int)reader.BaseStream.Position;
+
+            var fbinHeader = new string(reader.ReadChars(8));
+
+            for (int i = 0; i < m_data.AreasCount; i++) {
+                var area = m_data[i];
+
+                area.DataOffset = reader.ReadInt32();
+                var length = reader.ReadInt32();
+
+                var areaPosition = dataPosition + area.DataOffset;
+                area.writer.Write(reader.SaveOffset(areaPosition, r => r.ReadBytes(length)));
+            }
+
+            var lastArea = m_data[m_data.AreasCount - 1];
+            var ptrsPos = dataPosition + lastArea.DataOffset + lastArea.Length;
+
+            m_ReadPointers(reader, ptrsPos);
+
+            m_data.CollectNames();
+            m_data.CollectAssetRefs();
+
+            for (int i = 0; i < m_data.AreasCount; i++)
+                m_data[i].DataOffset = 0;
+
+            var res = m_data;
+
+            m_data = null;
+            reader = null;
+
+            return res;
+        }
+
+        private void m_ReadPointers(BinaryReader reader, int position) {
+            var length = reader.BaseStream.Length;
+            var count = (length - position) / Pointer.Size;
+
+            var prevPos = reader.BaseStream.Position;
+            reader.BaseStream.Position = position;
+
+            for (int i = 0; i < count; i++) {
+                var fromPtr = Area.ReadPointerData(reader);
+
+                m_data.AddPointer(fromPtr);
+            }
+            reader.BaseStream.Position = prevPos;
         }
 
         public StructType ReadStructType(Pointer structPtr) {

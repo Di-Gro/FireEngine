@@ -141,11 +141,11 @@ namespace FireBin {
         public int offset;
 
         public Pointer TranslateTo(Area area) {
-            return new Pointer { areaId = areaId, offset = offset - area.InfilePosition };
+            return new Pointer { areaId = areaId, offset = offset - area.DataOffset };
         }
 
         public Pointer TranslateFrom(Area area) {
-            return new Pointer { areaId = areaId, offset = offset + area.InfilePosition };
+            return new Pointer { areaId = areaId, offset = offset + area.DataOffset };
         }
 
         public void Check(AreaId areaId) {

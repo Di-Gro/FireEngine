@@ -39,6 +39,11 @@ public class FireBinTest : CSComponent
     }
 
     public void ToFireBin() {
+        var fireDB = new Engine.FireDB(outputPath);
+
+        fireDB.Load();
+
+
         var fileStream = new FileStream(outputPath + @"\out.bin", FileMode.Create);
 
         fbinData = new FireBin.Data();
@@ -57,7 +62,7 @@ public class FireBinTest : CSComponent
         TimeSpan elapsedTime = stopwatch.Elapsed;
         Console.WriteLine($"FireBin.Serialize: {elapsedTime.TotalMilliseconds} ms");
 
-        new FireBin.FileWriter(fbinData).Write(fileStream);
+        new FireBin.DataWriter(fbinData).Write(new BinaryWriter(fileStream));
 
         fileStream.Close();
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace FireBin {
     public class DataWriter {
@@ -26,6 +26,55 @@ namespace FireBin {
 
         public DataWriter(FireBin.Data data) {
             m_data = data;
+        }
+
+        public void Write(BinaryWriter writer) {
+            var dataPosition = writer.BaseStream.Position;
+
+            writer.Write("FBINv001".ToArray());
+
+            var areaInfoOffsets = writer.BaseStream.Position;
+            for (int i = 0; i < m_data.AreasCount; i++) {
+                writer.Write(Pointer.NullOffset);
+                writer.Write(Pointer.NullOffset);
+            }
+
+            for (int i = 0; i < m_data.AreasCount; i++) {
+                var area = m_data[i];
+                var areaInfoOffset = areaInfoOffsets + i * sizeof(int) * 2;
+                var areaLength = (int)area.writer.BaseStream.Length;
+
+                area.DataOffset = (int)writer.BaseStream.Position - (int)dataPosition;
+                writer.Write(area.stream.ToArray());
+
+                writer.SaveOffset(areaInfoOffset, w => {
+                    w.Write(area.DataOffset);
+                    w.Write(areaLength);
+                });
+            }
+
+            m_WritePointers(writer);
+
+            for (int i = 0; i < m_data.AreasCount; i++)
+                m_data[i].DataOffset = 0;
+        }
+
+        private void m_WritePointers(BinaryWriter writer) {
+            int writedRefsCount = 0;
+
+            m_data.DistinctPointers();
+
+            for (int i = 0; i < m_data.PointersCount; ++i) {
+                var fromPtr = m_data.GetPointer(i);
+                if (fromPtr.offset == Pointer.NullOffset)
+                    continue;
+
+                Area.WritePointerData(writer, fromPtr);
+
+                writedRefsCount++;
+            }
+
+            //Console.WriteLine($"Writed Refs Count: {writedRefsCount}");
         }
 
         public Pointer WriteReference(Pointer toPtr, ulong csRef, out int refIndex) {

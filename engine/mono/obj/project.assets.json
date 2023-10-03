@@ -67,11 +67,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\GitHub\\FireEngine (test2)\\engine\\mono\\Mono.csproj",
+      "projectUniqueName": "C:\\GitHub\\FireEngine\\engine\\mono\\Mono.csproj",
       "projectName": "Mono",
-      "projectPath": "C:\\GitHub\\FireEngine (test2)\\engine\\mono\\Mono.csproj",
+      "projectPath": "C:\\GitHub\\FireEngine\\engine\\mono\\Mono.csproj",
       "packagesPath": "C:\\Users\\Dmitry\\.nuget\\packages\\",
-      "outputPath": "C:\\GitHub\\FireEngine (test2)\\engine\\mono\\obj\\",
+      "outputPath": "C:\\GitHub\\FireEngine\\engine\\mono\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Dmitry\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -88,8 +88,8 @@
         "netstandard2.1": {
           "targetAlias": "netstandard2.1",
           "projectReferences": {
-            "C:\\GitHub\\FireEngine (test2)\\engine\\vim-math\\vim-math.csproj": {
-              "projectPath": "C:\\GitHub\\FireEngine (test2)\\engine\\vim-math\\vim-math.csproj"
+            "C:\\GitHub\\FireEngine\\engine\\vim-math\\vim-math.csproj": {
+              "projectPath": "C:\\GitHub\\FireEngine\\engine\\vim-math\\vim-math.csproj"
             }
           }
         }

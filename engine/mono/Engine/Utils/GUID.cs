@@ -13,9 +13,25 @@ namespace Engine {
     ]
     public sealed class GUIDAttribute : System.Attribute {
 
-        public static Dictionary<int, Type> types = null;
+        public static Dictionary<int, Type> types = new Dictionary<int, Type>();
 
         public readonly string guid;
+
+        public static void CollectTypes() {
+            types.Clear();
+
+            var currentDomain = AppDomain.CurrentDomain;
+            var assemblies = currentDomain.GetAssemblies();
+
+            foreach (var assembly in assemblies) {
+                var types = assembly.GetTypes();
+
+                foreach (var type in types) {
+                    if (GUIDAttribute.HasGuid(type))
+                        GUIDAttribute.types.Add(GUIDAttribute.GetGuidHash(type), type);
+                }
+            }
+        }
 
         public GUIDAttribute(string guid, Type type = null) {
             this.guid = guid;
@@ -40,7 +56,8 @@ namespace Engine {
 
         public static int GetGuidHash(Type type) {
             var attr = type.GetCustomAttribute<GUIDAttribute>();
-            return attr == null ? 0 : attr.guid.GetHashCode();
+            var hash = attr == null ? 0 : attr.guid.GetHashCode();
+            return hash;
         }
 
         public static string GetGuid(Type type) {

@@ -58,15 +58,25 @@ namespace FireBin {
             Serialize();
         }
 
-        public Serializer Add(object obj) {
-            AddAsNamedList(obj.GetType(), obj);
+        //public Serializer Add(object obj) {
+        //    AddAsNamedList(obj.GetType(), obj);
 
-            return this;
-        }
+        //    return this;
+        //}
 
         public void Serialize() {
             m_ResolveLinks();
             //m_data.PrintPointers();
+        }
+
+        public Pointer? AddAsNamedList(Type type) {
+            var scriptId = Engine.GUIDAttribute.GetGuid(type);
+            if (scriptId == "")
+                throw new FireBinException($"BinType: {BinType.NamedList} must have a scriptId.");
+
+            var namedListPtr = m_writer.WriteNamedList(type, scriptId, new string[0], null);
+           
+            return namedListPtr;
         }
 
         public Pointer? AddAsNamedList(Type type, object? obj) {

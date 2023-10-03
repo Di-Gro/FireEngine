@@ -23,4 +23,5 @@ C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.dll
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.pdb
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.Properties.Resources.resources
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csproj.GenerateResource.cache
-C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csprojAssemblyReference.cache
+C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csproj.AssemblyReference.cache
+C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.GeneratedMSBuildEditorConfig.editorconfig

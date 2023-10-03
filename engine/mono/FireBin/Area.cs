@@ -19,7 +19,7 @@ namespace FireBin {
 
         public PointerType Length => (PointerType)stream.Length;
 
-        public PointerType InfilePosition { get; set; }
+        public PointerType DataOffset { get; set; }
 
         public Area(AreaId areaId) {
             this.areaId = areaId;

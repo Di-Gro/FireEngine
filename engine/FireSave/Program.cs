@@ -2,23 +2,28 @@
 using FireBinEditor;
 
 var outputPath = @"C:\Users\Dmitry\Desktop\FireSave";
+var projectPath = @"C:\GitHub\FireEngine\project";
 
 Console.WriteLine("FireBinTest>");
 
-FireYaml.AssetStore.Instance = new FireYaml.AssetStore();
-FireYaml.AssetStore.Instance.CollectTypes(new Assembly[] { 
-    Assembly.GetAssembly(typeof(Program))
-});
+//FireYaml.AssetStore.Instance = new FireYaml.AssetStore();
+//FireYaml.AssetStore.Instance.CollectTypes(new Assembly[] { 
+//    Assembly.GetAssembly(typeof(Program))
+//});
 
-bool serialize = true;
-bool deserialize = true;
+var fireDB = new Engine.FireDB(projectPath);
+
+fireDB.Load();
+
+bool serialize = false;
+bool deserialize = false;
 
 if (serialize) {
     var fileStream = new FileStream(outputPath + @"\out.bin", FileMode.Create);
 
     var fbinData = new FireBin.Data();
     var serializer = new FireBin.Serializer(fbinData);
-    var fbinWriter = new FireBin.FileWriter(fbinData);
+    var fbinWriter = new FireBin.DataWriter(fbinData);
 
     //var comp1 = new TestComponent1();
     //var comp2 = new TestComponent2();
@@ -57,7 +62,7 @@ if (serialize) {
     //serializer.Add(comp2);
     serializer.Serialize();
 
-    fbinWriter.Write(fileStream);
+    fbinWriter.Write(new BinaryWriter(fileStream));
 
     fileStream.Close();
 } 
@@ -65,8 +70,8 @@ if (serialize) {
 if (deserialize) {
     var fileStream = new FileStream(outputPath + @"\out.bin", FileMode.Open);
 
-    var fbinReader = new FireBin.FileReader();
-    var fbinData = fbinReader.Read(fileStream);
+    var fbinReader = new FireBin.DataReader();
+    var fbinData = fbinReader.Read(new BinaryReader(fileStream));
     var deserializer = new FireBin.Deserializer(fbinData);
 
     //var comp1 = new TestComponent1();
@@ -87,6 +92,5 @@ if (deserialize) {
 
     fileStream.Close();
 }
-
 
 Console.WriteLine("<");

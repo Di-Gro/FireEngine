@@ -186,6 +186,20 @@ namespace Engine {
             }
         }
 
+        public static string GetAssetExtBySourceExt(string ext) {
+            switch (ext) {
+                case ".obj":
+                    return ".mesh";
+
+                case ".png":
+                case ".jpg":
+                    return ".image";
+
+                default:
+                    return "";
+            }
+        }
+
         public static string ReadCString(ulong ptr, ulong length) {
             string str = "";
             unsafe {

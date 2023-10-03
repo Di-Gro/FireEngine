@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using Engine;
 using EngineDll;
 
+/// TODO: Переделать WriteAsset для обновления существующего ассета. 
+/// TODO: В качестве AssetIDHash использовать hash от guid. 
+/// TODO: Убрать замену Actor на Prefab.
+
 namespace FireYaml {
 
     public class AssetStore {
@@ -51,7 +55,7 @@ namespace FireYaml {
             Dll.AssetStore.assetsPath_set(Game.assetStoreRef, AssetsPath);
             Dll.AssetStore.editorPath_set(Game.assetStoreRef, EditorPath);
 
-            CollectTypes();
+            GUIDAttribute.CollectTypes();
 
             m_UpdateAssets(EditorPath, in DateTime.UnixEpoch);
             m_UpdateAssets(AssetsPath, in DateTime.UnixEpoch);
@@ -160,6 +164,11 @@ namespace FireYaml {
             return info;
         }
 
+
+        /// <summary>
+        /// Записывает ассет с перезаписью, если файла ассета нет, создает новый ассет.
+        /// </summary>
+        /// TODO: Переделать для обновления существующего ассета. 
         public int WriteAsset(string path, object data, bool unpuck = false, FireWriter writer = null) {
             var fullPath = Path.GetFullPath(path);
             var projectFullPath = Path.GetFullPath(ProjectPath);
@@ -271,23 +280,23 @@ namespace FireYaml {
                 ext == ".jpg";
         }
 
-        public void CollectTypes(Assembly[] additionalAssemblies = null) {
-            GUIDAttribute.types = m_guidHash_type;
+        //public void CollectTypes(Assembly[] additionalAssemblies = null) {
+        //    GUIDAttribute.types = m_guidHash_type;
 
-            var assemblies = new List<Assembly>();
-            assemblies.Add(Assembly.GetAssembly(typeof(AssetStore)));
-            if (additionalAssemblies != null)
-                assemblies.AddRange(additionalAssemblies);
+        //    var assemblies = new List<Assembly>();
+        //    assemblies.Add(Assembly.GetAssembly(typeof(AssetStore)));
+        //    if (additionalAssemblies != null)
+        //        assemblies.AddRange(additionalAssemblies);
 
-            foreach (var assembly in assemblies) {
-                var types = assembly.GetTypes();
+        //    foreach (var assembly in assemblies) {
+        //        var types = assembly.GetTypes();
 
-                foreach (var type in types) {
-                    if (GUIDAttribute.HasGuid(type))
-                        m_guidHash_type.Add(GUIDAttribute.GetGuidHash(type), type);
-                }
-            }
-        }
+        //        foreach (var type in types) {
+        //            if (GUIDAttribute.HasGuid(type))
+        //                m_guidHash_type.Add(GUIDAttribute.GetGuidHash(type), type);
+        //        }
+        //    }
+        //}
 
         public void SendTypesToCpp() {
             Dll.AssetStore.ClearTypes(Game.gameRef);
@@ -424,6 +433,7 @@ namespace FireYaml {
             return CreateNewAsset(type, assetPath);
         }
 
+        
         public AssetData CreateNewAsset(Type type, string assetPath) {
             var assetGuid = Guid.NewGuid().ToString();
             var assetGuidHash = assetGuid.GetHashCode();

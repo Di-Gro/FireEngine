@@ -14,6 +14,9 @@ END_MONO_INCLUDE
 
 #include <iostream>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 namespace mono
 {
 
