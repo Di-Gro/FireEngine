@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -72,7 +73,7 @@ namespace Engine {
             m_gameCallbacks.setAssetStoreRef = new GameCallbacks.TakeCppRef(SetAssetStoreRef);
             m_gameCallbacks.setUpdateData = new GameCallbacks.SetUpdateData(SetUpdateData);
             m_gameCallbacks.onInputUpdate = new GameCallbacks.Void(Input.OnUpdate);
-            m_gameCallbacks.saveScene = new GameCallbacks.SaveScene(SaveScene);
+            m_gameCallbacks.saveScene = new GameCallbacks.SaveScene(cpp_SaveCppScene);
             m_gameCallbacks.loadScene = new GameCallbacks.LoadScene(LoadScene);
 
             m_gameCallbacks.runOrCrush = new GameCallbacks.RunOrCrush(Component.RunOrCrush);
@@ -103,8 +104,8 @@ namespace Engine {
             
             m_gameCallbacks.setPrefabId = new GameCallbacks.SetPrefabId(Actor.SetPrefabId);
 
-            m_gameCallbacks.createSceneAsset = new GameCallbacks.CreateSceneAsset(Scene.CreateSceneAsset);
-            m_gameCallbacks.renameSceneAsset = new GameCallbacks.RenameSceneAsset(Scene.RenameSceneAsset);
+            m_gameCallbacks.createSceneAsset = new GameCallbacks.CreateSceneAsset(Scene.cpp_CreateSceneAsset);
+            m_gameCallbacks.renameSceneAsset = new GameCallbacks.RenameSceneAsset(Scene.cpp_RenameSceneAsset);
 
             m_gameCallbacks.requestAssetGuid = new GameCallbacks.TakeAssetHash(AssetStore.cpp_RequestAssetGuid);
             m_gameCallbacks.setStartupScene = new GameCallbacks.TakeCppRef(SetStartupScene);
@@ -125,7 +126,11 @@ namespace Engine {
 
             editorSettings.StartupScene = scene;
 
-            AssetStore.Instance.UpdateAsset(Assets.editor_settings, editorSettings);
+            var assetIdHash = Assets.editor_settings.GetHashCode();
+            var assetInfo = AssetStore.Instance.GetAssetInfo(assetIdHash);
+            var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
+
+            AssetStore.Instance.WriteAsset(assetIdHash, editorSettings, writer);
             editorSettings.UpdateInCpp();
         }
 
@@ -167,14 +172,32 @@ namespace Engine {
 
 #endif
 
-        private static int SaveScene(CppRef cppSceneRef, ulong pathPtr) {
+        /// TODO: Изменить. В принципе не нужно создавать ассет. 
+        /// ----: Искользуется в C++ только для созранения EditioScene в папку Editor\Ignore.
+        /// ----: Как следствие эта сцена игнорируется и отсутствует в найденных ассетах. 
+        /// ----: Первый вызов приводит к созданию ассета. 
+        /// ----: Это явно особый ассет, не уверен, что его вообще нужно создавать. 
+        /// ----: С другими сценами из С++ нужно работать как с ассетами. 
+        private static int cpp_SaveCppScene(CppRef cppSceneRef, ulong pathPtr) {
             var path = Assets.ReadCString(pathPtr);
+            var fullPath = Path.GetFullPath(path);
 
             try {
                 object scene = new Scene(cppSceneRef);
-                var assetGuidHash = FireYaml.AssetStore.Instance.WriteAsset(path, scene);
-                return assetGuidHash;
+                int assetIdHash = 0;
 
+                if (File.Exists(fullPath)) {
+                    assetIdHash = AssetStore.Instance.GetAssetIdHashFromFile(fullPath);
+                    if(assetIdHash != 0 && !AssetStore.HasAsset(assetIdHash))
+                        AssetStore.Instance.UpdateAssetData(typeof(Scene), fullPath);
+                }
+                else {
+                    assetIdHash = Scene.cpp_CreateSceneAsset(pathPtr);
+                }
+                if(assetIdHash != 0)
+                    AssetStore.Instance.WriteAsset(assetIdHash, scene);
+                
+                return assetIdHash;
             } catch (Exception e) {
 
                 Console.WriteLine("Exception on SaveScene:");

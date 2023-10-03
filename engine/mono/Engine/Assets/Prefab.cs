@@ -51,10 +51,12 @@ namespace Engine {
                 actor.prefabId = "";
 
                 var writer = new FireWriter(ignoreExistingIds: true, writeNewIds: false, startId: 1);
-                var assetGuidHash = FireYaml.AssetStore.Instance.WriteAsset(path, actorObj, writer: writer);
+
+                var assetIdHash = AssetStore.Instance.CreateNewAsset(typeof(Actor), path);
+                AssetStore.Instance.WriteAsset(assetIdHash, actorObj, writer);
 
                 actor.prefabId = lastPrefabId;
-                return assetGuidHash;
+                return assetIdHash;
 
             } catch (Exception e) {
 
@@ -102,7 +104,7 @@ namespace Engine {
                 var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
 
                 var writer = new FireWriter(ignoreExistingIds: true, writeNewIds: false, startId: 1);
-                FireYaml.AssetStore.Instance.UpdateAsset(assetGuid, actor, writer: writer);
+                AssetStore.Instance.WriteAsset(assetGuidHash, actor, writer);
 
                 return true;
 

@@ -57,7 +57,7 @@ namespace Engine {
 
             new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
 
-            var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetId);
+            var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetIdHash);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
             Dll.Image.Init(Game.gameRef, cppRef, sourcePath, ref width, ref height);

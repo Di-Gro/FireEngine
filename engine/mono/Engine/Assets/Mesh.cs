@@ -90,7 +90,7 @@ namespace Engine {
 
             new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
 
-            var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetId);
+            var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetIdHash);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
             Dll.Mesh4.Init(Game.gameRef, cppRef, sourcePath);

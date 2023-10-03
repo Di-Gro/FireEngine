@@ -55,51 +55,6 @@ namespace Engine {
             asset.SaveAsset();
         }
 
-        public static void InitNewAsset(Type assetType, string assetPath, string assetGuid, string assetSourcePath = "") {
-
-            if(!File.Exists(assetPath))
-                throw new FileNotFoundException($"Assets.Create: {assetPath}");
-
-            if (assetType == typeof(Engine.Actor)) {
-                m_InitNewPrefab(assetPath, assetGuid);
-                return;
-            }
-
-            var asset = FireReader.CreateInstance(assetType);
-
-            if (FireWriter.IsAsset(assetType)) 
-                FireReader.InitIAsset(ref asset, assetGuid, 0);
-            
-            if (FireWriter.IsAssetWithSource(assetType)) {
-                if (assetSourcePath == "")
-                    throw new Exception("Assets.Create: Asset with source need a sourcePath");
-
-                var ext = Path.GetExtension(assetSourcePath);
-
-                FireReader.InitISourceAsset(ref asset, ext);
-            }
-
-            AssetStore.Instance.WriteAsset(assetPath, asset);
-        }
-
-        private static void m_InitNewPrefab(string assetPath, string assetGuid) {
-            
-            var filesCount = 1;
-            var scriptName = nameof(Engine.Actor);
-            var scriptGuid = GUIDAttribute.GetGuid(typeof(Engine.Actor));
-
-            var text = File.ReadAllText(assetPath);
-            var values = new YamlValues().LoadFromText(text);
-
-            values.SetValue(".file0.assetId", new YamlValue(YamlValue.Type.AssetId, assetGuid));
-            values.SetValue(".file0.files", new YamlValue(YamlValue.Type.Var, $"{filesCount}"));
-
-            values.AddValue(".file1!script", new YamlValue(YamlValue.Type.Var, $"{scriptName}"));
-            values.AddValue(".file1!scriptId", new YamlValue(YamlValue.Type.AssetId, $"{scriptGuid}"));
-
-            File.WriteAllText(assetPath, values.ToSortedText());
-        }
-
         public static string FindSourceFile(Type assetType, string assetPath) {
             var typeName = assetType.FullName;
             var typeNameHash = typeName.GetHashCode();

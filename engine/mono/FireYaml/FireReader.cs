@@ -65,7 +65,9 @@ namespace FireYaml {
             m_assetId = assetGuid;
             m_writeIDs = writeIDs;
 
-            m_values = AssetStore.Instance.ThrowAssetValues(m_assetId);
+            var assetGuidHash = m_assetId.GetHashCode();
+
+            m_values = AssetStore.Instance.ThrowAssetValues(assetGuidHash);
         }
 
         public YamlValues GetField(string fieldPath) => m_values.GetObject(fieldPath);
@@ -304,6 +306,8 @@ namespace FireYaml {
 
         private void m_LoadPrefab(string selfPath, Type type, ref object instance, string prefabId) {
 
+            var prefabAssetIdHash = prefabId.GetHashCode();
+
             /// Запоминаем старое состояние
             var last_m_assetId = m_assetId;
             var last_rootPath = m_rootPath;
@@ -316,7 +320,7 @@ namespace FireYaml {
             m_rootPath = $"{selfPath}!";
             m_assetInst = IFile.GetAssetInstance(ref instance);
 
-            var values = AssetStore.Instance.ThrowAssetValues(prefabId);
+            var values = AssetStore.Instance.ThrowAssetValues(prefabAssetIdHash);
             m_values = YamlValues.Merge(values, m_values, m_rootPath, true);
             
             /// Внутри нового состояния

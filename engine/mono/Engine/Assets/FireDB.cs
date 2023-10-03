@@ -334,6 +334,7 @@ namespace Engine {
         //        throw new Exception($"Asset file: '{fullPath}' not found.");
 
         //    asset.data = new FireBin.Data();
+        //    /// TODO: Обновить asset.time
 
         //    new FireBin.Serializer(asset.data).Serialize(valueObj);
 

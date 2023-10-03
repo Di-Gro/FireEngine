@@ -12,7 +12,7 @@ namespace Engine {
 
     public class Scene : FireYaml.IFile, FireYaml.IAsset {
 
-        /// TODO: У ассетов открыт AssetId, но инорируется в FireYaml.
+        /// TODO: пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ AssetId, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ FireYaml.
 
         /// FireYaml.IAsset
         [Open] public string assetId { get; private set; } = "0000000000";
@@ -203,7 +203,7 @@ namespace Engine {
 
     public class Scene : FireYaml.IFile, FireYaml.IAsset {
 
-        /// TODO: У ассетов открыт AssetId, но инорируется в FireYaml.
+        /// TODO: пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ AssetId, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ FireYaml.
 
         /// FireYaml.IAsset
         [Open] public string assetId { get; private set; } = "0000000000";
@@ -274,7 +274,7 @@ namespace Engine {
 
             new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
 
-            var assetPath = FireYaml.AssetStore.Instance.GetAssetPath(assetId);
+            var assetPath = FireYaml.AssetStore.Instance.GetAssetPath(assetIdHash);
             Name = Path.GetFileNameWithoutExtension(assetPath);
         }
 
@@ -285,23 +285,26 @@ namespace Engine {
 
             fileId = 1;
             assetInstance = cppRef.value;
-            
-            AssetStore.Instance.UpdateAsset(assetId, this);
+
+            var assetInfo = AssetStore.Instance.GetAssetInfo(assetIdHash);
+            var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
+
+            AssetStore.Instance.WriteAsset(assetIdHash, this, writer);
         }
 
-        public static int CreateSceneAsset(ulong cpath) {
+        public static int cpp_CreateSceneAsset(ulong cpath) {
             var path = Assets.ReadCString(cpath);
 
-            var data = AssetStore.Instance.CreateNewAsset(typeof(Scene), path);
+            var assetIdHash = AssetStore.Instance.CreateNewAsset(typeof(Scene), path);
 
-            return data == null ? 0 : data.guidHash;
+            return assetIdHash;
         }
 
-        public static bool RenameSceneAsset(int assetIdHash, ulong cpath) {
+        public static bool cpp_RenameSceneAsset(int assetIdHash, ulong cpath) {
             var newPath = Assets.ReadCString(cpath);
 
-            var assetGuid = AssetStore.Instance.GetAssetGuid(assetIdHash);
-            var assetPath = AssetStore.Instance.GetAssetPath(assetGuid);
+            //var assetGuid = AssetStore.Instance.GetAssetGuid(assetIdHash);
+            var assetPath = AssetStore.Instance.GetAssetPath(assetIdHash);
 
             if(!File.Exists(assetPath) || File.Exists(newPath))
                 return false;

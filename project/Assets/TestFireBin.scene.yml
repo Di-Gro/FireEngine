@@ -1,16 +1,16 @@
 .file0.assetId: {AssetId: 566c9ed8-5462-4674-b358-5a591146892c}
-.file0.files: {Var: 174}
+.file0.files: {Var: 177}
 
 .file1!script: {Var: Scene}
 .file1!scriptId: {AssetId: c24339ac-ed91-44f9-bab5-600fe45a9806}
 .file1.Name: {Var: TestFireBin.scene}
-.file1.CameraPos.X: {Var: -54.44846}
-.file1.CameraPos.Y: {Var: 116.1407}
-.file1.CameraPos.Z: {Var: 183.2619}
-.file1.CameraRot.X: {Var: -0.2731448}
-.file1.CameraRot.Y: {Var: -0.07205888}
-.file1.CameraRot.Z: {Var: -0.02052262}
-.file1.CameraRot.W: {Var: 0.9590507}
+.file1.CameraPos.X: {Var: -54.79771}
+.file1.CameraPos.Y: {Var: 99.25357}
+.file1.CameraPos.Z: {Var: 180.2495}
+.file1.CameraRot.X: {Var: -0.232838}
+.file1.CameraRot.Y: {Var: -0.1235967}
+.file1.CameraRot.Z: {Var: -0.02984725}
+.file1.CameraRot.W: {Var: 0.9641678}
 .file1.CameraSpeed: {Var: 111}
 .file1.m_roots.0: {Ref: file2}
 .file1.m_roots.1: {Ref: file7}
@@ -148,7 +148,7 @@
 .file70.Name: {Var: Actor}
 .file70.ActiveSelf: {Var: True}
 .file70.localPosition.X: {Var: 0}
-.file70.localPosition.Y: {Var: -20.63196}
+.file70.localPosition.Y: {Var: 4.479774}
 .file70.localPosition.Z: {Var: 0}
 .file70.localRotationQ.X: {Var: 0}
 .file70.localRotationQ.Y: {Var: 0}
@@ -416,7 +416,7 @@
 .file87.localPosition.Z: {Var: 57.76817}
 .file87.localRotationQ.X: {Var: -5.892986E-07}
 .file87.localRotationQ.Y: {Var: 0.235343}
-.file87.localRotationQ.Z: {Var: -8.823502E-07}
+.file87.localRotationQ.Z: {Var: -8.823498E-07}
 .file87.localRotationQ.W: {Var: 0.9719123}
 .file87.localScale.X: {Var: 1}
 .file87.localScale.Y: {Var: 0.9238601}
@@ -504,10 +504,10 @@
 .file94.localPosition.X: {Var: 46.98137}
 .file94.localPosition.Y: {Var: 23.99892}
 .file94.localPosition.Z: {Var: 36.83818}
-.file94.localRotationQ.X: {Var: 5.120147E-07}
-.file94.localRotationQ.Y: {Var: -0.5247888}
-.file94.localRotationQ.Z: {Var: 7.454796E-07}
-.file94.localRotationQ.W: {Var: 0.8512324}
+.file94.localRotationQ.X: {Var: 5.120149E-07}
+.file94.localRotationQ.Y: {Var: -0.5247887}
+.file94.localRotationQ.Z: {Var: 7.454797E-07}
+.file94.localRotationQ.W: {Var: 0.8512326}
 .file94.localScale.X: {Var: 0.9999997}
 .file94.localScale.Y: {Var: 1}
 .file94.localScale.Z: {Var: 0.9999997}

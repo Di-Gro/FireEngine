@@ -428,9 +428,10 @@ namespace Engine {
                 
             var yamlValue = meshField.GetValue(meshAssetPath);
             var assetId = yamlValue.value;
+            var assetIdHash = assetId.GetHashCode();
             var isPath = m_IsPath(assetId);
 
-            if (!isPath && !AssetStore.Instance.HasAssetPath(assetId))
+            if (!isPath && !AssetStore.Instance.HasAssetPath(assetIdHash))
                     throw new Exception($"Missing AssetId: {assetId}");
 
             if (yamlValue.type == YamlValue.Type.AssetId) {
@@ -453,8 +454,9 @@ namespace Engine {
             var mesh = meshObj as StaticMesh;
 
             var isPath = m_IsPath(mesh.assetId);
+            var assetIdHash = mesh.assetId.GetHashCode();
 
-            if (!isPath && !AssetStore.Instance.HasAssetPath(mesh.assetId))
+            if (!isPath && !AssetStore.Instance.HasAssetPath(assetIdHash))
                 throw new Exception($"Missing AssetId: {mesh.assetId}");
 
             if (isPath)
@@ -488,8 +490,9 @@ namespace Engine {
                     
                     if (yamlValue.type == YamlValue.Type.AssetId) {
                         var assetId = yamlValue.value;
+                        var assetIdHash = assetId.GetHashCode();
 
-                        if (!AssetStore.Instance.HasAssetPath(assetId))
+                        if (!AssetStore.Instance.HasAssetPath(assetIdHash))
                             throw new Exception($"Missing AssetId: {assetId}");
 
                         var material = new StaticMaterial().LoadFromAsset(assetId);
@@ -519,7 +522,8 @@ namespace Engine {
                     matRefs.Add(defaultMatCppRef);
                     continue;
                 }
-                if (!AssetStore.Instance.HasAssetPath(material.assetId))
+                var assetIdHash = material.assetId.GetHashCode();
+                if (!AssetStore.Instance.HasAssetPath(assetIdHash))
                     throw new Exception($"Missing AssetId: {material.assetId}");
 
                 material.LoadFromAsset(material.assetId);
