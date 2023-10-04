@@ -251,12 +251,12 @@ namespace Engine {
 
         public Scene(string assetId) : this() {
             this.assetId = assetId;
-            assetIdHash = assetId.GetHashCode();
+            assetIdHash = assetId.GetAssetIDHash();
         }
 
         public void LoadAsset() {
             Console.WriteLine("Scene.LoadAsset()");
-            assetIdHash = assetId.GetHashCode();
+            assetIdHash = assetId.GetAssetIDHash();
 
             if (!HasInstance)
                 return;

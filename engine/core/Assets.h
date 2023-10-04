@@ -71,7 +71,7 @@ public:
 	void MakeDirty(int assetIdHash);
 	bool IsDirty(int assetIdHash);
 
-	int GetCsHash(const std::string& str);
+	int GetCsAssetIDHash(const std::string& str);
 	//std::string CreateAssetId();
 	std::string CreateTmpAssetId();
 

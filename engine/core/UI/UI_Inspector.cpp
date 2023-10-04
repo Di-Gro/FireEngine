@@ -342,7 +342,7 @@ const std::string& UI_Inspector::RequestComponentName(Component* component) {
 bool UI_Inspector::ShowActorPrefab(Actor* actor) {
 
 	auto& prefabId = actor->prefabId();
-	auto assetIdHash = prefabId == "" ? 0 : _game->assets()->GetCsHash(prefabId);
+	auto assetIdHash = prefabId == "" ? 0 : _game->assets()->GetCsAssetIDHash(prefabId);
 	auto scriptIdHash = _game->assetStore()->prefabTypeIdHash;
 		
 	std::string fieldName = "##Prefab" + std::to_string(m_groupRef.value);

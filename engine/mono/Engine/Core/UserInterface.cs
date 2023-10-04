@@ -521,7 +521,7 @@ namespace Engine
         public static void DrawActorPrefab(Actor actor) {
             var store = FireYaml.AssetStore.Instance;
 
-            var assetIdHash = actor.prefabId == IFile.NotPrefab ? 0 : actor.prefabId.GetHashCode();
+            var assetIdHash = actor.prefabId == IFile.NotPrefab ? 0 : actor.prefabId.GetAssetIDHash();
             var scriptIdHash = GUIDAttribute.GetGuidHash(typeof(Prefab));
 
             // var isActive = actor.prefabId != IFile.NotPrefab;

@@ -25,7 +25,7 @@ namespace Engine {
 
         public Prefab(string assetId) { 
             this.assetId = assetId; 
-            assetIdHash = assetId.GetHashCode(); 
+            assetIdHash = assetId.GetAssetIDHash(); 
         }
 
         public Actor Instanciate() {
@@ -33,7 +33,7 @@ namespace Engine {
         }
 
         public void LoadAsset() {
-            assetIdHash = assetId.GetHashCode();
+            assetIdHash = assetId.GetAssetIDHash();
         }
 
         public void ReloadAsset() { }

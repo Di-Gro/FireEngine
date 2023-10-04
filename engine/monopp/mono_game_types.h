@@ -114,7 +114,7 @@ public:
 	void (*loadAssetStore)();
 	bool (*hasAssetInStore)(int assetIdHash);
 
-	int (*getStringHash)(size_t stringPtr);
+	int (*getAssetIDHash)(size_t stringPtr);
 
 	bool (*loadAsset)(int assetIdHash, CppRef cppRef);
 	void (*reloadAsset)(int assetIdHash);

@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using Engine;
 using EngineDll;
 
-/// TODO: Переделать WriteAsset для обновления существующего ассета. 
-/// TODO: В качестве AssetIDHash использовать hash от guid. 
 /// TODO: Убрать замену Actor на Prefab.
 
 namespace FireYaml {
@@ -171,7 +169,7 @@ namespace FireYaml {
         public int GetAssetIdHashFromFile(string assetPath) {
             var assetGuid = m_ReadAssetGuid(assetPath);
             if(assetGuid != "")
-                return assetGuid.GetHashCode();
+                return assetGuid.GetAssetIDHash();
 
             return 0;
         }
@@ -181,7 +179,7 @@ namespace FireYaml {
         /// </summary>
         public int CreateNewAsset(Type type, string assetPath) {
             var assetGuid = Guid.NewGuid().ToString();
-            var assetGuidHash = assetGuid.GetHashCode();
+            var assetGuidHash = assetGuid.GetAssetIDHash();
             var sourcePath = "";
 
             if (FireWriter.IsAssetWithSource(type)) {
@@ -254,7 +252,7 @@ namespace FireYaml {
         }
 
         public void WriteNewAsset(Type assetType, string assetPath, string assetGuid, string assetSourcePath = "") {
-            var assetGuidHash = assetGuid.GetHashCode();
+            var assetGuidHash = assetGuid.GetAssetIDHash();
             var fullPath = Path.GetFullPath(assetPath);
             var projectFullPath = Path.GetFullPath(ProjectPath);
 
@@ -475,7 +473,7 @@ namespace FireYaml {
 
         public Asset UpdateAssetData(Type type, string assetPath) {
             var assetGuid = m_ReadAssetGuid(assetPath);
-            var assetGuidHash = assetGuid.GetHashCode();
+            var assetGuidHash = assetGuid.GetAssetIDHash();
             var sourcePath = "";
 
             if (FireWriter.IsAssetWithSource(type))
@@ -523,7 +521,7 @@ namespace FireYaml {
             data.path = assetPath;
             data.time = File.GetLastWriteTime(assetPath);
             data.guid = assetGuid;
-            data.guidHash = data.guid.GetHashCode();
+            data.guidHash = data.guid.GetAssetIDHash();
             data.type = GUIDAttribute.GetTypeByGuid(scriptGuid);
             data.sourceExt = sourcePath != "" ? Path.GetExtension(sourcePath) : "";
 

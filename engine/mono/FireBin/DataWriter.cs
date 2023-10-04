@@ -212,13 +212,13 @@ namespace FireBin {
 
         public Pointer WriteAssetRef(string assetId) {
             var assetRefArea = m_data[AreaId.AssetRefs];
-            int assetIdHash;
+            int assetIdHash = Engine.StringExt.GetAssetIDHash(assetId);
 
-            Guid guid;
-            if (Guid.TryParse(assetId, out guid))
-                assetIdHash = guid.GetHashCode();
-            else
-                assetIdHash = assetId.GetHashCode();
+            //Guid guid;
+            //if (Guid.TryParse(assetId, out guid))
+            //    assetIdHash = guid.GetHashCode();
+            //else
+            //    assetIdHash = assetId.GetHashCode();
 
             if (m_data.HasAssetRefOffset(assetIdHash))
                 return new Pointer() { areaId = assetRefArea.areaId, offset = m_data.GetAssetRefOffset(assetIdHash) };

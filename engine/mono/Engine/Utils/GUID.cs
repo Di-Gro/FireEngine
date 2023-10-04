@@ -36,11 +36,11 @@ namespace Engine {
         public GUIDAttribute(string guid, Type type = null) {
             this.guid = guid;
 
-            var hash = guid.GetHashCode();
+            //var hash = guid.GetAssetIDHash();
         }
 
         public static Type GetTypeByGuid(string guid) {
-            return GetTypeByHash(guid.GetHashCode());
+            return GetTypeByHash(guid.GetAssetIDHash());
         }
 
         public static Type GetTypeByHash(int guidHash) {
@@ -56,7 +56,7 @@ namespace Engine {
 
         public static int GetGuidHash(Type type) {
             var attr = type.GetCustomAttribute<GUIDAttribute>();
-            var hash = attr == null ? 0 : attr.guid.GetHashCode();
+            var hash = attr == null ? 0 : attr.guid.GetAssetIDHash();
             return hash;
         }
 

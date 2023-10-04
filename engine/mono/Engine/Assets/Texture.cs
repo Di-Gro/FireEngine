@@ -35,7 +35,7 @@ namespace Engine {
         ~Texture() { Assets.AfterReloadEvent -= OnAfterReload; }
 
         public void LoadAsset() {
-            assetIdHash = assetId.GetHashCode();
+            assetIdHash = assetId.GetAssetIDHash();
 
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
@@ -45,7 +45,7 @@ namespace Engine {
         }
 
         public void ReloadAsset() {
-            assetIdHash = assetId.GetHashCode();
+            assetIdHash = assetId.GetAssetIDHash();
 
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0)

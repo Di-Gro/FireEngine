@@ -39,9 +39,9 @@ public class FireBinTest : CSComponent
     }
 
     public void ToFireBin() {
-        var fireDB = new Engine.FireDB(outputPath);
+        // var fireDB = new Engine.AssetMenager(outputPath);
 
-        fireDB.Load();
+        // fireDB.Load();
 
 
         var fileStream = new FileStream(outputPath + @"\out.bin", FileMode.Create);

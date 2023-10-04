@@ -40,7 +40,7 @@ std::string MeshAsset::formCone = "../../engine/data/models/cone.obj";
 
 int MeshAsset::CreateHash(const fs::path& path) {
 	auto pathStr = path.string();
-	auto hash = m_game->assets()->GetCsHash(pathStr);
+	auto hash = m_game->assets()->GetCsAssetIDHash(pathStr);
 
 	m_assetPaths[hash] = pathStr;
 
@@ -78,7 +78,7 @@ void MeshAsset::Destroy() {
 }
 
 Material* MeshAsset::m_NewMaterialAsset(const std::string& assetId) {
-	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
+	auto assetIdHash = m_game->assets()->GetCsAssetIDHash(assetId);
 	auto cppRef = Material_PushAsset(CppRefs::GetRef(m_game), assetId.c_str(), assetIdHash);
 	auto material = CppRefs::ThrowPointer<Material>(cppRef);
 
@@ -93,7 +93,7 @@ void MeshAsset::m_DeleteMaterialAsset(Material* material) {
 }
 
 Texture* MeshAsset::m_NewTextureAsset(const std::string& assetId) {
-	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
+	auto assetIdHash = m_game->assets()->GetCsAssetIDHash(assetId);
 	auto texCppRef = Texture_PushAsset(CppRefs::GetRef(m_game), assetId.c_str(), assetIdHash);
 
 	return CppRefs::ThrowPointer<Texture>(texCppRef);
@@ -101,7 +101,7 @@ Texture* MeshAsset::m_NewTextureAsset(const std::string& assetId) {
 
 Mesh4* MeshAsset::m_NewMeshAsset(const std::string& assetId) {
 	auto gameRef = CppRefs::GetRef(m_game);
-	auto assetIdHash = m_game->assets()->GetCsHash(assetId);
+	auto assetIdHash = m_game->assets()->GetCsAssetIDHash(assetId);
 	auto meshRef = Mesh4_PushAsset(gameRef, assetId.c_str(), assetIdHash);
 
 	return CppRefs::ThrowPointer<Mesh4>(meshRef);

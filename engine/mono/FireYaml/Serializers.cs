@@ -428,7 +428,7 @@ namespace Engine {
                 
             var yamlValue = meshField.GetValue(meshAssetPath);
             var assetId = yamlValue.value;
-            var assetIdHash = assetId.GetHashCode();
+            var assetIdHash = assetId.GetAssetIDHash();
             var isPath = m_IsPath(assetId);
 
             if (!isPath && !AssetStore.Instance.HasAssetPath(assetIdHash))
@@ -454,7 +454,7 @@ namespace Engine {
             var mesh = meshObj as StaticMesh;
 
             var isPath = m_IsPath(mesh.assetId);
-            var assetIdHash = mesh.assetId.GetHashCode();
+            var assetIdHash = mesh.assetId.GetAssetIDHash();
 
             if (!isPath && !AssetStore.Instance.HasAssetPath(assetIdHash))
                 throw new Exception($"Missing AssetId: {mesh.assetId}");
@@ -490,7 +490,7 @@ namespace Engine {
                     
                     if (yamlValue.type == YamlValue.Type.AssetId) {
                         var assetId = yamlValue.value;
-                        var assetIdHash = assetId.GetHashCode();
+                        var assetIdHash = assetId.GetAssetIDHash();
 
                         if (!AssetStore.Instance.HasAssetPath(assetIdHash))
                             throw new Exception($"Missing AssetId: {assetId}");
@@ -522,7 +522,7 @@ namespace Engine {
                     matRefs.Add(defaultMatCppRef);
                     continue;
                 }
-                var assetIdHash = material.assetId.GetHashCode();
+                var assetIdHash = material.assetId.GetAssetIDHash();
                 if (!AssetStore.Instance.HasAssetPath(assetIdHash))
                     throw new Exception($"Missing AssetId: {material.assetId}");
 

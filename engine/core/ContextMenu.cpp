@@ -241,7 +241,7 @@ bool PrefabMenu::CanSave(Actor* actor) {
 		return false;
 
 	auto game = actor->game();
-	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+	auto prefabIdHash = game->assets()->GetCsAssetIDHash(actor->prefabId());
 
 	bool hasAsset = game->callbacks().hasAssetInStore(prefabIdHash);
 	if (!hasAsset)
@@ -255,7 +255,7 @@ void PrefabMenu::Save(Actor* actor) {
 		return;
 
 	auto game = actor->game();
-	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+	auto prefabIdHash = game->assets()->GetCsAssetIDHash(actor->prefabId());
 
 	game->callbacks().updatePrefab(actor->csRef(), prefabIdHash);
 }
@@ -265,7 +265,7 @@ bool PrefabMenu::CanLoad(Actor* actor) {
 		return false;
 
 	auto game = actor->game();
-	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+	auto prefabIdHash = game->assets()->GetCsAssetIDHash(actor->prefabId());
 
 	bool hasAsset = game->callbacks().hasAssetInStore(prefabIdHash);
 	if (!hasAsset)
@@ -279,7 +279,7 @@ void PrefabMenu::Load(Actor* actor) {
 		return;
 
 	auto game = actor->game();
-	auto prefabIdHash = game->assets()->GetCsHash(actor->prefabId());
+	auto prefabIdHash = game->assets()->GetCsAssetIDHash(actor->prefabId());
 
 	auto position = actor->localPosition();
 	auto rotation = actor->localRotationQ();

@@ -84,7 +84,7 @@ namespace Engine {
             m_gameCallbacks.removeCsRef = new GameCallbacks.TakeCsRef(CppLinked.RemoveCsRef);
             m_gameCallbacks.loadAssetStore = new GameCallbacks.Void(LoadAssets);
             m_gameCallbacks.hasAssetInStore = new GameCallbacks.HasAsset(FireYaml.AssetStore.HasAsset);
-            m_gameCallbacks.getStringHash = new GameCallbacks.GetStringHash(m_GetStringHash);
+            m_gameCallbacks.getStringHash = new GameCallbacks.GetStringHash(cpp_GetStringHash);
             m_gameCallbacks.loadAsset = new GameCallbacks.LoadAsset(Assets.Load);
             m_gameCallbacks.reloadAsset = new GameCallbacks.ReloadAsset(Assets.Reload);
             m_gameCallbacks.saveAsset = new GameCallbacks.SaveAsset(Assets.Save);
@@ -126,7 +126,7 @@ namespace Engine {
 
             editorSettings.StartupScene = scene;
 
-            var assetIdHash = Assets.editor_settings.GetHashCode();
+            var assetIdHash = Assets.editor_settings.GetAssetIDHash();
             var assetInfo = AssetStore.Instance.GetAssetInfo(assetIdHash);
             var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
 
@@ -134,9 +134,9 @@ namespace Engine {
             editorSettings.UpdateInCpp();
         }
 
-        private static int m_GetStringHash(ulong stringPtr){
+        private static int cpp_GetStringHash(ulong stringPtr){
             var str = Assets.ReadCString(stringPtr);
-            return str.GetHashCode();
+            return str.GetAssetIDHash();
         }
 
         private static void SetSceneRef(CppRef value) => sceneRef = value;

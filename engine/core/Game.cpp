@@ -367,7 +367,7 @@ Scene* Game::CreateScene(bool isEditor) {
 
 Scene* Game::CreateScene(bool isEditor, const std::string& assetId) {
 	auto gameRef = CppRefs::GetRef(this);
-	auto assetIdHash = assets()->GetCsHash(assetId);
+	auto assetIdHash = assets()->GetCsAssetIDHash(assetId);
 
 	auto sceneRef = Scene_PushAsset(gameRef, assetId.c_str(), assetIdHash);
 	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);

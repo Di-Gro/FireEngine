@@ -42,12 +42,12 @@ bool Assets::Contains(int assetIdHash) {
 }
 
 bool Assets::Contains(const std::string& assetId) {
-	auto assetIdHash = GetCsHash(assetId);
+	auto assetIdHash = GetCsAssetIDHash(assetId);
 	return m_assets.count(assetIdHash) > 0;
 }
 
 void Assets::Push(const std::string& assetId, IAsset* ptr) {
-	auto assetIdHash = GetCsHash(assetId);
+	auto assetIdHash = GetCsAssetIDHash(assetId);
 	Push(assetIdHash, ptr);
 }
 
@@ -63,7 +63,7 @@ void Assets::Push(int pathHash, IAsset* ptr) {
 }
 
 IAsset* Assets::Pop(const std::string& assetId) {
-	auto assetIdHash = GetCsHash(assetId);
+	auto assetIdHash = GetCsAssetIDHash(assetId);
 	return Pop(assetIdHash);
 }
 
@@ -81,7 +81,7 @@ IAsset* Assets::Pop(int assetIdHash) {
 }
 
 IAsset* Assets::Get(const std::string& assetId) {
-	auto assetIdHash = GetCsHash(assetId);
+	auto assetIdHash = GetCsAssetIDHash(assetId);
 	return Get(assetIdHash);
 }
 
@@ -140,8 +140,8 @@ bool Assets::IsDirty(int assetIdHash) {
 	return m_dirtyAssets.contains(assetIdHash);
 }
 
-int Assets::GetCsHash(const std::string& str) {
-	int hash = m_game->callbacks().getStringHash((size_t)str.c_str());
+int Assets::GetCsAssetIDHash(const std::string& str) {
+	int hash = m_game->callbacks().getAssetIDHash((size_t)str.c_str());
 	return hash;
 }
 
@@ -160,7 +160,7 @@ std::string Assets::CreateTmpAssetId() {
 	auto assetId = std::string(nullCount, '0') + idStr;
 	assetId = "tmp_" + assetId;
 
-	auto hash = GetCsHash(assetId);
+	auto hash = GetCsAssetIDHash(assetId);
 	m_method_AddTmpAssetIdHash(hash);
 
 	return assetId;

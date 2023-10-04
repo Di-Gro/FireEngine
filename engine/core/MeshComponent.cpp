@@ -67,7 +67,7 @@ void MeshComponent::m_InitDynamic() {
 		return;
 
 	auto assetId = "DynamicMesh_" + std::to_string(Random().Int());
-	auto assetIdHash = game()->assets()->GetCsHash(assetId);
+	auto assetIdHash = game()->assets()->GetCsAssetIDHash(assetId);
 	auto meshCppRef = Mesh4_PushAsset(CppRefs::GetRef(game()), assetId.c_str(), assetIdHash);
 	auto newMesh = CppRefs::ThrowPointer<Mesh4>(meshCppRef);
 

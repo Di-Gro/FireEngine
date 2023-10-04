@@ -11,6 +11,24 @@ using FireYaml;
 
 namespace Engine {
 
+    public static class StringExt {
+
+        /// <summary>
+        /// Если assetID, это GUID, парсит GUID и возвращает его hash, иначе возвращает hash строки.
+        /// <br/>
+        /// Таким образом AssetID может быть как GUID, так и любой уникальной строкой.
+        /// </summary>
+        /// <param name="assetID"></param>
+        /// <returns></returns>
+        public static int GetAssetIDHash(this string assetID) {
+            Guid assetIDGuid;
+            if (Guid.TryParse(assetID, out assetIDGuid))
+                return assetIDGuid.GetHashCode();
+
+            return assetID.GetHashCode();
+        }
+    }
+
     public sealed class Assets {
 
         public static string M_Default = "cd882168-97ef-4799-98a2-c48a0955ba32";
@@ -76,10 +94,10 @@ namespace Engine {
             return "";
         }
 
-        public static int GetStringHash(ulong ptr, ulong length) {
-            var assetId = ReadCString(ptr, length);
-            return assetId.GetHashCode();
-        }
+        //public static int GetStringHash(ulong ptr, ulong length) {
+        //    var assetId = ReadCString(ptr, length);
+        //    return assetId.GetHashCode();
+        //}
 
         /// <summary>
         /// Создает IAsset только для дабавленного в AssetStore ассета.

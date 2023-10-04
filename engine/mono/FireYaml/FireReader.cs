@@ -65,7 +65,7 @@ namespace FireYaml {
             m_assetId = assetGuid;
             m_writeIDs = writeIDs;
 
-            var assetGuidHash = m_assetId.GetHashCode();
+            var assetGuidHash = m_assetId.GetAssetIDHash();
 
             m_values = AssetStore.Instance.ThrowAssetValues(assetGuidHash);
         }
@@ -236,7 +236,7 @@ namespace FireYaml {
             var refProp = type.GetProperty(nameof(IAsset.cppRef), flags);
 
             idProp.SetValue(asset, assetId);
-            hashProp.SetValue(asset, assetId.GetHashCode());
+            hashProp.SetValue(asset, assetId.GetAssetIDHash());
             refProp.SetValue(asset, cppRef);
         }
 
@@ -306,7 +306,7 @@ namespace FireYaml {
 
         private void m_LoadPrefab(string selfPath, Type type, ref object instance, string prefabId) {
 
-            var prefabAssetIdHash = prefabId.GetHashCode();
+            var prefabAssetIdHash = prefabId.GetAssetIDHash();
 
             /// Запоминаем старое состояние
             var last_m_assetId = m_assetId;

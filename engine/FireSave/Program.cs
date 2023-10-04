@@ -11,7 +11,7 @@ Console.WriteLine("FireBinTest>");
 //    Assembly.GetAssembly(typeof(Program))
 //});
 
-var fireDB = new Engine.FireDB(projectPath);
+var fireDB = new Engine.AssetMenager(projectPath);
 
 fireDB.Load();
 
