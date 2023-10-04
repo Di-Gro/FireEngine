@@ -27,14 +27,11 @@ bool PrefabPickerPopup::Open(Actor* actor) {
 	auto game = actor->game();
 	auto store = game->assetStore();
 
-	m_prefabIdHash = store->prefabTypeIdHash;
-
-	//if (!store->assets.contains(m_prefabIdHash))
-	//	return false;
+	m_prefabTypeIdHash = store->actorTypeIdHash;
 
 	const std::vector<int>* content = &m_emptyContent;
-	if (store->assets.contains(m_prefabIdHash))
-		content = &store->assets[m_prefabIdHash];
+	if (store->assets.contains(m_prefabTypeIdHash))
+		content = &store->assets[m_prefabTypeIdHash];
 	
 	bool hasSelected = false;
 

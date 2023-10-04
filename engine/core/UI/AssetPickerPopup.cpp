@@ -29,7 +29,10 @@ bool AssetPickerPopup::Open(Game* game) {
 	if (!store->assets.contains(scriptIdHash))
 		return false;
 
-	const auto* content = &store->assets[scriptIdHash];
+	//const auto* content = &store->assets[scriptIdHash];
+	const std::vector<int>* content = &m_emptyContent;
+	if (store->assets.contains(scriptIdHash))
+		content = &store->assets[scriptIdHash];
 
 	bool hasSelected = false;
 

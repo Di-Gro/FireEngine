@@ -518,31 +518,17 @@ namespace Engine
             ImGui.Columns(1);
         }
 
-        public static void DrawActorPrefab(Actor actor) {
-            var store = FireYaml.AssetStore.Instance;
-
-            var assetIdHash = actor.prefabId == IFile.NotPrefab ? 0 : actor.prefabId.GetAssetIDHash();
-            var scriptIdHash = GUIDAttribute.GetGuidHash(typeof(Prefab));
-
-            // var isActive = actor.prefabId != IFile.NotPrefab;
-
-            bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, "Prefab", scriptIdHash, ref assetIdHash, GUI.active);
-
-            if (changed) {
-                actor.prefabId = assetIdHash == 0 ? IFile.NotPrefab : store.GetAssetGuid(assetIdHash);
-
-                Assets.MakeDirty(groupAssetIdHash);
-            }
-        }
-
+        /// <summary>
+        /// Применяется для автоматического сериалайзера.
+        /// </summary>
         public static void DrawAsset(string label, FireYaml.Field field, RangeAttribute range = null) {
             var store = FireYaml.AssetStore.Instance;
             var instance = field.Value;
             var iasset = field.Value as FireYaml.IAsset;
 
             var assetIdHash = 0;
-            var scriptId = GUIDAttribute.GetGuid(field.type); // store.GetScriptIdByTypeName(field.type.FullName);
-            var scriptIdHash = GUIDAttribute.GetGuidHash(field.type); // scriptId.GetHashCode();
+            var scriptId = GUIDAttribute.GetGuid(field.type);
+            var scriptIdHash = GUIDAttribute.GetGuidHash(field.type); 
 
             if (instance != null)
                 assetIdHash = iasset.assetIdHash;
@@ -563,6 +549,9 @@ namespace Engine
             }
         }
 
+        /// <summary>
+        /// Применяется для пользовательских сериалайзеров.
+        /// </summary>
         public static bool DrawAsset(string label, Type type, int assetIdHash,  out object changedAsset) {
             var store = FireYaml.AssetStore.Instance;
 

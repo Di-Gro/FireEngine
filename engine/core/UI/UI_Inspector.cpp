@@ -404,8 +404,11 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
 	std::string buttonText = assetName + " (" + assetType + ") ";
 
+	if (scriptIdHash == _game->assetStore()->prefabTypeIdHash)
+		scriptIdHash = _game->assetStore()->actorTypeIdHash;
+
 	m_assetPickerPopup.header = assetType;
-	m_assetPickerPopup.scriptIdHash = scriptIdHash;
+	m_assetPickerPopup.scriptIdHash = scriptIdHash; 
 
 	auto& style = ImGui::GetStyle();
 
@@ -445,7 +448,7 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 
 	if (assetWasSelected) {
 		int newAssetIdHash = m_assetPickerPopup.selected;
-		if (newAssetIdHash != scriptIdHash) {
+		if (newAssetIdHash != *assetIdHash) {
 			*assetIdHash = newAssetIdHash;
 			return true;
 		}

@@ -109,6 +109,8 @@ namespace Engine {
             var assetStore = AssetStore.Instance;
         
             var assetType = assetStore.GetAssetType(assetIdHash);
+            if (assetType == typeof(Actor))
+                assetType = typeof(Prefab);
 
             var iassetName = nameof(IAsset);
             var iassetInterface = assetType.GetInterface(iassetName);

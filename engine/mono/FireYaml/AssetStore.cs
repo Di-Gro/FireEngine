@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Engine;
 using EngineDll;
 
-/// TODO: Убрать замену Actor на Prefab.
 
 namespace FireYaml {
 
@@ -376,9 +375,6 @@ namespace FireYaml {
                 var assetName = Path.GetFileNameWithoutExtension(assetData.path);
                 var scriptIdHash = GUIDAttribute.GetGuidHash(assetData.type);
 
-                if (assetData.type == typeof(Engine.Actor))
-                    scriptIdHash = prefabGuidHash;
-
                 Dll.AssetStore.AddAsset(Game.gameRef, scriptIdHash, assetGuidHash, assetName);
             }
         }
@@ -485,7 +481,7 @@ namespace FireYaml {
             data.time = File.GetLastWriteTime(assetPath);
             data.guid = assetGuid;
             data.guidHash = assetGuidHash;
-            data.type = type != typeof(Actor) ? type : typeof(Prefab);
+            data.type = type;
             data.sourceExt = sourcePath != "" ? Path.GetExtension(sourcePath) : "";
 
             m_assetGuidHash_assetData[data.guidHash] = data;
@@ -580,7 +576,7 @@ namespace FireYaml {
             }
 
             Instance.m_assetGuidHash_assetData.Remove(asset.guidHash);
-
+            
             var typeGuidHash = GUIDAttribute.GetGuidHash(asset.type);
             Dll.AssetStore.RemoveAsset(Game.gameRef, typeGuidHash, asset.guidHash);
         }

@@ -22,6 +22,7 @@ private:
 	bool m_isOpen = false;
 	int m_selectedIndex = -1;
 	std::string m_input;
+	std::vector<int> m_emptyContent;
 
 public:
 	bool Open(Game* game);

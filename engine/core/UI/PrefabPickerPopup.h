@@ -34,7 +34,7 @@ private:
 	int m_selectedIndex = -1;
 	std::string m_input;
 	int m_filteredCount = 0;
-	int m_prefabIdHash = 0;
+	int m_prefabTypeIdHash = 0;
 	std::vector<int> m_emptyContent;
 
 public:
