@@ -170,6 +170,9 @@ namespace FireBin {
 
             var asset = (IAsset)obj;
 
+            if (AssetStore.IsTmpAssetId(asset.assetIdHash))
+                return null;
+
             return m_writer.WriteAssetRef(asset.assetId);
         }
 

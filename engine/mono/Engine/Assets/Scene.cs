@@ -286,8 +286,8 @@ namespace Engine {
             fileId = 1;
             assetInstance = cppRef.value;
 
-            var assetInfo = AssetStore.Instance.GetAssetInfo(assetIdHash);
-            var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
+            var filesCount = AssetStore.Instance.GetAssetFilesCount(assetIdHash);
+            var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: filesCount + 1);
 
             AssetStore.Instance.WriteAsset(assetIdHash, this, writer);
         }
@@ -301,18 +301,7 @@ namespace Engine {
         }
 
         public static bool cpp_RenameSceneAsset(int assetIdHash, ulong cpath) {
-            var newPath = Assets.ReadCString(cpath);
-
-            //var assetGuid = AssetStore.Instance.GetAssetGuid(assetIdHash);
-            var assetPath = AssetStore.Instance.GetAssetPath(assetIdHash);
-
-            if(!File.Exists(assetPath) || File.Exists(newPath))
-                return false;
-
-            File.Move(assetPath, newPath);
-
-            AssetStore.Instance.UpdateAssetData(typeof(Scene), newPath);
-            return true;
+            return AssetStore.cpp_RenameAsset(assetIdHash, cpath);
         }
     }
 

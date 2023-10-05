@@ -84,7 +84,8 @@ private:
 	bool m_onExit = false;
 	//bool m_isEditor = false;
 
-	//std::string tmpSceneAssetId;
+	std::string editorSceneAssetPath;
+	int editorSceneAssetIdHash;
 
 public:
 

@@ -100,8 +100,8 @@ public:
 	void (*setUpdateData)(GameUpdateData value);
 	void (*onInputUpdate)();
 
-	int (*saveScene)(CppRef cppSceneRef, size_t pathPtr);
-	bool (*loadScene)(CppRef cppSceneRef, int assetGuidHash);
+	bool (*writeScene)(CppRef cppSceneRef, int assetIdHash);
+	bool (*loadScene)(CppRef cppSceneRef, int assetIdHash);
 
 	bool (*runOrCrush)(CsRef componentRef, void(*method)());
 	bool (*runOrCrushContactEnter)(CsRef componentRef, void(*method)(void*, const void*), CsRef, const void*);

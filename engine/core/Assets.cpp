@@ -25,8 +25,8 @@ void Assets::Init(Game* game) {
 
 	auto type2 = m_game->mono()->GetType("FireYaml", "AssetStore");
 	//m_method_CreateAssetId = mono::make_method_invoker<unsigned int(void)>(type2, "CreateAssetIdInt");
-	m_method_CreateTmpAssetId = mono::make_method_invoker<unsigned int(void)>(type2, "CreateTmpAssetIdInt");
-	m_method_AddTmpAssetIdHash = mono::make_method_invoker<void(int)>(type2, "AddTmpAssetIdHash");
+	m_method_CreateTmpAssetId = mono::make_method_invoker<unsigned int(void)>(type2, "cpp_CreateTmpAssetIdInt");
+	m_method_AddTmpAssetIdHash = mono::make_method_invoker<void(int)>(type2, "cpp_AddTmpAssetIdHash");
 }
 
 Assets::~Assets() {

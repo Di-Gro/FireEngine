@@ -73,14 +73,14 @@ namespace Engine {
             m_gameCallbacks.setAssetStoreRef = new GameCallbacks.TakeCppRef(SetAssetStoreRef);
             m_gameCallbacks.setUpdateData = new GameCallbacks.SetUpdateData(SetUpdateData);
             m_gameCallbacks.onInputUpdate = new GameCallbacks.Void(Input.OnUpdate);
-            m_gameCallbacks.saveScene = new GameCallbacks.SaveScene(cpp_SaveCppScene);
+            m_gameCallbacks.writeScene = new GameCallbacks.WriteScene(cpp_WriteScene);
             m_gameCallbacks.loadScene = new GameCallbacks.LoadScene(LoadScene);
 
             m_gameCallbacks.runOrCrush = new GameCallbacks.RunOrCrush(Component.RunOrCrush);
             m_gameCallbacks.runOrCrushContactEnter = new GameCallbacks.RunOrCrushContactEnter(Component.RunOrCrushContactEnter);
             m_gameCallbacks.runOrCrushContactExit = new GameCallbacks.RunOrCrushContactExit(Component.RunOrCrushContactExit);
 
-            m_gameCallbacks.isAssignable = new GameCallbacks.IsAssignable(FireYaml.AssetStore.IsAssignable);
+            m_gameCallbacks.isAssignable = new GameCallbacks.IsAssignable(FireYaml.AssetStore.cpp_IsAssignable);
             m_gameCallbacks.removeCsRef = new GameCallbacks.TakeCsRef(CppLinked.RemoveCsRef);
             m_gameCallbacks.loadAssetStore = new GameCallbacks.Void(LoadAssets);
             m_gameCallbacks.hasAssetInStore = new GameCallbacks.HasAsset(FireYaml.AssetStore.HasAsset);
@@ -94,9 +94,9 @@ namespace Engine {
             m_gameCallbacks.clipboardIsSameType = new GameCallbacks.ClipboardIsAssignable(Clipboard.IsSameType);
             m_gameCallbacks.clipboardSetActor = new GameCallbacks.TakeCsRef(Clipboard.SetActor);
 
-            m_gameCallbacks.createAsset = new GameCallbacks.CreateAsset(AssetStore.CreateAsset);
-            m_gameCallbacks.renameAsset = new GameCallbacks.RenameAsset(AssetStore.SetAssetPath);
-            m_gameCallbacks.removeAsset = new GameCallbacks.RemoveAsset(AssetStore.RemoveAsset);
+            m_gameCallbacks.createAsset = new GameCallbacks.CreateAsset(AssetStore.cpp_CreateAsset);
+            m_gameCallbacks.renameAsset = new GameCallbacks.RenameAsset(AssetStore.cpp_RenameAsset);
+            m_gameCallbacks.removeAsset = new GameCallbacks.RemoveAsset(AssetStore.cpp_RemoveAsset);
 
             m_gameCallbacks.createPrefab = new GameCallbacks.CreatePrefab(Prefab.CreatePrefab);
             m_gameCallbacks.loadPrefab = new GameCallbacks.LoadPrefab(Prefab.LoadPrefab);
@@ -127,8 +127,8 @@ namespace Engine {
             editorSettings.StartupScene = scene;
 
             var assetIdHash = Assets.editor_settings.GetAssetIDHash();
-            var assetInfo = AssetStore.Instance.GetAssetInfo(assetIdHash);
-            var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: assetInfo.files + 1);
+            var filesCount = AssetStore.Instance.GetAssetFilesCount(assetIdHash);
+            var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: filesCount + 1);
 
             AssetStore.Instance.WriteAsset(assetIdHash, editorSettings, writer);
             editorSettings.UpdateInCpp();
@@ -173,34 +173,21 @@ namespace Engine {
 #endif
 
         /// TODO: Изменить. В принципе не нужно создавать ассет. 
-        /// ----: Искользуется в C++ только для созранения EditioScene в папку Editor\Ignore.
-        /// ----: Как следствие эта сцена игнорируется и отсутствует в найденных ассетах. 
+        /// ----: Искользуется в C++ только для созранения EditorScene в папку Editor\Ignore.
+        /// ----: Как следствие эта сцена игнорируется при загрузке ассетов. 
         /// ----: Первый вызов приводит к созданию ассета. 
         /// ----: Это явно особый ассет, не уверен, что его вообще нужно создавать. 
-        /// ----: С другими сценами из С++ нужно работать как с ассетами. 
-        private static int cpp_SaveCppScene(CppRef cppSceneRef, ulong pathPtr) {
-            var path = Assets.ReadCString(pathPtr);
-            var fullPath = Path.GetFullPath(path);
-
+        /// ----: С другими сценами С++ работает как с обычными ассетами. 
+        private static bool cpp_WriteScene(CppRef cppSceneRef, int assetIdHash) {
             try {
                 object scene = new Scene(cppSceneRef);
-                int assetIdHash = 0;
 
-                if (File.Exists(fullPath)) {
-                    assetIdHash = AssetStore.Instance.GetAssetIdHashFromFile(fullPath);
-                    if(assetIdHash != 0 && !AssetStore.HasAsset(assetIdHash))
-                        AssetStore.Instance.UpdateAssetData(typeof(Scene), fullPath);
-                }
-                else {
-                    assetIdHash = Scene.cpp_CreateSceneAsset(pathPtr);
-                }
-                if(assetIdHash != 0)
-                    AssetStore.Instance.WriteAsset(assetIdHash, scene);
-                
-                return assetIdHash;
+                AssetStore.Instance.WriteAsset(assetIdHash, scene);
+
+                return true;
             } catch (Exception e) {
 
-                Console.WriteLine("Exception on SaveScene:");
+                Console.WriteLine("Exception on WriteScene:");
 
                 if (e.InnerException != null) {
                     Console.WriteLine(e.InnerException.Message);
@@ -208,7 +195,7 @@ namespace Engine {
                 }
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
-                return 0;
+                return false;
             }
         }
 
@@ -252,8 +239,8 @@ namespace Engine {
         public delegate CppRef ClipboardPeek();
         public delegate bool ClipboardIsAssignable(int scriptIdHash);
         public delegate void SetUpdateData(GameUpdateData value);
-        public delegate int SaveScene(CppRef cppSceneRef, ulong pathPtr);
-        public delegate bool LoadScene(CppRef cppSceneRef, int assetGuidHash);
+        public delegate bool WriteScene(CppRef cppSceneRef, int assetIdHash);
+        public delegate bool LoadScene(CppRef cppSceneRef, int assetIdHash);
         public delegate bool RunOrCrush(CsRef componentRef, ComponentCallbacks.ComponentCallback method);
         public delegate bool RunOrCrushContactEnter(CsRef componentRef, ComponentCallbacks.ContactEnter method, CsRef csRef, in Contact contact);
         public delegate bool RunOrCrushContactExit(CsRef componentRef, ComponentCallbacks.ContactExit method, CsRef csRef);
@@ -280,7 +267,7 @@ namespace Engine {
         public SetUpdateData setUpdateData;
         public Void onInputUpdate;
 
-        public SaveScene saveScene;
+        public WriteScene writeScene;
         public LoadScene loadScene;
 
         public RunOrCrush runOrCrush;

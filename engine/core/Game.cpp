@@ -192,6 +192,12 @@ void Game::Run() {
 	}
 	m_editorWindow->scene(m_editorScene);
 
+	editorSceneAssetPath = assetStore()->editorPath() + "/Ignore/editor_scene.yml";
+	if (fs::exists(editorSceneAssetPath))
+		fs::remove(editorSceneAssetPath);
+
+	editorSceneAssetIdHash = SceneMenu::Create(this, editorSceneAssetPath);
+
 	//PushScene(m_editorScene);
 
 	//auto meshcomp = currentScene()->CreateActor("Half Sphere")->AddComponent<MeshComponent>(true);
@@ -461,20 +467,17 @@ void Game::DeleteMaterialFromAllScenes(const Material* material) {
 }
 
 void Game::TogglePlayMode() {
-	auto tmpScenePath = assetStore()->editorPath() + "/Ignore/editor_scene.yml";
-	//auto assetId = tmpSceneAssetId.c_str();
-
 	if (m_gameScene == nullptr) {
 		m_gameScene = CreateScene(false);
 
 		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
 		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
 
-		int assetGuidHash = callbacks().saveScene(editorSceneRef, (size_t)tmpScenePath.c_str());
+		bool wasWrited = callbacks().writeScene(editorSceneRef, editorSceneAssetIdHash);
 		bool wasLoaded = false;
 
-		if (assetGuidHash != 0) {
-			wasLoaded = LoadScene(m_gameScene, assetGuidHash);
+		if (wasWrited) {
+			wasLoaded = LoadScene(m_gameScene, editorSceneAssetIdHash);
 			if (wasLoaded) {
 				m_gameScene->name(m_editorScene->name() + " (Game)");
 
