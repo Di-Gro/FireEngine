@@ -80,9 +80,11 @@ void UI_Hierarchy::m_DrawSceneHeader() {
 	m_DrawHeaderContext("Scene", imGuiItemSize, lastCursor, nextCursor);
 
 	if (hasSelected && m_game->CanChangeScene()) {
-		auto guid = m_game->assetStore()->GetAssetGuid(m_scenePickerPopup.selected);
-		auto nextScene = m_game->CreateScene(true, guid);
-		m_game->ChangeScene(nextScene);
+		if (m_scenePickerPopup.selected != scene->assetIdHash()) {
+			auto guid = m_game->assetStore()->GetAssetGuid(m_scenePickerPopup.selected);
+			auto nextScene = m_game->CreateScene(true, guid);
+			m_game->ChangeScene(nextScene);
+		}
 	}
 
 	ImGui::PopStyleVar(2);

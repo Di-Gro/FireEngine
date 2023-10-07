@@ -11,20 +11,49 @@ namespace Engine {
         public FireYaml.YamlValues data = null;
     }
 
-    internal class FireYmlAssetMenager {
+    internal class FireYmlAssetMenager : IAssetMenager {
 
         private Dictionary<int, FireYamlAsset> m_assetIDHash_asset = new Dictionary<int, FireYamlAsset>();
 
         public string m_projectPath;
-        public string assetsPath => $"{m_projectPath}/Assets";
-        public string engineAssetsPath => $"{m_projectPath}/Engine/Assets";
-        public string editorPath => $"{m_projectPath}/Editor";
+        public string assetsPath => $"{m_projectPath}\\Assets";
+        public string engineAssetsPath => $"{m_projectPath}\\Engine\\Assets";
+        public string editorPath => $"{m_projectPath}\\Editor";
 
-        public FireYmlAssetMenager(string projectPath) {
-            m_projectPath = projectPath;
+        public bool createNewAssetsOnLoad = true;
+
+        public static readonly string[] AssetExtentions = new string[] {
+            ".yml",
+        };
+
+        public static readonly string[] SourceExtentions = new string[] {
+            ".obj",
+            ".png",
+            ".jpg",
+        };
+
+        public static readonly string[] CreateExtentions = new string[] {
+            ".create_scene",
+            ".create_tex",
+            ".create_mat",
+            ".create_prefab",
+        };
+
+        public FireYmlAssetMenager() {
+
         }
 
-        public FireYamlAsset GetAsset(int assetIdHash) {
+        public IDeserializer GetDeserializer(int assetIdHash, bool writeIDs = true, bool useCsRefs = false) {
+            var asset = GetAsset(assetIdHash) as FireYamlAsset;
+            if(asset == null)
+                throw new Exception($"FYML.GetDeserializer: Asset not exist.");
+
+            LoadAssetData(assetIdHash);
+
+            return new FireYaml.FireReader(asset.data, writeIDs: writeIDs, assetId: asset.assetID);
+        }
+
+        public Asset GetAsset(int assetIdHash) {
             if(m_assetIDHash_asset.ContainsKey(assetIdHash))
                 return m_assetIDHash_asset[assetIdHash];
 
@@ -36,12 +65,14 @@ namespace Engine {
                 m_assetIDHash_asset.Remove(assetIdHash);
         }
 
-        public void Load() {
+        public void Load(string projectPath) {
+            m_projectPath = projectPath;
+
             m_UpdateAssets(editorPath, in DateTime.UnixEpoch);
             m_UpdateAssets(assetsPath, in DateTime.UnixEpoch);
         }
 
-        public IEnumerable<FireYamlAsset> EnumerateAssets() {
+        public IEnumerable<Asset> EnumerateAssets() {
             foreach (var key_value in m_assetIDHash_asset)
                 yield return key_value.Value;
         }
@@ -52,23 +83,23 @@ namespace Engine {
         public int CreateNewAsset(Type type, string assetPath, string sourceExt = "") {
             var assetIDGuid = Guid.NewGuid();
             var assetID = assetIDGuid.ToString();
-            var assetIDHash = assetIDGuid.GetHashCode();
+            var assetIDHash = assetID.GetAssetIDHash();
 
             var sourcePath = "";
 
             if (sourceExt != "") {
                 sourcePath = Path.ChangeExtension(assetPath, sourceExt);
                 if (!File.Exists(sourcePath)) {
-                    Console.WriteLine($"Assets.Create: Asset source not found: {assetPath}");
+                    Console.WriteLine($"FYML.Assets.Create: Asset source not found: {assetPath}");
                     return 0;
                 }
             }
             if (File.Exists(assetPath)) {
-                Console.WriteLine($"CreateNewAsset: Asset already exist: {assetPath}");
+                Console.WriteLine($"FYML.CreateNewAsset: Asset already exist: {assetPath}");
                 return 0;
             }
             if (!GUIDAttribute.HasGuid(type)) {
-                Console.WriteLine($"CreateNewAsset: Type hasn't a guid: {type.Name}");
+                Console.WriteLine($"FYML.CreateNewAsset: Type hasn't a guid: {type.Name}");
                 return 0;
             }
             var assetHeader = new string[] {
@@ -84,7 +115,7 @@ namespace Engine {
             var assetName = Path.GetFileNameWithoutExtension(asset.path);
             Dll.AssetStore.AddAsset(Game.gameRef, AssetTypeId, asset.assetIDHash, assetName);
 
-            Console.WriteLine($"CreatAsset: {asset.time}: '{assetPath}'");
+            Console.WriteLine($"FYML.CreatAsset: {asset.time}: '{assetPath}'");
 
             return asset.assetIDHash;
         }
@@ -95,21 +126,21 @@ namespace Engine {
         public void WriteAsset(int assetIDHash, object valueObj, FireWriter writer = null) {
             var asset = GetAsset(assetIDHash);
             if (asset == null)
-                throw new Exception($"WriteAsset: Asset with assetIdHash: '{assetIDHash}' not exist.");
+                throw new Exception($"FYML.WriteAsset: Asset with assetIdHash: '{assetIDHash}' not exist.");
 
             var fullPath = Path.GetFullPath(asset.path);
             var projectFullPath = Path.GetFullPath(m_projectPath);
 
             if (!fullPath.Contains(projectFullPath))
-                throw new Exception($"WriteAsset: Asset Path not contains project path");
+                throw new Exception($"FYML.WriteAsset: Asset Path not contains project path");
 
             if (!File.Exists(fullPath))
-                throw new Exception($"WriteAsset: Asset not exist: '{fullPath}'");
+                throw new Exception($"FYML.WriteAsset: Asset not exist: '{fullPath}'");
 
             m_WriteAssetData(asset.assetID, valueObj, fullPath, writer);
 
-            UpdateAssetData(valueObj.GetType(), fullPath);
-            ReloadAssetData(assetIDHash);
+            m_UpdateAssetData(valueObj.GetType(), fullPath);
+            m_ReloadAssetData(assetIDHash);
         }
 
         private void m_WriteNewAsset(Type assetType, string assetPath, string assetGuid, string assetSourcePath = "") {
@@ -118,10 +149,10 @@ namespace Engine {
             var projectFullPath = Path.GetFullPath(m_projectPath);
 
             if (!fullPath.Contains(projectFullPath))
-                throw new Exception($"Asset Path not contains project path");
+                throw new Exception($"FYML.m_WriteNewAsset: Asset Path not contains project path");
 
             if (!File.Exists(assetPath))
-                throw new FileNotFoundException($"Assets.Create: {assetPath}");
+                throw new FileNotFoundException($"FYML.m_WriteNewAsset: {assetPath}");
 
             if (assetType == typeof(Engine.Actor)) {
                 m_WriteNewPrefab(assetPath, assetGuid);
@@ -134,7 +165,7 @@ namespace Engine {
 
                 if (FireWriter.IsAssetWithSource(assetType)) {
                     if (assetSourcePath == "")
-                        throw new Exception("Assets.Create: Asset with source need a sourcePath");
+                        throw new Exception("FYML.m_WriteNewAsset: Asset with source need a sourcePath");
 
                     var ext = Path.GetExtension(assetSourcePath);
 
@@ -142,12 +173,11 @@ namespace Engine {
                 }
                 m_WriteAssetData(assetGuid, valueObj, fullPath);
             }
-            UpdateAssetData(assetType, fullPath);
-            ReloadAssetData(assetGuidHash);
+            m_UpdateAssetData(assetType, fullPath);
+            m_ReloadAssetData(assetGuidHash);
         }
 
-
-        public Asset UpdateAssetData(Type assetType, string assetPath) {
+        private Asset m_UpdateAssetData(Type assetType, string assetPath) {
             var assetID = m_ReadAssetGuid(assetPath);
             var assetIDHash = assetID.GetAssetIDHash();
             var scriptID = GUIDAttribute.GetGuid(assetType);
@@ -157,7 +187,7 @@ namespace Engine {
             if (FireWriter.IsAssetWithSource(assetType))
                 sourcePath = Assets.FindSourceFile(assetType, assetPath);
 
-            var prevAsset = GetAsset(assetIDHash);
+            var prevAsset = GetAsset(assetIDHash) as FireYamlAsset;
             var asset = new FireYamlAsset();
 
             asset.path = assetPath;
@@ -177,7 +207,7 @@ namespace Engine {
         }
 
         public void LoadAssetData(int assetGuidHash) {
-            var asset = GetAsset(assetGuidHash);
+            var asset = GetAsset(assetGuidHash) as FireYamlAsset;
             if (asset == null || asset.data != null)
                 return;
 
@@ -187,39 +217,35 @@ namespace Engine {
             asset.data = values;
         }
 
-        public void ReloadAssetData(int assetGuidHash) {
-            var asset = GetAsset(assetGuidHash);
+        public int CreateAssetFromSourceOrRequest(string filePath) {
+            if (!createNewAssetsOnLoad)
+                return 0;
+
+            var assetFile = new AssetFile();
+
+            assetFile.path = filePath;
+            assetFile.ext = Path.GetExtension(filePath);
+            assetFile.writeTime = File.GetLastWriteTime(filePath);
+
+            if (CreateExtentions.Contains(assetFile.ext)) {
+                assetFile.type = AssetFileType.CreateRequest;
+                return m_CreateAssetFromRequest(assetFile);
+            }
+            if (SourceExtentions.Contains(assetFile.ext)) {
+                assetFile.type = AssetFileType.Source;
+                return m_CreateAssetFromSource(assetFile);
+            }
+            return 0;
+        }
+
+        private void m_ReloadAssetData(int assetGuidHash) {
+            var asset = GetAsset(assetGuidHash) as FireYamlAsset;
             if (asset == null)
                 return;
 
             asset.data = null;
             LoadAssetData(assetGuidHash);
         }
-
-        public int GetAssetIdHashFromFile(string assetPath) {
-            var assetGuid = m_ReadAssetGuid(assetPath);
-            if (assetGuid != "")
-                return assetGuid.GetAssetIDHash();
-
-            return 0;
-        }
-
-        public static readonly string[] AssetExtentions = new string[] {
-            ".yml",
-        };
-
-        public static readonly string[] SourceExtentions = new string[] {
-            ".obj",
-            ".png",
-            ".jpg",
-        };
-
-        public static readonly string[] CreateExtentions = new string[] {
-            ".create_scene",
-            ".create_tex",
-            ".create_mat",
-            ".create_prefab",
-        };
 
         private void m_WriteAssetData(string assetGuid, object valueObj, string fullPath, FireWriter writer = null) {
             var serializer = writer;
@@ -229,7 +255,7 @@ namespace Engine {
             serializer.Serialize(valueObj);
 
             if (!serializer.Result)
-                throw new Exception($"Can not create asset: Serialization failed.");
+                throw new Exception($"FYML.Can not create asset: Serialization failed.");
 
             var values = serializer.Mods;
 
@@ -264,11 +290,11 @@ namespace Engine {
 
             Guid guid;
             if (!Guid.TryParse(assetID, out guid)) {
-                Console.WriteLine($"Bad AssetID: '{assetID}' in path: '{assetPath}'");
+                Console.WriteLine($"FYML.m_UpdateAssetPath: Bad AssetID: '{assetID}' in path: '{assetPath}'");
                 return;
             }
             if (!Guid.TryParse(scriptID, out guid)) {
-                Console.WriteLine($"Bad asset ScriptId: '{scriptID}' in path: '{assetPath}'");
+                Console.WriteLine($"FYML.m_UpdateAssetPath: Bad asset ScriptId: '{scriptID}' in path: '{assetPath}'");
                 return;
             }
 
@@ -278,12 +304,12 @@ namespace Engine {
             if (FireWriter.IsAssetWithSource(assetType)) {
                 sourcePath = Assets.FindSourceFile(assetType, assetPath);
                 if (sourcePath == "")
-                    Console.WriteLine($"UpdateAsset: Asset source not found: {assetPath}");
+                    Console.WriteLine($"FYML.m_UpdateAssetPath: Asset source not found: {assetPath}");
             }
             var assetIDHash = assetID.GetAssetIDHash();
             var scriptIDHash = scriptID.GetAssetIDHash();
 
-            var prevAsset = GetAsset(assetIDHash);
+            var prevAsset = GetAsset(assetIDHash) as FireYamlAsset;
             var asset = new FireYamlAsset();
 
             asset.path = assetPath;
@@ -298,13 +324,13 @@ namespace Engine {
             asset.data = prevAsset != null ? prevAsset.data : null;
 
             if (asset.scriptType == null) {
-                Console.WriteLine($"UpdateAssetPath: Misssing ScriptId: '{scriptID}' in path: '{assetPath}'");
+                Console.WriteLine($"FYML.UpdateAssetPath: Misssing ScriptId: '{scriptID}' in path: '{assetPath}'");
                 return;
             }
 
             m_assetIDHash_asset[asset.assetIDHash] = asset;
 
-            Console.WriteLine($"UpdateAssetPath: {asset.time}: '{assetPath}'");
+            Console.WriteLine($"FYML.UpdateAssetPath: {asset.time}: '{assetPath}'");
         }
 
         private static void m_WriteNewPrefab(string assetPath, string assetGuid) {
@@ -359,24 +385,6 @@ namespace Engine {
             return newTime;
         }
 
-        public int CreateAssetFromSourceOrRequest(string filePath) {
-            var assetFile = new AssetFile();
-
-            assetFile.path = filePath;
-            assetFile.ext = Path.GetExtension(filePath);
-            assetFile.writeTime = File.GetLastWriteTime(filePath);
-
-            if (CreateExtentions.Contains(assetFile.ext)) {
-                assetFile.type = AssetFileType.CreateRequest;
-                return m_CreateAssetFromRequest(assetFile);
-            }
-            if (SourceExtentions.Contains(assetFile.ext)) {
-                assetFile.type = AssetFileType.Source;
-                return m_CreateAssetFromSource(assetFile);
-            }
-            return 0;
-        }
-
         /// <summary>
         /// Принимает файл с расширением типа 'filename.create_mesh' 
         /// и создает соответствующий ассет 'filename.yml'.
@@ -398,9 +406,11 @@ namespace Engine {
             if (type == null)
                 return 0;
 
-            File.Move(requestFile.path, assetPath);
+            var assetIdHash = CreateNewAsset(type, assetPath);
+            if (assetIdHash != 0)
+                File.Delete(requestFile.path);
 
-            return CreateNewAsset(type, assetPath);
+            return assetIdHash;
         }
 
         private int m_CreateAssetFromSource(AssetFile sourceFile) {
@@ -415,10 +425,7 @@ namespace Engine {
             if (type == null)
                 return 0;
 
-            File.WriteAllText(assetPath, "");
-
             return CreateNewAsset(type, assetPath, sourceFile.ext);
         }
-
     }
 }

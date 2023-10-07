@@ -12,5 +12,12 @@
             "port": 55555,
             "preLaunchTask": "FireProject_Debug"
         },
+        {
+            "name": "Attach",
+            "type": "mono",
+            "request": "attach",
+            "address": "localhost",
+            "port": 55555,
+        },
     ]
 }

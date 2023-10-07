@@ -134,8 +134,11 @@ namespace Engine
         public void DrawObject(Type type, ref object instance) {
             var serializer = FireWriter.GetSerializer(type);
 
-            if (serializer.NeedIncludeBase(type))
+            if (serializer.NeedIncludeBase(type)) {
                 DrawObject(type.BaseType, ref instance);
+                GUI.Space();
+            }
+            GUI.groupTypeHash = type.GetHashCode();
 
             var fields = FireWriter.GetFields(type, instance, serializer);
 
@@ -198,6 +201,7 @@ namespace Engine
         /// Context ->
         public static UI.ImGuiStyle style;
         public static CsRef groupRef;
+        public static int groupTypeHash;
         public static int groupAssetIdHash;
         public static float rectWidth = 0;
         public static bool active = true;
@@ -232,9 +236,9 @@ namespace Engine
             bool changed = false;
 
             if (range == null)
-                changed = ImGui.DragInt($"##{label}_{groupRef}", ref intValue);
+                changed = ImGui.DragInt($"##{label}_{groupRef}_{groupTypeHash}", ref intValue);
             else
-                changed = ImGui.SliderInt($"##{label}_{groupRef}", ref intValue, min, max);
+                changed = ImGui.SliderInt($"##{label}_{groupRef}_{groupTypeHash}", ref intValue, min, max);
 
             if (changed) {
                 field.SetValue(intValue);
@@ -261,9 +265,9 @@ namespace Engine
             bool changed = false;
 
             if (range == null)
-                changed = ImGui.DragFloat($"##{label}_{groupRef}", ref floatValue, floatSpeed, min, max);
+                changed = ImGui.DragFloat($"##{label}_{groupRef}_{groupTypeHash}", ref floatValue, floatSpeed, min, max);
             else
-                changed = ImGui.SliderFloat($"##{label}_{groupRef}", ref floatValue, min, max);
+                changed = ImGui.SliderFloat($"##{label}_{groupRef}_{groupTypeHash}", ref floatValue, min, max);
 
             if (changed) {
                 field.SetValue(floatValue);
@@ -282,7 +286,7 @@ namespace Engine
             ImGui.NextColumn();
 
             var boolValue = (bool)field.Value;
-            bool changed = ImGui.Checkbox($"##{label}_{groupRef}", ref boolValue);
+            bool changed = ImGui.Checkbox($"##{label}_{groupRef}_{groupTypeHash}", ref boolValue);
             if (changed) {
                 field.SetValue(boolValue);
                 Assets.MakeDirty(groupAssetIdHash);
@@ -294,8 +298,8 @@ namespace Engine
         public static void DrawVector2(string label, FireYaml.Field field, RangeAttribute range = null) {
             bool changed = false;
 
-            string nameX = $"##X_{label}_{groupRef}";
-            string nameY = $"##Y_{label}_{groupRef}";
+            string nameX = $"##X_{label}_{groupRef}_{groupTypeHash}";
+            string nameY = $"##Y_{label}_{groupRef}_{groupTypeHash}";
 
             var vecValue = (Vector2)field.Value;
             float min = range != null ? range.fmin : 0;
@@ -358,9 +362,9 @@ namespace Engine
             if (colorAttr != null) {
                 changed = Dll.UI_Inspector.ShowColor3(Game.gameRef, label, ref vecValue);
             } else {
-                string nameX = $"##X_{label}_{groupRef}";
-                string nameY = $"##Y_{label}_{groupRef}";
-                string nameZ = $"##Z_{label}_{groupRef}";
+                string nameX = $"##X_{label}_{groupRef}_{groupTypeHash}";
+                string nameY = $"##Y_{label}_{groupRef}_{groupTypeHash}";
+                string nameZ = $"##Z_{label}_{groupRef}_{groupTypeHash}";
 
                 float min = range != null ? range.fmin : 0;
                 float max = range != null ? range.fmax : 0;
@@ -421,10 +425,10 @@ namespace Engine
         }
 
         public static void DrawQuaternion(string label, FireYaml.Field field, RangeAttribute range = null) {
-            string nameX = $"##X_{label}_{groupRef}";
-            string nameY = $"##Y_{label}_{groupRef}";
-            string nameZ = $"##Z_{label}_{groupRef}";
-            string nameW = $"##W_{label}_{groupRef}";
+            string nameX = $"##X_{label}_{groupRef}_{groupTypeHash}";
+            string nameY = $"##Y_{label}_{groupRef}_{groupTypeHash}";
+            string nameZ = $"##Z_{label}_{groupRef}_{groupTypeHash}";
+            string nameW = $"##W_{label}_{groupRef}_{groupTypeHash}";
 
             var quat = (Quaternion)field.Value;
             float min = range != null ? range.fmin : 0;
@@ -478,7 +482,7 @@ namespace Engine
             var value = (string)field.Value;
 
             ulong ptr = 0;
-            bool changed = Dll.UI_Inspector.ShowText(Game.gameRef, $"{label}_{groupRef}", value, value.Length, ref ptr);
+            bool changed = Dll.UI_Inspector.ShowText(Game.gameRef, $"{label}_{groupRef}_{groupTypeHash}", value, value.Length, ref ptr);
             if (changed) {
                 field.SetValue(ReadCString(ptr));
                 Assets.MakeDirty(groupAssetIdHash);
@@ -501,9 +505,9 @@ namespace Engine
             ImGui.NextColumn();
             ImGui.PushItemWidth(rectWidth - labelWidth - padding);
 
-            if (ImGui.BeginCombo($"##{label}_{groupRef}", value)) {
+            if (ImGui.BeginCombo($"##{label}_{groupRef}_{groupTypeHash}", value)) {
                 foreach (var item in values) {
-                    if (ImGui.Selectable($"{item}##_{groupRef}", item == value))
+                    if (ImGui.Selectable($"{item}##_{groupRef}_{groupTypeHash}", item == value))
                         newValue = item;
                     Space();
                 }
@@ -522,7 +526,7 @@ namespace Engine
         /// Применяется для автоматического сериалайзера.
         /// </summary>
         public static void DrawAsset(string label, FireYaml.Field field, RangeAttribute range = null) {
-            var store = FireYaml.AssetStore.Instance;
+            var store = AssetStore.Instance;
             var instance = field.Value;
             var iasset = field.Value as FireYaml.IAsset;
 
@@ -553,7 +557,7 @@ namespace Engine
         /// Применяется для пользовательских сериалайзеров.
         /// </summary>
         public static bool DrawAsset(string label, Type type, int assetIdHash,  out object changedAsset) {
-            var store = FireYaml.AssetStore.Instance;
+            var store = AssetStore.Instance;
 
             changedAsset = null;
             
@@ -600,7 +604,7 @@ namespace Engine
         }
 
         public static void DrawComponent(string label, FireYaml.Field field, RangeAttribute range = null) {
-            var store = FireYaml.AssetStore.Instance;
+            var store = AssetStore.Instance;
             var component = field.Value as Engine.Component;
 
             var csRef = CsRef.NullRef;
@@ -637,7 +641,7 @@ namespace Engine
             ImGui.SetColumnWidth(0, headerWidth);
             ImGui.SetColumnWidth(1, padding);
 
-            bool isOpen = ImGui.CollapsingHeader($"{label}##_{groupRef}", (int)flags);
+            bool isOpen = ImGui.CollapsingHeader($"{label}##_{groupRef}_{groupTypeHash}", (int)flags);
             
             ImGui.NextColumn();
             ImGui.Columns(1);

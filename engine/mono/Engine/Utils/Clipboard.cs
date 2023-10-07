@@ -12,7 +12,7 @@ namespace Engine {
 
     public static class Clipboard {
 
-        private static YamlValues m_values = null;
+        private static FireBin.Data m_data = null;
         private static Type m_sourceType;
 
         private static CsRef m_targetActorRef = CsRef.NullRef;
@@ -26,35 +26,21 @@ namespace Engine {
             if(source == null)
                 return;
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            m_data = new FireBin.Data();
+            m_sourceType = source.GetType();
 
-            var serializer = new FireYaml.FireWriter(ignoreExistingIds: true, writeNewIds: false, useCsRefs: true);
-            serializer.Serialize(source);
+            new FireBin.Serializer(m_data).Serialize(source);
 
-            stopwatch.Stop();
+            var path = $"{AssetStore.Instance.EditorPath}/Ignore/clipboard.fbin";
 
-            TimeSpan elapsedTime = stopwatch.Elapsed;
-            Console.WriteLine($"FireYaml.Serialize: {elapsedTime.TotalMilliseconds} ms");
-
-            if (!serializer.Result)
-                throw new Exception($"Can not update asset: Serialization failed.");
-
-            m_values = serializer.Values;
-
-            var text = m_values.ToSortedText();
-            var path = $"{AssetStore.Instance.EditorPath}/Ignore/clipboard.yml";
-
-            File.WriteAllText(path, text);
-
-            var scriptId = m_values.GetValue(".file1!scriptId", "");
-            var typeFullName = GUIDAttribute.GetTypeByGuid(scriptId).FullName;
-
-            m_sourceType = Type.GetType(typeFullName);
+            using (var fileStream = new FileStream(path, FileMode.Create)) {
+                var binaryWriter = new BinaryWriter(fileStream);
+                new FireBin.DataWriter(m_data).Write(binaryWriter);
+            }
         }
 
         public static CppRef Peek() {
-            if (m_values == null)
+            if (m_data == null)
                 return CppRef.NullRef;
 
             try {
@@ -65,12 +51,13 @@ namespace Engine {
                     if(actor == null)
                         throw new Exception("Clipboard target actor is not valid.");
 
-                    cppLinked = new FireReader(m_values, writeIDs: false).InstanciateComponent(actor);
+                    var deserializer = new FireBin.Deserializer(m_data, useCsRefs: true);
+                    cppLinked = deserializer.InstanciateComponent(actor);
 
                     m_targetActorRef = CsRef.NullRef;
-
                 } else {
-                    var target = new FireReader(m_values, writeIDs: false).Instanciate();
+                    var deserializer = new FireBin.Deserializer(m_data, useCsRefs: true);
+                    var target = deserializer.Instanciate();
 
                     var ICppLinkedType = target.GetType().GetInterface(nameof(ICppLinked));
                     if (ICppLinkedType == null)
@@ -96,7 +83,7 @@ namespace Engine {
         }
 
         private static bool m_ForClipboardSource(int typeIdHash, Func<Type, Type, bool> func) {
-            if (m_values == null)
+            if (m_data == null)
                 return false;
 
             try {

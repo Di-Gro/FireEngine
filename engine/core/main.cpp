@@ -91,6 +91,8 @@ int main(int argc, char* argv[]) {
 
 	bool useMonoDebug = mode == FireMode::WaitDebugger;
 
+	//useMonoDebug = true;
+
 	if(useMonoDebug)
 		std::cout << "Waiting for debagger" << std::endl;
 

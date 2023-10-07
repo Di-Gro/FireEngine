@@ -40,7 +40,11 @@ namespace Engine {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
                 cppRef = Dll.Texture.PushAsset(Game.gameRef, assetId, assetIdHash);
+                Assets.SetLoadedAsset(assetIdHash, this);
                 ReloadAsset();
+            }
+            else {
+                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
         }
 
@@ -51,7 +55,7 @@ namespace Engine {
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
+            AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
             if (image == null)
                 Dll.Texture.Init(Game.gameRef, cppRef, width, height);
@@ -64,6 +68,8 @@ namespace Engine {
                 return;
                 
             var texture = asset as Texture;
+            if (texture == null)
+                throw new Exception($"Asset with assetId: '{assetId}' is not {nameof(Texture)} but {asset.GetType().Name}");
 
             this.assetId = texture.assetId;
             this.assetIdHash = texture.assetIdHash;

@@ -272,9 +272,9 @@ namespace Engine {
 
             assetInstance = cppRef.value;
 
-            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
+            AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
-            var assetPath = FireYaml.AssetStore.Instance.GetAssetPath(assetIdHash);
+            var assetPath = AssetStore.Instance.GetAssetPath(assetIdHash);
             Name = Path.GetFileNameWithoutExtension(assetPath);
         }
 
@@ -354,9 +354,10 @@ namespace Engine {
             var roots = des.Reader.ReadList(rootsPtr);
 
             Game.PushScene(scene);
-            for (int i = 0; i < roots.Count; i++) 
-                des.LoadAsNamedList(typeof(Actor), roots[i].Value);
-
+            for (int i = 0; i < roots.Count; i++) {
+                var actorRef = des.Reader.ReadReference(roots[i].Value);
+                des.LoadAsNamedList(typeof(Actor), actorRef.to);
+            }
             Game.PopScene();
         }
 

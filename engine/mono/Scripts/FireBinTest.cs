@@ -77,7 +77,7 @@ public class FireBinTest : CSComponent
         var deserializer = new FireBin.Deserializer(fbinData, useCsRefs: useCsRefs);
 
         // Console.WriteLine($"Deserialize >");
-        var loadedObj = deserializer.Load();
+        var loadedObj = deserializer.Instanciate();
         // Console.WriteLine($"<");
     }
 

@@ -36,7 +36,7 @@ namespace Engine {
         [Close] public string prefabId { get; set; } = IFile.NotPrefab;
         /// <- 
 
-        [Open] private List<StaticMaterial> m_materials { get; set; }
+        [Open] public List<StaticMaterial> m_materials { get; set; }
 
         public StaticMesh() {
             Assets.AfterReloadEvent += OnAfterReload;
@@ -61,6 +61,10 @@ namespace Engine {
                 
                 Dll.Mesh4.Init(Game.gameRef, cppRef, path);
                 Dll.Mesh4.assetId_set(cppRef, assetId);
+                Assets.SetLoadedAsset(assetIdHash, this);
+            }
+            else {
+                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
             return this;
         }
@@ -77,7 +81,12 @@ namespace Engine {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
                 cppRef = Dll.Mesh4.PushAsset(Game.gameRef, assetId, assetIdHash);
+
+                Assets.SetLoadedAsset(assetIdHash, this);
                 ReloadAsset();
+            }
+            else {
+                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
         }
 
@@ -88,9 +97,9 @@ namespace Engine {
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
+            AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
-            var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetIdHash);
+            var selfPath = AssetStore.Instance.GetAssetPath(assetIdHash);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
             Dll.Mesh4.Init(Game.gameRef, cppRef, sourcePath);
@@ -109,6 +118,8 @@ namespace Engine {
                 return;
                 
             var mesh = asset as StaticMesh;
+            if (mesh == null)
+                throw new Exception($"Asset with assetId: '{assetId}' is not {nameof(StaticMesh)} but {asset.GetType().Name}");
 
             this.assetId = mesh.assetId;
             this.assetIdHash = mesh.assetIdHash;

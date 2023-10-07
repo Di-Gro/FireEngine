@@ -192,11 +192,12 @@ void Game::Run() {
 	}
 	m_editorWindow->scene(m_editorScene);
 
-	editorSceneAssetPath = assetStore()->editorPath() + "/Ignore/editor_scene.yml";
+	editorSceneAssetName = "\\Ignore\\editor_scene";
+	auto editorSceneAssetPath = m_assetStore->editorPath() + editorSceneAssetName + ".scene";
 	if (fs::exists(editorSceneAssetPath))
 		fs::remove(editorSceneAssetPath);
 
-	editorSceneAssetIdHash = SceneMenu::Create(this, editorSceneAssetPath);
+	editorSceneAssetIdHash = SceneMenu::Create(this, editorSceneAssetName, true);
 
 	//PushScene(m_editorScene);
 

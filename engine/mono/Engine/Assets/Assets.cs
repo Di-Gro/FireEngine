@@ -42,6 +42,11 @@ namespace Engine {
             { typeof(StaticMesh).FullName.GetHashCode(), "|.obj|" },
         };
 
+        private static Dictionary<int, IAsset> m_loadedAssets = new Dictionary<int, IAsset>();
+
+        public static void SetLoadedAsset(int assetIdHash, IAsset asset) => m_loadedAssets[assetIdHash] = asset;
+        public static IAsset GetLoadedAsset(int assetIdHash) => m_loadedAssets[assetIdHash];
+
         public static bool Load(int assetIdHash, CppRef cppRef) {
             try {
                 var asset = CreateAssetWrapper(assetIdHash, cppRef);
@@ -152,7 +157,7 @@ namespace Engine {
                 case ".jpg":
                     return typeof(Engine.Image);
 
-                case ".material":
+                case ".mat":
                     return typeof(Engine.StaticMaterial);
 
                 default:
@@ -161,6 +166,7 @@ namespace Engine {
             }
         }
 
+        
         public static string GetAssetExtBySourceExt(string ext) {
             switch (ext) {
                 case ".obj":

@@ -14,7 +14,7 @@ using Engine;
 
 namespace FireYaml {
 
-    public class FireReader {
+    public class FireReader : Engine.IDeserializer {
         public event Action EndLoadEvent;
 
         private class InnerLink {
@@ -52,7 +52,8 @@ namespace FireYaml {
         /// 
         /// </summary>
         /// <param name="writeIDs">Записывает ID файлов в объекты под которыми они сохранены в документе.</param>
-        public FireReader(YamlValues values, bool writeIDs = true) {
+        public FireReader(YamlValues values, bool writeIDs = true, string assetId = "") {
+            m_assetId = assetId;
             m_values = values;
             m_writeIDs = writeIDs;
         }
@@ -61,14 +62,14 @@ namespace FireYaml {
         /// 
         /// </summary>
         /// <param name="writeIDs">Записывает ID файлов в объекты под которыми они сохранены в документе.</param>
-        public FireReader(string assetGuid, bool writeIDs = true) {
-            m_assetId = assetGuid;
-            m_writeIDs = writeIDs;
+        //public FireReader(string assetGuid, bool writeIDs = true) {
+        //    m_assetId = assetGuid;
+        //    m_writeIDs = writeIDs;
 
-            var assetGuidHash = m_assetId.GetAssetIDHash();
+        //    var assetGuidHash = m_assetId.GetAssetIDHash();
 
-            m_values = AssetStore.Instance.ThrowAssetValues(assetGuidHash);
-        }
+        //    m_values = AssetStore.Instance.ThrowYamlAssetData(assetGuidHash);
+        //}
 
         public YamlValues GetField(string fieldPath) => m_values.GetObject(fieldPath);
 
@@ -90,7 +91,7 @@ namespace FireYaml {
             return target;
         }
 
-        public void InstanciateTo(ref object target) {
+        public void InstanciateTo(object target) {
             var yamlRef = new YamlRef(1);
 
             var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
@@ -103,7 +104,7 @@ namespace FireYaml {
             m_EndInstanciate();
         }
 
-        public void InstanciateIAssetAsFile(IAsset target) {
+        public void InstanciateToWithoutLoad(object target) {
             var yamlRef = new YamlRef(1);
 
             var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
@@ -117,18 +118,18 @@ namespace FireYaml {
             m_EndInstanciate();
         }
 
-        public Engine.Component InstanciateComponent(Engine.Actor targetActor) {
+        public Engine.Component InstanciateComponent(Engine.Actor actor) {
             var yamlRef = new YamlRef(1);
 
             var hasFile = m_values.HasValue($".{yamlRef.Name}!scriptId");
             if (!hasFile)
                 throw new Exception("Prefab must contains root file 'file1'");
 
-            m_assetInst = targetActor.assetInstance;
+            m_assetInst = actor.assetInstance;
 
             var selfPath = GetFullPath(yamlRef.Name);
 
-            var component = new Engine.ActorSerializer().LoadComponent(this, selfPath, targetActor);
+            var component = new Engine.ActorSerializer().LoadComponent(this, selfPath, actor);
 
             m_EndInstanciate();
             return component as Engine.Component;
@@ -183,16 +184,7 @@ namespace FireYaml {
                     return;
                 }
             }
-
-            // IFile.SetPrefabId(prefabId, ref target);  
-
-            // if (prefabId != IFile.NotPrefab)
-                // m_LoadPrefab(fullPath, type, ref target, prefabId);
-            // else
-                m_LoadObjectFields(fullPath, type, ref target, isIAssetAsFile);
-
-            // if (isEntryPoint && m_assetId != "")
-            //     IFile.SetPrefabId(m_assetId, ref target);
+            m_LoadObjectFields(fullPath, type, ref target, isIAssetAsFile);
         }
 
         public void LoadAsset<TAsset>(string fieldPath, TAsset asset) where TAsset: IAsset {
@@ -320,7 +312,7 @@ namespace FireYaml {
             m_rootPath = $"{selfPath}!";
             m_assetInst = IFile.GetAssetInstance(ref instance);
 
-            var values = AssetStore.Instance.ThrowAssetValues(prefabAssetIdHash);
+            var values = AssetStore.Instance.ThrowYamlAssetData(prefabAssetIdHash);
             m_values = YamlValues.Merge(values, m_values, m_rootPath, true);
             
             /// Внутри нового состояния

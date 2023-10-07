@@ -170,7 +170,7 @@ namespace Engine {
             }
         }
 
-        public void LoadComponent(FireBin.Deserializer des, Engine.Actor actor, FireBin.Pointer compPtr) {
+        public Component LoadComponent(FireBin.Deserializer des, Engine.Actor actor, FireBin.Pointer compPtr) {
 
             var scriptId = des.Reader.ReadScriptId(compPtr);
             var componentType = FireBin.Deserializer.GetTypeOf(scriptId);
@@ -198,6 +198,8 @@ namespace Engine {
             waited.node = m_waitedComponents.AddLast(waited);
 
             des.EndLoadEvent += waited.OnEndLoad;
+
+            return component;
         }
 
         public override void OnSerialize(FireYaml.FireWriter serializer, string selfPath, Type type, object instance) {
@@ -296,7 +298,7 @@ namespace Engine {
             }
         }
 
-        public object LoadComponent(FireYaml.FireReader reader, string filePath, Engine.Actor actor) {
+        public Component LoadComponent(FireYaml.FireReader reader, string filePath, Engine.Actor actor) {
             var componentType = reader.GetTypeOf(filePath);
 
             /// Create
@@ -319,7 +321,7 @@ namespace Engine {
 
             reader.EndLoadEvent += waited.OnEndLoad;
 
-            return componentObj;
+            return component;
         }
 
     }

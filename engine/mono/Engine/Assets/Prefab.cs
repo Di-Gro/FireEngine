@@ -29,7 +29,7 @@ namespace Engine {
         }
 
         public Actor Instanciate() {
-            return new FireYaml.FireReader(assetId).Instanciate<Actor>();
+            return AssetStore.GetAssetDeserializer(assetIdHash).Instanciate<Actor>();
         }
 
         public void LoadAsset() {
@@ -77,7 +77,7 @@ namespace Engine {
                 var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
                 object actorObj = CppLinked.GetObjectByRef(actorRef);
 
-                new FireYaml.FireReader(assetGuid, writeIDs: false).InstanciateTo(ref actorObj);
+                AssetStore.GetAssetDeserializer(assetGuidHash, writeIDs: false).InstanciateTo(actorObj);
 
                 var actor = actorObj as Actor;
                 actor.prefabId = assetGuid;

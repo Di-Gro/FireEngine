@@ -48,7 +48,7 @@ namespace FireBin {
         public FireBinException(string msg) : base(msg) { }
     }
 
-    public class Deserializer {
+    public class Deserializer : Engine.IDeserializer {
         private struct Ref {
             public Pointer refPtr;
             public FireYaml.Field field;
@@ -94,34 +94,60 @@ namespace FireBin {
             };
         }
 
-        public object Load() {
-            var structPtr = new Pointer { areaId = AreaId.Structs, offset = 0 };
+        public T Instanciate<T>() where T : new() {
+            return (T)Instanciate();
+        }
 
-            var scriptId = Reader.ReadScriptId(structPtr);
-            if(scriptId == "")
-                throw new FireBinException("Struct not contains scriptId");
+        public object Instanciate() {
+            m_GetFirstStructInfo(out var type, out var structPtr);
 
-            var type = GetTypeOf(scriptId);
             var target = CreateInstance(type);
 
-            Load(target);
+            LoadAsNamedList(type, structPtr, target);
+
+            if (YamlWriter.IsAsset(type))
+                m_assets.Add((FireYaml.IAsset)target);
+
             EndLoad();
 
             return target;
         }
 
-        public Deserializer Load(object target, int tmp_offset = 0) {
-            var structPtr = new Pointer { areaId = AreaId.Structs, offset = tmp_offset };
+        public void InstanciateTo(object target) {
+            m_GetFirstStructInfo(out var type, out var structPtr);
+
+            LoadAsNamedList(type, structPtr, target);
+
+            if(YamlWriter.IsAsset(type))
+                m_assets.Add((FireYaml.IAsset)target);
+
+            EndLoad();
+        }
+
+        public void InstanciateToWithoutLoad(object target) {
+            m_GetFirstStructInfo(out var type, out var structPtr);
+
+            LoadAsNamedList(type, structPtr, target);
+            EndLoad();
+        }
+
+        private void m_GetFirstStructInfo(out Type type, out Pointer structPtr) {
+            structPtr = new Pointer { areaId = AreaId.Structs, offset = 0 };
 
             var scriptId = Reader.ReadScriptId(structPtr);
             if (scriptId == "")
                 throw new FireBinException("Struct not contains scriptId");
 
-            var type = GetTypeOf(scriptId);
+            type = GetTypeOf(scriptId);
+        }
 
-            LoadAsNamedList(type, structPtr, target);
+        public Engine.Component InstanciateComponent(Engine.Actor actor) {
+            var structPtr = new Pointer { areaId = AreaId.Structs, offset = 0 };
 
-            return this;
+            var component = new Engine.ActorSerializer().LoadComponent(this, actor, structPtr);
+            EndLoad();
+
+            return component;
         }
 
         public void EndLoad() {

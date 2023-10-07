@@ -494,7 +494,7 @@ namespace Engine {
 
             var prefabGuid = "";
             if (prefabGuidHash != 0)
-                prefabGuid = FireYaml.AssetStore.Instance.GetAssetGuid(prefabGuidHash);
+                prefabGuid = AssetStore.Instance.GetAssetGuid(prefabGuidHash);
 
             actor.prefabId = prefabGuid;
         }

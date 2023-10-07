@@ -25,8 +25,8 @@ namespace Engine {
 
         public static EditorSettings editorSettings;
 
-        public static T InstanciateAsset<T>(string assetId) where T : FireYaml.IFile, new() {
-            return new FireYaml.FireReader(assetId).Instanciate<T>();
+        public static T InstanciateAsset<T>(int assetIdHash) where T : FireYaml.IFile, new() {
+            return AssetStore.GetAssetDeserializer(assetIdHash).Instanciate<T>();
         }
 
         public static Scene CreateScene() {
@@ -80,10 +80,10 @@ namespace Engine {
             m_gameCallbacks.runOrCrushContactEnter = new GameCallbacks.RunOrCrushContactEnter(Component.RunOrCrushContactEnter);
             m_gameCallbacks.runOrCrushContactExit = new GameCallbacks.RunOrCrushContactExit(Component.RunOrCrushContactExit);
 
-            m_gameCallbacks.isAssignable = new GameCallbacks.IsAssignable(FireYaml.AssetStore.cpp_IsAssignable);
+            m_gameCallbacks.isAssignable = new GameCallbacks.IsAssignable(AssetStore.cpp_IsAssignable);
             m_gameCallbacks.removeCsRef = new GameCallbacks.TakeCsRef(CppLinked.RemoveCsRef);
             m_gameCallbacks.loadAssetStore = new GameCallbacks.Void(LoadAssets);
-            m_gameCallbacks.hasAssetInStore = new GameCallbacks.HasAsset(FireYaml.AssetStore.HasAsset);
+            m_gameCallbacks.hasAssetInStore = new GameCallbacks.HasAsset(AssetStore.HasAsset);
             m_gameCallbacks.getStringHash = new GameCallbacks.GetStringHash(cpp_GetStringHash);
             m_gameCallbacks.loadAsset = new GameCallbacks.LoadAsset(Assets.Load);
             m_gameCallbacks.reloadAsset = new GameCallbacks.ReloadAsset(Assets.Reload);
@@ -117,7 +117,7 @@ namespace Engine {
             AssetStore.Instance = new AssetStore();
             AssetStore.Instance.Init("../../project");
 
-            editorSettings = InstanciateAsset<EditorSettings>(Assets.editor_settings);
+            editorSettings = InstanciateAsset<EditorSettings>(Assets.editor_settings.GetAssetIDHash());
             editorSettings.UpdateInCpp();
         }
 
@@ -201,7 +201,7 @@ namespace Engine {
 
         private static bool LoadScene(CppRef cppSceneRef, int assetGuidHash) {
             try {
-                var assetGuid = FireYaml.AssetStore.Instance.GetAssetGuid(assetGuidHash);
+                var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
 
                 var scene = new Scene(cppSceneRef);
                 object sceneObj = scene;

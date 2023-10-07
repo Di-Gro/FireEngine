@@ -96,7 +96,11 @@ namespace Engine {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
                 cppRef = Dll.Material.PushAsset(Game.gameRef, assetId, assetIdHash);
+                Assets.SetLoadedAsset(assetIdHash, this);
                 ReloadAsset();
+            }
+            else {
+                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
 #endif
         }
@@ -108,7 +112,7 @@ namespace Engine {
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
+            AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
             Dll.Material.Init(Game.gameRef, cppRef);
 
@@ -126,6 +130,8 @@ namespace Engine {
                 return;
                 
             var material = asset as StaticMaterial;
+            if (material == null)
+                throw new Exception($"Asset with assetId: '{assetId}' is not {nameof(StaticMaterial)} but {asset.GetType().Name}");
 
             this.assetId = material.assetId;
             this.assetIdHash = material.assetIdHash;

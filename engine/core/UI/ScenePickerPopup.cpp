@@ -29,10 +29,9 @@ bool ScenePickerPopup::Open(Scene* scene, const char* id) {
 
 	m_typeIdHash = store->sceneTypeIdHash;
 
-	if (!store->assets.contains(m_typeIdHash))
-		return false;
-
-	const auto* content = &store->assets[m_typeIdHash];
+	const std::vector<int>* content = &m_emptyContent;
+	if (store->assets.contains(m_typeIdHash))
+		content = &store->assets[m_typeIdHash];
 
 	bool hasSelected = false;
 

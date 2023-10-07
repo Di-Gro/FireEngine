@@ -22,6 +22,7 @@ private:
 	std::string m_input;
 	int m_filteredCount = 0;
 	int m_typeIdHash = 0;
+	std::vector<int> m_emptyContent;
 
 public:
 	bool Open(Scene* scene, const char* id);

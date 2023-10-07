@@ -11,9 +11,9 @@ Console.WriteLine("FireBinTest>");
 //    Assembly.GetAssembly(typeof(Program))
 //});
 
-var fireDB = new Engine.FireBinAssetManager(projectPath);
+//var fireDB = new Engine.FireBinAssetManager(projectPath);
 
-fireDB.Load();
+//fireDB.Load();
 
 bool serialize = false;
 bool deserialize = false;

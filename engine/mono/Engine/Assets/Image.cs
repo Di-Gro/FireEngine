@@ -44,7 +44,10 @@ namespace Engine {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if (cppRef.value == 0) {
                 cppRef = Dll.Image.PushAsset(Game.gameRef, assetId, assetIdHash);
+                Assets.SetLoadedAsset(assetIdHash, this);
                 ReloadAsset();
+            } else {
+                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
         }
 
@@ -55,19 +58,21 @@ namespace Engine {
             if (cppRef.value == 0)
                 throw new Exception("Asset not loaded");
 
-            new FireYaml.FireReader(assetId).InstanciateIAssetAsFile(this);
+            AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
-            var selfPath = FireYaml.AssetStore.Instance.GetAssetPath(assetIdHash);
+            var selfPath = AssetStore.Instance.GetAssetPath(assetIdHash);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
             Dll.Image.Init(Game.gameRef, cppRef, sourcePath, ref width, ref height);
         }
 
-        private void OnAfterReload(int assetId, FireYaml.IAsset asset) {
-            if (assetId != this.assetIdHash || asset == this)
+        private void OnAfterReload(int assetIdHash, FireYaml.IAsset asset) {
+            if (assetIdHash != this.assetIdHash || asset == this)
                 return;
 
             var image = asset as Image;
+            if (image == null)
+                throw new Exception($"Asset with assetId: '{assetId}' is not {nameof(Image)} but {asset.GetType().Name}");
 
             this.assetId = image.assetId;
             this.assetIdHash = image.assetIdHash;

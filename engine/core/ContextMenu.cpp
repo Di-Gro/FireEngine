@@ -34,11 +34,13 @@ void SceneMenu::AddLight(Scene* scene) {
 	game->assets()->MakeDirty(scene->assetIdHash());
 }
 
-bool SceneMenu::CanCreate(Game* game, const std::string& name) {
+bool SceneMenu::CanCreate(Game* game, const std::string& name, bool inEditorDir) {
 	if (name == "")
 		return false;
 
-	auto path = game->assetStore()->assetsPath() + "/" + name + ".yml";
+	auto path = game->assetStore()->assetsPath() + "\\" + name + ".scene";
+	if (inEditorDir)
+		path = game->assetStore()->editorPath() + "\\" + name + ".scene";
 
 	if (fs::exists(path))
 		return false;
@@ -46,11 +48,13 @@ bool SceneMenu::CanCreate(Game* game, const std::string& name) {
 	return true;
 }
 
-int SceneMenu::Create(Game* game, const std::string& name) {
+int SceneMenu::Create(Game* game, const std::string& name, bool inEditorDir) {
 	if (!CanCreate(game, name))
 		return 0;
 
-	auto path = game->assetStore()->assetsPath() + "/" + name + ".yml";
+	auto path = game->assetStore()->assetsPath() + "\\" + name + ".scene";
+	if(inEditorDir)
+		path = game->assetStore()->editorPath() + "\\" + name + ".scene";
 
 	return game->callbacks().createSceneAsset((size_t)path.c_str());
 }
@@ -65,7 +69,7 @@ bool SceneMenu::CanRename(Scene* scene, const std::string& name) {
 	if (!hasAsset)
 		return false;
 
-	auto path = game->assetStore()->assetsPath() + "/" + name + ".yml";
+	auto path = game->assetStore()->assetsPath() + "/" + name + ".scene";
 
 	if (fs::exists(path))
 		return false;
@@ -78,7 +82,7 @@ void SceneMenu::Rename(Scene* scene, const std::string& name) {
 		return;
 	
 	auto game = scene->game();
-	fs::path path = game->assetStore()->assetsPath() + "/" + name + ".yml";
+	fs::path path = game->assetStore()->assetsPath() + "/" + name + ".scene";
 
 	bool res = game->callbacks().renameSceneAsset(scene->assetIdHash(), (size_t)path.string().c_str());
 
@@ -216,7 +220,7 @@ bool PrefabMenu::CanCreate(Actor* actor, const std::string& name) {
 		return false;
 
 	auto game = actor->game();
-	auto path = game->assetStore()->assetsPath() + "/" + name + ".yml";
+	auto path = game->assetStore()->assetsPath() + "/" + name + ".prefab";
 
 	if (fs::exists(path))
 		return false;
@@ -229,7 +233,7 @@ void PrefabMenu::Create(Actor* actor, const std::string& name) {
 		return;
 
 	auto game = actor->game();
-	auto path = game->assetStore()->assetsPath() + "/" + name + ".yml";
+	auto path = game->assetStore()->assetsPath() + "/" + name + ".prefab";
 
 	auto prefabIdHash = game->callbacks().createPrefab(actor->csRef(), (size_t)path.c_str());
 
