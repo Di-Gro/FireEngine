@@ -67,7 +67,6 @@
     <ClCompile Include="CSLinked.cpp" />
     <ClCompile Include="Delegates.cpp" />
     <ClCompile Include="DirectionLight.cpp" />
-    <ClCompile Include="FlyingCamera.cpp" />
     <ClCompile Include="Forms.cpp" />
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -178,7 +177,6 @@
     <ClInclude Include="RunMode.h" />
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="EditorCBuffer.h" />
-    <ClInclude Include="FlyingCamera.h" />
     <ClInclude Include="Forms.h" />
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="Game.h" />

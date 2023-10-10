@@ -30,7 +30,6 @@
 #include "RenderTarget.h"
 #include "FPSCounter.h"
 #include "DirectionLight.h"
-#include "FlyingCamera.h"
 #include "EditorCamera.h"
 #include "ImageComponent.h"
 #include "MeshComponent.h"

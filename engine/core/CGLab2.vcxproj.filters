@@ -93,9 +93,6 @@
     <ClCompile Include="Component.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="FlyingCamera.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="LinedPlain.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -432,9 +429,6 @@
       <Filter>TinyObjLoader</Filter>
     </ClInclude>
     <ClInclude Include="Component.inl">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="FlyingCamera.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="LinedPlain.h">
