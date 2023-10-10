@@ -456,6 +456,12 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
 	ImGui::PopStyleVar(1);
 
+	bool isDoubleClick = ImGui::IsMouseDoubleClicked(ImGuiMouseButton_::ImGuiMouseButton_Left);
+	bool isHovered = ImGui::IsItemHovered();
+
+	if (*assetIdHash != 0 && isHovered && isDoubleClick)
+		_ui->SelectedAsset(*assetIdHash);
+
 	if (ImGui::IsMouseReleased(ImGuiPopupFlags_MouseButtonRight) && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup))
 		int h = 0;
 

@@ -40,7 +40,7 @@ namespace Engine {
         //public string assetId = "9a28a3c5-8e65-49da-ac20-61f608fa88bb"; 
         //public string assetId = "fcebda45-6fae-4d9e-86e2-0e3ac87b879f";
 
-        public int tmp_selectedAssetIdHash = "25ddaa33-ea53-4749-a368-c2143d4c6a25".GetAssetIDHash();
+        // public int tmp_selectedAssetIdHash = "25ddaa33-ea53-4749-a368-c2143d4c6a25".GetAssetIDHash();
 
         private int m_assetIdHash;
         private IAsset m_iasset = null;
@@ -56,8 +56,8 @@ namespace Engine {
             ImGui.PushStyleVar((int)ImGuiStyleVar_._FrameRounding, 0.0f);
             ImGui.PushStyleVar((int)ImGuiStyleVar_._ItemSpacing, new ImVec2( 0.0f, 0.0f ));
 
-            var assetIdHash = tmp_selectedAssetIdHash;
-            //var assetIdHash = UserInterface.SelectedAsset;
+            // var assetIdHash = tmp_selectedAssetIdHash;
+            var assetIdHash = UserInterface.SelectedAsset;
 
             if(m_assetIdHash != assetIdHash) {
                 m_assetIdHash = assetIdHash;
@@ -76,6 +76,9 @@ namespace Engine {
                         Assets.Save(assetIdHash);
                 }
                 ImGui.End();
+
+                if(!isOpen)
+                    UserInterface.SelectedAsset = 0;
             }
             ImGui.PopStyleVar(4);
         }
@@ -83,6 +86,9 @@ namespace Engine {
         private void m_LoadAsset() {
             m_asset = null;
             m_iasset = null;
+
+            if (m_assetIdHash == 0)
+                return;
 
             var asset = AssetStore.GetAsset(m_assetIdHash);
             if (asset == null)
@@ -147,7 +153,8 @@ namespace Engine {
             GUI.HeaderSpace();
 
             if (changed)
-                tmp_selectedAssetIdHash = assetIdHash;
+                UserInterface.SelectedAsset = assetIdHash;
+                // tmp_selectedAssetIdHash = assetIdHash;
         }
 
     }
