@@ -77,7 +77,7 @@ void UI_Hierarchy::m_DrawSceneHeader() {
 
 	bool hasSelected = m_scenePickerPopup.Open(scene, treeNodeId.c_str());
 	
-	m_DrawHeaderContext("Scene", imGuiItemSize, lastCursor, nextCursor);
+	m_ui->inspector()->DrawHeaderContext("Scene", imGuiItemSize, lastCursor, nextCursor);
 
 	if (hasSelected && m_game->CanChangeScene()) {
 		if (m_scenePickerPopup.selected != scene->assetIdHash()) {
@@ -217,7 +217,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 			m_ui->SelectedActor(actor);
 	}
 
-	m_DrawHeaderContext(actorId, imGuiItemSize, lastCursor, nextCursor);
+	m_ui->inspector()->DrawHeaderContext(actorId, imGuiItemSize, lastCursor, nextCursor);
 
 	if (selectedTree)
 	{
@@ -229,25 +229,7 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	}
 }
 
-void UI_Hierarchy::m_DrawHeaderContext(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor) {
-	auto textSize = ImGui::CalcTextSize(idText.c_str());
 
-	lastCursor.x = headerSize.x - textSize.x - 10;
-	lastCursor.y += (headerSize.y - textSize.y) / 2;
-
-	auto id = "##m_DrawActorId" + idText;
-	ImGui::PushID(id.c_str());
-
-	ImGui::PushStyleColor(ImGuiCol_Text, { 0.4f, 0.4f ,0.4f ,1.0f });
-
-	ImGui::SetCursorPos(lastCursor);
-	ImGui::Text(idText.c_str());
-	ImGui::SetCursorPos(nextCursor);
-
-	ImGui::PopStyleColor(1);
-
-	ImGui::PopID();
-}
 
 void UI_Hierarchy::HandleDrag(Actor* actor)
 {

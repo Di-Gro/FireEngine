@@ -126,15 +126,25 @@ DEF_FUNC(Material, Init, void)(CppRef gameRef, CppRef matRef) {
 DEF_FUNC(Material, textures_set, void)(CppRef matRef, size_t* cppRefs, int count) {
 	auto* material = CppRefs::ThrowPointer<Material>(matRef);
 	
-	//TODO: Удалить старые текстуры
+	/// TODO: Удалить старые текстуры
 	material->textures.clear(); 
 	material->resources.clear();
 
+	if (count == 0) {
+		auto* texture = Texture::Default;
+
+		material->textures.push_back(texture);
+		material->resources.emplace_back(ShaderResource::Create(texture));
+		return;
+	}
 	auto ptr = cppRefs;
 	for (int i = 0; i < count; i++, ptr++) {
-		auto cppRef = RefCpp(*ptr);
-		auto* texture = CppRefs::ThrowPointer<Texture>(cppRef);
-		
+		auto* texture = Texture::Default;
+
+		if (*ptr != 0) {
+			auto cppRef = RefCpp(*ptr);
+			texture = CppRefs::ThrowPointer<Texture>(cppRef);
+		}
 		material->textures.push_back(texture);
 		material->resources.emplace_back(ShaderResource::Create(texture));
 	}

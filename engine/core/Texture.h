@@ -10,6 +10,9 @@ class Render;
 class Image;
 
 class Texture : public IAsset {
+public:
+	static Texture* Default;
+
 private:
 	D3D11_TEXTURE2D_DESC m_desc;
 	comptr<ID3D11Texture2D> m_texture;

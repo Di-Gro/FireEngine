@@ -4,6 +4,9 @@
 #include "MeshAsset.h"
 #include "Game.h"
 
+Texture* Texture::Default = nullptr;
+
+
 void Texture::Release() {
 	if (m_texture.Get() != nullptr)
 		m_texture.ReleaseAndGetAddressOf();

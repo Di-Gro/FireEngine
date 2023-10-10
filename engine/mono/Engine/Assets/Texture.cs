@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 
 using EngineDll;
+using FireYaml;
 
 namespace Engine {
 
     [GUID("81b31ac1-86d8-4d99-aff6-324c5f987b15", typeof(Texture))]
-    public class Texture : FireYaml.IFile, FireYaml.IAsset {
+    public class Texture : IFile, IAsset, IEditorUIDrawer {
 
         /// FireYaml.IAsset ->
-        [Open] public string assetId { get; private set; } = "0000000000";
+        [Open][ReadOnly] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
         [Close] public CppRef cppRef { get; private set; } = CppRef.NullRef;
         /// <- 
@@ -25,14 +26,18 @@ namespace Engine {
         public Image image;
         public uint width = 128;
         public uint height = 128;
+
+        private int m_imageIdHash = 0;
        
 
         public Texture() { 
-            Assets.AfterReloadEvent += OnAfterReload;
+            Assets.AssetUpdateEvent += m_OnAssetUpdate;
             assetInstance = FireYaml.AssetInstance.PopId();
         }
 
-        ~Texture() { Assets.AfterReloadEvent -= OnAfterReload; }
+        ~Texture() {
+            Assets.AssetUpdateEvent -= m_OnAssetUpdate;
+        }
 
         public void LoadAsset() {
             assetIdHash = assetId.GetAssetIDHash();
@@ -44,7 +49,7 @@ namespace Engine {
                 ReloadAsset();
             }
             else {
-                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
+                m_OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
         }
 
@@ -57,16 +62,36 @@ namespace Engine {
 
             AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
+            m_imageIdHash = image == null ? 0 : image.assetIdHash;
+            m_InitTexture();
+        }
+
+        
+
+        public void SaveAsset() {
+            AssetStore.WriteAsset(assetIdHash, this);
+        }
+
+        public void OnDrawUI() {
+            int hash = image == null ? 0 : image.assetIdHash;
+            if (m_imageIdHash != hash) {
+                m_imageIdHash = hash;
+                m_InitTexture();
+                Assets.NotifyAssetUpdate(assetIdHash);
+            }
+        }
+
+        private void m_InitTexture() {
             if (image == null)
                 Dll.Texture.Init(Game.gameRef, cppRef, width, height);
-            else 
+            else
                 Dll.Texture.InitFromImage(Game.gameRef, cppRef, image.cppRef);
         }
 
-        private void OnAfterReload(int assetId, FireYaml.IAsset asset) {
-            if(assetId != this.assetIdHash || asset == this)
+        private void m_OnAssetUpdate(int assetId, FireYaml.IAsset asset) {
+            if (assetId != this.assetIdHash || asset == this)
                 return;
-                
+
             var texture = asset as Texture;
             if (texture == null)
                 throw new Exception($"Asset with assetId: '{assetId}' is not {nameof(Texture)} but {asset.GetType().Name}");
@@ -78,9 +103,6 @@ namespace Engine {
             this.width = texture.width;
             this.height = texture.height;
         }
-
-        public void SaveAsset() {
-
-        }
+        
     }
 }

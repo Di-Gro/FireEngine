@@ -21,9 +21,9 @@ namespace Engine {
     }
 
     [GUID("bad8395e-7c27-4697-ba7a-2e7556af5423", typeof(StaticMesh))]
-    public class StaticMesh : Mesh, IFile, IAsset, ISourceAsset {
+    public class StaticMesh : Mesh, IFile, IAsset, ISourceAsset, IEditorUIDrawer {
         /// IAsset ->
-        [Open] public string assetId { get; private set; } = "0000000000";
+        [Open][ReadOnly] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
         /// ISourceAsset ->
         public string ext { get; set; } = "";
@@ -36,10 +36,10 @@ namespace Engine {
         [Close] public string prefabId { get; set; } = IFile.NotPrefab;
         /// <- 
 
-        [Open] public List<StaticMaterial> m_materials { get; set; }
+        [Open] private List<StaticMaterial> m_materials { get; set; }
 
         public StaticMesh() {
-            Assets.AfterReloadEvent += OnAfterReload;
+            Assets.AssetUpdateEvent += OnAssetUpdate;
             assetInstance = AssetInstance.PopId();
         }
 
@@ -49,7 +49,7 @@ namespace Engine {
             this.assetId = Assets.ReadCString(Dll.Mesh4.assetId_get(cppRef));
         }
 
-        ~StaticMesh() { Assets.AfterReloadEvent -= OnAfterReload; }
+        ~StaticMesh() { Assets.AssetUpdateEvent -= OnAssetUpdate; }
 
         public StaticMesh LoadFromFile(string path) {
             assetId = path;
@@ -64,7 +64,7 @@ namespace Engine {
                 Assets.SetLoadedAsset(assetIdHash, this);
             }
             else {
-                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
+                OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
             return this;
         }
@@ -86,7 +86,7 @@ namespace Engine {
                 ReloadAsset();
             }
             else {
-                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
+                OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
         }
 
@@ -99,7 +99,7 @@ namespace Engine {
 
             AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
-            var selfPath = AssetStore.Instance.GetAssetPath(assetIdHash);
+            var selfPath = AssetStore.GetAssetPath(assetIdHash);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
             Dll.Mesh4.Init(Game.gameRef, cppRef, sourcePath);
@@ -113,7 +113,7 @@ namespace Engine {
             }
         }
 
-        private void OnAfterReload(int assetIdHash, FireYaml.IAsset asset) {
+        private void OnAssetUpdate(int assetIdHash, FireYaml.IAsset asset) {
             if(assetIdHash != this.assetIdHash || asset == this)
                 return;
                 
@@ -128,7 +128,13 @@ namespace Engine {
         }
 
         public void SaveAsset() {
+            AssetStore.WriteAsset(assetIdHash, this);
+        }
 
+        public void OnDrawUI() {
+            if (m_materials != null && m_materials.Count > 0) {
+                // GUI.DrawList("materials", m_materials);
+            }
         }
     }
 

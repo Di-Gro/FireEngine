@@ -3,6 +3,7 @@ using System.IO;
 using System.Diagnostics;
 
 using Engine;
+using System.Collections.Generic;
 
 [GUID("7757cd16-db34-4221-887d-02a928d4100c")]
 public class FireBinTest : CSComponent
@@ -20,6 +21,21 @@ public class FireBinTest : CSComponent
 
     private FireBin.Data fbinData = null;
 
+    // public List<Vector3> list1 = new List<Vector3>() {
+    //     new Vector3(),
+    //     new Vector3(),
+    //     new Vector3(),
+    // };
+
+    // public List<string> list2 = new List<string>() {
+    //    "sfsf",
+    //     "aga",
+    // };
+
+    // public List<StaticMesh> list3 = null;
+
+    public List<Actor> list4 = null;
+    public List<Component> list5 = null;
 
     public override void OnInit()
     {

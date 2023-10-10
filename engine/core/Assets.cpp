@@ -62,14 +62,14 @@ void Assets::Push(int pathHash, IAsset* ptr) {
 	m_assets.insert({ pathHash, asset });
 }
 
-IAsset* Assets::Pop(const std::string& assetId) {
+void Assets::Pop(const std::string& assetId) {
 	auto assetIdHash = GetCsAssetIDHash(assetId);
-	return Pop(assetIdHash);
+	Pop(assetIdHash);
 }
 
-IAsset* Assets::Pop(int assetIdHash) {
+void Assets::Pop(int assetIdHash) {
 	if (!Contains(assetIdHash))
-		return nullptr;
+		return;
 
 	auto asset = m_assets.at(assetIdHash);
 	CppRefs::Remove(asset.ref);
@@ -164,6 +164,11 @@ std::string Assets::CreateTmpAssetId() {
 	m_method_AddTmpAssetIdHash(hash);
 
 	return assetId;
+}
+
+DEF_FUNC(Assets, Save, void)(CppRef gameRef, int assetIdHash) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	game->assets()->Save(assetIdHash);
 }
 
 DEF_FUNC(Assets, Reload, void)(CppRef gameRef, int pathHash) {

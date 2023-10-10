@@ -61,6 +61,9 @@ FUNC(HotKeys, GetButtonDown, bool)(CppRef objRef, int keyCode);
 FUNC(HotKeys, GetButtonUp, bool)(CppRef objRef, int keyCode);
 FUNC(HotKeys, GetButton, bool)(CppRef objRef, int keyCode);
 
+FUNC(HotKeys, GetButtonDownEd, bool)(CppRef objRef, int keyCode);
+FUNC(HotKeys, GetButtonDownEd2, bool)(CppRef objRef, int keyCode, int modifier);
+
 FUNC(HotKeys, RegisterHotkey, void)(CppRef objRef, int keyCode);
 FUNC(HotKeys, UnregisterHotkey, void)(CppRef objRef, int keyCode);
 

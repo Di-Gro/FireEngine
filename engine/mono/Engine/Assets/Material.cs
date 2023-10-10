@@ -32,7 +32,8 @@ namespace Engine {
     }
 
     [GUID("110065f7-ed95-4fca-8a09-288b7ec17500", typeof(StaticMaterial))]
-    public class StaticMaterial : IMaterial, FireYaml.IFile, FireYaml.IAsset {
+    public class StaticMaterial : IMaterial, FireYaml.IFile, FireYaml.IAsset, FireYaml.IEditorUIDrawer
+    {
 
         /// IFile ->
         [Close] public ulong assetInstance { get; set; } = 0;
@@ -41,14 +42,14 @@ namespace Engine {
         /// <- 
 
         /// IAsset ->
-        [Open] public string assetId { get; private set; } = "0000000000";
+        [Open][ReadOnly] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
         public CppRef cppRef { get => m_proxy.cppRef; protected set => m_proxy.cppRef = value; }
         /// <- 
 
         /// IMaterial ->
         public bool IsDynamic { get => m_proxy.IsDynamic; }
-        [Open] public string Name { get => m_proxy.Name; private set => m_proxy.Name = value; }
+        [Open][ReadOnly] public string Name { get => m_proxy.Name; private set => m_proxy.Name = value; }
         [Open] public string Shader { get => m_proxy.Shader; private set => m_proxy.Shader = value; }
         
         [Open] public CullMode CullMode { get => m_proxy.CullMode; private set => m_proxy.CullMode = value; }
@@ -64,22 +65,28 @@ namespace Engine {
         [Open] private List<Texture> m_textures { get; set; }
 
         private MaterialProxy m_proxy = new MaterialProxy();
+        private long m_texturesHash = 0;
 
 
         public StaticMaterial() {
-            Assets.AfterReloadEvent += OnAfterReload;
+            Assets.AssetUpdateEvent += OnAssetUpdate;
+            Assets.TextureAssetUpdateEvent += m_OnTextureUpdate;
+
             assetInstance = FireYaml.AssetInstance.PopId();
         }
 
         public StaticMaterial(CppRef cppRef) {
-            m_proxy.cppRef = cppRef;
+            Assets.AssetUpdateEvent += OnAssetUpdate;
+            Assets.TextureAssetUpdateEvent += m_OnTextureUpdate;
+            
+            this.cppRef = cppRef;
             assetId = Assets.ReadCString(Dll.Material.assetId_get(cppRef));
             assetIdHash = Dll.Material.assetIdHash_get(cppRef);
         }
 
         ~StaticMaterial() { 
-            if(assetInstance != 0)
-                Assets.AfterReloadEvent -= OnAfterReload;
+            Assets.AssetUpdateEvent -= OnAssetUpdate;
+            Assets.TextureAssetUpdateEvent -= m_OnTextureUpdate;
         }
 
         public StaticMaterial LoadFromAsset(string assetId) {
@@ -100,7 +107,7 @@ namespace Engine {
                 ReloadAsset();
             }
             else {
-                OnAfterReload(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
+                OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
 #endif
         }
@@ -116,35 +123,70 @@ namespace Engine {
 
             Dll.Material.Init(Game.gameRef, cppRef);
 
-            if(m_textures.Count > 0) {
-                var cppRefs = new ulong[m_textures.Count];
-                for(int i = 0; i < m_textures.Count; i++)
-                    cppRefs[i] = m_textures[i].cppRef.value;
+            m_texturesHash = m_GetTexturesHash();
 
-                Dll.Material.textures_set(cppRef, cppRefs, m_textures.Count);
+            // if (m_textures.Count > 0) {
+            m_SendTexturesToCpp();
+            // }
+        }
+
+        public void SaveAsset() {
+            AssetStore.WriteAsset(assetIdHash, this);
+        }
+
+        public void OnDrawUI() {
+            var hash = m_GetTexturesHash();
+            if (m_texturesHash != hash) {
+                m_texturesHash = hash;
+                m_SendTexturesToCpp();
             }
         }
 
-        private void OnAfterReload(int assetId, FireYaml.IAsset asset) {
-            if(assetId != this.assetIdHash || asset == this)
+        private void OnAssetUpdate(int assetIdHash, FireYaml.IAsset asset) {
+            if(assetIdHash != this.assetIdHash || asset == this)
                 return;
                 
             var material = asset as StaticMaterial;
             if (material == null)
-                throw new Exception($"Asset with assetId: '{assetId}' is not {nameof(StaticMaterial)} but {asset.GetType().Name}");
+                throw new Exception($"Asset with assetIdHash: '{assetIdHash}' is not {nameof(StaticMaterial)} but {asset.GetType().Name}");
 
             this.assetId = material.assetId;
             this.assetIdHash = material.assetIdHash;
             this.m_textures = material.m_textures;
-            
+            this.m_texturesHash = material.m_texturesHash;
+
             this.m_proxy = new MaterialProxy();
             this.m_proxy.Name = material.m_proxy.Name;
             this.m_proxy.Shader = material.m_proxy.Shader;
             this.m_proxy.cppRef = material.m_proxy.cppRef;
         }
 
-        public void SaveAsset() {
+        private void m_OnTextureUpdate(int texAssetIdHash) {
+            if (m_textures == null)
+                return;
 
+            foreach(var texture in m_textures) {
+                if (texture != null && texture.assetIdHash == texAssetIdHash) {
+                    m_SendTexturesToCpp();
+                    return;   
+                }
+            }
+        }
+
+        private long m_GetTexturesHash() {
+            long value = 0;
+            foreach (var texture in m_textures)
+                value += texture != null ? texture.assetIdHash : -1111;
+
+            return value.GetHashCode();
+        }
+
+        private void m_SendTexturesToCpp() {
+            var cppRefs = new ulong[m_textures.Count];
+            for (int i = 0; i < m_textures.Count; i++)
+                cppRefs[i] = m_textures[i].cppRef.value;
+
+            Dll.Material.textures_set(cppRef, cppRefs, m_textures.Count);
         }
 
     }

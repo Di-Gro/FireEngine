@@ -18,10 +18,14 @@ class UI_Inspector
 {
 public:
 	static const char* ComponentDragType;
+	static const int TEXT_BUF_SIZE = 1024;
 
-	static char textBuffer[1024];
-	float widthComponent = 0;
+	static char textBuffer[TEXT_BUF_SIZE];
+	
 	CsRef csRef;
+
+	float labelWidth = 100;
+	float padding = 20;
 
 private:
 	ImGuiTreeNodeFlags treeNodeFlags = 0
@@ -57,8 +61,6 @@ private:
 
 	std::string m_componentName;
 
-	CsRef m_groupRef;
-
 	CsRef m_copyedCompRef = CsRef(0);
 
 public:
@@ -67,6 +69,7 @@ public:
 
 	void DrawActorTransform();
 	void DrawActorComponents();
+	void DrawHeaderContext(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor);
 
 	void AddComponent();
 
@@ -81,6 +84,7 @@ public:
 	bool ShowComponent(const std::string& label, CsRef* csRef, CppRef cppRef, int scriptIdHash);
 	bool ShowColor3(const std::string& label, Vector3* value);
 	bool ShowColor4(const std::string& label, Vector4* value);
+	bool ShowText(const char* label, const char* labelId, const char* buffer, int length, size_t* ptr, int flags);
 
 	void BigSpace();
 	void Space();
@@ -113,7 +117,7 @@ private:
 
 };
 
-FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr);
+FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* labelId, const char* buffer, int length, size_t* ptr, int flags);
 FUNC(UI_Inspector, SetComponentName, void)(CppRef gameRef, const char* value);
 
 FUNC(UI_Inspector, ShowAsset, bool)(CppRef gameRef, const char* label, int scriptIdHash, int* assetIdHash, bool isActive);
@@ -121,6 +125,13 @@ FUNC(UI_Inspector, ShowActor, bool)(CppRef gameRef, const char* label, CsRef* cs
 FUNC(UI_Inspector, ShowComponent, bool)(CppRef gameRef, const char* label, CsRef* csRef, CppRef cppRef, int scriptIdHash);
 
 FUNC(ImGui, CalcTextWidth, float)(const char* value);
+FUNC(ImGui, CalcTextSize, Vector3)(const char* value);
+FUNC(ImGui, GetItemRectSize, Vector3)();
+FUNC(ImGui, GetContentRegionAvail, Vector3)();
+
+FUNC(ImGui, Begin, bool)(const char* name, bool* isOpen, int flags = 0);
 
 FUNC(UI_Inspector, ShowColor3, bool)(CppRef gameRef, const char* label, Vector3* value);
 FUNC(UI_Inspector, ShowColor4, bool)(CppRef gameRef, const char* label, Vector4* value);
+
+

@@ -42,6 +42,7 @@
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CS.cpp" />
+    <ClCompile Include="PureAsset.cpp" />
     <ClCompile Include="CSComponent.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="AI\Token.h" />
     <ClInclude Include="AI\WME.h" />
     <ClInclude Include="AmbientLight.h" />
+    <ClInclude Include="AssetIterator.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="AssetStore.h" />
     <ClInclude Include="Attachable.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="Contact.h" />
     <ClInclude Include="CppClass.h" />
     <ClInclude Include="CS.h" />
+    <ClInclude Include="PureAsset.h" />
     <ClInclude Include="CSBridge.h" />
     <ClInclude Include="CSComponent.h" />
     <ClInclude Include="CsLink.h" />

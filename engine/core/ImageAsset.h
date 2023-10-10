@@ -11,6 +11,9 @@
 
 class Image : public IAsset {
 public:
+	static const Image* Default;
+
+public:
 	size_t width = 0;
 	size_t height = 0;
 	size_t lineSize = 0;

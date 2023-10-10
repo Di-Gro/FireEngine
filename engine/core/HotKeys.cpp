@@ -158,6 +158,13 @@ DEF_FUNC(HotKeys, GetButton, bool)(CppRef objRef, int keyCode) {
 	return CppRefs::ThrowPointer<HotKeys>(objRef)->GetButton((Keys)keyCode);
 }
 
+DEF_FUNC(HotKeys, GetButtonDownEd, bool)(CppRef objRef, int keyCode) {
+	return CppRefs::ThrowPointer<HotKeys>(objRef)->GetButtonDownEd((Keys)keyCode);
+}
+DEF_FUNC(HotKeys, GetButtonDownEd2, bool)(CppRef objRef, int keyCode, int modifier) {
+	return CppRefs::ThrowPointer<HotKeys>(objRef)->GetButtonDownEd((Keys)keyCode, (Keys)modifier);
+}
+
 DEF_FUNC(HotKeys, RegisterHotkey, void)(CppRef objRef, int keyCode) {
 	CppRefs::ThrowPointer<HotKeys>(objRef)->RegisterHotkey((Keys)keyCode);
 }

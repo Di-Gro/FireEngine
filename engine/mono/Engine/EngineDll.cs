@@ -321,6 +321,12 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "HotKeys_GetButton")]
 		    public static extern bool GetButton(CppRef objRef, int keyCode);
 
+            [DllImport(Paths.Exe, EntryPoint = "HotKeys_GetButtonDownEd")]
+		    public static extern bool GetButtonDownEd(CppRef objRef, int keyCode);
+
+            [DllImport(Paths.Exe, EntryPoint = "HotKeys_GetButtonDownEd2")]
+		    public static extern bool GetButtonDownEd2(CppRef objRef, int keyCode, int modifier);
+
             [DllImport(Paths.Exe, EntryPoint = "HotKeys_RegisterHotkey")]
 		    public static extern void RegisterHotkey(CppRef objRef, int keyCode);
 
@@ -473,7 +479,9 @@ namespace EngineDll {
 		}
 
 		public static class Assets {
-		
+            [DllImport(Paths.Exe, EntryPoint = "Assets_Save")]
+		    public static extern void Save(CppRef gameRef, int assetIdHash);
+
             [DllImport(Paths.Exe, EntryPoint = "Assets_Reload")]
 		    public static extern void Reload(CppRef gameRef, int assetIdHash);
 
@@ -485,6 +493,47 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "Assets_IsDirty")]
 		    public static extern bool IsDirty(CppRef gameRef, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_get")]
+		    public static extern size_t assetId_get(CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_set", CharSet = CharSet.Ansi)]
+		    public static extern void assetId_set(CppRef cppRef, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetIdHash_get")]
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetIdHash_set")]
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
+
+		}
+
+		public static class PureAsset {
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_get")]
+		    public static extern size_t assetId_get(CppRef cppRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_set", CharSet = CharSet.Ansi)]
+		    public static extern void assetId_set(CppRef cppRef, string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetIdHash_get")]
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetIdHash_set")]
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
 		}
 
@@ -653,7 +702,7 @@ namespace EngineDll {
 		public static class UI_Inspector {
 
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowText", CharSet = CharSet.Ansi)]
-		    public static extern bool ShowText(CppRef gameRef, string label, string buffer, int length, ref ulong ptr);
+		    public static extern bool ShowText(CppRef gameRef, string label, string labelId, string buffer, int length, ref ulong ptr, int flags = 0);
 
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_SetComponentName", CharSet = CharSet.Ansi)]
 		    public static extern void SetComponentName(CppRef gameRef, string value);
@@ -669,6 +718,60 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowColor3", CharSet = CharSet.Ansi)]
 		    public static extern bool ShowColor3(CppRef gameRef, string label, ref Vector3 value);
+
+		}
+
+		public static class UserInterface {
+		
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_SelectedAsset_get")]
+		    private static extern int SelectedAsset_get_inner(CppRef objRef);
+
+            public static int SelectedAsset_get(CppRef objRef) => objRef.value != 0 ? SelectedAsset_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_SelectedAsset_set")]
+		    private static extern void SelectedAsset_set_inner(CppRef objRef, int value);
+
+            public static void SelectedAsset_set(CppRef objRef, int value) { if(objRef.value != 0) SelectedAsset_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_rectWidth_get")]
+		    private static extern float rectWidth_get_inner(CppRef objRef);
+
+            public static float rectWidth_get(CppRef objRef) => objRef.value != 0 ? rectWidth_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_rectWidth_set")]
+		    private static extern void rectWidth_set_inner(CppRef objRef, float value);
+
+            public static void rectWidth_set(CppRef objRef, float value) { if(objRef.value != 0) rectWidth_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_groupId_get")]
+		    private static extern size_t groupId_get_inner(CppRef objRef);
+
+            public static size_t groupId_get(CppRef objRef) => objRef.value != 0 ? groupId_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_groupId_set")]
+		    private static extern void groupId_set_inner(CppRef objRef, size_t value);
+
+            public static void groupId_set(CppRef objRef, size_t value) { if(objRef.value != 0) groupId_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_subGroupId_get")]
+		    private static extern int subGroupId_get_inner(CppRef objRef);
+
+            public static int subGroupId_get(CppRef objRef) => objRef.value != 0 ? subGroupId_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_subGroupId_set")]
+		    private static extern void subGroupId_set_inner(CppRef objRef, int value);
+
+            public static void subGroupId_set(CppRef objRef, int value) { if(objRef.value != 0) subGroupId_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_groupAssetIdHash_get")]
+		    private static extern int groupAssetIdHash_get_inner(CppRef objRef);
+
+            public static int groupAssetIdHash_get(CppRef objRef) => objRef.value != 0 ? groupAssetIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_groupAssetIdHash_set")]
+		    private static extern void groupAssetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void groupAssetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) groupAssetIdHash_set_inner(objRef, value); }
 
 		}
 
@@ -818,6 +921,18 @@ namespace EngineDll {
 		
             [DllImport(Paths.Exe, EntryPoint = "ImGui_CalcTextWidth", CharSet = CharSet.Ansi)]
 		    public static extern float CalcTextWidth(string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "ImGui_CalcTextSize", CharSet = CharSet.Ansi)]
+		    public static extern Vector3 CalcTextSize(string value);
+
+            [DllImport(Paths.Exe, EntryPoint = "ImGui_GetItemRectSize")]
+		    public static extern Vector3 GetItemRectSize();
+
+            [DllImport(Paths.Exe, EntryPoint = "ImGui_GetContentRegionAvail")]
+		    public static extern Vector3 GetContentRegionAvail();
+
+            [DllImport(Paths.Exe, EntryPoint = "ImGui_Begin", CharSet = CharSet.Ansi)]
+		    public static extern bool Begin(string name, ref bool isOpen, int flags = 0);
 
 		}
 

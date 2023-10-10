@@ -55,8 +55,8 @@ public:
 	void Push(const std::string& assetId, IAsset* ptr);
 	void Push(int assetIdHash, IAsset* ptr);
 
-	IAsset* Pop(const std::string& assetId);
-	IAsset* Pop(int assetIdHash);
+	void Pop(const std::string& assetId);
+	void Pop(int assetIdHash);
 
 	IAsset* Get(const std::string& assetId);
 	IAsset* Get(int assetIdHash);
@@ -78,8 +78,10 @@ public:
 		
 };
 
+FUNC(Assets, Save, void)(CppRef gameRef, int assetIdHash);
 FUNC(Assets, Reload, void)(CppRef gameRef, int assetIdHash);
 FUNC(Assets, Get, CppRef)(CppRef gameRef, int assetIdHash);
 
 FUNC(Assets, MakeDirty, void)(CppRef gameRef, int assetIdHash);
 FUNC(Assets, IsDirty, bool)(CppRef gameRef, int assetIdHash);
+

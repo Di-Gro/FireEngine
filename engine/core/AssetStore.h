@@ -10,20 +10,22 @@ class Game;
 
 class AssetStore {
 public:
-	using ScriptIdHash = int;
-	using AssetIdHash = int;
+	using TypeHash = int;
+	using AssetHash = int;
+	using AssetsMap = std::unordered_map<TypeHash, std::vector<AssetHash>>;
 
-	std::unordered_map<ScriptIdHash, std::string> typeFullNames;
-	std::unordered_map<ScriptIdHash, std::string> typeNames;
-	std::unordered_map<AssetIdHash, std::string> assetNames;
+	std::unordered_map<TypeHash, std::string> typeFullNames;
+	std::unordered_map<TypeHash, std::string> typeNames;
+	std::unordered_map<AssetHash, std::string> assetNames;
 
-	std::vector<ScriptIdHash> components;
-	std::vector<ScriptIdHash> assetTypes;
+	std::vector<TypeHash> components;
+	std::vector<TypeHash> assetTypes;
 
-	std::unordered_map<ScriptIdHash, std::vector<AssetIdHash>> assets;
+	AssetsMap assets;
 
 	int actorTypeIdHash;
 	int prefabTypeIdHash;
+	int anyScriptIdHash = -1;
 	int componentTypeIdHash;
 	int sceneTypeIdHash;
 	
@@ -32,6 +34,7 @@ private:
 
 	std::string m_emptyValue = "";
 	std::string m_nullValue = "Null";
+	std::string m_anyScriptName = "Asset";
 	std::string m_missingValue = "Missing";
 	std::string m_dynamicValue = "Dynamic";
 
@@ -74,6 +77,9 @@ public:
 		if (scriptIdHash == 0)
 			return m_nullValue;
 
+		if (scriptIdHash == anyScriptIdHash)
+			return m_anyScriptName;
+
 		if (typeNames.contains(scriptIdHash))
 			return typeNames[scriptIdHash];
 
@@ -92,18 +98,18 @@ public:
 
 	const std::string& GetAssetGuid(int assetGuidHash);
 
-	void SetType(ScriptIdHash typeId, const std::string& fullName, const std::string& name);
-	void AddComponent(ScriptIdHash typeId);
-	void AddAsset(ScriptIdHash typeId, AssetIdHash assetId, const std::string& name);
-	void AddAssetType(ScriptIdHash typeId);
+	void SetType(TypeHash typeId, const std::string& fullName, const std::string& name);
+	void AddComponent(TypeHash typeId);
+	void AddAsset(TypeHash typeId, AssetHash assetId, const std::string& name);
+	void AddAssetType(TypeHash typeId);
 
 	void ClearTypes();
 	void ClearComponents();
 	void ClearAssets();
 	void ClearAssetTypes();
 
-	void RenameAsset(AssetIdHash assetId, const std::string& name);
-	void RemoveAsset(ScriptIdHash typeId, AssetIdHash assetId);
+	void RenameAsset(AssetHash assetId, const std::string& name);
+	void RemoveAsset(TypeHash typeId, AssetHash assetId);
 };
 
 FUNC(AssetStore, ClearTypes, void)(CppRef gameRef);

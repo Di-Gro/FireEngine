@@ -76,11 +76,20 @@ namespace Engine {
             throw new Exception($"GetDeserializer: Asset not exist.");
         }
 
-        public string GetAssetGuid(int assetIdHash) {
-            foreach(var assetMenager in m_assetMenagers) {
+        public static string GetAssetGuid(int assetIdHash) {
+            foreach(var assetMenager in Instance.m_assetMenagers) {
                 var asset = assetMenager.GetAsset(assetIdHash);
                 if (asset != null)
                     return asset.assetID;
+            }
+            return null;
+        }
+
+        public static Asset GetAsset(int assetIdHash) {
+            foreach (var assetMenager in Instance.m_assetMenagers) {
+                var asset = assetMenager.GetAsset(assetIdHash);
+                if (asset != null)
+                    return asset;
             }
             return null;
         }
@@ -94,7 +103,7 @@ namespace Engine {
             return false;
         }
 
-        public Type GetAssetType(int assetIdHash) {
+        public static Type GetAssetType(int assetIdHash) {
             foreach (var assetMenager in Instance.m_assetMenagers) {
                 var asset = assetMenager.GetAsset(assetIdHash);
                 if (asset != null)
@@ -103,27 +112,27 @@ namespace Engine {
             return null;
         }
 
-        public YamlValues ThrowYamlAssetData(int assetIdHash) {
-            var asset = m_fymlAM.GetAsset(assetIdHash) as FireYamlAsset;
+        public static YamlValues ThrowYamlAssetData(int assetIdHash) {
+            var asset = Instance.m_fymlAM.GetAsset(assetIdHash) as FireYamlAsset;
             if (asset == null)
                 throw new Exception($"Asset with assetGuidHash:{assetIdHash} not exist");
 
-            m_fymlAM.LoadAssetData(assetIdHash);
+            Instance.m_fymlAM.LoadAssetData(assetIdHash);
 
             return asset.data;
         }
 
-        //public FireBin.Data ThrowFbinAssetData(int assetIdHash) {
-        //    var asset = m_fbinAM.GetAsset(assetIdHash) as FireBinAsset;
-        //    if (asset == null)
-        //        throw new Exception($"Asset with assetGuidHash:{assetIdHash} not exist");
+        public static FireBin.Data ThrowFbinAssetData(int assetIdHash) {
+            var asset = Instance.m_fbinAM.GetAsset(assetIdHash) as FireBinAsset;
+            if (asset == null)
+                throw new Exception($"Asset with assetGuidHash:{assetIdHash} not exist");
 
-        //    m_fbinAM.LoadAssetData(assetIdHash);
+            Instance.m_fbinAM.LoadAssetData(assetIdHash);
 
-        //    return asset.data;
-        //}
+            return asset.data;
+        }
 
-        public bool HasAssetPath(int assetIdHash) {
+        public static bool HasAssetPath(int assetIdHash) {
             foreach (var assetMenager in Instance.m_assetMenagers) {
                 var asset = assetMenager.GetAsset(assetIdHash);
                 if (asset != null)
@@ -132,7 +141,7 @@ namespace Engine {
             return false;
         }
 
-        public string GetAssetPath(int assetIdHash) {
+        public static string GetAssetPath(int assetIdHash) {
             foreach (var assetMenager in Instance.m_assetMenagers) {
                 var asset = assetMenager.GetAsset(assetIdHash);
                 if (asset != null)
@@ -141,8 +150,8 @@ namespace Engine {
             return "";
         }
 
-        public int GetAssetFilesCount(int assetIdHash) {
-            var yamlAsset = m_fymlAM.GetAsset(assetIdHash) as FireYamlAsset;
+        public static int GetAssetFilesCount(int assetIdHash) {
+            var yamlAsset = Instance.m_fymlAM.GetAsset(assetIdHash) as FireYamlAsset;
             if (yamlAsset != null) {
                 var values = yamlAsset.data;
 
@@ -220,21 +229,21 @@ namespace Engine {
             }
         }
 
-        public int CreateNewAsset(Type type, string assetPath, string sourceExt = "") {
-            foreach (var assetMenager in m_assetMenagers)
+        public static int CreateNewAsset(Type type, string assetPath, string sourceExt = "") {
+            foreach (var assetMenager in Instance.m_assetMenagers)
                 return assetMenager.CreateNewAsset(type, assetPath, sourceExt);
 
             return 0;
         }
 
-        public void WriteAsset(int assetIDHash, object valueObj, FireWriter writer = null) {
-            if(m_fbinAM.GetAsset(assetIDHash) != null) {
-                m_fbinAM.WriteAsset(assetIDHash, valueObj, writer);
+        public static void WriteAsset(int assetIDHash, object valueObj, FireWriter writer = null) {
+            if(Instance.m_fbinAM.GetAsset(assetIDHash) != null) {
+                Instance.m_fbinAM.WriteAsset(assetIDHash, valueObj, writer);
                 return;
             }
-            var ymlAsset = m_fymlAM.GetAsset(assetIDHash);
+            var ymlAsset = Instance.m_fymlAM.GetAsset(assetIDHash);
             if (ymlAsset != null) {
-                m_fbinAM.ConvertFromYaml(valueObj, ymlAsset);
+                Instance.m_fbinAM.ConvertFromYaml(valueObj, ymlAsset);
             }
             // foreach (var assetMenager in m_assetMenagers) {
             //     if (assetMenager.GetAsset(assetIDHash) != null) {
@@ -252,19 +261,19 @@ namespace Engine {
         /// Создает ассет, если файл не пустой и ассета с таким именем не существукт. 
         /// </summary>
         /// <returns>AssetIDHash != 0 если ассет успшно создан</returns>
-        public int CreateAssetFromSourceOrRequest(string path) {
-            foreach(var assetMenager in m_assetMenagers)
+        public static int CreateAssetFromSourceOrRequest(string path) {
+            foreach(var assetMenager in Instance.m_assetMenagers)
                 return assetMenager.CreateAssetFromSourceOrRequest(path);
 
             return 0;
         }
 
-        public bool RenameAsset(int assetIDHash, string newPath) {
+        public static bool RenameAsset(int assetIDHash, string newPath) {
             if(!HasAsset(assetIDHash))
                 return false;
 
             Asset asset = null;
-            foreach (var assetMenager in m_assetMenagers) {
+            foreach (var assetMenager in Instance.m_assetMenagers) {
                 asset = assetMenager.GetAsset(assetIDHash);
                 if (asset != null)
                     break;
@@ -291,12 +300,12 @@ namespace Engine {
             return true;
         }
 
-        public void RemoveAsset(int assetIDHash) {
+        public static void RemoveAsset(int assetIDHash) {
             if (!HasAsset(assetIDHash))
                 return;
 
             Asset asset = null;
-            foreach (var assetMenager in m_assetMenagers) {
+            foreach (var assetMenager in Instance.m_assetMenagers) {
                 asset = assetMenager.GetAsset(assetIDHash);
                 if (asset != null)
                     break;
@@ -310,7 +319,7 @@ namespace Engine {
                 if (File.Exists(sourcePath))
                     File.Delete(sourcePath);
             }
-            foreach (var assetMenager in m_assetMenagers)
+            foreach (var assetMenager in Instance.m_assetMenagers)
                 assetMenager.ForgetAsset(assetIDHash);
 
             Dll.AssetStore.RemoveAsset(Game.gameRef, asset.scriptIDHash, asset.assetIDHash);
@@ -328,7 +337,7 @@ namespace Engine {
             if (!fileExists)
                 File.WriteAllText(path, "");
 
-            if (Instance.CreateAssetFromSourceOrRequest(path) != 0)
+            if (CreateAssetFromSourceOrRequest(path) != 0)
                 return true;
 
             if (!fileExists)
@@ -339,11 +348,11 @@ namespace Engine {
 
         public static bool cpp_RenameAsset(int assetGuidHash, ulong newPathPtr) {
             var newPath = Assets.ReadCString(newPathPtr);
-            return Instance.RenameAsset(assetGuidHash, newPath);
+            return RenameAsset(assetGuidHash, newPath);
         }
 
         public static void cpp_RemoveAsset(int assetIDHash) {
-            Instance.RemoveAsset(assetIDHash);
+            RemoveAsset(assetIDHash);
         }
 
         /// <param name="objRef">From object</param>
@@ -362,7 +371,7 @@ namespace Engine {
         }
 
         public static void cpp_RequestAssetGuid(int assetGuidHash) {
-            var guid = Instance.GetAssetGuid(assetGuidHash);
+            var guid = GetAssetGuid(assetGuidHash);
             Dll.AssetStore.buffer_set(Game.assetStoreRef, guid);
         }
 

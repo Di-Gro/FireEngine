@@ -426,6 +426,9 @@
     <ClCompile Include="NavMesh.cpp">
       <Filter>AI</Filter>
     </ClCompile>
+    <ClCompile Include="PureAsset.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -847,6 +850,12 @@
     </ClInclude>
     <ClInclude Include="NavMesh.h">
       <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetIterator.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="PureAsset.h">
+      <Filter>Assets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -39,9 +39,6 @@ using System.Numerics;
 /// ---: 5) Перечисления.
 /// ---: 5) Классы и структуры, у которых есть GUID и new().
 /// ---: 6) StaticAsset-ы. После загрузки нужные ассеты будут загружены в память.
-///
-/// ASK: Сохранится ли структура если она будет не ValueType?
-/// 
 
 namespace FireBin {
     public class FireBinException : Exception {
@@ -224,15 +221,15 @@ namespace FireBin {
 
             for (int i = 0; i < data.Count; i++) {
                 var valuePtr = data[i].Value;
+                if (valuePtr.offset == Pointer.NullOffset) {
+                    list.Add(null);
+                    continue;
+                }
                 var valueType = genericType;
                 var valueBinType = Reader.ThrowBinType(valuePtr);
 
                 if (genericBinType != valueBinType) {
                     m_WriteTypeConflict(genericBinType, valueBinType, $"List<{genericType.Name}>[{i}]");
-                    list.Add(null);
-                    continue;
-                }
-                if (valuePtr.offset == Pointer.NullOffset) {
                     list.Add(null);
                     continue;
                 }
@@ -245,7 +242,6 @@ namespace FireBin {
                     var scriptId = Reader.ReadScriptId(valuePtr);
                     valueType = GetTypeOf(scriptId);
                 }
-
                 var fieldValue = itemReader.Invoke(valueType, valuePtr);
 
                 list.Add(fieldValue);

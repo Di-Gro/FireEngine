@@ -62,6 +62,5 @@ private:
 
 	void m_HandleInput();
 	void m_DrawSceneHeader();
-
-	void m_DrawHeaderContext(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor);
+	
 };

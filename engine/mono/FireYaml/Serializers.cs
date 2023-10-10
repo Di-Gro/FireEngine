@@ -24,6 +24,8 @@ namespace Engine {
     
     public class SpaceAttribute : Attribute { }
 
+    public class ReadOnlyAttribute : Attribute { }
+
     public class RangeAttribute : Attribute {
         public int imin, imax;
         public float fmin, fmax;
@@ -433,7 +435,7 @@ namespace Engine {
             var assetIdHash = assetId.GetAssetIDHash();
             var isPath = m_IsPath(assetId);
 
-            if (!isPath && !AssetStore.Instance.HasAssetPath(assetIdHash))
+            if (!isPath && !AssetStore.HasAssetPath(assetIdHash))
                     throw new Exception($"Missing AssetId: {assetId}");
 
             if (yamlValue.type == YamlValue.Type.AssetId) {
@@ -458,7 +460,7 @@ namespace Engine {
             var isPath = m_IsPath(mesh.assetId);
             var assetIdHash = mesh.assetId.GetAssetIDHash();
 
-            if (!isPath && !AssetStore.Instance.HasAssetPath(assetIdHash))
+            if (!isPath && !AssetStore.HasAssetPath(assetIdHash))
                 throw new Exception($"Missing AssetId: {mesh.assetId}");
 
             if (isPath)
@@ -494,7 +496,7 @@ namespace Engine {
                         var assetId = yamlValue.value;
                         var assetIdHash = assetId.GetAssetIDHash();
 
-                        if (!AssetStore.Instance.HasAssetPath(assetIdHash))
+                        if (!AssetStore.HasAssetPath(assetIdHash))
                             throw new Exception($"Missing AssetId: {assetId}");
 
                         var material = new StaticMaterial().LoadFromAsset(assetId);
@@ -525,7 +527,7 @@ namespace Engine {
                     continue;
                 }
                 var assetIdHash = material.assetId.GetAssetIDHash();
-                if (!AssetStore.Instance.HasAssetPath(assetIdHash))
+                if (!AssetStore.HasAssetPath(assetIdHash))
                     throw new Exception($"Missing AssetId: {material.assetId}");
 
                 material.LoadFromAsset(material.assetId);
@@ -554,7 +556,7 @@ namespace Engine {
                 meshComponent.mesh = changedMesh as Mesh;
             
             var flags = ImGuiTreeNodeFlags_._Framed | ImGuiTreeNodeFlags_._DefaultOpen;
-            if(GUI.CollapsingHeader("Materials", flags)) {
+            if(GUI.CollapsingHeader("Materials", flags, out var size)) {
 
                 var count = (ulong) meshComponent.MaterialCount;
                 for (ulong index = 0; index < count; index++) {

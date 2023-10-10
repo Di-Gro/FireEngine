@@ -4,25 +4,25 @@
 
 AssetStore::~AssetStore() { }
 
-void AssetStore::SetType(ScriptIdHash typeId, const std::string& fullName, const std::string& name) {
+void AssetStore::SetType(TypeHash typeId, const std::string& fullName, const std::string& name) {
 	typeFullNames[typeId] = fullName;
 	typeNames[typeId] = name;
 }
 
-void AssetStore::AddComponent(ScriptIdHash typeId) {
+void AssetStore::AddComponent(TypeHash typeId) {
 	components.push_back(typeId);
 }
 
-void AssetStore::AddAsset(ScriptIdHash typeId, AssetIdHash assetId, const std::string& name) {
+void AssetStore::AddAsset(TypeHash typeId, AssetHash assetId, const std::string& name) {
 	assetNames[assetId] = name;
 	assets[typeId].push_back(assetId);
 }
 
-void AssetStore::RenameAsset(AssetIdHash assetId, const std::string& name) {
+void AssetStore::RenameAsset(AssetHash assetId, const std::string& name) {
 	assetNames[assetId] = name;
 }
 
-void AssetStore::RemoveAsset(ScriptIdHash typeId, AssetIdHash assetId) {
+void AssetStore::RemoveAsset(TypeHash typeId, AssetHash assetId) {
 	
 	auto& list = assets.at(typeId);
 	for (int i = 0; i < list.size(); i++) {
@@ -33,7 +33,7 @@ void AssetStore::RemoveAsset(ScriptIdHash typeId, AssetIdHash assetId) {
 	}
 }
 
-void AssetStore::AddAssetType(ScriptIdHash typeId) {
+void AssetStore::AddAssetType(TypeHash typeId) {
 	assetTypes.push_back(typeId);
 }
 

@@ -6,6 +6,7 @@
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_internal.h"
+#include "../imgui/misc/cpp/imgui_stdlib.h"
 #include "../imguizmo/ImGuizmo.h"
 
 #include "../Game.h"
@@ -23,7 +24,7 @@
 #include "../ContextMenu.h"
 
 const char* UI_Inspector::ComponentDragType = "Inspector.Actor";
-char UI_Inspector::textBuffer[1024] = { 0 };
+char UI_Inspector::textBuffer[UI_Inspector::TEXT_BUF_SIZE] = { 0 };
 
 
 void UI_Inspector::Init(Game* game, UserInterface* ui)
@@ -80,6 +81,26 @@ void UI_Inspector::Draw_UI_Inspector() {
 	ImGui::PopStyleVar(4);
 }
 
+void UI_Inspector::DrawHeaderContext(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor) {
+	auto textSize = ImGui::CalcTextSize(idText.c_str());
+
+	lastCursor.x = headerSize.x - textSize.x - 10;
+	lastCursor.y += (headerSize.y - textSize.y) / 2;
+
+	auto id = "##m_DrawActorId" + idText;
+	ImGui::PushID(id.c_str());
+
+	ImGui::PushStyleColor(ImGuiCol_Text, { 0.4f, 0.4f ,0.4f ,1.0f });
+
+	ImGui::SetCursorPos(lastCursor);
+	ImGui::Text(idText.c_str());
+	ImGui::SetCursorPos(nextCursor);
+
+	ImGui::PopStyleColor(1);
+
+	ImGui::PopID();
+}
+
 void UI_Inspector::m_DrawAddComponent() {
 
 	BigSpace();
@@ -95,8 +116,10 @@ void UI_Inspector::m_DrawAddComponent() {
 
 	ImGui::PopStyleColor(1);
 
+	auto mousePos = ImGui::GetScrollY() + ImGui::GetMousePos().y;
+
 	auto actor = _game->ui()->GetActor();
-	if (ImGui::GetMousePos().y >= ImGui::GetCursorPosY() + 20 || m_componentPicker.isOpen()) {
+	if (mousePos >= ImGui::GetCursorPosY() + 20 || m_componentPicker.isOpen()) {
 
 		m_componentPicker.header = "AddComponent";
 		m_componentPicker.flags = ImGuiPopupFlags_MouseButtonRight;
@@ -187,7 +210,7 @@ void UI_Inspector::m_DrawHeader() {
 
 	ImGui::Unindent(10);
 
-	widthComponent = ImGui::GetContentRegionAvail().x;
+	_ui->rectWidth(ImGui::GetContentRegionAvail().x);
 	m_DrawComponent(&UI_Inspector::m_DrawActorHeader);
 
 	
@@ -204,9 +227,10 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, { 0.5f, 0.0f, 0.0f, 1.0f });
 	}
 
-	ImVec2 lastCursor = ImGui::GetCursorPos();
+	auto lastCursor = ImGui::GetCursorPos();
 	result = ImGui::CollapsingHeader(nodeId.c_str(), collapsingHeaderFlags);
-	ImVec2 nextCursor = ImGui::GetCursorPos();
+	auto nextCursor = ImGui::GetCursorPos();
+	auto headerSize = ImGui::GetItemRectSize();
 
 	m_DrawComponentContextMenu(component);
 	if (component->IsDestroyed())
@@ -216,20 +240,14 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 		ImGui::SetDragDropPayload(UI_Inspector::ComponentDragType, &component, sizeof(Component*));
 		ImGui::EndDragDropSource();
 	}
+	
+	std::string crashedTag = isCrashed ? "Crashed " : "";
+	std::string compId = crashedTag + "ID:" + std::to_string(component->csRef());
+	DrawHeaderContext(compId, headerSize, lastCursor, nextCursor);
 
-	if (isCrashed) {
-		auto textSize = ImGui::CalcTextSize("Crashed");
-		auto itemSize = ImGui::GetItemRectSize();
-
-		lastCursor.x = itemSize.x - textSize.x - 10;
-		lastCursor.y += (itemSize.y - textSize.y) / 2;
-
-		ImGui::SetCursorPos(lastCursor);
-		ImGui::Text("Crashed");
-		ImGui::SetCursorPos(nextCursor);
-
+	if (isCrashed)
 		ImGui::PopStyleColor(2);
-	}
+
 	return result;
 }
 
@@ -263,8 +281,9 @@ void UI_Inspector::m_DrawComponents()
 
 			bool isOpen = CollapsingHeader(component, name);
 			if (isOpen) {
-				widthComponent = ImGui::GetContentRegionAvail().x;
-				m_groupRef = component->csRef();
+				_ui->rectWidth(ImGui::GetContentRegionAvail().x);
+				_ui->groupId(component->csRef().value);
+
 				m_DrawComponent(&UI_Inspector::m_DrawComponentContent);
 			}
 		}
@@ -290,7 +309,7 @@ void UI_Inspector::m_DrawActorHeader() {
 }
 
 void UI_Inspector::m_DrawComponentContent() {
-	_ui->_callbacks.onDrawComponent(csRef, widthComponent);
+	_ui->_callbacks.onDrawComponent(csRef);
 }
 
 bool UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
@@ -345,7 +364,7 @@ bool UI_Inspector::ShowActorPrefab(Actor* actor) {
 	auto assetIdHash = prefabId == "" ? 0 : _game->assets()->GetCsAssetIDHash(prefabId);
 	auto scriptIdHash = _game->assetStore()->prefabTypeIdHash;
 		
-	std::string fieldName = "##Prefab" + std::to_string(m_groupRef.value);
+	std::string fieldName = "##Prefab" + std::to_string(_ui->groupId());
 	std::string assetName = _game->assetStore()->GetAssetName(assetIdHash);
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
 	std::string buttonText = assetName + " (" + assetType + ") ";
@@ -353,7 +372,7 @@ bool UI_Inspector::ShowActorPrefab(Actor* actor) {
 	auto& style = ImGui::GetStyle();
 
 	float column1 = 50;
-	float column2 = widthComponent - column1;
+	float column2 = _ui->rectWidth() - column1;
 	float iconWidth = ImGui::GetFrameHeight();
 	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 23;
 
@@ -399,7 +418,7 @@ bool UI_Inspector::ShowActorPrefab(Actor* actor) {
 
 
 bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash, bool isActive) {
-	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
+	std::string fieldName = "##" + label + std::to_string(_ui->groupId());
 	std::string assetName = _game->assetStore()->GetAssetName(*assetIdHash);
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
 	std::string buttonText = assetName + " (" + assetType + ") ";
@@ -413,7 +432,7 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 	auto& style = ImGui::GetStyle();
 
 	float column1 = 100;
-	float column2 = widthComponent - column1;
+	float column2 = _ui->rectWidth() - column1;
 	float iconWidth = ImGui::GetFrameHeight();
 	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
 
@@ -463,7 +482,7 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 		throw std::exception("ShowComponent: Bad actor reference");
 
 	std::string actorId = "";
-	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
+	std::string fieldName = "##" + label + std::to_string(_ui->groupId());
 	std::string actorName = csRef->value == 1 ? "Missing" : "Null"; 
 
 	if (actor != nullptr) {
@@ -475,7 +494,7 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 	auto& style = ImGui::GetStyle();
 
 	float column1 = 100;
-	float column2 = widthComponent - column1;
+	float column2 = _ui->rectWidth() - column1;
 	float iconWidth = ImGui::GetFrameHeight();
 	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
 
@@ -524,18 +543,22 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 	if (component == nullptr && cppRef.value != 0)
 		throw std::exception("ShowComponent: Bad component reference");
 
-	std::string fieldName = "##" + label + std::to_string(m_groupRef.value);
+	std::string compId = "";
+	std::string fieldName = "##" + label + std::to_string(_ui->groupId());
 	std::string actorName = csRef->value == 1 ? "Missing" : "Null";
 	if(actor != nullptr) 
 		actorName = actor->name();
 
+	if (component != nullptr)
+		compId = "[" + std::to_string(component->csRef()) + "] ";
+
 	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
-	std::string buttonText = actorName + " (" + assetType + ") ";
+	std::string buttonText = compId + actorName + " (" + assetType + ") ";
 
 	auto& style = ImGui::GetStyle();
 
 	float column1 = 100;
-	float column2 = widthComponent - column1;
+	float column2 = _ui->rectWidth() - column1;
 	float iconWidth = ImGui::GetFrameHeight();
 	float holderWidth = column2 - iconWidth - style.ItemSpacing.x - 20;
 
@@ -579,12 +602,12 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 
 bool UI_Inspector::ShowColor3(const std::string& label, Vector3* value) {
 
-	std::string itemId = "##_" + label + "_" + std::to_string(m_groupRef.value);
+	std::string itemId = "##_" + label + "_" + std::to_string(_ui->groupId());
 
 	auto& style = ImGui::GetStyle();
 
 	float column1 = 100;
-	float column2 = widthComponent - column1;
+	float column2 = _ui->rectWidth() - column1;
 	float colorWidth = column2 - style.ItemSpacing.x - 20;
 
 	ImGui::Columns(2, "", false);
@@ -607,12 +630,12 @@ bool UI_Inspector::ShowColor3(const std::string& label, Vector3* value) {
 
 bool UI_Inspector::ShowColor4(const std::string& label, Vector4* value) {
 
-	std::string itemId = "##_" + label + "_" + std::to_string(m_groupRef.value);
+	std::string itemId = "##_" + label + "_" + std::to_string(_ui->groupId());
 
 	auto& style = ImGui::GetStyle();
 
 	float column1 = 100;
-	float column2 = widthComponent - column1;
+	float column2 = _ui->rectWidth() - column1;
 	float colorWidth = column2 - style.ItemSpacing.x - 20;
 
 	ImGui::Columns(2, "", false);
@@ -808,33 +831,44 @@ bool UI_Inspector::m_DrawComponentFieldContextMenu(int scriptIdHash, CsRef* comp
 	return changed;
 }
 
-DEF_FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* buffer, int length, size_t* ptr)
-{
-	length = (length < 1024) ? length : 1024;
-	std::memcpy(UI_Inspector::textBuffer, buffer, length);
-
+bool UI_Inspector::ShowText(const char* label, const char* labelId, const char* buffer, int length, size_t* ptr, int flags) {
+	/// out
 	*ptr = (size_t)UI_Inspector::textBuffer;
+	
+	std::string text = buffer;
 
-	//auto game = CppRefs::ThrowPointer<Game>(gameRef);
-
-	std::string tmpLabel = "##" + (std::string)label;
+	auto& style = ImGui::GetStyle();
+	auto column1 = labelWidth;
+	auto column2 = _ui->rectWidth() - labelWidth - padding;
 
 	ImGui::Columns(2, "", false);
-	ImGui::SetColumnWidth(0, 100.0f);
+	ImGui::SetColumnWidth(0, column1);
 
 	ImGui::Text(label);
-
 	ImGui::NextColumn();
-	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x + 7.0f);
+	ImGui::PushItemWidth(column2);
 
-	ImGui::InputText(tmpLabel.c_str(), UI_Inspector::textBuffer, sizeof(UI_Inspector::textBuffer));
+	ImGui::InputText(labelId, &text, flags);
 
 	bool changed = ImGui::IsItemDeactivatedAfterChange();
 
 	ImGui::PopItemWidth();
 	ImGui::Columns(1);
 
+	int textSize = text.size();
+	if (textSize > UI_Inspector::TEXT_BUF_SIZE - 1)
+		textSize = UI_Inspector::TEXT_BUF_SIZE - 1;
+
+	std::memcpy(UI_Inspector::textBuffer, text.c_str(), textSize);
+	UI_Inspector::textBuffer[textSize] = '\0';
+
 	return changed;
+}
+
+DEF_FUNC(UI_Inspector, ShowText, bool)(CppRef gameRef, const char* label, const char* labelId, const char* buffer, int length, size_t* ptr, int flags) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	return game->ui()->inspector()->ShowText(label, labelId, buffer, length, ptr, flags);
 }
 
 DEF_FUNC(UI_Inspector, SetComponentName, void)(CppRef gameRef, const char* value) {
@@ -863,6 +897,25 @@ DEF_FUNC(UI_Inspector, ShowComponent, bool)(CppRef gameRef, const char* label, C
 
 DEF_FUNC(ImGui, CalcTextWidth, float)(const char* value) {
 	return ImGui::CalcTextSize(value).x;
+}
+
+DEF_FUNC(ImGui, CalcTextSize, Vector3)(const char* value) {
+	auto size = ImGui::CalcTextSize(value);
+	return Vector3(size.x, size.y, 0);
+}
+
+DEF_FUNC(ImGui, GetItemRectSize, Vector3)() {
+	auto size = ImGui::GetItemRectSize();
+	return Vector3(size.x, size.y, 0);
+}
+
+DEF_FUNC(ImGui, GetContentRegionAvail, Vector3)() {
+	auto vec2 = ImGui::GetContentRegionAvail();
+	return Vector3(vec2.x, vec2.y, 0);
+}
+
+DEF_FUNC(ImGui, Begin, bool)(const char* name, bool* isOpen, int flags) {
+	return ImGui::Begin(name, isOpen, flags);
 }
 
 DEF_FUNC(UI_Inspector, ShowColor3, bool)(CppRef gameRef, const char* label, Vector3* value) {

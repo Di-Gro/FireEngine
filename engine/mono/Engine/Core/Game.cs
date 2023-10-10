@@ -14,6 +14,7 @@ namespace Engine {
         public static CppRef gameRef { get; private set; }
         public static CppRef meshAssetRef { get; private set; }
         public static CppRef assetStoreRef { get; private set; }
+        public static CppRef uiRef { get; private set; }
         public static CppRef sceneRef { get; private set; }
         public static float DeltaTime => m_updateData.deltaTime;
         public static float DeltaFixedTime => m_updateData.deltaFixedTime;
@@ -85,9 +86,9 @@ namespace Engine {
             m_gameCallbacks.loadAssetStore = new GameCallbacks.Void(LoadAssets);
             m_gameCallbacks.hasAssetInStore = new GameCallbacks.HasAsset(AssetStore.HasAsset);
             m_gameCallbacks.getStringHash = new GameCallbacks.GetStringHash(cpp_GetStringHash);
-            m_gameCallbacks.loadAsset = new GameCallbacks.LoadAsset(Assets.Load);
-            m_gameCallbacks.reloadAsset = new GameCallbacks.ReloadAsset(Assets.Reload);
-            m_gameCallbacks.saveAsset = new GameCallbacks.SaveAsset(Assets.Save);
+            m_gameCallbacks.loadAsset = new GameCallbacks.LoadAsset(Assets.cpp_Load);
+            m_gameCallbacks.reloadAsset = new GameCallbacks.ReloadAsset(Assets.cpp_Reload);
+            m_gameCallbacks.saveAsset = new GameCallbacks.SaveAsset(Assets.cpp_Save);
             m_gameCallbacks.pushClipboard = new GameCallbacks.TakeCsRef(Clipboard.Push);
             m_gameCallbacks.peekClipboard = new GameCallbacks.ClipboardPeek(Clipboard.Peek);
             m_gameCallbacks.clipboardIsAssignable = new GameCallbacks.ClipboardIsAssignable(Clipboard.IsAssignable);
@@ -108,7 +109,9 @@ namespace Engine {
             m_gameCallbacks.renameSceneAsset = new GameCallbacks.RenameSceneAsset(Scene.cpp_RenameSceneAsset);
 
             m_gameCallbacks.requestAssetGuid = new GameCallbacks.TakeAssetHash(AssetStore.cpp_RequestAssetGuid);
-            m_gameCallbacks.setStartupScene = new GameCallbacks.TakeCppRef(SetStartupScene);
+            m_gameCallbacks.setStartupScene = new GameCallbacks.TakeCppRef(cpp_SetStartupScene);
+
+            m_gameCallbacks.setUserInterfaceRef = new GameCallbacks.TakeCppRef(SetUserInterfaceRef);
 
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
@@ -117,21 +120,23 @@ namespace Engine {
             AssetStore.Instance = new AssetStore();
             AssetStore.Instance.Init("../../project");
 
-            editorSettings = InstanciateAsset<EditorSettings>(Assets.editor_settings.GetAssetIDHash());
-            editorSettings.UpdateInCpp();
+            editorSettings = new EditorSettings(Assets.editor_settings);
+            editorSettings.LoadAsset();
         }
 
-        private static void SetStartupScene(CppRef sceneRef) {
+        private static void cpp_SetStartupScene(CppRef sceneRef) {
             var scene = new Scene(new Scene(sceneRef).assetId);
 
             editorSettings.StartupScene = scene;
+            editorSettings.SaveAsset();
+            editorSettings.SendToCpp();
+            
+            // var assetIdHash = Assets.editor_settings.GetAssetIDHash();
+            // var filesCount = AssetStore.GetAssetFilesCount(assetIdHash);
+            // var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: filesCount + 1);
 
-            var assetIdHash = Assets.editor_settings.GetAssetIDHash();
-            var filesCount = AssetStore.Instance.GetAssetFilesCount(assetIdHash);
-            var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: filesCount + 1);
+            // AssetStore.WriteAsset(assetIdHash, editorSettings, writer);
 
-            AssetStore.Instance.WriteAsset(assetIdHash, editorSettings, writer);
-            editorSettings.UpdateInCpp();
         }
 
         private static int cpp_GetStringHash(ulong stringPtr){
@@ -142,6 +147,7 @@ namespace Engine {
         private static void SetSceneRef(CppRef value) => sceneRef = value;
         private static void SetMeshAssetRef(CppRef value) => meshAssetRef = value;
         private static void SetAssetStoreRef(CppRef value) => assetStoreRef = value;
+        private static void SetUserInterfaceRef(CppRef value) => uiRef = value;
         private static void SetUpdateData(GameUpdateData value) => m_updateData = value;
 
 #if DETACHED
@@ -182,7 +188,7 @@ namespace Engine {
             try {
                 object scene = new Scene(cppSceneRef);
 
-                AssetStore.Instance.WriteAsset(assetIdHash, scene);
+                AssetStore.WriteAsset(assetIdHash, scene);
 
                 return true;
             } catch (Exception e) {
@@ -201,7 +207,7 @@ namespace Engine {
 
         private static bool LoadScene(CppRef cppSceneRef, int assetGuidHash) {
             try {
-                var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
+                var assetGuid = AssetStore.GetAssetGuid(assetGuidHash);
 
                 var scene = new Scene(cppSceneRef);
                 object sceneObj = scene;
@@ -309,7 +315,7 @@ namespace Engine {
 
         public TakeCppRef setStartupScene;
 
-
+        public TakeCppRef setUserInterfaceRef;
     }
 }
 

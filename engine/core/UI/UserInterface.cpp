@@ -23,6 +23,7 @@ void UserInterface::Init(Game* game) {
 	uiBarMenu.Init(_game);
 
 	uiInspector.Init(_game, this);
+	//m_assetEditor.Init(_game, this);
 
 	InitMono();
 }
@@ -175,6 +176,7 @@ void UserInterface::Draw()
 
 	uiHierarchy.Draw_UI_Hierarchy();
 	uiInspector.Draw_UI_Inspector();
+	_callbacks.drawAssetEditor();
 
 	ImGui::End();
 
@@ -249,3 +251,9 @@ DEF_FUNC(UserInterface, SetCallbacks2, void)(CppRef cppRef, const UserInterface:
 	auto component = CppRefs::ThrowPointer<UserInterface>(cppRef);
 	component->SetCallbacks(callbacks);
 }
+
+DEF_PROP_GETSET(UserInterface, int, SelectedAsset);
+DEF_PROP_GETSET(UserInterface, float, rectWidth);
+DEF_PROP_GETSET(UserInterface, size_t, groupId);
+DEF_PROP_GETSET(UserInterface, int, subGroupId);
+DEF_PROP_GETSET(UserInterface, int, groupAssetIdHash);

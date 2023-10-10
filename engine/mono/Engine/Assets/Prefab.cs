@@ -52,8 +52,8 @@ namespace Engine {
 
                 var writer = new FireWriter(ignoreExistingIds: true, writeNewIds: false, startId: 1);
 
-                var assetIdHash = AssetStore.Instance.CreateNewAsset(typeof(Actor), path);
-                AssetStore.Instance.WriteAsset(assetIdHash, actorObj, writer);
+                var assetIdHash = AssetStore.CreateNewAsset(typeof(Actor), path);
+                AssetStore.WriteAsset(assetIdHash, actorObj, writer);
 
                 actor.prefabId = lastPrefabId;
                 return assetIdHash;
@@ -74,7 +74,7 @@ namespace Engine {
 
         public static bool LoadPrefab(int assetGuidHash, CsRef actorRef) {
             try {
-                var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
+                var assetGuid = AssetStore.GetAssetGuid(assetGuidHash);
                 object actorObj = CppLinked.GetObjectByRef(actorRef);
 
                 AssetStore.GetAssetDeserializer(assetGuidHash, writeIDs: false).InstanciateTo(actorObj);
@@ -101,10 +101,10 @@ namespace Engine {
         public static bool UpdatePrefab(CsRef actorRef, int assetGuidHash) {
             try {
                 object actor = CppLinked.GetObjectByRef(actorRef);
-                var assetGuid = AssetStore.Instance.GetAssetGuid(assetGuidHash);
+                var assetGuid = AssetStore.GetAssetGuid(assetGuidHash);
 
                 var writer = new FireWriter(ignoreExistingIds: true, writeNewIds: false, startId: 1);
-                AssetStore.Instance.WriteAsset(assetGuidHash, actor, writer);
+                AssetStore.WriteAsset(assetGuidHash, actor, writer);
 
                 return true;
 

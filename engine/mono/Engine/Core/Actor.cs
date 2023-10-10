@@ -494,7 +494,7 @@ namespace Engine {
 
             var prefabGuid = "";
             if (prefabGuidHash != 0)
-                prefabGuid = AssetStore.Instance.GetAssetGuid(prefabGuidHash);
+                prefabGuid = AssetStore.GetAssetGuid(prefabGuidHash);
 
             actor.prefabId = prefabGuid;
         }

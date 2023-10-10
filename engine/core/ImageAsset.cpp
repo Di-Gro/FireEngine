@@ -6,6 +6,8 @@
 #include "Game.h"
 #include "Assets.h"
 
+const Image* Image::Default = nullptr;
+
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_1111 = "runtime:/generated/image/2x2/rgba/1111";
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_0001 = "runtime:/generated/image/2x2/rgba/0001"; 
 const fs::path ImageAsset::RUNTIME_IMG_2X2_RGBA_1001 = "runtime:/generated/image/2x2/rgba/1001";

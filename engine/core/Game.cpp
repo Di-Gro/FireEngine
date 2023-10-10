@@ -131,9 +131,12 @@ void Game::Init(MonoInst* imono) {
 	m_InitImGui();
 	m_ui->Init(this);
 
-	auto assetStoreRef = CppRefs::Create((void*)m_assetStore).cppRef();
+	auto assetStoreRef = CppRefs::Create(m_assetStore).cppRef();
 	callbacks().setAssetStoreRef(RefCpp(assetStoreRef));
 	callbacks().loadAssetStore();
+
+	auto uiRef = CppRefs::Create(m_ui).cppRef();
+	callbacks().setUserInterfaceRef(RefCpp(uiRef));
 
 	m_editorWindow = ui()->CreateSceneWindow("Editor");
 	m_editorWindow->visible = true;
@@ -329,6 +332,7 @@ void Game::m_EndUpdate() {
 	if (m_hotkeys->GetButtonDownEd(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
 		/// TODO: Сохранить все ассеты
 	}
+		
 }
 
 
@@ -438,7 +442,7 @@ void Game::m_InitImGui() {
 	io.KeysDown[io.KeyMap[ImGuiKey_Enter]];
 	io.KeysDown[io.KeyMap[ImGuiKey_UpArrow]];
 	io.KeysDown[io.KeyMap[ImGuiKey_DownArrow]];
-
+	
 	ImGui_ImplWin32_Init(window()->GetHWindow());
 	ImGui_ImplDX11_Init(render()->device(), render()->context());
 }

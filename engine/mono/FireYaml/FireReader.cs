@@ -312,7 +312,7 @@ namespace FireYaml {
             m_rootPath = $"{selfPath}!";
             m_assetInst = IFile.GetAssetInstance(ref instance);
 
-            var values = AssetStore.Instance.ThrowYamlAssetData(prefabAssetIdHash);
+            var values = AssetStore.ThrowYamlAssetData(prefabAssetIdHash);
             m_values = YamlValues.Merge(values, m_values, m_rootPath, true);
             
             /// Внутри нового состояния

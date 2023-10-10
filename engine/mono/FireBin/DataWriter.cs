@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace FireBin {
     public class DataWriter {
@@ -70,11 +71,12 @@ namespace FireBin {
                     continue;
 
                 Area.WritePointerData(writer, fromPtr);
-
                 writedRefsCount++;
-            }
 
-            //Console.WriteLine($"Writed Refs Count: {writedRefsCount}");
+                // var toPtr = new DataReader(m_data).ReadPointer(fromPtr.areaId, fromPtr.offset);
+                // Console.WriteLine($"From(area: {fromPtr.areaId}, offset: {fromPtr.offset}) To(area: {toPtr.areaId}, offset: {toPtr.offset}))");
+            }
+            // Console.WriteLine($"Writed Refs Count: {writedRefsCount}\n");
         }
 
         public Pointer WriteReference(Pointer toPtr, ulong csRef, out int refIndex) {
@@ -105,6 +107,7 @@ namespace FireBin {
 
         public void WriteStructType(StructType structType) {
             var structsArea = m_data[AreaId.Structs];
+            m_AssertEnd(structsArea);
 
             structsArea.writer.Write((byte)structType);
         }
@@ -112,10 +115,10 @@ namespace FireBin {
         public Pointer WriteNamedList(Type type, string scriptId, IEnumerable<string> fields, IEnumerable<string> extraFields = null) {
             var areaId = AreaId.Structs;
             var structsArea = m_data[areaId];
-            int totalCount;
+            m_AssertEnd(structsArea);
 
             var structOffset = structsArea.Offset;
-            var namesPtr = WriteNames(out totalCount, type, fields, extraFields);
+            var namesPtr = WriteNames(out var totalNamesCount, type, fields, extraFields);
             var scriptIdPtr = WriteAssetRef(scriptId);
 
             WriteStructType(StructType.NamedList);
@@ -123,7 +126,7 @@ namespace FireBin {
             WritePointer(areaId, scriptIdPtr);
             WritePointer(areaId, null);
 
-            for (int i = 0; i < totalCount; i++)
+            for (int i = 0; i < totalNamesCount; i++)
                 WritePointer(areaId, null);
 
             return new Pointer() { areaId = areaId, offset = structOffset };
@@ -149,6 +152,8 @@ namespace FireBin {
             var namesArea = m_data[AreaId.Names];
             var stringsArea = m_data[AreaId.Strings];
             var namesOffset = namesArea.Offset;
+            m_AssertEnd(namesArea);
+            m_AssertEnd(stringsArea);
 
             m_data.AddNamesOffset(namesSign, namesOffset);
             namesArea.writer.Write(namesSign);
@@ -181,6 +186,7 @@ namespace FireBin {
 
         public Pointer WriteList(int itemsCount) {
             var structsArea = m_data[AreaId.Structs];
+            m_AssertEnd(structsArea);
 
             var structOffset = structsArea.Offset;
             WriteStructType(StructType.List);
@@ -195,6 +201,8 @@ namespace FireBin {
         public Pointer WriteEnum(object enumObj) {
             var structsArea = m_data[AreaId.Structs];
             var stringsArea = m_data[AreaId.Strings];
+            m_AssertEnd(structsArea);
+            m_AssertEnd(stringsArea);
 
             var intValue = Convert.ToInt32(enumObj);
             var strValue = enumObj.ToString();
@@ -211,19 +219,14 @@ namespace FireBin {
         }
 
         public Pointer WriteAssetRef(string assetId) {
-            var assetRefArea = m_data[AreaId.AssetRefs];
             int assetIdHash = Engine.StringExt.GetAssetIDHash(assetId);
 
-            //Guid guid;
-            //if (Guid.TryParse(assetId, out guid))
-            //    assetIdHash = guid.GetHashCode();
-            //else
-            //    assetIdHash = assetId.GetHashCode();
-
             if (m_data.HasAssetRefOffset(assetIdHash))
-                return new Pointer() { areaId = assetRefArea.areaId, offset = m_data.GetAssetRefOffset(assetIdHash) };
+                return new Pointer() { areaId = AreaId.AssetRefs, offset = m_data.GetAssetRefOffset(assetIdHash) };
 
+            var assetRefArea = m_data[AreaId.AssetRefs];
             var offset = assetRefArea.Offset;
+            m_AssertEnd(assetRefArea);
 
             m_data.AddAssetRefOffset(assetIdHash, offset);
 
@@ -240,6 +243,7 @@ namespace FireBin {
             var scalarsArea = m_data[AreaId.Scalars];
             var scalarWriter = s_scalarWriters[(int)scalarType];
             var scalarOffset = scalarsArea.Offset;
+            m_AssertEnd(scalarsArea);
 
             scalarsArea.writer.Write((byte)scalarType);
             scalarWriter.Invoke(scalarsArea.writer, obj);
@@ -250,6 +254,7 @@ namespace FireBin {
         public Pointer WriteString(string value) {
             var stringsArea = m_data[AreaId.Strings];
             var stringOffset = stringsArea.Offset;
+            m_AssertEnd(stringsArea);
 
             stringsArea.writer.Write(value);
 
@@ -261,6 +266,7 @@ namespace FireBin {
 
             var structsArea = m_data[AreaId.Structs];
             var structOffset = structsArea.Offset;
+            m_AssertEnd(structsArea);
 
             WriteStructType(structType);
             foreach (var field in fields)
@@ -278,6 +284,7 @@ namespace FireBin {
 
         public void WritePointer(AreaId fromAreaId, AreaId toAreaId, int toOffset, int fromOffset = -1) {
             var area = m_data[fromAreaId];
+            m_AssertEndOrNullPonter(area);
 
             bool pushBack = fromOffset < 0;
             var offset = pushBack ? area.Offset : fromOffset;
@@ -293,6 +300,26 @@ namespace FireBin {
             m_data.AddPointer(fromPtr);
 
             //Console.WriteLine($"ptr: from:({fromPtr.areaId}, {fromPtr.offset}) to:({toPtr.areaId}, {toPtr.offset})");
+        }
+
+        private void m_AssertEnd(Area area) {
+            bool isEnd = area.Offset == area.Length;
+            Debug.Assert(isEnd);
+        }
+
+        private void m_AssertEndOrNullPonter(Area area) {
+            bool isEnd = area.Offset == area.Length;
+            if (isEnd)
+                return;
+
+            bool isNullPointer = false;
+            try {
+                var ptr = new DataReader(m_data).ReadPointer(area.areaId, area.Offset);
+                isNullPointer = ptr.GetHashCode() == Pointer.NullPointer.GetHashCode();
+            }
+            catch (FireBinException ex) {  }
+
+            Debug.Assert(isEnd || isNullPointer);
         }
     }
 }

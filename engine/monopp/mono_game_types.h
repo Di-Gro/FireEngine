@@ -142,4 +142,6 @@ public:
 	void (*requestAssetGuid)(int assetIdHash);
 
 	void (*setStartupScene)(CppRef sceneRef);
+
+	void (*setUserInterfaceRef)(CppRef value);
 };

@@ -13,9 +13,20 @@ using Engine;
 
 namespace FireYaml {
 
-    public class Field {
-        public string name;
-        public Type type;
+    public interface IField {
+        public string name { get; }
+        public Type type { get; }
+        public object? Value { get; }
+        public object? Instance { get; } /// Объект, в котором находится поле
+
+        public void SetValue(object? value);
+        public object? GetValue();
+        TAttribute GetCustomAttribute<TAttribute>() where TAttribute : Attribute;
+    }
+
+    public class Field : IField {
+        public string name { get; set; }
+        public Type type { get; set; }
 
         public object? Value => GetValue();
 

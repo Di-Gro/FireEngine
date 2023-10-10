@@ -35,7 +35,8 @@ namespace Engine {
         public static string editor_settings = "d41d19d7-fef9-4034-a3e3-6589d657d863";
 
 
-        public static event Action<int, IAsset> AfterReloadEvent;
+        public static event Action<int, IAsset> AssetUpdateEvent;
+        public static event Action<int> TextureAssetUpdateEvent;
 
         public static Dictionary<int, string> m_assetSources = new Dictionary<int, string>() {
             { typeof(Image).FullName.GetHashCode(), "|.png|.jpg|" },
@@ -45,9 +46,30 @@ namespace Engine {
         private static Dictionary<int, IAsset> m_loadedAssets = new Dictionary<int, IAsset>();
 
         public static void SetLoadedAsset(int assetIdHash, IAsset asset) => m_loadedAssets[assetIdHash] = asset;
-        public static IAsset GetLoadedAsset(int assetIdHash) => m_loadedAssets[assetIdHash];
+        
+        public static IAsset GetLoadedAsset(int assetIdHash) {
+            if(m_loadedAssets.ContainsKey(assetIdHash))
+                return m_loadedAssets[assetIdHash];
 
-        public static bool Load(int assetIdHash, CppRef cppRef) {
+            return null;
+        }
+
+        public static void Save(int assetIdHash) {
+            Dll.Assets.Save(Game.gameRef, assetIdHash);
+        }
+
+        public static void NotifyAssetUpdate(int assetIdHash) {
+            var assetType = AssetStore.GetAssetType(assetIdHash);
+            if (assetType == null)
+                return;
+
+            if (assetType == typeof(Texture)) {
+                TextureAssetUpdateEvent?.Invoke(assetIdHash);
+                return;
+            }
+        }
+
+        public static bool cpp_Load(int assetIdHash, CppRef cppRef) {
             try {
                 var asset = CreateAssetWrapper(assetIdHash, cppRef);
                 asset.LoadAsset();
@@ -66,15 +88,21 @@ namespace Engine {
             }
         }
 
-        public static void Reload(int assetIdHash) {
-            var asset = CreateAssetWrapper(assetIdHash, CppRef.NullRef);
+        public static void cpp_Reload(int assetIdHash) {
+            var asset = GetLoadedAsset(assetIdHash);
+            if (asset == null)
+                asset = CreateAssetWrapper(assetIdHash, CppRef.NullRef);
+
             asset.ReloadAsset();
 
-            AfterReloadEvent?.Invoke(assetIdHash, asset);
+            AssetUpdateEvent?.Invoke(assetIdHash, asset);
         }
 
-        public static void Save(int assetIdHash) {
-            var asset = CreateAssetWrapper(assetIdHash, CppRef.NullRef);
+        public static void cpp_Save(int assetIdHash) {
+            var asset = GetLoadedAsset(assetIdHash);
+            if (asset == null)
+                asset = CreateAssetWrapper(assetIdHash, CppRef.NullRef);
+
             asset.SaveAsset();
         }
 
@@ -111,9 +139,8 @@ namespace Engine {
         /// <param name="cppRef">Ссылка на Cpp-объект, нужна только в том случае, 
         /// если asset загружается как файл для asset-а созданного в C++</param>
         public static IAsset CreateAssetWrapper(int assetIdHash, CppRef cppRef) {
-            var assetStore = AssetStore.Instance;
         
-            var assetType = assetStore.GetAssetType(assetIdHash);
+            var assetType = AssetStore.GetAssetType(assetIdHash);
             if (assetType == typeof(Actor))
                 assetType = typeof(Prefab);
 
@@ -124,7 +151,7 @@ namespace Engine {
 
             var asset = FireReader.CreateInstance(assetType);
 
-            var assetIdStr = assetStore.GetAssetGuid(assetIdHash);
+            var assetIdStr = AssetStore.GetAssetGuid(assetIdHash);
 
             FireReader.InitIAsset(ref asset, assetIdStr, cppRef);
 

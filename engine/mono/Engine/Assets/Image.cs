@@ -12,7 +12,7 @@ namespace Engine {
     public class Image : IFile, IAsset, ISourceAsset {
 
         /// IAsset ->
-        [Open] public string assetId { get; private set; } = "0000000000";
+        [Open][ReadOnly] public string assetId { get; private set; } = "0000000000";
         public int assetIdHash { get; private set; }
         [Close] public CppRef cppRef { get; private set; } = CppRef.NullRef;
         /// <- 
@@ -32,11 +32,11 @@ namespace Engine {
         [Close] public int height;
 
         public Image() {
-            Assets.AfterReloadEvent += OnAfterReload;
+            Assets.AssetUpdateEvent += OnAfterReload;
             assetInstance = FireYaml.AssetInstance.PopId();
         }
 
-        ~Image() { Assets.AfterReloadEvent -= OnAfterReload; }
+        ~Image() { Assets.AssetUpdateEvent -= OnAfterReload; }
 
         public void LoadAsset() {
             assetIdHash = assetId.GetAssetIDHash();
@@ -60,7 +60,7 @@ namespace Engine {
 
             AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
-            var selfPath = AssetStore.Instance.GetAssetPath(assetIdHash);
+            var selfPath = AssetStore.GetAssetPath(assetIdHash);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
             Dll.Image.Init(Game.gameRef, cppRef, sourcePath, ref width, ref height);
@@ -82,8 +82,8 @@ namespace Engine {
         }
 
         public void SaveAsset() {
-
+            AssetStore.WriteAsset(assetIdHash, this);
         }
-
+        
     }
 }

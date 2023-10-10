@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 using System.Runtime.InteropServices;
 
@@ -8,6 +9,7 @@ using EngineDll;
 using FireYaml;
 
 using sn = System.Numerics;
+using System.Linq.Expressions;
 
 namespace Engine
 {
@@ -31,41 +33,31 @@ namespace Engine
 
     [StructLayout(LayoutKind.Sequential)]
     public struct Callbacks {
-        public delegate void Callback(CsRef csRef, float width);
+        public delegate void Callback(CsRef csRef);
         public delegate void RequestName(CsRef csRef);
         public delegate void OnDrawActorTags(CsRef csRef);
+        public delegate void DrawAssetEditor();
 
         public Callback onDrawComponent;
         public RequestName requestComponentName;
         public OnDrawActorTags onDrawActorTags;
+        public DrawAssetEditor onDrawAssetEditor;
     }
 
     class UserInterface
     {
-        private delegate void FieldDrawer(string label, FireYaml.Field field, RangeAttribute range = null);
-
         public static UserInterface Instance { get; private set; }
+
+        public static int SelectedAsset {
+            get => Dll.UserInterface.SelectedAsset_get(Game.uiRef);
+            set => Dll.UserInterface.SelectedAsset_set(Game.uiRef, value);
+        }
 
         private Callbacks m_callbacks;
 
-        private Dictionary<int, FieldDrawer> m_fieldDrawers = new Dictionary<int, FieldDrawer>();
-
         private CppRef m_UICppRef;
 
-
-        public UserInterface() {
-            m_fieldDrawers.Add(typeof(int).FullName.GetHashCode(), GUI.DrawIntField);
-            m_fieldDrawers.Add(typeof(float).FullName.GetHashCode(), GUI.DrawFloatField);
-            m_fieldDrawers.Add(typeof(bool).FullName.GetHashCode(), GUI.DrawBoolField);
-            m_fieldDrawers.Add(typeof(Vector2).FullName.GetHashCode(), GUI.DrawVector2);
-            m_fieldDrawers.Add(typeof(Vector3).FullName.GetHashCode(), GUI.DrawVector3);
-            m_fieldDrawers.Add(typeof(Quaternion).FullName.GetHashCode(), GUI.DrawQuaternion);
-            m_fieldDrawers.Add(typeof(Enum).FullName.GetHashCode(), GUI.DrawEnum);
-            m_fieldDrawers.Add(typeof(string).FullName.GetHashCode(), GUI.DrawString);
-            m_fieldDrawers.Add(typeof(FireYaml.IAsset).FullName.GetHashCode(), GUI.DrawAsset);
-            m_fieldDrawers.Add(typeof(Actor).FullName.GetHashCode(), GUI.DrawActor);
-            m_fieldDrawers.Add(typeof(Component).FullName.GetHashCode(), GUI.DrawComponent);
-        }
+        private AssetEditor m_AssetEditor = new AssetEditor();
 
         public static void cpp_Init(CppRef cppRef)
         {
@@ -76,6 +68,7 @@ namespace Engine
             Instance.m_callbacks.onDrawComponent = new Callbacks.Callback(Instance.OnDrawComponent);
             Instance.m_callbacks.requestComponentName = new Callbacks.RequestName(Instance.RequestComponentName);
             Instance.m_callbacks.onDrawActorTags = new Callbacks.OnDrawActorTags(Instance.DrawActorTags);
+            Instance.m_callbacks.onDrawAssetEditor = new Callbacks.DrawAssetEditor(Instance.m_AssetEditor.Draw);
 
             dll_SetCallbacks2(cppRef, Instance.m_callbacks);
         }
@@ -90,9 +83,12 @@ namespace Engine
 
             var label = "Flags";
             var width = Dll.ImGui.CalcTextWidth(label);
+            var itemSpacing = new sn.Vector2(3, 5);
+
             ImGui.SetNextItemWidth(width);           
 
-            if (ImGui.BeginCombo($"##actorFlags_{csRef}", "")) {
+            if (ImGui.BeginCombo($"##actorFlags_{csRef}", "", (int)ImGuiComboFlags_._HeightLarge)) {
+                GUI.Space();
                 for (int i = 0; i < names.Length; i++) {
                     var name = names.GetValue(i);
                     var flag = (Flag)values.GetValue(i);
@@ -101,29 +97,30 @@ namespace Engine
                     if(flag == Flag.Null)
                         continue;
 
+                    ImGui.PushStyleVar((int)ImGuiStyleVar_._ItemSpacing, in itemSpacing);
+
                     if (ImGui.Selectable($"  {name}  ##_{csRef}", hasFlag, (int)ImGuiSelectableFlags_._DontClosePopups)) {
                         if(hasFlag)
                             actor.Flags ^= flag;
                         else
                             actor.Flags |= flag;
                     }
-                    GUI.Space();
+                    ImGui.PopStyleVar(1);
                 }
+                GUI.Space();
                 ImGui.EndCombo();
             }
             if (lastFlags != actor.Flags)
                 Assets.MakeDirty(actor.scene.assetIdHash);
         }
 
-        public void OnDrawComponent(CsRef csRef, float width) {
+        public void OnDrawComponent(CsRef csRef) {
             var component = CppLinked.GetObjectByRef(csRef) as Component;
 
-            /// Set Context ->
             GUI.style = Marshal.PtrToStructure<UI.ImGuiStyle>(ImGui.GetStyle());
-            GUI.rectWidth = width;
-            GUI.groupRef = csRef;
+            // GUI.rectWidth = Dll.ImGui.GetContentRegionAvail().X;
+            GUI.groupId = csRef.value;
             GUI.groupAssetIdHash = component.actor.scene.assetIdHash;
-            /// <-
 
             var instance = CppLinked.GetObjectByRef(csRef);
             var type = instance.GetType();
@@ -138,7 +135,7 @@ namespace Engine
                 DrawObject(type.BaseType, ref instance);
                 GUI.Space();
             }
-            GUI.groupTypeHash = type.GetHashCode();
+            GUI.subGroupId = type.GetHashCode();
 
             var fields = FireWriter.GetFields(type, instance, serializer);
 
@@ -160,26 +157,16 @@ namespace Engine
             serializer.OnDrawGui(type, ref instance);
         }
 
-        private void m_DrawField(FireYaml.Field field) {
-            var typeName = field.type.FullName;
-
-            if(field.type.IsEnum)
-                typeName = typeof(Enum).FullName;
-
-            bool isAsset = field.type.GetInterface(nameof(FireYaml.IAsset)) != null;
-            if(isAsset)
-                typeName = typeof(FireYaml.IAsset).FullName;
-
-            if(FireYaml.FireWriter.IsComponent(field.type))
-                typeName = typeof(Component).FullName;
-
-            var hash = typeName.GetHashCode();
-
-            if(!m_fieldDrawers.ContainsKey(hash))
+        
+        private void m_DrawField(IField field) {
+            var type = GUI.GetSupportedType(field.type);
+            if (type == null)
                 return;
 
+            var hash = type.FullName.GetHashCode();
+
             var range = field.GetCustomAttribute<RangeAttribute>();
-            var drawer = m_fieldDrawers[hash];
+            var drawer = GUI.fieldDrawers[hash];
 
             drawer(field.name, field, range);
         }        
@@ -197,13 +184,46 @@ namespace Engine
     }
 
     public static class GUI {
+        public delegate void FieldDrawer(string label, IField field, RangeAttribute range = null);
 
+        public static readonly Dictionary<int, FieldDrawer> fieldDrawers = new Dictionary<int, FieldDrawer>() {
+            { typeof(int).FullName.GetHashCode(), DrawIntField },
+            { typeof(float).FullName.GetHashCode(), DrawFloatField },
+            { typeof(bool).FullName.GetHashCode(), DrawBoolField },
+            { typeof(Vector2).FullName.GetHashCode(), DrawVector2 },
+            { typeof(Vector3).FullName.GetHashCode(), DrawVector3 },
+            { typeof(Quaternion).FullName.GetHashCode(), DrawQuaternion },
+            { typeof(Enum).FullName.GetHashCode(), DrawEnum },
+            { typeof(string).FullName.GetHashCode(), DrawString },
+            { typeof(IAsset).FullName.GetHashCode(), DrawAsset },
+            { typeof(Actor).FullName.GetHashCode(), DrawActor },
+            { typeof(Component).FullName.GetHashCode(), DrawComponent },
+            { typeof(IList).FullName.GetHashCode(), DrawList }
+        };
+        
         /// Context ->
         public static UI.ImGuiStyle style;
-        public static CsRef groupRef;
-        public static int groupTypeHash;
-        public static int groupAssetIdHash;
-        public static float rectWidth = 0;
+
+        public static ulong groupId {
+            get => Dll.UserInterface.groupId_get(Game.uiRef);
+            set => Dll.UserInterface.groupId_set(Game.uiRef, value);
+        }
+
+        public static int subGroupId {
+            get => Dll.UserInterface.subGroupId_get(Game.uiRef);
+            set => Dll.UserInterface.subGroupId_set(Game.uiRef, value);
+        }
+
+        public static int groupAssetIdHash {
+            get => Dll.UserInterface.groupAssetIdHash_get(Game.uiRef);
+            set => Dll.UserInterface.groupAssetIdHash_set(Game.uiRef, value);
+        }
+
+        public static float rectWidth {
+            get => Dll.UserInterface.rectWidth_get(Game.uiRef);
+            set => Dll.UserInterface.rectWidth_set(Game.uiRef, value);
+        }
+
         public static bool active = true;
         /// <-
         
@@ -217,10 +237,30 @@ namespace Engine
 
         private static TestGUIFields testObj = new TestGUIFields();
 
+        public static Type GetSupportedType(Type type) {
+            if (fieldDrawers.ContainsKey(type.FullName.GetHashCode()))
+                return type;
+
+            if (type.IsEnum)
+                return typeof(Enum);
+
+            bool isAsset = type.GetInterface(nameof(IAsset)) != null;
+            if (isAsset)
+                return typeof(IAsset);
+
+            if (FireWriter.IsComponent(type))
+                return typeof(Component);
+
+            if (FireWriter.IsList(type))
+                return typeof(IList);
+
+            return null;
+        }
+
         public static void Space() { ImGui.Dummy(lineSpacing); }
         public static void HeaderSpace() { ImGui.Dummy(headerSpacing); }
 
-        public static void DrawIntField(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawIntField(string label, IField field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
             ImGui.SetColumnWidth(0, labelWidth);
 
@@ -236,20 +276,20 @@ namespace Engine
             bool changed = false;
 
             if (range == null)
-                changed = ImGui.DragInt($"##{label}_{groupRef}_{groupTypeHash}", ref intValue);
+                changed = ImGui.DragInt($"##{label}_{groupId}_{subGroupId}", ref intValue);
             else
-                changed = ImGui.SliderInt($"##{label}_{groupRef}_{groupTypeHash}", ref intValue, min, max);
+                changed = ImGui.SliderInt($"##{label}_{groupId}_{subGroupId}", ref intValue, min, max);
 
             if (changed) {
                 field.SetValue(intValue);
                 Assets.MakeDirty(groupAssetIdHash);
             }
-
+            
             ImGui.PopItemWidth();
             ImGui.Columns(1);
         }
 
-        public static void DrawFloatField(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawFloatField(string label, IField field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
             ImGui.SetColumnWidth(0, labelWidth);
 
@@ -265,9 +305,9 @@ namespace Engine
             bool changed = false;
 
             if (range == null)
-                changed = ImGui.DragFloat($"##{label}_{groupRef}_{groupTypeHash}", ref floatValue, floatSpeed, min, max);
+                changed = ImGui.DragFloat($"##{label}_{groupId}_{subGroupId}", ref floatValue, floatSpeed, min, max);
             else
-                changed = ImGui.SliderFloat($"##{label}_{groupRef}_{groupTypeHash}", ref floatValue, min, max);
+                changed = ImGui.SliderFloat($"##{label}_{groupId}_{subGroupId}", ref floatValue, min, max);
 
             if (changed) {
                 field.SetValue(floatValue);
@@ -277,7 +317,7 @@ namespace Engine
             ImGui.Columns(1);
         }
 
-        public static void DrawBoolField(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawBoolField(string label, IField field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
             ImGui.SetColumnWidth(0, labelWidth);
 
@@ -286,7 +326,7 @@ namespace Engine
             ImGui.NextColumn();
 
             var boolValue = (bool)field.Value;
-            bool changed = ImGui.Checkbox($"##{label}_{groupRef}_{groupTypeHash}", ref boolValue);
+            bool changed = ImGui.Checkbox($"##{label}_{groupId}_{subGroupId}", ref boolValue);
             if (changed) {
                 field.SetValue(boolValue);
                 Assets.MakeDirty(groupAssetIdHash);
@@ -295,11 +335,11 @@ namespace Engine
             ImGui.Columns(1);
         }
 
-        public static void DrawVector2(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawVector2(string label, IField field, RangeAttribute range = null) {
             bool changed = false;
 
-            string nameX = $"##X_{label}_{groupRef}_{groupTypeHash}";
-            string nameY = $"##Y_{label}_{groupRef}_{groupTypeHash}";
+            string nameX = $"##X_{label}_{groupId}_{subGroupId}";
+            string nameY = $"##Y_{label}_{groupId}_{subGroupId}";
 
             var vecValue = (Vector2)field.Value;
             float min = range != null ? range.fmin : 0;
@@ -353,7 +393,7 @@ namespace Engine
             }
         }
 
-        public static void DrawVector3(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawVector3(string label, IField field, RangeAttribute range = null) {
             bool changed = false;
 
             var vecValue = (Vector3)field.Value;
@@ -362,9 +402,9 @@ namespace Engine
             if (colorAttr != null) {
                 changed = Dll.UI_Inspector.ShowColor3(Game.gameRef, label, ref vecValue);
             } else {
-                string nameX = $"##X_{label}_{groupRef}_{groupTypeHash}";
-                string nameY = $"##Y_{label}_{groupRef}_{groupTypeHash}";
-                string nameZ = $"##Z_{label}_{groupRef}_{groupTypeHash}";
+                string nameX = $"##X_{label}_{groupId}_{subGroupId}";
+                string nameY = $"##Y_{label}_{groupId}_{subGroupId}";
+                string nameZ = $"##Z_{label}_{groupId}_{subGroupId}";
 
                 float min = range != null ? range.fmin : 0;
                 float max = range != null ? range.fmax : 0;
@@ -424,11 +464,11 @@ namespace Engine
             }
         }
 
-        public static void DrawQuaternion(string label, FireYaml.Field field, RangeAttribute range = null) {
-            string nameX = $"##X_{label}_{groupRef}_{groupTypeHash}";
-            string nameY = $"##Y_{label}_{groupRef}_{groupTypeHash}";
-            string nameZ = $"##Z_{label}_{groupRef}_{groupTypeHash}";
-            string nameW = $"##W_{label}_{groupRef}_{groupTypeHash}";
+        public static void DrawQuaternion(string label, IField field, RangeAttribute range = null) {
+            string nameX = $"##X_{label}_{groupId}_{subGroupId}";
+            string nameY = $"##Y_{label}_{groupId}_{subGroupId}";
+            string nameZ = $"##Z_{label}_{groupId}_{subGroupId}";
+            string nameW = $"##W_{label}_{groupId}_{subGroupId}";
 
             var quat = (Quaternion)field.Value;
             float min = range != null ? range.fmin : 0;
@@ -478,25 +518,25 @@ namespace Engine
             }
         }
 
-        public static void DrawString(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawString(string label, IField field, RangeAttribute range = null) {
             var value = (string)field.Value;
 
+            var readOnlyAttr = field.GetCustomAttribute<ReadOnlyAttribute>();
+            var readOnly = readOnlyAttr != null;
+
+            ImGuiInputTextFlags_ flags = 0;
+            if (readOnly)
+                flags |= ImGuiInputTextFlags_._ReadOnly;
+
             ulong ptr = 0;
-            bool changed = Dll.UI_Inspector.ShowText(Game.gameRef, $"{label}_{groupRef}_{groupTypeHash}", value, value.Length, ref ptr);
+            bool changed = Dll.UI_Inspector.ShowText(Game.gameRef, label, $"##{label}_{groupId}_{subGroupId}", value, value.Length, ref ptr, (int)flags);
             if (changed) {
                 field.SetValue(ReadCString(ptr));
                 Assets.MakeDirty(groupAssetIdHash);
             }
         }
 
-        public static void DrawEnum(string label, FireYaml.Field field, RangeAttribute range = null) {
-            if (!field.type.IsEnum)
-                return;
-
-            var values = Enum.GetNames(field.type);
-            string value = Enum.GetName(field.type, field.Value);
-            string newValue = "";
-
+        public static void DrawText(string label, string text) {
             ImGui.Columns(2, "", hasBorder);
             ImGui.SetColumnWidth(0, labelWidth);
 
@@ -505,14 +545,64 @@ namespace Engine
             ImGui.NextColumn();
             ImGui.PushItemWidth(rectWidth - labelWidth - padding);
 
-            if (ImGui.BeginCombo($"##{label}_{groupRef}_{groupTypeHash}", value)) {
+            ImGui.Text(text);
+
+            ImGui.PopItemWidth();
+            ImGui.Columns(1);
+        }
+
+        public static void DrawTextWrapped(string label, string text)
+        {
+            ImGui.Columns(2, "", hasBorder);
+            ImGui.SetColumnWidth(0, labelWidth);
+
+            ImGui.Text(label);
+
+            ImGui.NextColumn();
+            ImGui.PushItemWidth(rectWidth - labelWidth - padding);
+
+            ImGui.TextWrapped(text);
+
+            ImGui.PopItemWidth();
+            ImGui.Columns(1);
+        }
+
+        public static void DrawEnum(string label, IField field, RangeAttribute range = null) {
+            if (!field.type.IsEnum)
+                return;
+
+            var values = Enum.GetNames(field.type);
+            string value = Enum.GetName(field.type, field.Value);
+            string newValue = "";
+
+            var itemSpacing = new sn.Vector2(3, 5);
+
+            ImGui.Columns(2, "", hasBorder);
+            ImGui.SetColumnWidth(0, labelWidth);
+
+            ImGui.Text(label);
+            
+            ImGui.NextColumn();
+            ImGui.PushItemWidth(rectWidth - labelWidth - padding);
+
+            PushEnumPopupStyle();
+            if (ImGui.BeginCombo($"##{label}_{groupId}_{subGroupId}", value, (int)ImGuiComboFlags_._HeightLarge)) {
+                Space();
                 foreach (var item in values) {
-                    if (ImGui.Selectable($"{item}##_{groupRef}_{groupTypeHash}", item == value))
+                    ImGui.PushStyleVar((int)ImGuiStyleVar_._ItemSpacing, in itemSpacing);
+                    ImGui.PushStyleColor((int)ImGuiCol_._Text, new sn.Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+
+                    if (ImGui.Selectable($"  {item}##_{groupId}_{subGroupId}", item == value))
                         newValue = item;
-                    Space();
+
+                    ImGui.PopStyleColor(1);
+                    ImGui.PopStyleVar(1);
                 }
+                Space();
                 ImGui.EndCombo();
             }
+            PopEnumPopupStyle();
+
             if (newValue.Length != 0) {
                 field.SetValue(Enum.Parse(field.type, newValue));
                 Assets.MakeDirty(groupAssetIdHash);
@@ -522,11 +612,7 @@ namespace Engine
             ImGui.Columns(1);
         }
 
-        /// <summary>
-        /// Применяется для автоматического сериалайзера.
-        /// </summary>
-        public static void DrawAsset(string label, FireYaml.Field field, RangeAttribute range = null) {
-            var store = AssetStore.Instance;
+        public static void DrawAsset(string label, IField field, RangeAttribute range = null) {
             var instance = field.Value;
             var iasset = field.Value as FireYaml.IAsset;
 
@@ -544,7 +630,7 @@ namespace Engine
                 iasset = instance as FireYaml.IAsset;
                 field.SetValue(instance);
 
-                var assetId = store.GetAssetGuid(assetIdHash);
+                var assetId = AssetStore.GetAssetGuid(assetIdHash);
 
                 FireYaml.FireReader.InitIAsset(ref instance, assetId, 0);
 
@@ -553,12 +639,7 @@ namespace Engine
             }
         }
 
-        /// <summary>
-        /// Применяется для пользовательских сериалайзеров.
-        /// </summary>
-        public static bool DrawAsset(string label, Type type, int assetIdHash,  out object changedAsset) {
-            var store = AssetStore.Instance;
-
+        public static bool DrawAsset(string label, Type type, int assetIdHash, out object changedAsset) {
             changedAsset = null;
             
             var scriptId = GUIDAttribute.GetGuid(type); // store.GetScriptIdByTypeName(type.FullName);
@@ -570,7 +651,7 @@ namespace Engine
                 changedAsset = FireYaml.FireReader.CreateInstance(type);
                 var iasset = changedAsset as FireYaml.IAsset;
 
-                var assetId = store.GetAssetGuid(assetIdHash);
+                var assetId = AssetStore.GetAssetGuid(assetIdHash);
 
                 FireYaml.FireReader.InitIAsset(ref changedAsset, assetId, 0);
 
@@ -580,7 +661,7 @@ namespace Engine
             return changed;
         }
 
-        public static void DrawActor(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawActor(string label, IField field, RangeAttribute range = null) {
             var actor = field.Value as Engine.Actor;
 
             var csRef = CsRef.NullRef;
@@ -603,7 +684,7 @@ namespace Engine
             }
         }
 
-        public static void DrawComponent(string label, FireYaml.Field field, RangeAttribute range = null) {
+        public static void DrawComponent(string label, IField field, RangeAttribute range = null) {
             var store = AssetStore.Instance;
             var component = field.Value as Engine.Component;
 
@@ -629,25 +710,99 @@ namespace Engine
             }
         }
 
-        public static bool CollapsingHeader(string label, ImGuiTreeNodeFlags_ flags) {
+        public static void DrawList(string label, IField field, RangeAttribute range = null) {
+            var valueType = field.type.GetGenericArguments()[0];
+            var drawerType = GetSupportedType(valueType);
+            if (drawerType == null)
+                return;
+
+            if (field.Value == null)
+                field.SetValue(FireReader.CreateInstance(field.type));
+
+            var list = field.Value as IList;
+            if (list == null)
+                return;
+
+            var drawer = fieldDrawers[drawerType.FullName.GetHashCode()];
+
+            var flags = ImGuiTreeNodeFlags_._Framed | ImGuiTreeNodeFlags_._DefaultOpen;
+            if (CollapsingHeader($" {label}", flags, out var size)) {
+                var textSize = Dll.ImGui.CalcTextSize(" + ");
+
+                var prevRectWidth = rectWidth;
+                rectWidth = prevRectWidth - 25;
+
+                int indexToRemove = -1;
+
+                for (int index = 0; index < list.Count; index++) {
+                    var itemField = new Field(list, valueType, index);
+
+                    var prevPos = GetCursorPos();
+                    drawer.Invoke($"{label}: {index}", itemField);
+                    var nextPos = GetCursorPos();
+
+                    if (m_DrawListButton($" - ##_{groupId}_{subGroupId}_{label}_{index}", size, prevPos))
+                        indexToRemove = index;
+
+                    ImGui.SetCursorPos(nextPos);
+
+                    Space();
+                }
+                rectWidth = prevRectWidth;
+
+                if (indexToRemove >= 0)
+                    list.RemoveAt(indexToRemove);
+
+                if (m_DrawListButton($" + ##_{groupId}_{subGroupId}_{label}_A", size, GetCursorPos())) {
+                    if (valueType.IsValueType)
+                        list.Add(FireReader.CreateInstance(valueType));
+                    else if (valueType == typeof(string))
+                        list.Add("");
+                    else
+                        list.Add(null);
+                }
+            }
+        }
+
+        public static sn.Vector2 GetCursorPos() {
+            var x = ImGui.GetCursorPosX();
+            var y = ImGui.GetCursorPosY();
+
+            return new sn.Vector2(x, y);
+        }
+
+        public static bool m_DrawListButton(string text, Vector3 headerSize, sn.Vector2 cursorPos) {
+            // var textSize = Dll.ImGui.CalcTextSize(text);
+
+            cursorPos.X = headerSize.X - 4;
+            // cursorPos.Y += (headerSize.Y - textSize.Y) / 2;
+
+            ImGui.SetCursorPos(cursorPos);
+
+            // ImGui.PushStyleColor((int)ImGuiCol_._Button, new sn.Vector4(1.0f, 1.0f, 1.0f, 0.2f));
+            var isClicked = ImGui.Button(text);
+            // ImGui.PopStyleColor(1);
+
+            return isClicked;
+        }
+
+        public static bool CollapsingHeader(string label, ImGuiTreeNodeFlags_ flags, out Vector3 size) {
 
             float headerWidth = rectWidth - padding;
 
-            // ImGui.PushStyleVar((int)ImGuiStyleVar_._FrameRounding, 10);
-
-            HeaderSpace();
+            Space();
 
             ImGui.Columns(2, "CollapsingHeader", false);
             ImGui.SetColumnWidth(0, headerWidth);
             ImGui.SetColumnWidth(1, padding);
 
-            bool isOpen = ImGui.CollapsingHeader($"{label}##_{groupRef}_{groupTypeHash}", (int)flags);
-            
+            bool isOpen = ImGui.CollapsingHeader($"{label}##_{groupId}_{subGroupId}", (int)flags);
+            size = Dll.ImGui.GetItemRectSize();
+
             ImGui.NextColumn();
             ImGui.Columns(1);
-            // ImGui.PopStyleVar();
 
-            HeaderSpace();
+            Space();
 
             return isOpen;
         }
@@ -674,5 +829,23 @@ namespace Engine
             return str;
         }
     
+        public static void PushEnumPopupStyle() {
+            ImGui.PushStyleVar((int)ImGuiStyleVar_._WindowPadding, new sn.Vector2( 0.0f, 0.0f ));
+            // ImGui.PushStyleVar((int)ImGuiStyleVar_._PopupRounding, 10.0f);
+            ImGui.PushStyleVar((int)ImGuiStyleVar_._PopupBorderSize, 0.0f);
+            ImGui.PushStyleVar((int)ImGuiStyleVar_._FramePadding, new sn.Vector2( 0.0f, 3.0f ));
+            ImGui.PushStyleVar((int)ImGuiStyleVar_._FrameRounding, 3.0f);
+            ImGui.PushStyleVar((int)ImGuiStyleVar_._ItemSpacing, new sn.Vector2(0.0f, 0.0f ));
+
+            ImGui.PushStyleColor((int)ImGuiCol_._PopupBg, new sn.Vector4( 0.7f, 0.7f ,0.7f ,1.0f ));
+            ImGui.PushStyleColor((int)ImGuiCol_._HeaderHovered, new sn.Vector4( 0.8f, 0.8f ,0.9f ,1.0f ));
+            ImGui.PushStyleColor((int)ImGuiCol_._Header, new sn.Vector4( 0.2f, 0.2f, 0.4f, 0.4f ));
+        }
+
+        public static void PopEnumPopupStyle() {
+            ImGui.PopStyleVar(5);
+            ImGui.PopStyleColor(3);
+        }
+
     }
 }

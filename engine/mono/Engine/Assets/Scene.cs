@@ -274,7 +274,7 @@ namespace Engine {
 
             AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
 
-            var assetPath = AssetStore.Instance.GetAssetPath(assetIdHash);
+            var assetPath = AssetStore.GetAssetPath(assetIdHash);
             Name = Path.GetFileNameWithoutExtension(assetPath);
         }
 
@@ -286,16 +286,16 @@ namespace Engine {
             fileId = 1;
             assetInstance = cppRef.value;
 
-            var filesCount = AssetStore.Instance.GetAssetFilesCount(assetIdHash);
+            var filesCount = AssetStore.GetAssetFilesCount(assetIdHash);
             var writer = new FireWriter(ignoreExistingIds: false, writeNewIds: true, startId: filesCount + 1);
 
-            AssetStore.Instance.WriteAsset(assetIdHash, this, writer);
+            AssetStore.WriteAsset(assetIdHash, this, writer);
         }
 
         public static int cpp_CreateSceneAsset(ulong cpath) {
             var path = Assets.ReadCString(cpath);
 
-            var assetIdHash = AssetStore.Instance.CreateNewAsset(typeof(Scene), path);
+            var assetIdHash = AssetStore.CreateNewAsset(typeof(Scene), path);
 
             return assetIdHash;
         }

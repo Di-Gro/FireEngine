@@ -12,7 +12,6 @@ namespace Engine {
         public static Action OnMouseMove;
         public static Action OnWheelMove;
 
-
         public static CppRef s_hotkeysRef;
 
         public static Vector2 MousePosition => Dll.Input.MousePosition(s_hotkeysRef);
@@ -23,6 +22,9 @@ namespace Engine {
         public static bool GetButtonDown(Key key) => Dll.Input.GetButtonDown(s_hotkeysRef, (int)key);
         public static bool GetButtonUp(Key key) => Dll.Input.GetButtonUp(s_hotkeysRef, (int)key);
         public static bool GetButton(Key key) => Dll.Input.GetButton(s_hotkeysRef, (int)key);
+
+        public static bool GetButtonDownEd(Key key) => Dll.Input.GetButtonDownEd(s_hotkeysRef, (int)key);
+        public static bool GetButtonDownEd(Key key, Key modifier) => Dll.Input.GetButtonDownEd2(s_hotkeysRef, (int)key, (int)modifier);
 
 
         public static void OnUpdate() {

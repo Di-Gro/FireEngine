@@ -231,7 +231,7 @@ void MeshAsset::ReloadMaterials() {
 
 Material* MeshAsset::CreateDynamicMaterial(const std::string& name, const fs::path& shaderPath) {
 	auto* render = m_game->render();
-	auto* images = m_game->imageAsset();
+	//auto* images = m_game->imageAsset();
 	auto* shaderAsset = m_game->shaderAsset();
 
 	auto matAssetId = name + std::to_string(Random().Int());
@@ -373,6 +373,17 @@ void MeshAsset::m_InitDefaultMaterials() {
 
 	auto hash = std::hash<std::string>()(materialDefault);
 
+	if (Image::Default == nullptr)
+		Image::Default = images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
+
+	if (Texture::Default == nullptr) {
+		auto assetId = materialDefault + "deffuseTex";
+		auto defaultTex = m_NewTextureAsset(assetId);
+
+		*defaultTex = Texture::CreateFromImage(render, Image::Default);
+
+		Texture::Default = defaultTex;
+	}
 	if (m_materials.count(hash) == 0) {
 		auto* mat = m_NewMaterialAsset(m_game->assets()->CreateTmpAssetId());
 		m_materials.insert({ hash, mat });
@@ -380,15 +391,8 @@ void MeshAsset::m_InitDefaultMaterials() {
 		mat->name(materialDefault);
 		mat->shader = shader;
 
-		const auto* image = images->Get(ImageAsset::RUNTIME_IMG_2X2_RGBA_1111);
-
-		auto assetId = materialDefault + "deffuseTex";
-		auto deffuseTex = m_NewTextureAsset(assetId);
-
-		*deffuseTex = Texture::CreateFromImage(render, image);
-
-		mat->textures.push_back(deffuseTex);
-		mat->resources.emplace_back(ShaderResource::Create(deffuseTex));
+		mat->textures.push_back(Texture::Default);
+		mat->resources.emplace_back(ShaderResource::Create(Texture::Default));
 	}
 }
 
