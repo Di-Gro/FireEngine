@@ -33,7 +33,7 @@ void SceneEditorWindow::AfterDrawScene() {
 		auto vpos = viewportPosition();
 		auto vsize = viewportSize();
 
-		game()->window()->ClipCursor(vpos.x, vpos.y + 23, vsize.x, vsize.y);
+		game()->window()->ClipCursor(vpos.x + 4, vpos.y + 20, vsize.x - 8, vsize.y - 5);
 	}
 	else if (game()->window()->IsCursorClipped()) {
 		game()->window()->UnclipCursor();

@@ -40,7 +40,6 @@ public class PlayerCamera : CSComponent {
         if (!m_camera.IsAttached)
             return;
 
-
         var rot = Quaternion.CreateFromAxisAngle(Vector3.Up, -m_angles.X)
                 * Quaternion.CreateFromAxisAngle(Vector3.Right, m_angles.Y);
 

@@ -9,8 +9,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) {
-    using Iwindow = DiGro::GameFramework::IWindow;
-    IWindow* window = (Iwindow*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+    Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
     if(window != nullptr)
         return window->MassageHandler(hwnd, umessage, wparam, lparam);

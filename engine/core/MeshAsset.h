@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "FileSystem.h"
 #include "Mesh.h"
 #include "Refs.h"
 #include "CSBridge.h"
@@ -79,7 +78,6 @@ public:
 
 	void Load(fs::path path);
 	void Load(int hash);
-	void LoadScene(fs::path path, std::vector<Actor*>* objects = nullptr);
 
 	void ReloadMaterials();
 
@@ -92,8 +90,6 @@ public:
 
 	const Material* GetStaticMaterial(const std::string& name);
 	const Material* GetStaticMaterial(const tinyobj::material_t& tinyMat, const std::string& directory);
-
-	//Material* CreateMaterial(const std::string& name, const fs::path& shaderPath = MeshAsset::shaderDefault);
 
 	Material* CreateDynamicMaterial(const Material*);
 	Material* CreateDynamicMaterial(const std::string& name, const fs::path& shaderPath = Assets::ShaderDefault);
@@ -115,8 +111,6 @@ private:
 	Mesh4::Vertex m_ReadVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index);
 
 	void m_InitMaterials(Mesh4* mesh, const std::vector<tinyobj::material_t>& materials, const std::string& directory);
-
-	Mesh4* m_GetMeshMutable(fs::path path);
 
 	Material* m_LoadMaterial(int hash, const tinyobj::material_t& tinyMat, const std::string& dir);
 

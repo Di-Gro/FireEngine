@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <chrono>
+#include <filesystem>
 
 #include "imgui\imgui.h"
 #include "imgui\imgui_impl_dx11.h"
@@ -28,14 +29,11 @@
 
 #include "RenderTarget.h"
 #include "FPSCounter.h"
-#include "GameController.h"
 #include "DirectionLight.h"
 #include "FlyingCamera.h"
 #include "EditorCamera.h"
 #include "ImageComponent.h"
 #include "MeshComponent.h"
-#include "Player.h"
-#include "PlayerCamera.h"
 #include "AmbientLight.h"
 #include "LinedPlain.h"
 
@@ -47,7 +45,6 @@
 #include "RenderPassUI.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include "TestLightComponent.h"
 #include "Material.h"
 
 #include "SimpleMath.h"
@@ -56,6 +53,7 @@
 
 #include "UI\SceneEditorWindow.h"
 
+namespace fs = std::filesystem;
 
 std::vector<std::string> game_shaderPaths = {
 	Assets::ShaderVertexColor,
@@ -201,17 +199,6 @@ void Game::Run() {
 		fs::remove(editorSceneAssetPath);
 
 	editorSceneAssetIdHash = SceneMenu::Create(this, editorSceneAssetName, true);
-
-	//PushScene(m_editorScene);
-
-	//auto meshcomp = currentScene()->CreateActor("Half Sphere")->AddComponent<MeshComponent>(true);
-	//auto form = Forms4::HalfSphereLined(0.5f, 12, 12);
-	//meshcomp->AddShape(&form.verteces, &form.indexes);
-	//meshcomp->mesh()->topology = form.topology;
-	//meshcomp->meshScale = {10,10,10};
-	//
-	//currentScene()->CreateActor("GameController")->AddComponent<GameController>();
-	//PopScene();
 
 	MSG msg = {};
 
@@ -533,7 +520,7 @@ void Game::ToggleGameFocus() {
 			scene->mainCamera(nullptr);
 		}
 		else {
-			ui()->SelectedActor(nullptr);
+			//ui()->SelectedActor(nullptr);
 			scene->AttachPlayerCamera();
 		}
 

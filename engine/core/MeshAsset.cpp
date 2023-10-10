@@ -5,7 +5,9 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <filesystem>
 
+namespace fs = std::filesystem;
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
@@ -23,7 +25,6 @@
 #include "Material.h"
 
 #include "MeshComponent.h"
-#include "Attachable.h"
 #include "Forms.h"
 #include "Random.h"
 
@@ -140,12 +141,12 @@ const Mesh4* MeshAsset::GetMesh(int hash) {
 	return (Mesh4*)m_game->assets()->Get(hash);
 }
 
-Mesh4* MeshAsset::m_GetMeshMutable(fs::path path) {
-	auto hash = CreateHash(path);
-
-	m_Load(hash, path);
-	return(Mesh4*)m_game->assets()->Get(hash);
-}
+//Mesh4* MeshAsset::m_GetMeshMutable(fs::path path) {
+//	auto hash = CreateHash(path);
+//
+//	m_Load(hash, path);
+//	return(Mesh4*)m_game->assets()->Get(hash);
+//}
 
 const std::vector<const Material*>* MeshAsset::GetMaterials(fs::path path) {
 	auto hash = CreateHash(path);
@@ -489,7 +490,7 @@ Material* MeshAsset::m_LoadMaterial(
 	if (tinyMat.diffuse_texname != "") {
 		deffuseTex->name = directory + "/" + tinyMat.diffuse_texname;
 
-		if (!FileSystem::File::Exist(deffuseTex->name)) {
+		if (!fs::exists(deffuseTex->name)) {
 			std::cout << "Warning! MeshAsset: Image not found (" << deffuseTex->name << ") " << std::endl;
 			deffuseTex->name.clear();
 		}
@@ -506,142 +507,6 @@ Material* MeshAsset::m_LoadMaterial(
 	mat.resources.emplace_back(ShaderResource::Create(deffuseTex));
 
 	return material;
-}
-
-static void s_LoadMeshScales(std::ifstream& file, std::map<std::string, Vector3>* meshScales) {
-	std::string data((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
-	auto jdata = nlohmann::json::parse(data);
-
-	for (auto& jitem : jdata["meshes"].items()) {
-		auto jscale = jitem.value()["scale"];
-		Vector3 scale;
-		scale.x = jscale["x"].get<float>();
-		scale.y = jscale["y"].get<float>();
-		scale.z = jscale["z"].get<float>();
-
-		meshScales->insert({ jitem.key(), scale });
-	}
-}
-
-static struct ObjectData {
-	std::string obj;
-	std::string name;
-	Vector3 pos;
-	Vector3 rot;
-	Vector3 scale;
-};
-
-static struct SceneData {
-	std::string sceneObj;
-	std::vector<ObjectData> objects;
-};
-
-static void s_LoadSceneData(std::ifstream& file, SceneData* scene) {
-	std::string data((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
-	auto jdata = nlohmann::json::parse(data);
-
-	scene->sceneObj = jdata["staticMesh"].get<std::string>();
-
-	for (auto& jitem : jdata["gameObjects"]) {
-		auto jobject = jitem["gameObject"];
-		auto& data = scene->objects.emplace_back();
-
-		data.obj = jobject["obj"].get<std::string>();
-		data.name = jobject["name"].get<std::string>();
-
-		auto jpos = jobject["pos"];
-		data.pos.x = jpos["x"].get<float>();
-		data.pos.y = jpos["y"].get<float>();
-		data.pos.z = jpos["z"].get<float>();
-
-		auto jrot = jobject["rot"];
-		data.rot.x = jrot["x"].get<float>();
-		data.rot.y = jrot["y"].get<float>();
-		data.rot.z = jrot["z"].get<float>();
-
-		auto jscale = jobject["scale"];
-		data.scale.x = jscale["x"].get<float>();
-		data.scale.y = jscale["y"].get<float>();
-		data.scale.z = jscale["z"].get<float>();
-	}
-}
-
-void MeshAsset::LoadScene(fs::path levelDir, std::vector<Actor*>* objects) {
-	auto dir = levelDir.string();
-	auto sceneJsonPath = levelDir.string() + "/scene.json";
-	auto meshesJsonPath = levelDir.string() + "/meshes.json";
-
-	std::ifstream fscene(sceneJsonPath);
-	std::ifstream fmeshes(meshesJsonPath);
-
-	if (!fscene)
-		std::cout << "Can't load scene: file not open (" << sceneJsonPath << ")\n";
-
-	if (!fmeshes)
-		std::cout << "Can't load scene: file not open (" << meshesJsonPath << ")\n";
-
-	if (!fscene || !fmeshes)
-		return;
-
-	std::map<std::string, Vector3> meshScales;
-	SceneData scene;
-
-	s_LoadMeshScales(fmeshes, &meshScales);
-	s_LoadSceneData(fscene, &scene);
-
-	auto sceneMeshPath = dir + "/" + scene.sceneObj;
-	Load(sceneMeshPath);
-
-	auto sceneObj = m_game->currentScene()->CreateActor("scene");
-	sceneObj->AddComponent<MeshComponent>()->mesh(GetMesh(sceneMeshPath));
-
-	if (objects != nullptr)
-		objects->push_back(sceneObj);
-
-	for (auto& data : scene.objects) {
-		auto meshPath = dir + "/" + data.obj;
-		Load(meshPath);
-
-		auto meshComp = m_game->currentScene()->CreateActor(data.name)->AddComponent<MeshComponent>();
-		meshComp->mesh(GetMesh(meshPath));
-
-		meshComp->localPosition(data.pos);
-		meshComp->localRotation(data.rot);
-		meshComp->localScale(data.scale / meshScales[data.name + ".obj"]);
-
-		DirectX::BoundingBox box;
-		auto mesh = m_GetMeshMutable(meshPath);
-
-		for (int i = 0; i < mesh->shapeCount(); ++i) {
-			auto shape = mesh->GetShape(i);
-
-			auto p = (DirectX::XMFLOAT3*)&shape->verteces->position;
-			auto count = shape->vertecesSize;
-
-			DirectX::BoundingBox shapeBox;
-			DirectX::BoundingBox::CreateFromPoints(shapeBox, count, p, sizeof(Mesh4::Vertex));
-			DirectX::BoundingBox::CreateMerged(box, shapeBox, box);
-		}
-		auto hs = box.Extents;
-		float radius = (hs.x + hs.y + hs.z) / 3;
-
-		//auto attachable = m_game->CreateActor("Attachable")->AddComponent<Attachable>();
-		//attachable->actor()->parent(meshComp->actor());
-		auto attachable = meshComp->actor()->AddComponent<Attachable>();
-
-		//attachable->localPosition(box.Center);
-		attachable->boundCenter = box.Center;
-
-		attachable->boundRadius = radius;
-		attachable->attachParent = true;
-		attachable->showCenter = false;
-		attachable->showBound = false;
-
-		if (objects != nullptr) {
-			objects->push_back(meshComp->actor());
-			objects->push_back(attachable->actor());
-		}
-	}
 }
 
 FUNC(MeshAsset, Load, void)(CppRef meshAssetRef, int assetHash) {

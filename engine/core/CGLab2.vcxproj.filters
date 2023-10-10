@@ -87,9 +87,6 @@
     <ClCompile Include="InputDevice.cpp">
       <Filter>Not Components</Filter>
     </ClCompile>
-    <ClCompile Include="LineMath.cpp">
-      <Filter>Not Components</Filter>
-    </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Not Components</Filter>
     </ClCompile>
@@ -99,16 +96,7 @@
     <ClCompile Include="FlyingCamera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="LinedPlain.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformTest.cpp">
       <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="MeshAsset.cpp">
@@ -116,27 +104,6 @@
     </ClCompile>
     <ClCompile Include="ImageAsset.cpp">
       <Filter>Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="FileSystem.cpp">
-      <Filter>Not Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerCamera.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Attachable.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AxisDrawer.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AxisDrawer.h">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="SimpleMath.cpp">
       <Filter>Not Components</Filter>
@@ -204,9 +171,6 @@
     <ClCompile Include="RenderDevice.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowMapRender.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="Lighting.cpp">
       <Filter>Render\Lighting</Filter>
     </ClCompile>
@@ -239,9 +203,6 @@
     </ClCompile>
     <ClCompile Include="OpaquePass.cpp">
       <Filter>Render\Render Passes</Filter>
-    </ClCompile>
-    <ClCompile Include="Tmp.cpp">
-      <Filter>Not Components</Filter>
     </ClCompile>
     <ClCompile Include="RenderTarget.cpp">
       <Filter>Render\Resources</Filter>
@@ -277,9 +238,6 @@
       <Filter>Render\Lighting</Filter>
     </ClCompile>
     <ClCompile Include="SpotLight.cpp">
-      <Filter>Render\Lighting</Filter>
-    </ClCompile>
-    <ClCompile Include="TestLightComponent.cpp">
       <Filter>Render\Lighting</Filter>
     </ClCompile>
     <ClCompile Include="UI\UI_BarMenu.cpp">
@@ -437,16 +395,10 @@
     <ClInclude Include="Game.h">
       <Filter>Not Components</Filter>
     </ClInclude>
-    <ClInclude Include="IApp.h">
-      <Filter>Not Components</Filter>
-    </ClInclude>
     <ClInclude Include="InputDevice.h">
       <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="IWin32InputHandler.h">
-      <Filter>Not Components</Filter>
-    </ClInclude>
-    <ClInclude Include="IWindow.h">
       <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="Keys.h">
@@ -467,9 +419,6 @@
     <ClInclude Include="HotKeys.h">
       <Filter>Not Components</Filter>
     </ClInclude>
-    <ClInclude Include="LineMath.h">
-      <Filter>Not Components</Filter>
-    </ClInclude>
     <ClInclude Include="Math.h">
       <Filter>Not Components</Filter>
     </ClInclude>
@@ -488,22 +437,7 @@
     <ClInclude Include="FlyingCamera.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="LinedPlain.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="RotatorComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="ScalerComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformTest.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="MeshAsset.h">
@@ -512,23 +446,8 @@
     <ClInclude Include="ImageAsset.h">
       <Filter>Assets</Filter>
     </ClInclude>
-    <ClInclude Include="FileSystem.h">
-      <Filter>Not Components</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleMath.h">
       <Filter>Not Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerCamera.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Attachable.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>Json</Filter>
@@ -540,9 +459,6 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ImageComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TestComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ClassInfo.h">
@@ -605,9 +521,6 @@
     <ClInclude Include="RenderDevice.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowMapRender.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="Lighting.h">
       <Filter>Render\Lighting</Filter>
     </ClInclude>
@@ -640,9 +553,6 @@
     </ClInclude>
     <ClInclude Include="OpaquePass.h">
       <Filter>Render\Render Passes</Filter>
-    </ClInclude>
-    <ClInclude Include="Tmp.h">
-      <Filter>Not Components</Filter>
     </ClInclude>
     <ClInclude Include="RenderTarget.h">
       <Filter>Render\Resources</Filter>
@@ -687,9 +597,6 @@
       <Filter>Render\Lighting</Filter>
     </ClInclude>
     <ClInclude Include="SpotLight.h">
-      <Filter>Render\Lighting</Filter>
-    </ClInclude>
-    <ClInclude Include="TestLightComponent.h">
       <Filter>Render\Lighting</Filter>
     </ClInclude>
     <ClInclude Include="UI\UI_BarMenu.h">

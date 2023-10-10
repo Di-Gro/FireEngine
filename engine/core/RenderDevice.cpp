@@ -10,7 +10,6 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 
-#include "IWindow.h"
 #include "Mesh.h"
 #include "Material.h"
 

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <filesystem>
+
 #include "wrl.h_d3d11_alias.h"
-#include "FileSystem.h"
+
+namespace fs = std::filesystem;
 
 class Shader {
 public:

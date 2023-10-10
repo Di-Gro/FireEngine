@@ -7,7 +7,7 @@
 #include "imgui\TextEditor\TextEditor.h"
 
 class CameraComponent;
-class Player;
+//class Player;
 class ShadowPass;
 class DirectionLight;
 class AmbientLight;

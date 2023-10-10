@@ -59,7 +59,7 @@ void RenderPassUI::OnUpdate() {
 	//ImGui::End();
 
 	auto input = game()->hotkeys();
-	if (input->GetButtonDown(Keys::T) && input->GetButton(Keys::Ctrl)) {
+	if (input->GetButtonDownEd(Keys::T, Keys::Ctrl)) {
 		m_editorOpened = true;
 		game()->inFocus = false;
 	}

@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include <set>
 
-#include "FileSystem.h"
 #include "Refs.h"
 #include "CSBridge.h"
 #include "IAsset.h"

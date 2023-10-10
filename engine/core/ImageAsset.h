@@ -2,12 +2,14 @@
 
 #include <string>
 #include <unordered_map>
+#include <filesystem>
 
 #include "wrl.h_d3d11_alias.h"
-#include "FileSystem.h"
 #include "CSBridge.h"
 
 #include "IAsset.h"
+
+namespace fs = std::filesystem;
 
 class Image : public IAsset {
 public:

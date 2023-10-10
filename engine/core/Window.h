@@ -1,5 +1,4 @@
 #pragma once
-#include "IWindow.h"
 
 #include <iostream>
 #include <windows.h>
@@ -8,12 +7,11 @@
 #include "IWin32InputHandler.h"
 #include <SimpleMath.h>
 
-using namespace DiGro::GameFramework;
 using namespace DirectX::SimpleMath;
 
 class Game;
 
-class Window : public IWindow {
+class Window {
 public:
     bool sizeChanged = false;
 
@@ -39,18 +37,18 @@ public:
     void Init(Game* game, LPCWSTR name, int width, int height);
     void Destroy();
 
-    int GetHeight() override { return m_height; }
-    int GetWidth() override { return m_width; }
-    HINSTANCE GetHInstance() override { return m_hInstance; }
-    WNDCLASSEX GetWindowClass() override { return m_wc; }
-    HWND GetHWindow() override { return m_hWnd; }
+    int GetHeight() { return m_height; }
+    int GetWidth() { return m_width; }
+    HINSTANCE GetHInstance() { return m_hInstance; }
+    WNDCLASSEX GetWindowClass() { return m_wc; }
+    HWND GetHWindow() { return m_hWnd; }
 
     void SetInputHandler(IWin32InputHandler* handler) { m_inputHandler = handler; };
 
-    void Create() override;
-    void Exit(int code) override;
+    void Create();
+    void Exit(int code);
 
-    LRESULT MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) override;
+    LRESULT MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam);
 
     void ClipCursor(float x, float y, float width, float height);
     void UnclipCursor();

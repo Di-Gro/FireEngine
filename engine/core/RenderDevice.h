@@ -4,7 +4,6 @@
 
 #include "wrl.h_d3d11_alias.h"
 
-#include "IWindow.h"
 #include "Shader.h"
 #include "Mesh.h"
 #include "ImageAsset.h"
