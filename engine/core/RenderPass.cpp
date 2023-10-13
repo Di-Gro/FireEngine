@@ -2,16 +2,19 @@
 
 #include "Game.h"
 #include "Render.h"
+#include "Shader.h"
 #include "RenderTarget.h"
 #include "UI/UserInterface.h"
 #include "Actor.h"
 #include "ShaderResource.h"
+#include "MaterialResource.h"
 #include "DepthStencil.h"
 #include "CameraComponent.h"
 #include "ActorCBuffer.h"
 #include "EditorCBuffer.h"
-//#include "UI\UserInterface.h"
+#include "ShaderStructs.h"
 
+using namespace ShaderStructs;
 
 void RenderPass::Init(Game* game) {
 	m_render = game->render();
@@ -121,7 +124,7 @@ inline void RenderPass::EndDraw() {
 	context->PSSetSamplers(0, SRCount, samplers);
 }
 
-void RenderPass::PrepareMaterial(const Material* material) {
+void RenderPass::PrepareMaterial(const MaterialResource* material) {
 	m_PrepareMaterialResources(material);
 	m_SetShader(material);
 	m_SetMaterialConstBuffer(material);
@@ -129,18 +132,18 @@ void RenderPass::PrepareMaterial(const Material* material) {
 	m_render->context()->RSSetState(m_render->GetRastState(material));
 }
 
-void RenderPass::m_PrepareMaterialResources(const Material* material) {
+void RenderPass::m_PrepareMaterialResources(const MaterialResource* material) {
 	auto* context = m_render->context();
 
-	for (int i = 0; i < material->resources.size(); ++i) {
-		auto& resource = material->resources[i];
+	for (int i = 0; i < material->textures.size(); ++i) {
+		auto& resource = material->textures[i];
 
 		context->PSSetShaderResources(SRCount + i, 1, resource.getRef());
 		context->PSSetSamplers(SRCount + i, 1, resource.samplerRef());
 	}
 }
 
-void RenderPass::m_SetShader(const Material* material) {
+void RenderPass::m_SetShader(const MaterialResource* material) {
 	auto* context = m_render->context();
 	auto* shader = material->shader;
 		
@@ -153,14 +156,14 @@ void RenderPass::m_SetShader(const Material* material) {
 
 }
 
-void RenderPass::m_SetMaterialConstBuffer(const Material* material) {
+void RenderPass::m_SetMaterialConstBuffer(const MaterialResource* material) {
 	auto* context = m_render->context();
 
 	context->PSSetConstantBuffers(PASS_CB_MATERIAL_PS, 1, material->materialConstBuffer.GetAddressOf());
 
 	D3D11_MAPPED_SUBRESOURCE res = {};
 	context->Map(material->materialConstBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
-	memcpy(res.pData, &material->data, sizeof(Material::Data));
+	memcpy(res.pData, &material->data, sizeof(MaterialResource::Data));
 	context->Unmap(material->materialConstBuffer.Get(), 0);
 }
 

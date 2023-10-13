@@ -1,25 +1,33 @@
-#include "Mesh.h"
+#include "MeshResource.h"
+
+#include "tiny_obj_loader.h"
 
 #include "Game.h"
 #include "Assets.h"
-#include "MeshAsset.h"
+#include "MeshAssets.h"
 #include "Render.h"
 #include "RenderPass.h"
-
 #include "DirectionLight.h"
 #include "CameraComponent.h"
+#include "ShaderStructs.h"
 
-/// ¬ HLSL пол€ структур выравниваютс€ по 16 байт 
-/// и упаковываютс€ в прошлые 16 байт, если вмещаютс€.
+using namespace ShaderStructs;
 
-
-Mesh4::Mesh4(const Mesh4& other) {
-	this->operator=(other);
+MeshResource::MeshResource(const MeshResource& other) {
+	*this = other;
 }
 
-Mesh4& Mesh4::operator=(const Mesh4& other) {
+MeshResource::MeshResource(MeshResource&& other) noexcept {
+	*this = std::move(other);
+}
+
+MeshResource& MeshResource::operator=(const MeshResource& other) {
 	if (&other == nullptr || &other == this)
 		return *this;
+
+	topology = other.topology;
+	version = other.version;
+	m_render = other.m_render;
 
 	for (auto& shape : other.m_shapes) {
 		std::vector<Vertex> verteces;
@@ -39,11 +47,25 @@ Mesh4& Mesh4::operator=(const Mesh4& other) {
 	return *this;
 }
 
-Mesh4::~Mesh4() {
+MeshResource& MeshResource::operator=(MeshResource&& other) noexcept {
+	if (this == &other)
+		return *this;
+
+	topology = other.topology;
+	version = other.version;
+	m_render = other.m_render;
+	m_shapes = std::move(other.m_shapes);
+
+	other.m_render = nullptr;
+
+	return *this;
+}
+
+MeshResource::~MeshResource() {
 	Release();
 }
 
-void Mesh4::Release() {
+void MeshResource::Release() {
 	for (auto& shape : m_shapes) {
 		if (shape.verteces != nullptr)
 			delete[] shape.verteces;
@@ -54,7 +76,7 @@ void Mesh4::Release() {
 	m_shapes.clear();
 }
 
-void Mesh4::AddShape(
+void MeshResource::AddShape(
 	Vertex* verteces,
 	int vertecesLength,
 	int* indeces,
@@ -84,7 +106,7 @@ void Mesh4::AddShape(
 }
 
 
-void Mesh4::AddShape(
+void MeshResource::AddShape(
 	std::vector<Vertex>* verteces,
 	std::vector<int>* indeces,
 	Render* render,
@@ -94,7 +116,7 @@ void Mesh4::AddShape(
 
 	m_shapes.emplace_back();
 	auto& shape = m_shapes.back();
-		
+
 	shape.verteces = new Vertex[verteces->size()];
 	std::copy(verteces->begin(), verteces->end(), shape.verteces);
 
@@ -111,7 +133,7 @@ void Mesh4::AddShape(
 	m_InitShape(shape);
 }
 
-void Mesh4::m_InitShape(Mesh4::Shape& shape) {
+void MeshResource::m_InitShape(MeshShape& shape) {
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -153,12 +175,12 @@ void Mesh4::m_InitShape(Mesh4::Shape& shape) {
 	m_render->device()->CreateBuffer(&constBufferDesc, nullptr, shape.meshCBuffer.GetAddressOf());
 }
 
-void Mesh4::Draw(const DynamicShapeData& data) const {
+void MeshResource::Draw(const MeshShaderData& data) const {
 	for (int index = 0; index < m_shapes.size(); ++index)
 		DrawShape(data, index);
 }
 
-void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
+void MeshResource::DrawShape(const MeshShaderData& data, int index) const {
 	auto* context = data.render->context();
 	auto& shape = m_shapes[index];
 
@@ -176,7 +198,7 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	/// Mesh: SetConstBuffers
 	context->VSSetConstantBuffers(PASS_CB_MESH_VS, 1, shape.meshCBuffer.GetAddressOf());
 	context->PSSetConstantBuffers(PASS_CB_MESH_PS, 1, shape.meshCBuffer.GetAddressOf());
-	
+
 	D3D11_MAPPED_SUBRESOURCE res = {};
 	context->Map(shape.meshCBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &res);
 
@@ -192,91 +214,16 @@ void Mesh4::DrawShape(const DynamicShapeData& data, int index) const {
 	context->DrawIndexed(shape.indecesSize, 0, 0);
 }
 
-void ScreenQuad::Init(Render* render, const Shader* shader) {
-	m_render = render;
-	this->shader = shader;
 
-	D3D11_SAMPLER_DESC sampleDesc = {};
-	sampleDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampleDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampleDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampleDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampleDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sampleDesc.BorderColor[0] = 1.0f;
-	sampleDesc.BorderColor[1] = 0.0f;
-	sampleDesc.BorderColor[2] = 0.0f;
-	sampleDesc.BorderColor[3] = 1.0f;
-	sampleDesc.MaxLOD = INT_MAX;
-
-	m_render->device()->CreateSamplerState(&sampleDesc, m_sampler.GetAddressOf());
-
-	CD3D11_RASTERIZER_DESC rastDesc = {};
-	rastDesc.CullMode = D3D11_CULL_FRONT;
-	rastDesc.FillMode = D3D11_FILL_SOLID;
-
-	m_render->device()->CreateRasterizerState(&rastDesc, rastState.GetAddressOf());
-}
-
-void ScreenQuad::Release() {
-	if (m_sampler.Get() != nullptr)
-		m_sampler.ReleaseAndGetAddressOf();
-
-	if (rastState.Get() != nullptr)
-		m_sampler.ReleaseAndGetAddressOf();
-}
-
-void ScreenQuad::Draw() const {
-	auto* context = m_render->context();
-	auto* camera = m_render->renderer()->camera();
-
-	/// Material: SetResources
-	ID3D11ShaderResourceView* resources[] = { deffuse != nullptr ? deffuse->get() : nullptr };
-	context->PSSetShaderResources(PASS_R_MATERIAL_PS, 1, resources);
-	context->PSSetSamplers(PASS_R_MATERIAL_PS, 1, m_sampler.GetAddressOf());
-
-	/// Material: SetShader
-	context->IASetInputLayout(nullptr);
-	context->VSSetShader(shader->vertex.Get(), nullptr, 0);
-	context->PSSetShader(shader->pixel.Get(), nullptr, 0);
-
-	/// Material: SetMaterialConstBuffer 
-	/// Material: SetRasterizerState
-	/// Mesh: SetTopology
-	context->IASetPrimitiveTopology(topology);
-
-	/// Mesh: SetInput
-	context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
-
-	/// Mesh: SetConstBuffers
-	/// Mesh: Draw
-	context->Draw(4, 0);
-}
-
-void ScreenQuad::Draw2() const {
-	auto* context = m_render->context();
-	auto* camera = m_render->renderer()->camera();
-
-	/// Mesh: SetTopology
-	context->IASetPrimitiveTopology(topology);
-
-	/// Mesh: SetInput
-	context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
-
-	/// Mesh: SetConstBuffers
-	/// Mesh: Draw
-	context->Draw(4, 0);
-}
-
-Mesh4::Shape* Mesh4::GetShape(int index) {
+MeshShape* MeshResource::GetShape(int index) {
 	return &m_shapes[index];
 }
 
-const Mesh4::Shape* Mesh4::GetConstShape(int index) const
-{
+const MeshShape* MeshResource::GetConstShape(int index) const {
 	return &m_shapes[index];
 }
 
-int Mesh4::maxMaterialIndex() const {
+int MeshResource::maxMaterialIndex() const {
 	int maxIndex = 0;
 	for (int i = 0; i < m_shapes.size(); i++) {
 		if (m_shapes[i].materialIndex > maxIndex)
@@ -286,45 +233,92 @@ int Mesh4::maxMaterialIndex() const {
 }
 
 
-DEF_FUNC(Mesh4, ShapeCount, int)(CppRef mesh4Ref) {
-	if (mesh4Ref == 0)
-		return Mesh4().shapeCount();
+MeshResource MeshResource::CreateFromObj(Render* render, const fs::path& path) {
+	auto dir = path.parent_path().string();
 
-	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->shapeCount();
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+
+	std::string warn, err;
+	bool res = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.string().c_str(), dir.c_str());
+	assert(res);
+
+	MeshResource meshRes;
+
+	s_InitMesh(render , &meshRes, attrib, shapes);
+
+	if (err != "")
+		std::cout << err << std::endl;
+
+	//if (warn != "")
+	//	std::cout << warn << std::endl;
+	
+	return meshRes;
 }
 
-DEF_FUNC(Mesh4, MaxMaterialIndex, int)(CppRef mesh4Ref) {
-	if (mesh4Ref == 0)
-		return Mesh4().maxMaterialIndex();
+void MeshResource::s_InitShape(
+	Render* render,
+	MeshResource* mesh,
+	const tinyobj::attrib_t& attrib,
+	const tinyobj::shape_t& shape)
+{
+	auto& verts = attrib.vertices;
 
-	return CppRefs::ThrowPointer<Mesh4>(mesh4Ref)->maxMaterialIndex();
+	std::vector<Vertex> verteces;
+	std::vector<int> indeces;
+
+	verteces.reserve(verts.size() / 3);
+	indeces.reserve(shape.mesh.indices.size());
+
+	int faceSize = 3;
+	for (int i = 0; i < shape.mesh.indices.size(); i += faceSize) {
+		auto vertex1 = s_ReadVertex(attrib, shape.mesh.indices[i + 0]);
+		auto vertex2 = s_ReadVertex(attrib, shape.mesh.indices[i + 1]);
+		auto vertex3 = s_ReadVertex(attrib, shape.mesh.indices[i + 2]);
+
+		verteces.insert(verteces.end(), { vertex1 , vertex2, vertex3 });
+		indeces.insert(indeces.end(), { i + 2, i + 1, i + 0 });
+	}
+
+	int matIndex = shape.mesh.material_ids[0];
+	matIndex = matIndex >= 0 ? matIndex : 0;
+
+	mesh->AddShape(&verteces, &indeces, render, matIndex);
 }
 
-DEF_PUSH_ASSET(Mesh4);
-
-DEF_FUNC(Mesh4, Init, void)(CppRef gameRef, CppRef meshRef, const char* path) {
-	auto* game = CppRefs::ThrowPointer<Game>(gameRef);
-	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
-
-	game->meshAsset()->InitMesh(mesh, path);
-	mesh->version++;
-}
-
-DEF_FUNC(Mesh4, materials_set, void)(CppRef meshRef, size_t* cppRefs, int count) {
-	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
-
-	mesh->f_staticMaterials.clear();
-
-	auto ptr = cppRefs;
-	for (int i = 0; i < count; i++, ptr++) {
-		auto cppRef = RefCpp(*ptr);
-		auto* material = CppRefs::ThrowPointer<Material>(cppRef);
-
-		mesh->f_staticMaterials.push_back(material);
+void MeshResource::s_InitMesh(
+	Render* render,
+	MeshResource* mesh,
+	const tinyobj::attrib_t& attrib,
+	const std::vector<tinyobj::shape_t>& shapes)
+{
+	for (auto& shape : shapes) {
+		s_InitShape(render, mesh, attrib, shape);
 	}
 }
 
-DEF_FUNC(Mesh4, NextVersion, void)(CppRef meshRef) {
-	auto* mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
-	mesh->version++;
+Vertex MeshResource::s_ReadVertex(const tinyobj::attrib_t& attrib, const tinyobj::index_t& index) {
+	auto& verts = attrib.vertices;
+	auto& colors = attrib.colors;
+	auto& normals = attrib.normals;
+	auto& texcoords = attrib.texcoords;
+
+	Vertex vertex;
+
+	auto v = (size_t)index.vertex_index * 3;
+	auto n = (size_t)index.normal_index * 3;
+	auto t = (size_t)index.texcoord_index * 2;
+
+	if (index.vertex_index >= 0) {
+		vertex.position = { verts[v], verts[v + 1], verts[v + 2], 0.0f };
+		vertex.color = { colors[v], colors[v + 1], colors[v + 2], 1.0f };
+	}
+	if (index.normal_index >= 0)
+		vertex.normal = { normals[n], normals[n + 1], normals[n + 2], 1.0f };
+
+	if (index.texcoord_index >= 0)
+		vertex.uv = { texcoords[t], texcoords[t + 1] };
+
+	return vertex;
 }

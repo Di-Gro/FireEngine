@@ -6,12 +6,13 @@
 #include "OldPass.h"
 #include "CameraComponent.h"
 #include "MaterialAlias.h"
-#include "Mesh.h"
+//#include "Mesh.h"
 #include "MeshComponent.h"
 #include "DirectionLight.h"
 
 #include "RenderTarget.h"
 #include "ShaderResource.h"
+#include "TextureResource.h"
 #include "DepthStencil.h"
 
 
@@ -38,12 +39,12 @@ void OpaquePass::Init(Game* game) {
 }
 
 void OpaquePass::Resize(float width, float height) {
-	target0Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
-	target1Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
-	target2Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
-	target3Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
-	target4Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
-	target5Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32_UINT);
+	target0Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	target1Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	target2Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	target3Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	target4Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	target5Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R32G32_UINT);
 
 	target0 = RenderTarget::Create(&target0Tex);
 	target1 = RenderTarget::Create(&target1Tex);

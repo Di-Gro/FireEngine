@@ -4,10 +4,10 @@
 
 #include "CSBridge.h"
 #include "Actor.h"
-#include "Mesh.h"
+#include "Vertex.h"
 
 class MeshComponent;
-class Material;
+class MaterialAsset;
 
 class LinedPlain : public Component {
 	PURE_COMPONENT(LinedPlain);
@@ -19,7 +19,7 @@ public:
 
 private:
 	MeshComponent* m_meshComponent;
-	Material* m_material = nullptr;
+	MaterialAsset* m_material = nullptr;
 
 public:
 	void OnInit() override;
@@ -27,7 +27,7 @@ public:
 	void OnDestroy() override;
 
 private:
-	void m_GeneratePoints(std::vector<Mesh4::Vertex>& points, std::vector<int>& indexes);
+	void m_GeneratePoints(std::vector<Vertex>& points, std::vector<int>& indexes);
 
 };
 

@@ -216,13 +216,13 @@ namespace Engine {
         private MaterialProxy m_proxy = new MaterialProxy();
 
         public DynamicMaterial(IMaterial source) {
-            m_proxy.cppRef = Dll.MeshAsset.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
+            m_proxy.cppRef = Dll.MeshAssets.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
         }
 
         public DynamicMaterial(string name, string assetId) {
             var source = new StaticMaterial().LoadFromAsset(assetId);
 
-            m_proxy.cppRef = Dll.MeshAsset.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
+            m_proxy.cppRef = Dll.MeshAssets.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
             m_proxy.Name = name;
         }
 
@@ -237,7 +237,7 @@ namespace Engine {
         }
 
         public void Delete() {
-            Dll.MeshAsset.DeleteDynamicMaterial(Game.meshAssetRef, cppRef);
+            Dll.MeshAssets.DeleteDynamicMaterial(Game.meshAssetRef, cppRef);
         }
 
     }

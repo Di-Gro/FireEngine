@@ -350,130 +350,130 @@ namespace EngineDll {
 
 		public static class Material {
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_PushAsset", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_PushAsset", CharSet = CharSet.Ansi)]
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_assetId_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_assetId_get")]
 		    public static extern size_t assetId_get(CppRef cppRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_assetId_set", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_assetId_set", CharSet = CharSet.Ansi)]
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_assetIdHash_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
 
             public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_assetIdHash_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_assetIdHash_set")]
 		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
 
             public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_diffuseColor_get")]
 		    private static extern Vector3 diffuseColor_get_inner(CppRef objRef);
 
             public static Vector3 diffuseColor_get(CppRef objRef) => objRef.value != 0 ? diffuseColor_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_diffuseColor_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_diffuseColor_set")]
 		    private static extern void diffuseColor_set_inner(CppRef objRef, Vector3 value);
 
             public static void diffuseColor_set(CppRef objRef, Vector3 value) { if(objRef.value != 0) diffuseColor_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_diffuse_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_diffuse_get")]
 		    private static extern float diffuse_get_inner(CppRef objRef);
 
             public static float diffuse_get(CppRef objRef) => objRef.value != 0 ? diffuse_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_diffuse_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_diffuse_set")]
 		    private static extern void diffuse_set_inner(CppRef objRef, float value);
 
             public static void diffuse_set(CppRef objRef, float value) { if(objRef.value != 0) diffuse_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_ambient_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_ambient_get")]
 		    private static extern float ambient_get_inner(CppRef objRef);
 
             public static float ambient_get(CppRef objRef) => objRef.value != 0 ? ambient_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_ambient_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_ambient_set")]
 		    private static extern void ambient_set_inner(CppRef objRef, float value);
 
             public static void ambient_set(CppRef objRef, float value) { if(objRef.value != 0) ambient_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_specular_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_specular_get")]
 		    private static extern float specular_get_inner(CppRef objRef);
 
             public static float specular_get(CppRef objRef) => objRef.value != 0 ? specular_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_specular_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_specular_set")]
 		    private static extern void specular_set_inner(CppRef objRef, float value);
 
             public static void specular_set(CppRef objRef, float value) { if(objRef.value != 0) specular_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_shininess_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_shininess_get")]
 		    private static extern float shininess_get_inner(CppRef objRef);
 
             public static float shininess_get(CppRef objRef) => objRef.value != 0 ? shininess_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_shininess_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_shininess_set")]
 		    private static extern void shininess_set_inner(CppRef objRef, float value);
 
             public static void shininess_set(CppRef objRef, float value) { if(objRef.value != 0) shininess_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_cullMode_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_cullMode_get")]
 		    private static extern int cullMode_get_inner(CppRef objRef);
 
             public static int cullMode_get(CppRef objRef) => objRef.value != 0 ? cullMode_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_cullMode_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_cullMode_set")]
 		    private static extern void cullMode_set_inner(CppRef objRef, int value);
 
             public static void cullMode_set(CppRef objRef, int value) { if(objRef.value != 0) cullMode_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_fillMode_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_fillMode_get")]
 		    private static extern int fillMode_get_inner(CppRef objRef);
 
             public static int fillMode_get(CppRef objRef) => objRef.value != 0 ? fillMode_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_fillMode_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_fillMode_set")]
 		    private static extern void fillMode_set_inner(CppRef objRef, int value);
 
             public static void fillMode_set(CppRef objRef, int value) { if(objRef.value != 0) fillMode_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_priority_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_priority_get")]
 		    private static extern size_t priority_get_inner(CppRef objRef);
 
             public static size_t priority_get(CppRef objRef) => objRef.value != 0 ? priority_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_priority_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_priority_set")]
 		    private static extern void priority_set_inner(CppRef objRef, size_t value);
 
             public static void priority_set(CppRef objRef, size_t value) { if(objRef.value != 0) priority_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_name_set", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_name_set", CharSet = CharSet.Ansi)]
 		    public static extern void name_set(CppRef matRef, string name);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_name_length")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_name_length")]
 		    public static extern size_t name_length(CppRef matRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_name_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_name_get")]
 		    public static extern void name_get(CppRef matRef, byte[] buf);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_shader_set", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_shader_set", CharSet = CharSet.Ansi)]
 		    public static extern void shader_set(CppRef gameRef, CppRef matRef, string name);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_shader_length")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_shader_length")]
 		    public static extern size_t shader_length(CppRef matRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_shader_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_shader_get")]
 		    public static extern void shader_get(CppRef matRef, byte[] buf);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_isDynamic_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_isDynamic_get")]
 		    public static extern bool isDynamic_get(CppRef matRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_Init")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_Init")]
 		    public static extern void Init(CppRef gameRef, CppRef matRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Material_textures_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_textures_set")]
 		    public static extern void textures_set(CppRef matRef, size_t[] cppRefs, int count);
 
 		}
@@ -539,100 +539,100 @@ namespace EngineDll {
 
 		public static class Image {
 		
-            [DllImport(Paths.Exe, EntryPoint = "Image_PushAsset", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_PushAsset", CharSet = CharSet.Ansi)]
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
-            [DllImport(Paths.Exe, EntryPoint = "Image_assetId_get")]
+            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_assetId_get")]
 		    public static extern size_t assetId_get(CppRef cppRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Image_assetId_set", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_assetId_set", CharSet = CharSet.Ansi)]
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
-            [DllImport(Paths.Exe, EntryPoint = "Image_assetIdHash_get")]
+            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
 
             public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Image_assetIdHash_set")]
+            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_assetIdHash_set")]
 		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
 
             public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Image_Init", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "ImageAsset_Init", CharSet = CharSet.Ansi)]
 		    public static extern void Init(CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height);
 
 		}
 
 		public static class Texture {
 		
-            [DllImport(Paths.Exe, EntryPoint = "Texture_PushAsset", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "TextureAsset_PushAsset", CharSet = CharSet.Ansi)]
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
-            [DllImport(Paths.Exe, EntryPoint = "Texture_assetId_get")]
+            [DllImport(Paths.Exe, EntryPoint = "TextureAsset_assetId_get")]
 		    public static extern size_t assetId_get(CppRef cppRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Texture_assetId_set", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "TextureAsset_assetId_set", CharSet = CharSet.Ansi)]
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
-            [DllImport(Paths.Exe, EntryPoint = "Texture_assetIdHash_get")]
+            [DllImport(Paths.Exe, EntryPoint = "TextureAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
 
             public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Texture_assetIdHash_set")]
+            [DllImport(Paths.Exe, EntryPoint = "TextureAsset_assetIdHash_set")]
 		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
 
             public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Texture_Init")]
+            [DllImport(Paths.Exe, EntryPoint = "TextureAsset_Init")]
 		    public static extern void Init(CppRef gameRef, CppRef texRef, uint width, uint height);
 
-            [DllImport(Paths.Exe, EntryPoint = "Texture_InitFromImage")]
+            [DllImport(Paths.Exe, EntryPoint = "TextureAsset_InitFromImage")]
 		    public static extern void InitFromImage(CppRef gameRef, CppRef texRef, CppRef imageRef);
 
 		}
 
-		public static class MeshAsset {
+		public static class MeshAssets {
 
-            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_CreateDynamicMaterial")]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAssets_CreateDynamicMaterial")]
 		    public static extern CppRef CreateDynamicMaterial(CppRef meshAssetRef, CppRef otherMaterialRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_DeleteDynamicMaterial")]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAssets_DeleteDynamicMaterial")]
 		    public static extern void DeleteDynamicMaterial(CppRef meshAssetRef, CppRef otherMaterialRef);
 
 		}
 
-		public static class Mesh4 {
+		public static class MeshAsset {
 		
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_PushAsset", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_PushAsset", CharSet = CharSet.Ansi)]
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetId_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_assetId_get")]
 		    public static extern size_t assetId_get(CppRef cppRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetId_set", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_assetId_set", CharSet = CharSet.Ansi)]
 		    public static extern void assetId_set(CppRef cppRef, string value);
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetIdHash_get")]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
 
             public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_assetIdHash_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_assetIdHash_set")]
 		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
 
             public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_Init", CharSet = CharSet.Ansi)]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_Init", CharSet = CharSet.Ansi)]
 		    public static extern void Init(CppRef gameRef, CppRef meshRef, string path);
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_ShapeCount")]
-		    public static extern int ShapeCount(CppRef mesh4Ref);
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_ShapeCount")]
+		    public static extern int ShapeCount(CppRef meshAssetRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_MaterialMaxIndex")]
-		    public static extern int MaterialMaxIndex(CppRef mesh4Ref);
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_MaterialMaxIndex")]
+		    public static extern int MaterialMaxIndex(CppRef meshAssetRef);
 
-            [DllImport(Paths.Exe, EntryPoint = "Mesh4_materials_set")]
+            [DllImport(Paths.Exe, EntryPoint = "MeshAsset_materials_set")]
 		    public static extern void materials_set(CppRef meshRef, size_t[] cppRefs, int count);
 
 		}

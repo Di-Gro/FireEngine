@@ -3,7 +3,7 @@
 #include <list>
 #include <map>
 
-class Material;
+class MaterialResource;
 class MeshComponent;
 class Component;
 class ILightSource;
@@ -12,7 +12,7 @@ class IShadowCaster;
 namespace Pass {
 	
 	using MaterialPriority = size_t;
-	using MaterialRef = const Material*;
+	using MaterialRef = const MaterialResource*;
 
 	using ShapeIndex = int;
 	using ShapeRef = std::pair<MeshComponent*, ShapeIndex>;

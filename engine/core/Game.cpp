@@ -18,14 +18,19 @@
 #include "Lighting.h"
 #include "InputDevice.h"
 #include "HotKeys.h"
+#include "Actor.h"
+#include "NavMesh.h"
+
+#include "UI/UserInterface.h"
+#include "UI\SceneEditorWindow.h"
+#include "ContextMenu.h"
+
 #include "Assets.h"
 #include "AssetStore.h"
 #include "ShaderAsset.h"
-#include "MeshAsset.h"
-#include "ImageAsset.h"
-#include "UI/UserInterface.h"
-#include "Actor.h"
-#include "NavMesh.h"
+#include "MeshAssets.h"
+#include "ImageAssets.h"
+#include "MaterialResource.h"
 
 #include "RenderTarget.h"
 #include "FPSCounter.h"
@@ -44,13 +49,8 @@
 #include "RenderPassUI.h"
 #include "PointLight.h"
 #include "SpotLight.h"
-#include "Material.h"
 
 #include "SimpleMath.h"
-
-#include "ContextMenu.h"
-
-#include "UI\SceneEditorWindow.h"
 
 namespace fs = std::filesystem;
 
@@ -80,8 +80,8 @@ Game::Game() {
 	m_input = new InputDevice();
 	m_hotkeys = new HotKeys();
 	m_shaderAsset = new ShaderAsset();
-	m_meshAsset = new MeshAsset();
-	m_imageAsset = new ImageAsset();
+	m_meshAsset = new MeshAssets();
+	m_imageAsset = new ImageAssets();
 	m_assets = new Assets();
 	m_assetStore = new AssetStore();
 	m_ui = new UserInterface();
@@ -452,7 +452,7 @@ void Game::m_EndUpdateImGui() {
 	ImGui::UpdatePlatformWindows();
 }
 
-void Game::DeleteMaterialFromAllScenes(const Material* material) {
+void Game::DeleteMaterialFromAllScenes(const MaterialResource* material) {
 	for (auto scene : m_scenes)
 		scene->renderer.UnRegisterMaterial(material);
 }

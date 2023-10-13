@@ -4,10 +4,10 @@
 #include "RenderDevice.h"
 
 #include "Render.h"
-#include "Texture.h"
+#include "TextureResource.h"
 
 
-RenderTarget RenderTarget::Create(Texture* texture) {
+RenderTarget RenderTarget::Create(TextureResource* texture) {
 	RenderTarget res;
 	res.m_render = texture->render;
 

@@ -6,7 +6,7 @@
 #include "SimpleMath.h"
 #include "MaterialAlias.h"
 
-#include "Texture.h"
+#include "TextureResource.h"
 #include "ShaderResource.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
@@ -14,7 +14,7 @@
 class Game;
 class Scene;
 class CameraComponent;
-class Material;
+class MaterialResource;
 
 class RenderPass;
 class ShadowPass;
@@ -42,11 +42,11 @@ private:
 	Game* m_game = nullptr;
 	Scene* m_scene = nullptr;
 
-	Texture m_mainTexure;
+	TextureResource m_mainTexure;
 	RenderTarget m_mainTarget;
 	ShaderResource m_mainResource;
 
-	Texture m_mainDepthTexure;
+	TextureResource m_mainDepthTexure;
 	DepthStencil m_mainDepthStencil;
 	ShaderResource m_mainDepthResource;
 
@@ -62,7 +62,7 @@ private:
 
 	std::unordered_map<std::string, int> m_renderPassIndex;
 	std::vector<RenderPass*> m_renderPipeline;
-	std::unordered_map<const Material*, MaterialLink>  m_linkedMaterials;
+	std::unordered_map<const MaterialResource*, MaterialLink>  m_linkedMaterials;
 
 	Vector2 m_newViewportSize = { 800, 800 };
 	bool m_viewportChanged = false;
@@ -84,11 +84,11 @@ public:
 	inline ID3D11DepthStencilView* depthStencil() { return m_mainDepthStencil.get(); }
 	inline ID3D11ShaderResourceView* screenSRV() { return m_mainResource.get(); }
 
-	inline Texture* depthTexture() { return &m_mainDepthTexure; }
+	inline TextureResource* depthTexture() { return &m_mainDepthTexure; }
 	inline ShaderResource* depthRes() { return &m_mainDepthResource; }
 
-	Texture* idsTexture();
-	Texture* wposTexture();
+	TextureResource* idsTexture();
+	TextureResource* wposTexture();
 
 	inline Vector2 viewportSize() { return m_newViewportSize; }
 
@@ -104,9 +104,9 @@ public:
 
 	RenderPass* GetRenderPass(const std::string& name);
 
-	Pass::ShapeIter RegisterShape(const Material* material, MeshComponent* component, int shapeIndex);
-	void UnRegisterShape(const Material* material, Pass::ShapeIter& iterator);
-	void UnRegisterMaterial(const Material* material);
+	Pass::ShapeIter RegisterShape(const MaterialResource* material, MeshComponent* component, int shapeIndex);
+	void UnRegisterShape(const MaterialResource* material, Pass::ShapeIter& iterator);
+	void UnRegisterMaterial(const MaterialResource* material);
 
 	Pass::ShadowCaster AddShadowCaster(IShadowCaster* component);
 	void RemoveShadowCaster(Pass::ShadowCaster shadowCaster);

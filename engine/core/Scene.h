@@ -6,6 +6,7 @@
 #include "SceneRenderer.h"
 #include "Refs.h"
 #include "SafeDestroy.h"
+#include "IAsset.h"
 
 class Game;
 class DirectionLight;

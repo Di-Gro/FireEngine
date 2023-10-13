@@ -3,12 +3,11 @@
 
 #include "../imguizmo/ImGuizmo.h"
 #include "../SimpleMath.h"
-
-#include "../Texture.h"
-#include "../ShaderResource.h"
-#include "../ImageAsset.h"
+//#include "../Texture.h"
+//#include "../ImageAsset.h"
 
 class Game;
+class ShaderResource;
 
 class SceneEditorWindow : public SceneWindow {
 

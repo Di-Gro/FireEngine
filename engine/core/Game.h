@@ -23,12 +23,12 @@ class Lighting;
 class InputDevice;
 class HotKeys;
 class ShaderAsset;
-class MeshAsset;
-class ImageAsset;
+class MeshAssets;
+class ImageAssets;
 class Assets;
 class UserInterface;
 class AssetStore;
-class Material;
+class MaterialResource;
 class SceneWindow;
 class Physics;
 class NavMesh;
@@ -55,8 +55,8 @@ private:
 	HotKeys* m_hotkeys;
 
 	ShaderAsset* m_shaderAsset;
-	MeshAsset* m_meshAsset;
-	ImageAsset* m_imageAsset;
+	MeshAssets* m_meshAsset;
+	ImageAssets* m_imageAsset;
 	Assets* m_assets;
 	AssetStore* m_assetStore;
 
@@ -112,8 +112,8 @@ public:
 	inline Scene* currentScene() { return m_sceneStack.empty() ? nullptr : m_sceneStack.back(); }
 
 	inline ShaderAsset* shaderAsset() { return m_shaderAsset; }
-	inline MeshAsset* meshAsset() { return m_meshAsset; }
-	ImageAsset* imageAsset() { return m_imageAsset; }
+	inline MeshAssets* meshAsset() { return m_meshAsset; }
+	ImageAssets* imageAsset() { return m_imageAsset; }
 
 	inline NavMesh* navMesh() { return m_NavMesh; };
 
@@ -151,7 +151,7 @@ public:
 	inline std::list<Scene*>::iterator ScenesBegin() { return m_scenes.begin(); }
 	inline std::list<Scene*>::iterator ScenesEnd() { return m_scenes.end(); }
 
-	void DeleteMaterialFromAllScenes(const Material* material);
+	void DeleteMaterialFromAllScenes(const MaterialResource* material);
 
 	void TogglePlayMode();
 	void ToggleGameFocus();

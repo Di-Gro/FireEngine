@@ -13,6 +13,10 @@
 #include "../Actor.h"
 #include "../SimpleMath.h"
 
+#include "../ImageResource.h"
+#include "../TextureResource.h"
+#include "../ShaderResource.h"
+
 class Game;
 class SceneWindow;
 
@@ -79,21 +83,21 @@ private:
 
 	std::unordered_map<size_t, SceneWindow*> m_sceneWindows;
 
-	Image m_imgMove;
-	Image m_imgRotate;
-	Image m_imgScale;
-	Image m_imgPickup;
-	Image m_imgPickupActor;
-	Image m_imgPickupComponent;
-	Image m_imgPickupAsset;
+	ImageResource m_imgMove;
+	ImageResource m_imgRotate;
+	ImageResource m_imgScale;
+	ImageResource m_imgPickup;
+	ImageResource m_imgPickupActor;
+	ImageResource m_imgPickupComponent;
+	ImageResource m_imgPickupAsset;
 
-	Texture m_texMove;
-	Texture m_texRotate;
-	Texture m_texScale;
-	Texture m_texPickup;
-	Texture m_texPickupActor;
-	Texture m_texPickupComponent;
-	Texture m_texPickupAsset;
+	TextureResource m_texMove;
+	TextureResource m_texRotate;
+	TextureResource m_texScale;
+	TextureResource m_texPickup;
+	TextureResource m_texPickupActor;
+	TextureResource m_texPickupComponent;
+	TextureResource m_texPickupAsset;
 
 public:
 	UserInterface();

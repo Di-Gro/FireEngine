@@ -1,8 +1,6 @@
 #pragma once
 #include "RenderPass.h"
 
-#include "Mesh.h"
-
 class ILightSource;
 
 class LightingPass : public RenderPass {

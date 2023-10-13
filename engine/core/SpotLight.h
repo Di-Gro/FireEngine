@@ -8,8 +8,8 @@
 
 #include "MaterialAlias.h"
 
-class Mesh4;
-class Material;
+class MeshAsset;
+class MaterialAsset;
 class RenderPass;
 
 class SpotLight : public Component, public ILightSource {
@@ -32,10 +32,10 @@ private:
 	float m_blendPower = 2;
 
 private:
-	const Mesh4* m_mesh;
-	const Mesh4* m_meshBlend;
-	Material* m_material;
-	Material* m_materialShape;
+	const MeshAsset* m_mesh;
+	const MeshAsset* m_meshBlend;
+	MaterialAsset* m_material;
+	MaterialAsset* m_materialShape;
 
 	Pass::LightSource m_lightSource;
 

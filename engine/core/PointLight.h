@@ -2,14 +2,15 @@
 
 #include "Actor.h"
 
+#include "MeshResource.h"
 #include "RenderTarget.h"
 #include "DepthStencil.h"
 #include "ILightSource.h"
 
 #include "MaterialAlias.h"
 
-class Mesh4;
-class Material;
+class MeshAsset;
+class MaterialAsset;
 class RenderPass;
 
 class PointLight : public Component, public ILightSource {
@@ -21,9 +22,8 @@ public:
 	float radius = 30;
 
 private:
-	//ScreenQuad m_screenQuad;
-	const Mesh4* m_mesh;
-	Material* m_material;
+	const MeshAsset* m_mesh;
+	MaterialAsset* m_material;
 
 	Pass::LightSource m_lightSource;
 

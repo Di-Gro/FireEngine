@@ -1,10 +1,10 @@
 #include "ShaderResource.h"
 
 #include "Render.h"
-#include "Texture.h"
+#include "TextureResource.h"
 
 
-ShaderResource ShaderResource::Create(Texture* texture) {
+ShaderResource ShaderResource::Create(TextureResource* texture) {
 	ShaderResource res;
 	res.m_render = texture->render;
 	auto device = res.m_render->device();

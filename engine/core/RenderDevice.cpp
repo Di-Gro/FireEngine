@@ -10,9 +10,6 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 
-#include "Mesh.h"
-#include "Material.h"
-
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")

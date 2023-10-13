@@ -96,10 +96,10 @@
     <ClCompile Include="LinedPlain.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="MeshAsset.cpp">
+    <ClCompile Include="MeshAssets.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
-    <ClCompile Include="ImageAsset.cpp">
+    <ClCompile Include="ImageAssets.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
     <ClCompile Include="SimpleMath.cpp">
@@ -174,9 +174,6 @@
     <ClCompile Include="DirectionLight.cpp">
       <Filter>Render\Lighting</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -204,13 +201,7 @@
     <ClCompile Include="RenderTarget.cpp">
       <Filter>Render\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Render\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="ShaderResource.cpp">
-      <Filter>Render\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
       <Filter>Render\Resources</Filter>
     </ClCompile>
     <ClCompile Include="DepthStencil.cpp">
@@ -384,6 +375,33 @@
     <ClCompile Include="PureAsset.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
+    <ClCompile Include="TextureAsset.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageAsset.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialAsset.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshAsset.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureResource.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshResource.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialResource.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageResource.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenQuad.cpp">
+      <Filter>Render\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -434,10 +452,10 @@
     <ClInclude Include="LinedPlain.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="MeshAsset.h">
+    <ClInclude Include="MeshAssets.h">
       <Filter>Assets</Filter>
     </ClInclude>
-    <ClInclude Include="ImageAsset.h">
+    <ClInclude Include="ImageAssets.h">
       <Filter>Assets</Filter>
     </ClInclude>
     <ClInclude Include="SimpleMath.h">
@@ -521,9 +539,6 @@
     <ClInclude Include="DirectionLight.h">
       <Filter>Render\Lighting</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -551,16 +566,10 @@
     <ClInclude Include="RenderTarget.h">
       <Filter>Render\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Render\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="MaterialAlias.h">
       <Filter>Render\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ShaderResource.h">
-      <Filter>Render\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
       <Filter>Render\Resources</Filter>
     </ClInclude>
     <ClInclude Include="DepthStencil.h">
@@ -757,6 +766,42 @@
     </ClInclude>
     <ClInclude Include="PureAsset.h">
       <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureAsset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageAsset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialAsset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshAsset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshShape.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureResource.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshResource.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialResource.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageResource.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenQuad.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderStructs.h">
+      <Filter>Render\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

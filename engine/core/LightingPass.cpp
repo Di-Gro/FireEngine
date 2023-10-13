@@ -5,7 +5,7 @@
 #include "Render.h"
 #include "CameraComponent.h"
 #include "MaterialAlias.h"
-#include "Mesh.h"
+#include "ShaderStructs.h"
 #include "MeshComponent.h"
 #include "Lighting.h"
 #include "DirectionLight.h"
@@ -13,10 +13,10 @@
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 #include "DepthStencil.h"
-#include "Material.h"
 
 #include "ILightSource.h"
 
+using namespace ShaderStructs;
 
 void LightingPass::Init(Game* game) {
 	RenderPass::Init(game);

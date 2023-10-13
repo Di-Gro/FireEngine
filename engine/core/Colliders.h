@@ -8,7 +8,7 @@
 #include "Forms.h"
 
 class MeshComponent;
-class Mesh4;
+class MeshAsset;
 
 class Collider : public Component {
 public:
@@ -37,7 +37,7 @@ public:
 	void OnUpdate() override;
 
 	virtual JPH::ShapeRefC CreateShapeSettings() = 0;
-	virtual const Mesh4* CreateDebugMesh() = 0;
+	virtual const MeshAsset* CreateDebugMesh() = 0;
 };
 
 class BoxCollider : public Collider {
@@ -48,7 +48,7 @@ public:
 
 public:
 	JPH::ShapeRefC CreateShapeSettings() override;
-	const Mesh4* CreateDebugMesh() override;
+	const MeshAsset* CreateDebugMesh() override;
 
 	void OnUpdate() override;
 
@@ -63,7 +63,7 @@ public:
 
 public:
 	JPH::ShapeRefC CreateShapeSettings() override;
-	const Mesh4* CreateDebugMesh() override;
+	const MeshAsset* CreateDebugMesh() override;
 
 	void OnUpdate() override;
 
@@ -85,7 +85,7 @@ private:
 
 public:
 	JPH::ShapeRefC CreateShapeSettings() override;
-	const Mesh4* CreateDebugMesh() override;
+	const MeshAsset* CreateDebugMesh() override;
 
 	float scaledRadius();
 	float scaledHeight();

@@ -1,8 +1,7 @@
 #pragma once
 #include "RenderPass.h"
-#include "Mesh.h"
+#include "ScreenQuad.h"
 
-#include "Texture.h"
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 

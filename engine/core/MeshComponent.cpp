@@ -7,8 +7,11 @@
 #include "Render.h"
 #include "RenderPass.h"
 #include "MeshAsset.h"
+#include "MeshAssets.h"
+#include "MaterialAsset.h"
 #include "Actor.h"
 #include "Random.h"
+#include "Vertex.h"
 
 #include "CameraComponent.h"
 #include "LineComponent.h"
@@ -68,16 +71,17 @@ void MeshComponent::m_InitDynamic() {
 
 	auto assetId = "DynamicMesh_" + std::to_string(Random().Int());
 	auto assetIdHash = game()->assets()->GetCsAssetIDHash(assetId);
-	auto meshCppRef = Mesh4_PushAsset(CppRefs::GetRef(game()), assetId.c_str(), assetIdHash);
-	auto newMesh = CppRefs::ThrowPointer<Mesh4>(meshCppRef);
+	auto meshCppRef = MeshAsset_PushAsset(CppRefs::GetRef(game()), assetId.c_str(), assetIdHash);
+	auto newMesh = CppRefs::ThrowPointer<MeshAsset>(meshCppRef);
 
-	*newMesh = *m_mesh;
+	if (m_mesh != nullptr)
+		newMesh->resource = m_mesh->resource;
 			
 	m_SetMesh(newMesh, true);
 }
 
 void MeshComponent::RemoveMaterial(size_t index) {
-	if (index > m_mesh->maxMaterialIndex())
+	if (index > m_mesh->resource.maxMaterialIndex())
 		return;
 
 	// ”дал€ем старый материал
@@ -85,7 +89,7 @@ void MeshComponent::RemoveMaterial(size_t index) {
 	m_DeleteLocalDynamicMaterial(index);
 
 	// —тавим стандартный материал
-	auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAsset::materialDefault);
+	auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAssets::materialDefault);
 	m_materials[index] = defaultMaterial;
 	m_RegisterShapesWithMaterial(index);
 }
@@ -94,14 +98,14 @@ void MeshComponent::RemoveMaterials() {
 	m_DeleteMaterials();
 
 	if (m_mesh != nullptr)
-		m_FillByDefaultMaterial(m_mesh->maxMaterialIndex() + 1);
+		m_FillByDefaultMaterial(m_mesh->resource.maxMaterialIndex() + 1);
 }
 
 void MeshComponent::ClearMesh() {
 	m_DeleteResources();
 
 	if (m_mesh != nullptr)
-		m_FillByDefaultMaterial(m_mesh->maxMaterialIndex() + 1);
+		m_FillByDefaultMaterial(m_mesh->resource.maxMaterialIndex() + 1);
 }
 
 void MeshComponent::m_DeleteResources() {
@@ -137,19 +141,19 @@ void MeshComponent::m_DeleteLocalDynamicMaterial(int index) {
 }
 
 void MeshComponent::AddShape(
-	std::vector<Mesh4::Vertex>* verteces, 
-	std::vector<int>* indeces, 
-	size_t materialIndex) 
+	std::vector<Vertex>* verteces,
+	std::vector<int>* indeces,
+	size_t materialIndex)
 {
 	m_InitDynamic();
 
-	m_dynamicMesh->AddShape(verteces, indeces, m_render, materialIndex);
+	m_dynamicMesh->resource.AddShape(verteces, indeces, m_render, materialIndex);
 
-	m_FillByDefaultMaterial(m_dynamicMesh->maxMaterialIndex() + 1);
+	m_FillByDefaultMaterial(m_dynamicMesh->resource.maxMaterialIndex() + 1);
 }
 
 void MeshComponent::AddShape(
-	Mesh4::Vertex* verteces,
+	Vertex* verteces,
 	int vertecesLength,
 	int* indeces,
 	int indecesLength,
@@ -157,15 +161,15 @@ void MeshComponent::AddShape(
 {
 	m_InitDynamic();
 
-	m_dynamicMesh->AddShape(verteces, vertecesLength, indeces, indecesLength, m_render, materialIndex);
+	m_dynamicMesh->resource.AddShape(verteces, vertecesLength, indeces, indecesLength, m_render, materialIndex);
 
-	m_FillByDefaultMaterial(m_dynamicMesh->maxMaterialIndex() + 1);
+	m_FillByDefaultMaterial(m_dynamicMesh->resource.maxMaterialIndex() + 1);
 }
 
 void MeshComponent::SetMaterial(size_t index, const fs::path& shaderPath) {
 	m_InitDynamic();
 
-	if (index > m_mesh->maxMaterialIndex())
+	if (index > m_mesh->resource.maxMaterialIndex())
 		return;
 
 	assert(index < m_dynamicMaterials.size());
@@ -183,8 +187,8 @@ void MeshComponent::SetMaterial(size_t index, const fs::path& shaderPath) {
 	m_RegisterShapesWithMaterial(index);
 }
 
-void MeshComponent::SetMaterial(size_t index, const Material* material) {
-	if (index > m_mesh->maxMaterialIndex())
+void MeshComponent::SetMaterial(size_t index, const MaterialAsset* material) {
+	if (index > m_mesh->resource.maxMaterialIndex())
 		return;
 
 	assert(index < m_dynamicMaterials.size());
@@ -199,7 +203,7 @@ void MeshComponent::SetMaterial(size_t index, const Material* material) {
 	m_RegisterShapesWithMaterial(index);
 }
 
-const Material* MeshComponent::GetMaterial(size_t index) {
+const MaterialAsset* MeshComponent::GetMaterial(size_t index) {
 	if (index >= m_materials.size())
 		return nullptr;
 
@@ -208,9 +212,9 @@ const Material* MeshComponent::GetMaterial(size_t index) {
 
 void MeshComponent::m_FillByDefaultMaterial(int targetSize) {
 	if (m_materials.size() < targetSize) {
-		auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAsset::materialDefault);
+		auto defaultMaterial = m_meshAsset->GetStaticMaterial(MeshAssets::materialDefault);
 
-		m_shapeIters.resize(m_mesh->shapeCount() > 0 ? m_mesh->shapeCount() : 1);
+		m_shapeIters.resize(m_mesh->resource.shapeCount() > 0 ? m_mesh->resource.shapeCount() : 1);
 
 		for (int matIndex = m_materials.size(); matIndex < targetSize; matIndex++) {
 
@@ -222,14 +226,14 @@ void MeshComponent::m_FillByDefaultMaterial(int targetSize) {
 	}
 }
 
-void MeshComponent::m_SetMesh(const Mesh4* mesh, bool isDynamic) {
+void MeshComponent::m_SetMesh(const MeshAsset* mesh, bool isDynamic) {
 	m_DeleteResources();
 	m_mesh = mesh;
-	m_meshVersion = m_mesh != nullptr ? m_mesh->version : 0;
+	m_meshVersion = m_mesh != nullptr ? m_mesh->resource.version : 0;
 	m_SetMaterialsFromMesh();
 
 	if(isDynamic)
-		m_dynamicMesh = (Mesh4*)mesh;
+		m_dynamicMesh = (MeshAsset*)mesh;
 
 	if (csRef() > 0) {
 		auto newRef = m_mesh != nullptr ? CppRefs::GetRef((void*)m_mesh) : RefCpp(0);
@@ -237,7 +241,7 @@ void MeshComponent::m_SetMesh(const Mesh4* mesh, bool isDynamic) {
 	}
 }
 
-void MeshComponent::SetMeshFromCs(const Mesh4* mesh) {
+void MeshComponent::SetMeshFromCs(const MeshAsset* mesh) {
 	m_DeleteResources();
 	m_mesh = mesh;
 	m_SetMaterialsFromMesh();
@@ -256,7 +260,7 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 	m_dynamicMaterials.reserve(newSize);
 
 	// —оздаем массив итераторов shape-ов
-	m_shapeIters.resize(m_mesh->shapeCount());
+	m_shapeIters.resize(m_mesh->resource.shapeCount());
 		
 	for (int materialIndex = 0; materialIndex < newSize; materialIndex++) {
 		auto material = staticMaterials->at(materialIndex);
@@ -269,43 +273,53 @@ void MeshComponent::m_SetMaterialsFromMesh() {
 
 	// ≈сли новых материалов меньше, чем используетс€,
 	// «аполн€ем стандартными материалами.
-	m_FillByDefaultMaterial(m_mesh->maxMaterialIndex() + 1);
+	m_FillByDefaultMaterial(m_mesh->resource.maxMaterialIndex() + 1);
 }
 
 void MeshComponent::m_OnMeshReload() {
 	std::cout << "MeshComponent::m_OnMeshReload() NotImplemented" << std::endl;
-	m_meshVersion = m_mesh->version;
+	m_meshVersion = m_mesh->resource.version;
 }
 
 void MeshComponent::m_RegisterShapesWithMaterial(int materialIndex) {
 	auto* material = m_materials[materialIndex];
+	assert(material != nullptr);
 
 	bool isNewDynamic = 
-		m_mesh->shapeCount() == 0 &&
+		m_mesh->resource.shapeCount() == 0 &&
 		m_materials.size() == 1 && 
 		materialIndex == 0;
 
 	if (isNewDynamic) {
-		m_shapeIters[0] = scene()->renderer.RegisterShape(material, this, 0);
+		m_shapeIters[0] = scene()->renderer.RegisterShape(&material->resource, this, 0);
 		return;
 	}
 
-	for (int shapeIndex = 0; shapeIndex < m_mesh->shapeCount(); shapeIndex++) {
-		const auto* shape = &m_mesh->m_shapes[shapeIndex];
+	for (int shapeIndex = 0; shapeIndex < m_mesh->resource.shapeCount(); shapeIndex++) {
+		const auto* shape = &m_mesh->resource.m_shapes[shapeIndex];
 
 		if (shape->materialIndex == materialIndex)
-			m_shapeIters[shapeIndex] = scene()->renderer.RegisterShape(material, this, shapeIndex);
+			m_shapeIters[shapeIndex] = scene()->renderer.RegisterShape(&material->resource, this, shapeIndex);
 	}
 }
 
 void MeshComponent::m_UnRegisterShapesWithMaterial(int materialIndex) {
 	auto* material = m_materials[materialIndex];
+	if (material == nullptr)
+		return;
 
-	for (int shapeIndex = 0; shapeIndex < m_mesh->m_shapes.size(); shapeIndex++) {
-		const auto* shape = &m_mesh->m_shapes[shapeIndex];
+	if (!CppRefs::IsValidPointer(material)) {
+		std::string msg = ""; 
+		msg += "Perhaps a dynamic material was deleted but not removed from a MeshComponent.";
+		msg += " Add a call to MeshComponent.RemoveMaterial() before deleting a dynamic material.";
+		throw std::exception(msg.c_str());
+	}
 
-		if (shape->materialIndex == materialIndex)
-			scene()->renderer.UnRegisterShape(material, m_shapeIters[shapeIndex]);
+	for (int shapeIndex = 0; shapeIndex < m_mesh->resource.m_shapes.size(); shapeIndex++) {
+		const auto* shape = &m_mesh->resource.m_shapes[shapeIndex];
+
+		if (shape->materialIndex == materialIndex) 
+			scene()->renderer.UnRegisterShape(&material->resource, m_shapeIters[shapeIndex]);
 	}
 }
 
@@ -338,7 +352,7 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 	if (!visible || m_mesh == nullptr || !IsActivated())
 		return;
 
-	if (m_meshVersion != m_mesh->version)
+	if (m_meshVersion != m_mesh->resource.version)
 		m_OnMeshReload();
 
 	auto camera = m_render->renderer()->camera();
@@ -351,18 +365,18 @@ void MeshComponent::m_Draw(RenderPass* renderPass, const Vector3& scale) {
 
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
-	Mesh4::DynamicShapeData data;
-	data.render = m_render;
-	data.worldMatrix = &worldMatrix;
-	data.transfMatrix = &transMatrix;
-	data.cameraPosition = &cameraPosition;
+	MeshShaderData params;
+	params.render = m_render;
+	params.worldMatrix = &worldMatrix;
+	params.transfMatrix = &transMatrix;
+	params.cameraPosition = &cameraPosition;
 
-	for (int i = 0; i < m_mesh->shapeCount(); i++){
+	for (int i = 0; i < m_mesh->resource.shapeCount(); i++){
 		if (renderPass != nullptr) {
-			auto material = m_materials[m_mesh->m_shapes[i].materialIndex];
-			renderPass->PrepareMaterial(material);
+			auto material = m_materials[m_mesh->resource.m_shapes[i].materialIndex];
+			renderPass->PrepareMaterial(&material->resource);
 		}
-		m_mesh->DrawShape(data, i);
+		m_mesh->resource.DrawShape(params, i);
 	}
 
 	///TODO: 
@@ -374,7 +388,7 @@ void MeshComponent::OnDrawShape(int index) {
 	if (!visible || m_mesh == nullptr || !IsActivated())
 		return;
 
-	if (m_meshVersion != m_mesh->version)
+	if (m_meshVersion != m_mesh->resource.version)
 		m_OnMeshReload();
 
 	auto id = actor()->Id();
@@ -389,18 +403,13 @@ void MeshComponent::OnDrawShape(int index) {
 
 	auto transMatrix = worldMatrix * camera->cameraMatrix();
 
-	Mesh4::DynamicShapeData data;
-	data.render = m_render;
-	data.worldMatrix = &worldMatrix;
-	data.transfMatrix = &transMatrix;
-	data.cameraPosition = &cameraPosition;
+	MeshShaderData params;
+	params.render = m_render;
+	params.worldMatrix = &worldMatrix;
+	params.transfMatrix = &transMatrix;
+	params.cameraPosition = &cameraPosition;
 
-	m_mesh->DrawShape(data, index);
-
-	///TODO: 
-	/// если первый раз за update
-	/// boundMesh.verteces * transMatrix 
-	/// и передать в navmesh 
+	m_mesh->resource.DrawShape(params, index);
 }
 
 
@@ -417,15 +426,14 @@ DEF_PROP_GETSET(MeshComponent, bool, castShadow);
 
 DEF_FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef) {
 	auto component = CppRefs::ThrowPointer<MeshComponent>(compRef);
-	auto mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+	auto mesh = CppRefs::ThrowPointer<MeshAsset>(meshRef);
 
 	component->SetMeshFromCs(mesh);
 }
 
-
 DEF_FUNC(MeshComponent, AddShape, void)( 
 	CppRef compRef,
-	Mesh4::Vertex* verteces, 
+	Vertex* verteces, 
 	int vlength, 
 	int* indeces, 
 	int ilength, 
@@ -448,7 +456,7 @@ DEF_FUNC(MeshComponent, ClearMesh, void)(CppRef compRef) {
 }
 
 DEF_FUNC(MeshComponent, SetMaterial, void)(CppRef compRef, size_t index, CppRef materialRef) {
-	auto material = CppRefs::ThrowPointer<Material>(materialRef);
+	auto material = CppRefs::ThrowPointer<MaterialAsset>(materialRef);
 	auto meshComp = CppRefs::ThrowPointer<MeshComponent>(compRef);
 	
 	meshComp->SetMaterial(index, material);
@@ -461,7 +469,7 @@ DEF_FUNC(MeshComponent, GetMaterial, CppRef)(CppRef compRef, size_t index) {
 
 DEF_FUNC(MeshComponent, SetPreInitMesh, void)(CppRef compRef, CppRef meshRef) {
 	auto meshComp = CppRefs::ThrowPointer<MeshComponent>(compRef);
-	auto mesh = CppRefs::ThrowPointer<Mesh4>(meshRef);
+	auto mesh = CppRefs::ThrowPointer<MeshAsset>(meshRef);
 
 	meshComp->m_preinitMesh = mesh;
 }
@@ -474,7 +482,7 @@ DEF_FUNC(MeshComponent, SetPreInitMaterials, void)(CppRef compRef, size_t* matRe
 	auto ptr = matRefs;
 	for (int i = 0; i < count; i++, ptr++) {
 		auto cppRef = RefCpp(*ptr);
-		auto* material = CppRefs::ThrowPointer<Material>(cppRef);
+		auto* material = CppRefs::ThrowPointer<MaterialAsset>(cppRef);
 
 		meshComp->m_preinitMaterials.push_back(material);
 	}

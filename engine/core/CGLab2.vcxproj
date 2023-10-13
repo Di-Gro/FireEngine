@@ -39,6 +39,10 @@
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CS.cpp" />
+    <ClCompile Include="ImageAsset.cpp" />
+    <ClCompile Include="ImageResource.cpp" />
+    <ClCompile Include="MaterialAsset.cpp" />
+    <ClCompile Include="MeshResource.cpp" />
     <ClCompile Include="PureAsset.cpp" />
     <ClCompile Include="CSComponent.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
@@ -73,18 +77,18 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="ActorBase.cpp" />
     <ClCompile Include="HotKeys.cpp" />
-    <ClCompile Include="ImageAsset.cpp" />
+    <ClCompile Include="ImageAssets.cpp" />
     <ClCompile Include="ImageComponent.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="Lighting.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MaterialResource.cpp" />
+    <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MeshComponent.cpp">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PreprocessToFile>
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreprocessToFile>
     </ClCompile>
     <ClCompile Include="LinedPlain.cpp" />
-    <ClCompile Include="MeshAsset.cpp" />
+    <ClCompile Include="MeshAssets.cpp" />
     <ClCompile Include="MonoInst.cpp" />
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="OpaquePass.cpp" />
@@ -102,6 +106,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ContextMenu.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
+    <ClCompile Include="ScreenQuad.cpp" />
     <ClCompile Include="SelectionPass.cpp" />
     <ClCompile Include="ShaderAsset.cpp" />
     <ClCompile Include="ShaderResource.cpp" />
@@ -109,7 +114,8 @@
     <ClCompile Include="ShadowPass.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="SpotLight.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureAsset.cpp" />
+    <ClCompile Include="TextureResource.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UI\AssetPickerPopup.cpp" />
     <ClCompile Include="UI\PrefabPickerPopup.cpp" />
@@ -156,6 +162,13 @@
     <ClInclude Include="Contact.h" />
     <ClInclude Include="CppClass.h" />
     <ClInclude Include="CS.h" />
+    <ClInclude Include="ImageAsset.h" />
+    <ClInclude Include="ImageResource.h" />
+    <ClInclude Include="MaterialAsset.h" />
+    <ClInclude Include="MeshResource.h" />
+    <ClInclude Include="MeshShape.h" />
+    <ClInclude Include="ScreenQuad.h" />
+    <ClInclude Include="ShaderStructs.h" />
     <ClInclude Include="PureAsset.h" />
     <ClInclude Include="CSBridge.h" />
     <ClInclude Include="CSComponent.h" />
@@ -197,9 +210,9 @@
     <ClInclude Include="SelectionPass.h" />
     <ClInclude Include="ShaderResource.h" />
     <ClInclude Include="SpotLight.h" />
-    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureAsset.h" />
     <ClInclude Include="HotKeys.h" />
-    <ClInclude Include="ImageAsset.h" />
+    <ClInclude Include="ImageAssets.h" />
     <ClInclude Include="ImageComponent.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -215,13 +228,13 @@
     <ClInclude Include="Keys.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="LineComponent.h" />
-    <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialResource.h" />
     <ClInclude Include="MaterialAlias.h" />
     <ClInclude Include="Math.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="LinedPlain.h" />
-    <ClInclude Include="MeshAsset.h" />
+    <ClInclude Include="MeshAssets.h" />
     <ClInclude Include="MonoInst.h" />
     <ClInclude Include="OpaquePass.h" />
     <ClInclude Include="Random.h" />
@@ -234,6 +247,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowPass.h" />
     <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="TextureResource.h" />
     <ClInclude Include="tiny_obj_loader.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UI\AssetPickerPopup.h" />
@@ -251,6 +265,7 @@
     <ClInclude Include="UI\UI_PlayGame.h" />
     <ClInclude Include="UI\UI_UpperMenu.h" />
     <ClInclude Include="UI\UserInterface.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="wrl.h_d3d11_alias.h" />
   </ItemGroup>

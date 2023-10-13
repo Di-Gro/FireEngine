@@ -100,13 +100,13 @@ void UI_Editor::Init(Game* game)
 }
 
 void UI_Editor::m_InitIcons() {
-	_game->imageAsset()->InitImage(&m_icMove, "../../engine/data/icons/ic_move.png");
-	_game->imageAsset()->InitImage(&m_icRotate, "../../engine/data/icons/ic_rotate.png");
-	_game->imageAsset()->InitImage(&m_icScale, "../../engine/data/icons/ic_scale.png");
+	m_icMove = ImageResource::CreateFromFile("../../engine/data/icons/ic_move.png");
+	m_icRotate = ImageResource::CreateFromFile("../../engine/data/icons/ic_rotate.png");
+	m_icScale = ImageResource::CreateFromFile("../../engine/data/icons/ic_scale.png");
 
-	m_moveTex = Texture::CreateFromImage(_game->render(), &m_icMove);
-	m_rotateTex = Texture::CreateFromImage(_game->render(), &m_icRotate);
-	m_scaleTex = Texture::CreateFromImage(_game->render(), &m_icScale);
+	m_moveTex = TextureResource::CreateFromImage(_game->render(), &m_icMove);
+	m_rotateTex = TextureResource::CreateFromImage(_game->render(), &m_icRotate);
+	m_scaleTex = TextureResource::CreateFromImage(_game->render(), &m_icScale);
 
 	m_moveRes = ShaderResource::Create(&m_moveTex);
 	m_rotateRes = ShaderResource::Create(&m_rotateTex);

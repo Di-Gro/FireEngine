@@ -1,19 +1,19 @@
 #pragma once
 #include "RenderPass.h"
 
-#include "Texture.h"
+#include "TextureResource.h"
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 
 
 class OpaquePass : public RenderPass {
 public:
-	Texture target0Tex; 
-	Texture target1Tex;
-	Texture target2Tex;
-	Texture target3Tex;
-	Texture target4Tex;
-	Texture target5Tex;
+	TextureResource target0Tex;
+	TextureResource target1Tex;
+	TextureResource target2Tex;
+	TextureResource target3Tex;
+	TextureResource target4Tex;
+	TextureResource target5Tex;
 
 	RenderTarget target0; // target0.rgb = diffuse
 	RenderTarget target1; // target1 = normals 

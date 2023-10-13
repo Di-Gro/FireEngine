@@ -77,14 +77,14 @@ void NavMesh::LoadStaticMeshes()
             if (meshComppnent != nullptr) {
                 auto mesh = meshComppnent->mesh();
                 bool flag_chek = flag == (actor->flags & flag);
-                if (mesh == nullptr || mesh->topology != D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST || !flag_chek)
+                if (mesh == nullptr || mesh->resource.topology != D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST || !flag_chek)
                     continue;
                 std::cout << actor->name() << std::endl;
                 auto world_matrix = Matrix::CreateScale(meshComppnent->meshScale) * meshComppnent->GetWorldMatrix();
-                for (auto shape_i = 0; shape_i < mesh->shapeCount(); shape_i++)
+                for (auto shape_i = 0; shape_i < mesh->resource.shapeCount(); shape_i++)
                 {
 
-                    auto shape = mesh->GetConstShape(shape_i);
+                    auto shape = mesh->resource.GetConstShape(shape_i);
 
 
 

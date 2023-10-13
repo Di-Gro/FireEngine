@@ -2,20 +2,23 @@
 
 #include "Game.h"
 #include "Scene.h"
+#include "SimpleMath.h"
+
 #include "Render.h"
 #include "RenderPass.h"
+
+#include "MeshAssets.h"
 #include "MeshAsset.h"
+#include "MaterialAsset.h"
 
 #include "CameraComponent.h"
-#include "SimpleMath.h"
 
 
 void PointLight::OnInit() {
 	auto render = game()->render();
 	auto meshAsset = game()->meshAsset();
 
-	//m_screenQuad.Init(render, game()->shaderAsset()->GetShader(Assets::ShaderPointLight));
-	m_mesh = meshAsset->GetMesh(MeshAsset::formSphere);
+	m_mesh = meshAsset->GetMesh(MeshAssets::formSphere);
 	m_material = meshAsset->CreateDynamicMaterial("Point Light", Assets::ShaderPointLightMesh);
 
 	m_lightSource = scene()->renderer.AddLightSource(this);
@@ -28,23 +31,20 @@ void PointLight::OnDestroy() {
 void PointLight::OnDrawLight(RenderPass* renderPass) {
 	auto* render = game()->render();
 
-	//render->context()->RSSetState(render->GetRastState(CullMode::Back));
-	//m_screenQuad.Draw();
-
 	auto position = worldPosition();
 	auto worldMatrix = Matrix::CreateScale(radius * 2) * GetWorldMatrix();
 	auto transMatrix = worldMatrix * render->renderer()->camera()->cameraMatrix();
 
-	m_material->cullMode = CullMode::Front;
+	m_material->resource.cullMode = CullMode::Front;
 
-	Mesh4::DynamicShapeData data;
+	MeshShaderData data;
 	data.render = render;
 	data.worldMatrix = &worldMatrix;
 	data.transfMatrix = &transMatrix;
 	data.cameraPosition = &position;
 
-	renderPass->PrepareMaterial(m_material);
-	m_mesh->Draw(data);
+	renderPass->PrepareMaterial(&m_material->resource);
+	m_mesh->resource.Draw(data);
 }
 
 LightCBuffer PointLight::GetCBuffer() {

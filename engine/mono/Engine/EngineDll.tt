@@ -142,30 +142,30 @@ namespace EngineDll {
 		public static class Material {
 
 <#
-			PUSH_ASSET("Material");
+			PUSH_ASSET("MaterialAsset");
 
-			PROP_GETSET("Material", "Vector3", "diffuseColor");
-			PROP_GETSET("Material", "float", "diffuse");
-			PROP_GETSET("Material", "float", "ambient");
-			PROP_GETSET("Material", "float", "specular");
-			PROP_GETSET("Material", "float", "shininess");
+			PROP_GETSET("MaterialAsset", "Vector3", "diffuseColor");
+			PROP_GETSET("MaterialAsset", "float", "diffuse");
+			PROP_GETSET("MaterialAsset", "float", "ambient");
+			PROP_GETSET("MaterialAsset", "float", "specular");
+			PROP_GETSET("MaterialAsset", "float", "shininess");
 
-			PROP_GETSET("Material", "int", "cullMode");
-			PROP_GETSET("Material", "int", "fillMode");
-			PROP_GETSET("Material", "size_t", "priority");
+			PROP_GETSET("MaterialAsset", "int", "cullMode");
+			PROP_GETSET("MaterialAsset", "int", "fillMode");
+			PROP_GETSET("MaterialAsset", "size_t", "priority");
 
-			ANSI_FUNC("Material", "name_set", "void", "CppRef matRef, string name");
-			FUNC("Material", "name_length", "size_t", "CppRef matRef");
-			FUNC("Material", "name_get", "void", "CppRef matRef, byte[] buf");
+			ANSI_FUNC("MaterialAsset", "name_set", "void", "CppRef matRef, string name");
+			FUNC("MaterialAsset", "name_length", "size_t", "CppRef matRef");
+			FUNC("MaterialAsset", "name_get", "void", "CppRef matRef, byte[] buf");
 
-			ANSI_FUNC("Material", "shader_set", "void", "CppRef gameRef, CppRef matRef, string name");
-			FUNC("Material", "shader_length", "size_t", "CppRef matRef");
-			FUNC("Material", "shader_get", "void", "CppRef matRef, byte[] buf");
+			ANSI_FUNC("MaterialAsset", "shader_set", "void", "CppRef gameRef, CppRef matRef, string name");
+			FUNC("MaterialAsset", "shader_length", "size_t", "CppRef matRef");
+			FUNC("MaterialAsset", "shader_get", "void", "CppRef matRef, byte[] buf");
 
-			FUNC("Material", "isDynamic_get",		"bool",		"CppRef matRef");
+			FUNC("MaterialAsset", "isDynamic_get",		"bool",		"CppRef matRef");
 
-			FUNC("Material", "Init", "void", "CppRef gameRef, CppRef matRef");
-			FUNC("Material", "textures_set", "void", "CppRef matRef, size_t[] cppRefs, int count");
+			FUNC("MaterialAsset", "Init", "void", "CppRef gameRef, CppRef matRef");
+			FUNC("MaterialAsset", "textures_set", "void", "CppRef matRef, size_t[] cppRefs, int count");
 #>
 		}
 
@@ -190,42 +190,42 @@ namespace EngineDll {
 		public static class Image {
 		
 <#
-			PUSH_ASSET("Image");
-			ANSI_FUNC("Image", "Init", "void", "CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height");
+			PUSH_ASSET("ImageAsset");
+			ANSI_FUNC("ImageAsset", "Init", "void", "CppRef gameRef, CppRef imgRef, string path, ref int width, ref int height");
 #>
 		}
 
 		public static class Texture {
 		
 <#
-			PUSH_ASSET("Texture");
-			FUNC("Texture", "Init", "void", "CppRef gameRef, CppRef texRef, uint width, uint height");
-			FUNC("Texture", "InitFromImage", "void", "CppRef gameRef, CppRef texRef, CppRef imageRef");
+			PUSH_ASSET("TextureAsset");
+			FUNC("TextureAsset", "Init", "void", "CppRef gameRef, CppRef texRef, uint width, uint height");
+			FUNC("TextureAsset", "InitFromImage", "void", "CppRef gameRef, CppRef texRef, CppRef imageRef");
+#>
+		}
+
+		public static class MeshAssets {
+
+<#
+			//ANSI_FUNC("MeshAssets", "CreateHash",	"size_t", 	"CppRef meshAssetRef, string fileName");
+
+			//FUNC("MeshAssets", "Load",		"void", 	"CppRef meshAssetRef, int assetHash");
+			//FUNC("MeshAssets", "GetMesh",	"CppRef", 	"CppRef meshAssetRef, int assetHash");
+
+			FUNC("MeshAssets", "CreateDynamicMaterial",	"CppRef",	"CppRef meshAssetRef, CppRef otherMaterialRef");
+			FUNC("MeshAssets", "DeleteDynamicMaterial",	"void",		"CppRef meshAssetRef, CppRef otherMaterialRef");
 #>
 		}
 
 		public static class MeshAsset {
-
-<#
-			//ANSI_FUNC("MeshAsset", "CreateHash",	"size_t", 	"CppRef meshAssetRef, string fileName");
-
-			//FUNC("MeshAsset", "Load",		"void", 	"CppRef meshAssetRef, int assetHash");
-			//FUNC("MeshAsset", "GetMesh",	"CppRef", 	"CppRef meshAssetRef, int assetHash");
-
-			FUNC("MeshAsset", "CreateDynamicMaterial",	"CppRef",	"CppRef meshAssetRef, CppRef otherMaterialRef");
-			FUNC("MeshAsset", "DeleteDynamicMaterial",	"void",		"CppRef meshAssetRef, CppRef otherMaterialRef");
-#>
-		}
-
-		public static class Mesh4 {
 		
 <#
-			PUSH_ASSET("Mesh4");
-			ANSI_FUNC("Mesh4", "Init", "void", "CppRef gameRef, CppRef meshRef, string path");
+			PUSH_ASSET("MeshAsset");
+			ANSI_FUNC("MeshAsset", "Init", "void", "CppRef gameRef, CppRef meshRef, string path");
 
-			FUNC("Mesh4", "ShapeCount",			"int", "CppRef mesh4Ref");
-			FUNC("Mesh4", "MaterialMaxIndex",	"int", "CppRef mesh4Ref");
-			FUNC("Mesh4", "materials_set", "void", "CppRef meshRef, size_t[] cppRefs, int count");
+			FUNC("MeshAsset", "ShapeCount",			"int", "CppRef meshAssetRef");
+			FUNC("MeshAsset", "MaterialMaxIndex",	"int", "CppRef meshAssetRef");
+			FUNC("MeshAsset", "materials_set", "void", "CppRef meshRef, size_t[] cppRefs, int count");
 #>
 		}
 

@@ -3,24 +3,27 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <filesystem>
 
 #include <d3d11.h>
 #include <SimpleMath.h>
 
 #include "Forms.h"
-#include "Mesh.h"
 #include "Actor.h"
 #include "MaterialAlias.h"
 #include "IShadowCaster.h"
 #include "Refs.h"
 
-
 using namespace DirectX::SimpleMath;
+namespace fs = std::filesystem;
 
 class Render;
 class RenderPass;
+class MeshAssets;
 class MeshAsset;
-class Material;
+class MaterialAsset;
+class MaterialResource;
+class Vertex;
 
 FUNC(MeshComponent, SetPreInitMesh, void)(CppRef compRef, CppRef meshRef);
 FUNC(MeshComponent, SetPreInitMaterials, void)(CppRef compRef, size_t* matRefs, int count);
@@ -40,18 +43,18 @@ public:
 
 private:
 	Render* m_render;
-	MeshAsset* m_meshAsset;
-	Mesh4* m_dynamicMesh = nullptr;
-	const Mesh4* m_mesh = nullptr;
-	std::vector<const Material*> m_materials;
-	std::vector<Material*> m_dynamicMaterials;
+	MeshAssets* m_meshAsset;
+	MeshAsset* m_dynamicMesh = nullptr;
+	const MeshAsset* m_mesh = nullptr;
+	std::vector<const MaterialAsset*> m_materials;
+	std::vector<MaterialAsset*> m_dynamicMaterials;
 	std::vector<Pass::ShapeIter> m_shapeIters;
 
 	bool m_castShadow = true;
 	Pass::ShadowCaster m_shadowCaster;
 
-	const Mesh4* m_preinitMesh = nullptr;
-	std::vector<const Material*> m_preinitMaterials;
+	const MeshAsset* m_preinitMesh = nullptr;
+	std::vector<const MaterialAsset*> m_preinitMaterials;
 
 	int m_meshVersion = 0;
 
@@ -68,27 +71,27 @@ public:
 	bool castShadow() { return m_castShadow; }
 	void castShadow(bool value);
 
-	const Mesh4* mesh() { return m_mesh; }
-	void mesh(const Mesh4* mesh) { m_SetMesh(mesh, false); };
+	const MeshAsset* mesh() { return m_mesh; }
+	void mesh(const MeshAsset* mesh) { m_SetMesh(mesh, false); };
 
-	void SetMeshFromCs(const Mesh4* mesh);
+	void SetMeshFromCs(const MeshAsset* mesh);
 
 	void AddShape(
-		std::vector<Mesh4::Vertex>* verteces, 
+		std::vector<Vertex>* verteces, 
 		std::vector<int>* indeces, 
 		size_t materialIndex = 0);
 	
 	void AddShape(
-		Mesh4::Vertex* verteces,
+		Vertex* verteces,
 		int vertecesLength,
 		int* indeces,
 		int indecesLength,
 		int materialIndex);
 	
 	void SetMaterial(size_t index, const fs::path& shaderPath);
-	void SetMaterial(size_t index, const Material* other);
+	void SetMaterial(size_t index, const MaterialAsset* other);
 
-	const Material* GetMaterial(size_t index);
+	const MaterialAsset* GetMaterial(size_t index);
 
 	void RemoveMaterial(size_t index);
 	void RemoveMaterials();
@@ -104,7 +107,6 @@ public:
 
 	void OnDraw() override;
 	void OnDrawShape(int index) override;
-	//void OnDrawDebug() override;
 	
 	void OnDrawShadow(RenderPass* renderPass, const Vector3& scale) override;
 	Component* GetComponent() override { return this; }
@@ -123,7 +125,7 @@ private:
 	void m_RegisterShapesWithMaterial(int materialIndex);
 	void m_UnRegisterShapesWithMaterial(int materialIndex);
 
-	void m_SetMesh(const Mesh4* mesh, bool isDynamic);
+	void m_SetMesh(const MeshAsset* mesh, bool isDynamic);
 
 };
 DEC_COMPONENT(MeshComponent);
@@ -135,7 +137,7 @@ PROP_GETSET(MeshComponent, bool, castShadow);
 
 FUNC(MeshComponent, SetFromCs, void)(CppRef compRef, CppRef meshRef);
 
-FUNC(MeshComponent, AddShape, void)(CppRef compRef, Mesh4::Vertex* verteces, int vength, int* indeces, int ilength, int matIndex);
+FUNC(MeshComponent, AddShape, void)(CppRef compRef, Vertex* verteces, int vength, int* indeces, int ilength, int matIndex);
 
 FUNC(MeshComponent, RemoveMaterials, void)(CppRef compRef);
 FUNC(MeshComponent, RemoveMaterial, void)(CppRef compRef, int index);

@@ -116,21 +116,21 @@ void UserInterface::m_InitStyles() {
 }
 
 void UserInterface::m_InitIcons() {
-	_game->imageAsset()->InitImage(&m_imgMove, "../../engine/data/icons/ic_move.png");
-	_game->imageAsset()->InitImage(&m_imgRotate, "../../engine/data/icons/ic_rotate.png");
-	_game->imageAsset()->InitImage(&m_imgScale, "../../engine/data/icons/ic_scale.png");
-	_game->imageAsset()->InitImage(&m_imgPickup, "../../engine/data/icons/ic_pickup.png");
-	_game->imageAsset()->InitImage(&m_imgPickupActor, "../../engine/data/icons/ic_pickup_actor.png");
-	_game->imageAsset()->InitImage(&m_imgPickupComponent, "../../engine/data/icons/ic_pickup_component.png");
-	_game->imageAsset()->InitImage(&m_imgPickupAsset, "../../engine/data/icons/ic_pickup_asset.png");
+	m_imgMove = ImageResource::CreateFromFile("../../engine/data/icons/ic_move.png");
+	m_imgRotate = ImageResource::CreateFromFile("../../engine/data/icons/ic_rotate.png");
+	m_imgScale = ImageResource::CreateFromFile("../../engine/data/icons/ic_scale.png");
+	m_imgPickup = ImageResource::CreateFromFile("../../engine/data/icons/ic_pickup.png");
+	m_imgPickupActor = ImageResource::CreateFromFile("../../engine/data/icons/ic_pickup_actor.png");
+	m_imgPickupComponent = ImageResource::CreateFromFile("../../engine/data/icons/ic_pickup_component.png");
+	m_imgPickupAsset = ImageResource::CreateFromFile("../../engine/data/icons/ic_pickup_asset.png");
 
-	m_texMove = Texture::CreateFromImage(_game->render(), &m_imgMove);
-	m_texRotate = Texture::CreateFromImage(_game->render(), &m_imgRotate);
-	m_texScale = Texture::CreateFromImage(_game->render(), &m_imgScale);
-	m_texPickup = Texture::CreateFromImage(_game->render(), &m_imgPickup);
-	m_texPickupActor = Texture::CreateFromImage(_game->render(), &m_imgPickupActor);
-	m_texPickupComponent = Texture::CreateFromImage(_game->render(), &m_imgPickupComponent);
-	m_texPickupAsset = Texture::CreateFromImage(_game->render(), &m_imgPickupAsset);
+	m_texMove = TextureResource::CreateFromImage(_game->render(), &m_imgMove);
+	m_texRotate = TextureResource::CreateFromImage(_game->render(), &m_imgRotate);
+	m_texScale = TextureResource::CreateFromImage(_game->render(), &m_imgScale);
+	m_texPickup = TextureResource::CreateFromImage(_game->render(), &m_imgPickup);
+	m_texPickupActor = TextureResource::CreateFromImage(_game->render(), &m_imgPickupActor);
+	m_texPickupComponent = TextureResource::CreateFromImage(_game->render(), &m_imgPickupComponent);
+	m_texPickupAsset = TextureResource::CreateFromImage(_game->render(), &m_imgPickupAsset);
 
 	icMove = ShaderResource::Create(&m_texMove);
 	icRotate = ShaderResource::Create(&m_texRotate);

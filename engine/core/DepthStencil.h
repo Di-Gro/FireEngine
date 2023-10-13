@@ -5,7 +5,7 @@
 #include "SimpleMath.h"
 
 class Render;
-class Texture;
+class TextureResource;
 
 class DepthStencil {
 public:
@@ -44,7 +44,7 @@ public:
 
 	void Clear();
 
-	static DepthStencil Create(Texture* texture);
+	static DepthStencil Create(TextureResource* texture);
 	static DepthStencil Create(Render* render, ID3D11Texture2D* texture);
 
 };

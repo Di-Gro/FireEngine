@@ -3,16 +3,17 @@
 #include "Game.h"
 #include "Window.h"
 #include "Assets.h"
-#include "MeshAsset.h"
+#include "MeshAssets.h"
 #include "UI/UserInterface.h"
 #include "Actor.h"
 #include "MeshComponent.h"
+#include "MaterialAsset.h"
 
 void SelectionPass::Init(Game* game) {
 	RenderPass::Init(game);
 
 	m_highlightMaterial = m_game->meshAsset()->CreateDynamicMaterial("Editor Highlight", Assets::ShaderEditorHihglight);
-	m_highlightMaterial->cullMode = CullMode::None;
+	m_highlightMaterial->resource.cullMode = CullMode::None;
 
 	auto width = m_game->window()->GetWidth();
 	auto height = m_game->window()->GetHeight();
@@ -23,7 +24,7 @@ void SelectionPass::Init(Game* game) {
 }
 
 void SelectionPass::Resize(float width, float height) {
-	target0Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	target0Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 	target0 = RenderTarget::Create(&target0Tex);
 	target0Res = ShaderResource::Create(&target0Tex);
 }
@@ -33,7 +34,7 @@ void SelectionPass::Draw() {
 
 	if (m_game->ui()->HasActor()) {
 		SetEditorConstBuffer();
-		PrepareMaterial(m_highlightMaterial);
+		PrepareMaterial(&m_highlightMaterial->resource);
 
 		m_DrawActor(m_game->ui()->GetActor());
 	}

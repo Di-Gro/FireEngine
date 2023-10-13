@@ -36,7 +36,7 @@
 //	m_materials.push_back(&m_material);
 //}
 //
-//void ImageComponent::SetImage(const ImageAsset::Image* image) {				
+//void ImageComponent::SetImage(const ImageAssets::Image* image) {				
 //	game()->render()->CreateTexture(image, m_material.diffuse, false, false);
 //	m_InitMesh(image->width, image->height);
 //}

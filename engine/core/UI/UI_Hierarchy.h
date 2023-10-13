@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../Texture.h"
+#include "../TextureResource.h"
 #include "../ShaderResource.h"
-#include "../ImageAsset.h"
+#include "../ImageResource.h"
 #include "../SimpleMath.h"
 #include "../imgui/imgui.h"
 
@@ -32,8 +32,8 @@ private:
 	Game* m_game;
 	UserInterface* m_ui;
 
-	Image m_icMoveSeparator;
-	Texture m_moveSeparatorTex;
+	ImageResource m_icMoveSeparator;
+	TextureResource m_moveSeparatorTex;
 	ShaderResource m_moveSeparatorRes;
 
 	bool m_isMouseReleaseOnDragActor = false;

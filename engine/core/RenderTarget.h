@@ -5,7 +5,7 @@
 #include "SimpleMath.h"
 
 class Render;
-class Texture;
+class TextureResource;
 
 class RenderTarget {
 public:
@@ -43,6 +43,6 @@ public:
 
 	void Clear();
 
-	static RenderTarget Create(Texture* texture);
+	static RenderTarget Create(TextureResource* texture);
 
 };

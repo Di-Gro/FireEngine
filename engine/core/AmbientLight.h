@@ -6,7 +6,7 @@
 #include "MaterialAlias.h"
 
 #include "Actor.h"
-#include "Mesh.h"
+#include "ScreenQuad.h"
 
 class RenderPass;
 

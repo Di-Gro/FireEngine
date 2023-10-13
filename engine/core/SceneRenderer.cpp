@@ -16,12 +16,7 @@
 #include "OutlinePass.h"
 #include "BlurPass.h"
 
-//#include "Texture.h"
-//#include "ShaderResource.h"
-//#include "RenderTarget.h"
-//#include "DepthStencil.h"
-
-#include "Material.h"
+#include "MaterialResource.h"
 
 
 SceneRenderer::SceneRenderer() {
@@ -135,22 +130,22 @@ void SceneRenderer::Draw() {
 }
 
 void SceneRenderer::m_ResizeMainResouces(float width, float height) { 
-	m_mainTexure = Texture::Create(m_game->render(), width, height);
+	m_mainTexure = TextureResource::Create(m_game->render(), width, height);
 	m_mainTarget = RenderTarget::Create(&m_mainTexure);
 	m_mainResource = ShaderResource::Create(&m_mainTexure);
 
-	m_mainDepthTexure = Texture::CreateDepthTexture(m_game->render(), width, height);
+	m_mainDepthTexure = TextureResource::CreateDepthTexture(m_game->render(), width, height);
 	m_mainDepthStencil = DepthStencil::Create(&m_mainDepthTexure);
 	m_mainDepthResource = ShaderResource::Create(&m_mainDepthTexure);
 }
 
-Texture* SceneRenderer::idsTexture() {
+TextureResource* SceneRenderer::idsTexture() {
 	if (m_opaquePass != nullptr)
 		return &m_opaquePass->target5Tex;
 	return nullptr;
 }
 
-Texture* SceneRenderer::wposTexture() {
+TextureResource* SceneRenderer::wposTexture() {
 	if (m_opaquePass != nullptr)
 		return &m_opaquePass->target3Tex;
 	return nullptr;
@@ -230,10 +225,8 @@ int SceneRenderer::m_GetRenderPassIndex(const std::string& name) {
 	return -1;
 }
 
-Pass::ShapeIter SceneRenderer::RegisterShape(const Material* material, MeshComponent* component, int shapeIndex) {
+Pass::ShapeIter SceneRenderer::RegisterShape(const MaterialResource* material, MeshComponent* component, int shapeIndex) {
 	assert(material != nullptr);
-
-	auto cppRef = CppRefs::GetRef((void*)material);
 
 	// Добавляем материал, если его нет
 	if (!m_linkedMaterials.contains(material)) {
@@ -265,17 +258,9 @@ Pass::ShapeIter SceneRenderer::RegisterShape(const Material* material, MeshCompo
 	return shapeIter;
 }
 
-void SceneRenderer::UnRegisterShape(const Material* material, Pass::ShapeIter& iterator) {
+void SceneRenderer::UnRegisterShape(const MaterialResource* material, Pass::ShapeIter& iterator) {
 	if (material == nullptr)
 		return;
-
-	auto cppRef = CppRefs::GetRef((void*)material);
-
-	if (!CppRefs::IsValidPointer(material)) {
-		/// THROW: 
-		throw std::exception("Perhaps a dynamic material was deleted but not removed from a MeshComponent. \
-			Add a call to MeshComponent.RemoveMaterial() before deleting a dynamic material.");
-	}
 
 	if (!m_linkedMaterials.contains(material))
 		return;
@@ -293,7 +278,7 @@ void SceneRenderer::UnRegisterShape(const Material* material, Pass::ShapeIter& i
 		UnRegisterMaterial(material);
 }
 
-void SceneRenderer::UnRegisterMaterial(const Material* material) {
+void SceneRenderer::UnRegisterMaterial(const MaterialResource* material) {
 	if (material == nullptr)
 		return;
 

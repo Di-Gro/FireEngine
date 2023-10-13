@@ -4,7 +4,6 @@
 #include "Render.h"
 #include "CameraComponent.h"
 #include "MaterialAlias.h"
-#include "Mesh.h"
 #include "MeshComponent.h"
 #include "DirectionLight.h"
 #include "UI/UserInterface.h"
@@ -14,7 +13,6 @@
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 #include "DepthStencil.h"
-
 
 
 void BlurPass::Init(Game* game) {
@@ -30,9 +28,9 @@ void BlurPass::Init(Game* game) {
 }
 
 void BlurPass::Resize(float width, float height) {
-	target0Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
-	tmpTarget1Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
-	tmpTarget2Tex = Texture::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	target0Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	tmpTarget1Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
+	tmpTarget2Tex = TextureResource::Create(m_game->render(), width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 
 	target0 = RenderTarget::Create(&target0Tex);
 	tmpTarget1 = RenderTarget::Create(&tmpTarget1Tex);

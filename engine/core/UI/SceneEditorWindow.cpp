@@ -1,21 +1,22 @@
 #include "SceneEditorWindow.h"
 
+#include "UserInterface.h"
+
 #include "../Game.h"
 #include "../Window.h"
 #include "../Scene.h"
 #include "../Render.h"
 #include "../HotKeys.h"
-#include "UserInterface.h"
 #include "../CameraComponent.h"
 #include "../EditorCamera.h"
 #include "../ImageAsset.h"
 #include "../Assets.h"
+#include "../ShaderResource.h"
 
 
 void SceneEditorWindow::OnInit() {
 
 }
-
 
 void SceneEditorWindow::AfterDrawScene() {
 	if (scene()->isEditor() || !game()->inFocus) {

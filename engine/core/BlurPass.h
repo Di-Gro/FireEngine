@@ -1,8 +1,7 @@
 #pragma once
 #include "RenderPass.h"
-#include "Mesh.h"
-
-#include "Texture.h"
+#include "ScreenQuad.h"
+#include "TextureResource.h"
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 
@@ -10,15 +9,15 @@ class Actor;
 
 class BlurPass : public RenderPass {
 public:
-	Texture target0Tex;
+	TextureResource target0Tex;
 	RenderTarget target0;
 	ShaderResource target0Res;
 
-	Texture tmpTarget1Tex;
+	TextureResource tmpTarget1Tex;
 	RenderTarget tmpTarget1;
 	ShaderResource tmpTarget1Res;
 
-	Texture tmpTarget2Tex;
+	TextureResource tmpTarget2Tex;
 	RenderTarget tmpTarget2;
 	ShaderResource tmpTarget2Res;
 

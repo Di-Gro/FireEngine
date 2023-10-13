@@ -1,16 +1,16 @@
 #pragma once
 #include "RenderPass.h"
-#include "Mesh.h"
 
-#include "Texture.h"
+#include "TextureResource.h"
 #include "RenderTarget.h"
 #include "ShaderResource.h"
 
 class Actor;
+class MaterialAsset;
 
 class SelectionPass : public RenderPass {
 public:
-	Texture target0Tex;
+	TextureResource target0Tex;
 	RenderTarget target0;
 	ShaderResource target0Res;
 
@@ -18,7 +18,7 @@ private:
 	//comptr<ID3D11Buffer> m_editorBuffer;
 	//ScreenQuad m_screenQuad;
 
-	Material* m_highlightMaterial = nullptr;
+	MaterialAsset* m_highlightMaterial = nullptr;
 
 public:
 	void Init(Game* game) override;

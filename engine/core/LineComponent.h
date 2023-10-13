@@ -2,6 +2,7 @@
 
 #include "MeshComponent.h"
 #include "Assets.h"
+#include "MeshAsset.h"
 
 class LineComponent : public MeshComponent {
 public:
@@ -12,7 +13,7 @@ public:
 	}
 
 	void SetPoint(Vector3 worldPos, Vector4 color) {
-		std::vector<Mesh4::Vertex> verteces;
+		std::vector<Vertex> verteces;
 		std::vector<int> indeces = { 0, 1 };
 
 		auto& vertex1 = verteces.emplace_back();
@@ -25,11 +26,11 @@ public:
 
 		this->AddShape(&verteces, &indeces);
 		this->SetMaterial(0, Assets::ShaderVertexColor);
-		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+		this->mesh()->resource.topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 
 	void SetPoints(Vector3 begin, Vector3 end, Vector4 color) {
-		std::vector<Mesh4::Vertex> verteces;
+		std::vector<Vertex> verteces;
 		std::vector<int> indeces = { 0, 1 };
 
 		auto& vertex1 = verteces.emplace_back();
@@ -42,13 +43,13 @@ public:
 
 		this->AddShape(&verteces, &indeces);
 		this->SetMaterial(0, Assets::ShaderVertexColor);
-		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+		this->mesh()->resource.topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 
 
 	void SetVector(std::vector<Vector3>& path, Vector4 color)
 	{
-		std::vector<Mesh4::Vertex> vertexes;
+		std::vector<Vertex> vertexes;
 		std::vector<int> indeces;
 		for (auto i = 0; i < path.size(); i++)
 		{
@@ -60,6 +61,6 @@ public:
 
 		this->AddShape(&vertexes, &indeces);
 		this->SetMaterial(0, Assets::ShaderVertexColor);
-		this->mesh()->topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+		this->mesh()->resource.topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	}
 };

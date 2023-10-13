@@ -15,23 +15,26 @@
 
 #include "Game.h"
 #include "Scene.h"
-#include "ShaderAsset.h"
-#include "Lighting.h"
 #include "Actor.h"
-#include "RenderTarget.h"
-#include "DirectionLight.h"
-#include "CameraComponent.h"
-#include "MeshComponent.h"
+#include "Lighting.h"
+
 #include "Refs.h"
 #include "RenderPass.h"
 #include "OldPass.h"
-#include "Material.h"
-#include "MaterialAlias.h"
-#include "RenderPassUI.h"
-#include "Mesh.h"
-
 #include "ILightSource.h"
 #include "IShadowCaster.h"
+
+#include "DirectionLight.h"
+#include "CameraComponent.h"
+#include "MeshComponent.h"
+
+#include "ShaderAsset.h"
+#include "RenderTarget.h"
+#include "MaterialResource.h"
+#include "MaterialAlias.h"
+#include "RenderPassUI.h"
+//#include "Mesh.h"
+
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -71,8 +74,8 @@ void Render::Init(Game* game, Window* window) {
 	rastDesc.CullMode = D3D11_CULL_NONE;
 	device()->CreateRasterizerState(&rastDesc, m_cullWireframeNone.GetAddressOf());
 
-	onePixelStagingTexUINT = Texture::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32_UINT);
-	onePixelStagingTexFLOAT3 = Texture::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	onePixelStagingTexUINT = TextureResource::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32_UINT);
+	onePixelStagingTexFLOAT3 = TextureResource::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
 }
 
 void Render::Start() {
@@ -138,7 +141,7 @@ void Render::m_UpdateDeviceSize() {
 	}
 }
 
-ID3D11RasterizerState* Render::GetRastState(const Material* material) {
+ID3D11RasterizerState* Render::GetRastState(const MaterialResource* material) {
 	return GetRastState(material->cullMode, material->fillMode);
 }
 

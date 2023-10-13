@@ -343,8 +343,8 @@ bool UI_Hierarchy::m_FindTargetInActorParent(Actor* actor, Actor* target)
 }
 
 void UI_Hierarchy::m_InitIcons() {
-	m_game->imageAsset()->InitImage(&m_icMoveSeparator, "../../engine/data/icons/ic_separator.png");
-	m_moveSeparatorTex = Texture::CreateFromImage(m_game->render(), &m_icMoveSeparator);
+	m_icMoveSeparator = ImageResource::CreateFromFile("../../engine/data/icons/ic_separator.png");
+	m_moveSeparatorTex = TextureResource::CreateFromImage(m_game->render(), &m_icMoveSeparator);
 	m_moveSeparatorRes = ShaderResource::Create(&m_moveSeparatorTex);
 }
 

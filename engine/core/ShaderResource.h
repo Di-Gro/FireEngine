@@ -4,7 +4,7 @@
 #include "wrl.h_d3d11_alias.h"
 
 class Render;
-class Texture;
+class TextureResource;
 
 class ShaderResource {
 public:
@@ -45,6 +45,6 @@ public:
 
 	void UpdateSampler();
 
-	static ShaderResource Create(Texture* texture);
+	static ShaderResource Create(TextureResource* texture);
 	static ShaderResource Create(Render* render, ID3D11Texture2D* texture, DXGI_FORMAT format);
 };

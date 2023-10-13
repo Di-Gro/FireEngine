@@ -11,8 +11,8 @@ namespace Engine {
 
     public class Mesh  {
         public CppRef cppRef { get; protected set; } = CppRef.NullRef;
-        public int ShapeCount => Dll.Mesh4.ShapeCount(cppRef);
-        public int MaxMaterialIndex => Dll.Mesh4.MaterialMaxIndex(cppRef);
+        public int ShapeCount => Dll.MeshAsset.ShapeCount(cppRef);
+        public int MaxMaterialIndex => Dll.MeshAsset.MaterialMaxIndex(cppRef);
 
         public bool IsDynamic => GetType() != typeof(StaticMesh);
 
@@ -46,7 +46,7 @@ namespace Engine {
         public StaticMesh(int assetIdHash) {
             this.assetIdHash = assetIdHash;
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
-            this.assetId = Assets.ReadCString(Dll.Mesh4.assetId_get(cppRef));
+            this.assetId = Assets.ReadCString(Dll.MeshAsset.assetId_get(cppRef));
         }
 
         ~StaticMesh() { Assets.AssetUpdateEvent -= OnAssetUpdate; }
@@ -57,10 +57,10 @@ namespace Engine {
 
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
-                cppRef = Dll.Mesh4.PushAsset(Game.gameRef, assetId, assetIdHash);
+                cppRef = Dll.MeshAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
                 
-                Dll.Mesh4.Init(Game.gameRef, cppRef, path);
-                Dll.Mesh4.assetId_set(cppRef, assetId);
+                Dll.MeshAsset.Init(Game.gameRef, cppRef, path);
+                Dll.MeshAsset.assetId_set(cppRef, assetId);
                 Assets.SetLoadedAsset(assetIdHash, this);
             }
             else {
@@ -80,7 +80,7 @@ namespace Engine {
 
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
-                cppRef = Dll.Mesh4.PushAsset(Game.gameRef, assetId, assetIdHash);
+                cppRef = Dll.MeshAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
 
                 Assets.SetLoadedAsset(assetIdHash, this);
                 ReloadAsset();
@@ -102,14 +102,14 @@ namespace Engine {
             var selfPath = AssetStore.GetAssetPath(assetIdHash);
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
-            Dll.Mesh4.Init(Game.gameRef, cppRef, sourcePath);
+            Dll.MeshAsset.Init(Game.gameRef, cppRef, sourcePath);
 
             if(m_materials.Count > 0) {
                 var cppRefs = new ulong[m_materials.Count];
                 for(int i = 0; i < m_materials.Count; i++)
                     cppRefs[i] = m_materials[i].cppRef.value;
 
-                Dll.Mesh4.materials_set(cppRef, cppRefs, m_materials.Count);
+                Dll.MeshAsset.materials_set(cppRef, cppRefs, m_materials.Count);
             }
         }
 

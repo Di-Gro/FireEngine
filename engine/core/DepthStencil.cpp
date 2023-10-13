@@ -1,10 +1,10 @@
 #include "DepthStencil.h"
 
 #include "Render.h"
-#include "Texture.h"
+#include "TextureResource.h"
 
 
-DepthStencil DepthStencil::Create(Texture* texture) {
+DepthStencil DepthStencil::Create(TextureResource* texture) {
 	DepthStencil res;
 	res.m_render = texture->render;
 

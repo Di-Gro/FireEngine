@@ -2,9 +2,11 @@
 #include "../imgui/imgui.h"
 #include "../imguizmo/ImGuizmo.h"
 #include "../SimpleMath.h"
-#include "../Texture.h"
+
 #include "../ShaderResource.h"
-#include "../ImageAsset.h"
+#include "../ImageResource.h"
+#include "../TextureResource.h"
+//#include "../ImageAssets.h"
 
 class Game;
 
@@ -26,13 +28,13 @@ private:
 	bool m_hasClickInViewport = false;
 	Vector2 m_viewportSize;
 
-	Image m_icMove;
-	Image m_icRotate;
-	Image m_icScale;
+	ImageResource m_icMove;
+	ImageResource m_icRotate;
+	ImageResource m_icScale;
 
-	Texture m_moveTex;
-	Texture m_rotateTex;
-	Texture m_scaleTex;
+	TextureResource m_moveTex;
+	TextureResource m_rotateTex;
+	TextureResource m_scaleTex;
 
 	ShaderResource m_moveRes;
 	ShaderResource m_rotateRes;

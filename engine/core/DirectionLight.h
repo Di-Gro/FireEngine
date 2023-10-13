@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Actor.h"
-#include "Texture.h"
-#include "RenderTarget.h"
-#include "DepthStencil.h"
 #include "MaterialAlias.h"
 #include "ILightSource.h"
 #include "CSBridge.h"
+#include "ScreenQuad.h"
 
-#include "Mesh.h"
+#include "ShaderResource.h"
+#include "TextureResource.h"
+#include "RenderTarget.h"
+#include "DepthStencil.h"
 
 class MeshComponent;
 class LineComponent;
@@ -22,10 +23,10 @@ public:
 	float intensity = 0.6f;
 
 private:
-	Texture m_renderTexture;
+	TextureResource m_renderTexture;
 	RenderTarget m_renderTarget;
 
-	Texture m_depthTexture;
+	TextureResource m_depthTexture;
 	DepthStencil m_depthStencil;
 	ShaderResource m_depthResource;
 

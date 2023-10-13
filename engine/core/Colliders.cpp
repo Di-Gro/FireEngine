@@ -11,11 +11,10 @@
 #include "Layers.h"
 
 #include "Game.h"
-#include "MeshAsset.h"
+#include "MeshAssets.h"
 #include "MeshComponent.h"
 #include "JoltExtantions.h"
-#include "Mesh.h"
-
+#include "MeshAsset.h"
 
 using namespace JPH;
 using namespace JPH::literals;
@@ -82,8 +81,8 @@ JPH::ShapeRefC BoxCollider::CreateShapeSettings() {
 	return shape;
 }
 
-const Mesh4* BoxCollider::CreateDebugMesh() {
-	return game()->meshAsset()->GetMesh(MeshAsset::formBoxLined);
+const MeshAsset* BoxCollider::CreateDebugMesh() {
+	return game()->meshAsset()->GetMesh(MeshAssets::formBoxLined);
 }
 
 void BoxCollider::OnUpdate() {
@@ -118,8 +117,8 @@ JPH::ShapeRefC SphereCollider::CreateShapeSettings() {
 	return result.Get();
 }
 
-const Mesh4* SphereCollider::CreateDebugMesh() {
-	return game()->meshAsset()->GetMesh(MeshAsset::formSphereLined);
+const MeshAsset* SphereCollider::CreateDebugMesh() {
+	return game()->meshAsset()->GetMesh(MeshAssets::formSphereLined);
 }
 
 void SphereCollider::OnUpdate() {
@@ -165,7 +164,7 @@ JPH::ShapeRefC CapsuleCollider::CreateShapeSettings() {
 	return result.Get();
 }
 
-const Mesh4* CapsuleCollider::CreateDebugMesh() {
+const MeshAsset* CapsuleCollider::CreateDebugMesh() {
 	return nullptr;
 }
 
@@ -178,8 +177,8 @@ void CapsuleCollider::OnUpdate() {
 		debugMesh->AddShape(&HalfSphereForm.verteces, &HalfSphereForm.indexes);
 		debugMesh2->AddShape(&HalfSphereForm.verteces, &HalfSphereForm.indexes);
 
-		debugMesh->mesh()->topology = HalfSphereForm.topology;
-		debugMesh2->mesh()->topology = HalfSphereForm.topology;
+		debugMesh->mesh()->resource.topology = HalfSphereForm.topology;
+		debugMesh2->mesh()->resource.topology = HalfSphereForm.topology;
 	}
 	if (!drawDebug && debugMesh2 != nullptr) {
 		debugMesh2->Destroy();

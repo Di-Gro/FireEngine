@@ -5,7 +5,8 @@
 #include <d3d11.h>
 #include <SimpleMath.h>
 
-#include "Mesh.h"
+//#include "Mesh.h"
+#include "Vertex.h"
 #include "CSBridge.h"
 
 using namespace DirectX::SimpleMath;
@@ -55,7 +56,7 @@ namespace Forms4 {
 
 	class Form {
 	public:
-		std::vector<Mesh4::Vertex> verteces;
+		std::vector<Vertex> verteces;
 		std::vector<int> indexes;
 		D3D_PRIMITIVE_TOPOLOGY topology;
 

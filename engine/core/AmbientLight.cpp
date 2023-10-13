@@ -7,6 +7,7 @@
 #include "ShaderAsset.h"
 #include "Actor.h"
 #include "Lighting.h"
+#include "MaterialResource.h"
 
 
 void AmbientLight::OnInit() {

@@ -52,6 +52,7 @@ class RenderTarget;
 class ShaderResource;
 class DepthStencil;
 class SceneRenderer;
+class MaterialResource;
 
 class RenderPass {
 	friend class Render;
@@ -111,7 +112,7 @@ public:
 	virtual void Draw();
 	virtual void Resize(float width, float height) { };
 
-	void PrepareMaterial(const Material* material);
+	void PrepareMaterial(const MaterialResource* material);
 	void SetActorConstBuffer(Actor* actor);
 	void SetEditorConstBuffer();
 
@@ -128,9 +129,9 @@ private:
 
 	inline void m_SetCameraConstBuffer();
 	
-	inline void m_PrepareMaterialResources(const Material* material);
-	inline void m_SetShader(const Material* material);
-	inline void m_SetMaterialConstBuffer(const Material* material);
+	inline void m_PrepareMaterialResources(const MaterialResource* material);
+	inline void m_SetShader(const MaterialResource* material);
+	inline void m_SetMaterialConstBuffer(const MaterialResource* material);
 
 };
 

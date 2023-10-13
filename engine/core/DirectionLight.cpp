@@ -15,6 +15,7 @@
 #include "CameraComponent.h"
 #include "MeshComponent.h"
 #include "LineComponent.h"
+#include "MeshAsset.h"
 
 void DirectionLight::OnInit() {
 	auto window = game()->window();
@@ -56,10 +57,10 @@ void DirectionLight::OnDestroy() {
 void DirectionLight::Resize(float width, float height) {
 	auto render = game()->render();
 
-	m_renderTexture = Texture::Create(render, width * m_mapScale, height * m_mapScale);
+	m_renderTexture = TextureResource::Create(render, width * m_mapScale, height * m_mapScale);
 	m_renderTarget = RenderTarget::Create(&m_renderTexture);
 
-	m_depthTexture = Texture::CreateDepthTexture(render, width * m_mapScale, height * m_mapScale);
+	m_depthTexture = TextureResource::CreateDepthTexture(render, width * m_mapScale, height * m_mapScale);
 	m_depthStencil = DepthStencil::Create(&m_depthTexture);
 	m_depthResource = ShaderResource::Create(&m_depthTexture);
 }
@@ -78,7 +79,7 @@ void DirectionLight::drawDebug(bool value) {
 		auto form = Forms4::SphereLined(10, 6, 6, { 0,1,0,1 });
 		m_debugMesh->AddShape(&form.verteces, &form.indexes, 0);
 		m_debugMesh->SetMaterial(0, Assets::ShaderVertexColor);
-		m_debugMesh->mesh()->topology = form.topology;
+		m_debugMesh->mesh()->resource.topology = form.topology;
 
 		m_debugLine = AddComponent<LineComponent>();
 		m_debugLine->SetPoint(Vector3::Forward * 100, { 0,1,0,1 });

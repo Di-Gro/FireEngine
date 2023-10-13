@@ -4,9 +4,9 @@
 
 #include "wrl.h_d3d11_alias.h"
 
-#include "Shader.h"
-#include "Mesh.h"
-#include "ImageAsset.h"
+//#include "Shader.h"
+//#include "Mesh.h"
+//#include "ImageAsset.h"
 
 class CameraComponent;
 

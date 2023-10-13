@@ -9,7 +9,7 @@
 //#include "Forms.h"
 //#include "Mesh.h"
 //#include "Game.h"
-//#include "ImageAsset.h"
+//#include "ImageAssets.h"
 //#include "Material.h"
 //#include "Mesh.h"
 //
@@ -40,7 +40,7 @@
 //	void OnDrawUI() override;
 //	void OnDestroy() override;
 //
-//	void SetImage(const ImageAsset::Image* image);
+//	void SetImage(const ImageAssets::Image* image);
 //	void SetImage(comptr<ID3D11Texture2D> texture2D);
 //
 //	void size(Vector2 size);
