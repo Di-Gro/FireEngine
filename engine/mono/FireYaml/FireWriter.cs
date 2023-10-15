@@ -346,7 +346,7 @@ namespace FireYaml {
         private void m_CreateAsset(string selfPath, ref object obj) {
             var asset = (IAsset)obj;
 
-            bool isTmpId = AssetStore.IsTmpAssetId(asset.assetIdHash);
+            bool isTmpId = AssetStore.IsRuntimeAsset(asset.assetIdHash);
             if(isTmpId) {
                 m_values.AddValue(selfPath, new YamlValue());
                 return;

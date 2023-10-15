@@ -2,11 +2,119 @@
 #include "Render.h"
 #include "Game.h"
 #include "Assets.h"
+#include "AssetStore.h"
 #include "ShaderAsset.h"
 #include "TextureAsset.h"
+#include "ImageAsset.h"
+
+const MaterialAsset* MaterialAsset::Default = nullptr;
+
+std::unordered_set<size_t> MaterialAsset::m_dynamic;
 
 void MaterialAsset::Release() {
 	resource.Release();
+}
+
+MaterialAsset* MaterialAsset::CreateDynamic(Game* game, const std::string& name, const fs::path& shaderPath) {
+	auto* render = game->render();
+	auto* shaderAsset = game->shaderAsset();
+	auto* assets = game->assets();
+	auto* store = game->assetStore();
+
+	auto assetId = store->CreateRuntimeAssetId(name);
+	auto mat = new MaterialAsset();
+
+	assets->Push(assetId, mat);
+	m_dynamic.insert(CppRefs::GetRef(mat));
+
+	mat->resource.Init(render);
+	mat->isDynamic = true;
+	mat->name(name);
+	mat->resource.shader = shaderAsset->GetShader(shaderAsset->GetShaderHash(shaderPath));
+
+	const auto* image = assets->GetStatic<ImageAsset>(Assets::Img2x2rgba1111);
+
+	auto texAssetId = store->CreateRuntimeAssetId(name + "/deffuseTex");
+	auto* deffuseTex = new TextureAsset();
+
+	assets->Push(assetId, deffuseTex);
+	m_dynamic.insert(CppRefs::GetRef(deffuseTex));
+
+	deffuseTex->resource = TextureResource::CreateFromImage(render, &image->resource);
+
+	mat->textures.push_back(deffuseTex);
+	mat->resource.textures.emplace_back(ShaderResource::Create(&deffuseTex->resource));
+	
+	return mat;
+}
+
+MaterialAsset* MaterialAsset::CreateDynamic(Game* game, const MaterialAsset* otherRes) {
+	auto* render = game->render();
+	auto* assets = game->assets();
+	auto* store = game->assetStore();
+
+	auto assetId = store->CreateRuntimeAssetId();
+	auto mat = new MaterialAsset();
+
+	assets->Push(assetId, mat);
+	m_dynamic.insert(CppRefs::GetRef(mat));
+
+	mat->resource.Init(render);
+
+	mat->resource.priority = otherRes->resource.priority;
+	mat->isDynamic = true;
+	mat->name(otherRes->name());
+	mat->resource.shader = otherRes->resource.shader;
+	mat->resource.data = otherRes->resource.data;
+
+	for (int i = 0; i < otherRes->textures.size(); i++) {
+		auto* otherTex = otherRes->textures[i];
+
+		const auto* image = otherTex->image;
+		assert(image != nullptr);
+
+		auto texAssetId = store->CreateRuntimeAssetId(assetId + "/deffuseTex");
+		auto thisTex = new TextureAsset();
+
+		assets->Push(texAssetId, thisTex);
+		m_dynamic.insert(CppRefs::GetRef(thisTex));
+
+		thisTex->resource = TextureResource::CreateFromImage(render, &image->resource);
+
+		mat->textures.push_back(thisTex);
+		mat->resource.textures.emplace_back(ShaderResource::Create(&thisTex->resource));
+
+		thisTex->name = otherTex->name;
+	}
+	return mat;
+}
+
+void MaterialAsset::DeleteDinamic(Game* game, MaterialAsset* material) {
+	auto* assets = game->assets();
+
+	auto matRef = CppRefs::GetRef(material);
+	if (!m_dynamic.contains(matRef))
+		return;
+
+	game->DeleteMaterialFromAllScenes(&material->resource);
+
+	for (int i = 0; i < material->textures.size(); i++) {
+		auto* staticTex = material->textures[i];
+		auto texRef = CppRefs::GetRef(staticTex);
+
+		if (m_dynamic.contains(texRef)) {
+			auto* dynamicTex = (TextureAsset*)staticTex;
+			
+			m_dynamic.erase(texRef);
+			assets->Pop(dynamicTex->assetIdHash());
+			dynamicTex->Release();
+			delete dynamicTex;
+		}
+	}
+	m_dynamic.erase(matRef);
+	assets->Pop(material->assetIdHash());
+	material->Release();
+	delete material;
 }
 
 DEF_PUSH_ASSET(MaterialAsset);
@@ -112,4 +220,20 @@ DEF_FUNC(MaterialAsset, textures_set, void)(CppRef matRef, size_t* cppRefs, int 
 		material->textures.push_back(texture);
 		material->resource.textures.emplace_back(ShaderResource::Create(&texture->resource));
 	}
+}
+
+DEF_FUNC(MaterialAsset, CreateDynamicMaterial, CppRef)(CppRef gameRef, CppRef otherMaterialRef) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto material = CppRefs::ThrowPointer<MaterialAsset>(otherMaterialRef);
+
+	auto newMaterial = MaterialAsset::CreateDynamic(game, material);
+
+	return CppRefs::GetRef(newMaterial);
+}
+
+DEF_FUNC(MaterialAsset, DeleteDynamicMaterial, void)(CppRef gameRef, CppRef otherMaterialRef) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto material = CppRefs::ThrowPointer<MaterialAsset>(otherMaterialRef);
+
+	MaterialAsset::DeleteDinamic(game, material);
 }

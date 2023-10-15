@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Assets.h"
 
+const ImageAsset* ImageAsset::Default = nullptr;
 
 void ImageAsset::Release() {
 	resource.Release();

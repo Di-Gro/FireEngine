@@ -67,6 +67,9 @@
     <Filter Include="AI">
       <UniqueIdentifier>{c08fe36c-e735-4477-86e0-ae43a29a2efb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Loaders">
+      <UniqueIdentifier>{19f2fcc1-e17d-4f22-b496-316a038a1418}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Delegates.cpp">
@@ -95,12 +98,6 @@
     </ClCompile>
     <ClCompile Include="LinedPlain.cpp">
       <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshAssets.cpp">
-      <Filter>Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageAssets.cpp">
-      <Filter>Assets</Filter>
     </ClCompile>
     <ClCompile Include="SimpleMath.cpp">
       <Filter>Not Components</Filter>
@@ -402,6 +399,9 @@
     <ClCompile Include="ScreenQuad.cpp">
       <Filter>Render\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="ObjLoader.cpp">
+      <Filter>Assets\Loaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FPSCounter.h">
@@ -451,12 +451,6 @@
     </ClInclude>
     <ClInclude Include="LinedPlain.h">
       <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshAssets.h">
-      <Filter>Assets</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageAssets.h">
-      <Filter>Assets</Filter>
     </ClInclude>
     <ClInclude Include="SimpleMath.h">
       <Filter>Not Components</Filter>
@@ -802,6 +796,9 @@
     </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjLoader.h">
+      <Filter>Assets\Loaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

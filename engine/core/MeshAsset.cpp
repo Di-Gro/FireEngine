@@ -2,12 +2,6 @@
 
 #include "Game.h"
 #include "Assets.h"
-#include "MeshAssets.h"
-//#include "Render.h"
-//#include "RenderPass.h"
-
-//#include "DirectionLight.h"
-//#include "CameraComponent.h"
 
 void MeshAsset::Release() {
 	resource.Release();

@@ -476,6 +476,12 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_textures_set")]
 		    public static extern void textures_set(CppRef matRef, size_t[] cppRefs, int count);
 
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_CreateDynamicMaterial")]
+		    public static extern CppRef CreateDynamicMaterial(CppRef gameRef, CppRef otherMaterialRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_DeleteDynamicMaterial")]
+		    public static extern void DeleteDynamicMaterial(CppRef gameRef, CppRef otherMaterialRef);
+
 		}
 
 		public static class Assets {
@@ -593,12 +599,6 @@ namespace EngineDll {
 		}
 
 		public static class MeshAssets {
-
-            [DllImport(Paths.Exe, EntryPoint = "MeshAssets_CreateDynamicMaterial")]
-		    public static extern CppRef CreateDynamicMaterial(CppRef meshAssetRef, CppRef otherMaterialRef);
-
-            [DllImport(Paths.Exe, EntryPoint = "MeshAssets_DeleteDynamicMaterial")]
-		    public static extern void DeleteDynamicMaterial(CppRef meshAssetRef, CppRef otherMaterialRef);
 
 		}
 

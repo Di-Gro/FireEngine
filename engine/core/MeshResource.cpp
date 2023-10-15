@@ -1,10 +1,10 @@
 #include "MeshResource.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 
 #include "Game.h"
 #include "Assets.h"
-#include "MeshAssets.h"
 #include "Render.h"
 #include "RenderPass.h"
 #include "DirectionLight.h"

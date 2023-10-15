@@ -4,7 +4,7 @@
 #include "TextureResource.h"
 
 
-ShaderResource ShaderResource::Create(TextureResource* texture) {
+ShaderResource ShaderResource::Create(const TextureResource* texture) {
 	ShaderResource res;
 	res.m_render = texture->render;
 	auto device = res.m_render->device();

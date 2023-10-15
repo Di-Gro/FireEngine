@@ -28,8 +28,6 @@
 #include "Assets.h"
 #include "AssetStore.h"
 #include "ShaderAsset.h"
-#include "MeshAssets.h"
-#include "ImageAssets.h"
 #include "MaterialResource.h"
 
 #include "RenderTarget.h"
@@ -80,8 +78,6 @@ Game::Game() {
 	m_input = new InputDevice();
 	m_hotkeys = new HotKeys();
 	m_shaderAsset = new ShaderAsset();
-	m_meshAsset = new MeshAssets();
-	m_imageAsset = new ImageAssets();
 	m_assets = new Assets();
 	m_assetStore = new AssetStore();
 	m_ui = new UserInterface();
@@ -96,8 +92,6 @@ Game::~Game() {
 	delete m_input;
 	delete m_hotkeys;
 	delete m_shaderAsset;
-	delete m_meshAsset;
-	delete m_imageAsset;
 	delete m_assets;
 	delete m_assetStore;
 	delete m_ui;
@@ -114,8 +108,6 @@ void Game::Init(MonoInst* imono) {
 	m_render->Init(this, m_window);
 	m_physics->Init(this);
 	m_shaderAsset->Init(m_render);
-	m_meshAsset->Init(this);
-	m_imageAsset->Init();
 	m_input->Init(this);
 	m_hotkeys->Init(this);
 	m_assets->Init(this);
@@ -140,8 +132,6 @@ void Game::Init(MonoInst* imono) {
 
 	m_gameWindow = ui()->CreateSceneWindow("Game");
 	m_gameWindow->visible = false;
-
-	//tmpSceneAssetId = assets()->CreateTmpAssetId();
 }
 
 void Game::m_InitMono(MonoInst* imono) {
@@ -180,8 +170,8 @@ if (msg.message == WM_QUIT || m_onExit) {\
 }\
 
 void Game::Run() {
-	m_render->Start();
-	m_meshAsset->Start();
+	m_assets->Start();
+	//m_meshAsset->Start();
 
 	m_editorScene = CreateScene(true, editorSettings.startupSceneId);
 	if (!LoadScene(m_editorScene)) {
@@ -311,7 +301,7 @@ void Game::m_EndUpdate() {
 
 	if (m_hotkeys->GetButtonDownEd(Keys::R, Keys::Ctrl)) {
 		shaderAsset()->RecompileShaders();
-		meshAsset()->ReloadMaterials();
+		//meshAsset()->ReloadMaterials();
 		std::cout << std::endl;
 	}
 
@@ -332,9 +322,8 @@ void Game::m_Destroy() {
 
 	m_DestroyImGui();
 	m_hotkeys->Destroy();
-	m_meshAsset->Destroy();
+	m_assets->Destroy();
 	m_physics->Destroy();
-	m_render->Destroy();
 	m_window->Destroy();
 }
 
@@ -364,7 +353,7 @@ Scene* Game::CreateScene(bool isEditor) {
 
 Scene* Game::CreateScene(bool isEditor, const std::string& assetId) {
 	auto gameRef = CppRefs::GetRef(this);
-	auto assetIdHash = assets()->GetCsAssetIDHash(assetId);
+	auto assetIdHash = assets()->GetAssetIDHash(assetId);
 
 	auto sceneRef = Scene_PushAsset(gameRef, assetId.c_str(), assetIdHash);
 	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);

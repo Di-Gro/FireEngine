@@ -45,6 +45,6 @@ public:
 
 	void UpdateSampler();
 
-	static ShaderResource Create(TextureResource* texture);
+	static ShaderResource Create(const TextureResource* texture);
 	static ShaderResource Create(Render* render, ID3D11Texture2D* texture, DXGI_FORMAT format);
 };

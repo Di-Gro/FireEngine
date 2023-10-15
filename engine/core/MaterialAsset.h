@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <filesystem>
+#include <unordered_set>
 
 #include "wrl.h_d3d11_alias.h"
 #include "CSBridge.h"
@@ -15,15 +16,20 @@
 namespace fs = std::filesystem;
 
 class TextureAsset;
+class Game;
 
 class MaterialAsset : public IAsset {
 	friend class Render;
 	friend class SceneRenderer;
 
 public:
+	static const MaterialAsset* Default;
+	static std::unordered_set<size_t> m_dynamic;
+
+public:
 	bool isDynamic = false;
 
-	std::vector<TextureAsset*> textures;
+	std::vector<const TextureAsset*> textures;
 	MaterialResource resource;
 
 private:
@@ -39,7 +45,11 @@ public:
 	}
 
 	void Release() override;
-	
+
+public:
+	static MaterialAsset* CreateDynamic(Game* game, const std::string& name, const fs::path& shaderPath);
+	static MaterialAsset* CreateDynamic(Game* game, const MaterialAsset* other);
+	static void DeleteDinamic(Game* game, MaterialAsset* material);
 };
 
 PUSH_ASSET(MaterialAsset);
@@ -65,3 +75,7 @@ FUNC(MaterialAsset, shader_get, void)(CppRef matRef, char* buf);
 
 FUNC(MaterialAsset, isDynamic_get, bool)(CppRef matRef);
 FUNC(MaterialAsset, textures_set, void)(CppRef matRef, size_t* cppRefs, int count);
+
+
+FUNC(MaterialAsset, CreateDynamicMaterial, CppRef)(CppRef gameRef, CppRef otherMaterialRef);
+FUNC(MaterialAsset, DeleteDynamicMaterial, void)(CppRef gameRef, CppRef otherMaterialRef);

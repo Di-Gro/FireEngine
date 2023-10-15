@@ -87,8 +87,6 @@ public:
 	inline comptr<ID3D11RenderTargetView> rtv() { return m_device.GetRTV(); }
 
 	void Init(Game* game, Window* window);
-	void Start();
-	void Destroy();
 	void Draw(std::list<Scene*>* scenes);
 
 	ID3D11RasterizerState* GetRastState(const MaterialResource* material);

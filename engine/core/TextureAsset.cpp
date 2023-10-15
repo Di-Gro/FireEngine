@@ -6,7 +6,7 @@
 #include "ImageAsset.h"
 #include "Game.h"
 
-TextureAsset* TextureAsset::Default = nullptr;
+const TextureAsset* TextureAsset::Default = nullptr;
 
 
 void TextureAsset::Release() {

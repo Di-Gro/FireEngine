@@ -23,8 +23,6 @@ class Lighting;
 class InputDevice;
 class HotKeys;
 class ShaderAsset;
-class MeshAssets;
-class ImageAssets;
 class Assets;
 class UserInterface;
 class AssetStore;
@@ -55,8 +53,6 @@ private:
 	HotKeys* m_hotkeys;
 
 	ShaderAsset* m_shaderAsset;
-	MeshAssets* m_meshAsset;
-	ImageAssets* m_imageAsset;
 	Assets* m_assets;
 	AssetStore* m_assetStore;
 
@@ -112,8 +108,6 @@ public:
 	inline Scene* currentScene() { return m_sceneStack.empty() ? nullptr : m_sceneStack.back(); }
 
 	inline ShaderAsset* shaderAsset() { return m_shaderAsset; }
-	inline MeshAssets* meshAsset() { return m_meshAsset; }
-	ImageAssets* imageAsset() { return m_imageAsset; }
 
 	inline NavMesh* navMesh() { return m_NavMesh; };
 

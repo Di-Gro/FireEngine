@@ -6,15 +6,15 @@
 #include "MeshComponent.h"
 #include "Game.h"
 #include "Actor.h"
+#include "Assets.h"
 #include "MaterialAsset.h"
 #include "MeshAsset.h"
-#include "MeshAssets.h"
 #include "Vertex.h"
 
 DEF_PURE_COMPONENT(LinedPlain, RunMode::EditOnly);
 
 void LinedPlain::OnInit() {
-	m_material = game()->meshAsset()->CreateDynamicMaterial("Lined Plain material", Assets::ShaderDiffuseColor);
+	m_material = MaterialAsset::CreateDynamic(game(), "Lined Plain material", Assets::ShaderDiffuseColor);
 }
 
 void LinedPlain::OnStart() {
@@ -36,7 +36,7 @@ void LinedPlain::OnDestroy() {
 	m_meshComponent->ClearMesh();
 	m_meshComponent->Destroy();
 
-	game()->meshAsset()->DeleteDynamicMaterial(m_material);
+	MaterialAsset::DeleteDinamic(game(), m_material);
 	m_material = nullptr;
 }
 

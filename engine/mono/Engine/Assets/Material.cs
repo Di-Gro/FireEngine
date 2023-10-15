@@ -98,8 +98,6 @@ namespace Engine {
         public void LoadAsset() {
             assetIdHash = assetId.GetAssetIDHash();
 
-#if DETACHED
-#else
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0){
                 cppRef = Dll.Material.PushAsset(Game.gameRef, assetId, assetIdHash);
@@ -109,7 +107,6 @@ namespace Engine {
             else {
                 OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
             }
-#endif
         }
 
         public void ReloadAsset() {
@@ -120,14 +117,12 @@ namespace Engine {
                 throw new Exception("Asset not loaded");
 
             AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
-
+         
             Dll.Material.Init(Game.gameRef, cppRef);
 
             m_texturesHash = m_GetTexturesHash();
 
-            // if (m_textures.Count > 0) {
             m_SendTexturesToCpp();
-            // }
         }
 
         public void SaveAsset() {
@@ -216,13 +211,13 @@ namespace Engine {
         private MaterialProxy m_proxy = new MaterialProxy();
 
         public DynamicMaterial(IMaterial source) {
-            m_proxy.cppRef = Dll.MeshAssets.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
+            m_proxy.cppRef = Dll.Material.CreateDynamicMaterial(Game.gameRef, source.cppRef);
         }
 
         public DynamicMaterial(string name, string assetId) {
             var source = new StaticMaterial().LoadFromAsset(assetId);
 
-            m_proxy.cppRef = Dll.MeshAssets.CreateDynamicMaterial(Game.meshAssetRef, source.cppRef);
+            m_proxy.cppRef = Dll.Material.CreateDynamicMaterial(Game.gameRef, source.cppRef);
             m_proxy.Name = name;
         }
 
@@ -237,7 +232,7 @@ namespace Engine {
         }
 
         public void Delete() {
-            Dll.MeshAssets.DeleteDynamicMaterial(Game.meshAssetRef, cppRef);
+            Dll.Material.DeleteDynamicMaterial(Game.gameRef, cppRef);
         }
 
     }

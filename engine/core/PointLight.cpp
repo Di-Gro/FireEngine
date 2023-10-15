@@ -1,13 +1,13 @@
 #include "PointLight.h"
 
 #include "Game.h"
+#include "Assets.h"
 #include "Scene.h"
 #include "SimpleMath.h"
 
 #include "Render.h"
 #include "RenderPass.h"
 
-#include "MeshAssets.h"
 #include "MeshAsset.h"
 #include "MaterialAsset.h"
 
@@ -16,10 +16,10 @@
 
 void PointLight::OnInit() {
 	auto render = game()->render();
-	auto meshAsset = game()->meshAsset();
+	auto asset = game()->assets();
 
-	m_mesh = meshAsset->GetMesh(MeshAssets::formSphere);
-	m_material = meshAsset->CreateDynamicMaterial("Point Light", Assets::ShaderPointLightMesh);
+	m_mesh = asset->GetStatic<MeshAsset>(Assets::FormSphere);
+	m_material = MaterialAsset::CreateDynamic(game(), "Point Light", Assets::ShaderPointLightMesh);
 
 	m_lightSource = scene()->renderer.AddLightSource(this);
 }

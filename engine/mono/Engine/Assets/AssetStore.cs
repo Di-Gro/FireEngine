@@ -20,15 +20,15 @@ namespace Engine {
         //private Dictionary<int, Asset> m_assetGuidHash_assetData = new Dictionary<int, Asset>();
         //private Dictionary<int, YamlValues> m_assetGuidHash_assetValues = new Dictionary<int, YamlValues>();
 
-        private HashSet<int> m_tmpAssetIdHashes = new HashSet<int>();
+        private HashSet<int> m_runtimeAssets = new HashSet<int>();
 
         public string ProjectPath;
         public string AssetsPath => $"{ProjectPath}\\Assets";
         public string EngineAssetsPath => $"{ProjectPath}\\Engine\\Assets";
         public string EditorPath => $"{ProjectPath}\\Editor";
 
-        private uint m_nextAssetId = 1;
-        private uint m_nextTmpAssetId = 1;
+        //private uint m_nextAssetId = 1;
+        //private uint m_nextTmpAssetId = 1;
 
         private DateTime m_lastChangeTime = DateTime.UnixEpoch;
 
@@ -174,16 +174,22 @@ namespace Engine {
         // Не добавляются в загруженные ассеты
         // Не сохраняются в файл при сериализации
 
-        public static uint cpp_CreateTmpAssetIdInt() {
-            var id = AssetStore.Instance.m_nextTmpAssetId++;
-            return id;
+        //public static uint cpp_CreateTmpAssetIdInt() {
+        //    var id = AssetStore.Instance.m_nextTmpAssetId++;
+        //    return id;
+        //}
+
+        //public static void cpp_AddTmpAssetIdHash(int tmpAssetIdHash) {
+        //    Instance.m_runtimeAssets.Add(tmpAssetIdHash);
+        //}
+
+        public static bool IsRuntimeAsset(int tmpAssetIdHash) {
+            return Instance.m_runtimeAssets.Contains(tmpAssetIdHash);
         }
 
-        public static void cpp_AddTmpAssetIdHash(int tmpAssetIdHash) {
-            Instance.m_tmpAssetIdHashes.Add(tmpAssetIdHash);
+        public static void AddRuntimeAsset(int assetIdHash) {
+            Instance.m_runtimeAssets.Add(assetIdHash);
         }
-
-        public static bool IsTmpAssetId(int tmpAssetIdHash) => Instance.m_tmpAssetIdHashes.Contains(tmpAssetIdHash);
 
         public void SendTypesToCpp() {
             Dll.AssetStore.ClearTypes(Game.gameRef);

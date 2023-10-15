@@ -95,7 +95,7 @@ public:
 class GameCallbacks {
 public:
 	void (*setSceneRef)(CppRef value);
-	void (*setMeshAssetRef)(CppRef value);
+	//void (*setMeshAssetRef)(CppRef value);
 	void (*setAssetStoreRef)(CppRef value);
 	void (*setUpdateData)(GameUpdateData value);
 	void (*onInputUpdate)();
@@ -116,7 +116,7 @@ public:
 
 	int (*getAssetIDHash)(size_t stringPtr);
 
-	bool (*loadAsset)(int assetIdHash, CppRef cppRef);
+	bool (*loadAsset)(CppRef cppRef, int assetIdHash);
 	void (*reloadAsset)(int assetIdHash);
 	void (*saveAsset)(int assetIdHash);
 
@@ -131,7 +131,7 @@ public:
 	void (*removeAsset)(int assetGuidHash);
 
 	int (*createPrefab)(CsRef actorRef, size_t pathPtr);
-	bool (*loadPrefab)(int assetGuidHash, CsRef actorRef);
+	bool (*loadPrefab)(CsRef actorRef, int assetGuidHash);
 	bool (*updatePrefab)(CsRef actorRef, int assetGuidHash);
 
 	void (*setPrefabId)(CsRef actorRef, int prefabGuidHash);
@@ -144,4 +144,7 @@ public:
 	void (*setStartupScene)(CppRef sceneRef);
 
 	void (*setUserInterfaceRef)(CppRef value);
+
+	bool (*isRuntimeAsset)(int assetIdHash);
+	void (*addRuntimeAsset)(int assetIdHash);
 };

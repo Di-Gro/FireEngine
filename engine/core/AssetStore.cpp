@@ -1,8 +1,47 @@
 #include "AssetStore.h"
 #include <unordered_map>
 #include "Game.h"
+#include "Assets.h"
+#include "Random.h"
 
 AssetStore::~AssetStore() { }
+
+const std::string& AssetStore::GetAssetName(int assetIdHash) {
+	if (assetIdHash == 0)
+		return m_nullValue;
+
+	// assetIdHash == -1
+	if (IsRuntimeAsset(assetIdHash)) 
+		return m_runtimeValue;
+
+	if (assetNames.contains(assetIdHash))
+		return assetNames[assetIdHash];
+
+	return m_missingValue;
+}
+
+const std::string& AssetStore::GetScriptName(int scriptIdHash) {
+	if (scriptIdHash == 0)
+		return m_nullValue;
+
+	if (scriptIdHash == anyScriptIdHash)
+		return m_anyScriptName;
+
+	if (typeNames.contains(scriptIdHash))
+		return typeNames[scriptIdHash];
+
+	return m_missingValue;
+}
+
+const std::string& AssetStore::GetScriptFullName(int scriptIdHash) {
+	if (scriptIdHash == 0)
+		return m_nullValue;
+
+	if (typeFullNames.contains(scriptIdHash))
+		return typeFullNames[scriptIdHash];
+
+	return m_missingValue;
+}
 
 void AssetStore::SetType(TypeHash typeId, const std::string& fullName, const std::string& name) {
 	typeFullNames[typeId] = fullName;
@@ -58,6 +97,24 @@ void AssetStore::ClearAssetTypes() {
 const std::string& AssetStore::GetAssetGuid(int assetGuidHash) {
 	m_game->callbacks().requestAssetGuid(assetGuidHash);
 	return m_buffer;
+}
+
+
+std::string AssetStore::CreateRuntimeAssetId(const std::string& name) {
+	auto sep = name == "" ? "" : "/";
+	auto assetId = "runtime:/" + name + sep + std::to_string(Random().Int());
+
+	AddRuntimeAssetId(assetId);
+
+	return assetId;
+}
+
+void AssetStore::AddRuntimeAssetId(const std::string& assetId) {
+	m_game->callbacks().addRuntimeAsset(m_game->assets()->GetAssetIDHash(assetId));
+}
+
+bool AssetStore::IsRuntimeAsset(int assetIdHash) {
+	return m_game->callbacks().isRuntimeAsset(assetIdHash);
 }
 
 DEF_FUNC(AssetStore, ClearTypes, void)(CppRef gameRef) {

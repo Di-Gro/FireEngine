@@ -11,7 +11,7 @@
 #include "Layers.h"
 
 #include "Game.h"
-#include "MeshAssets.h"
+#include "Assets.h"
 #include "MeshComponent.h"
 #include "JoltExtantions.h"
 #include "MeshAsset.h"
@@ -29,6 +29,7 @@ void Collider::OnUpdate() {
 	if (drawDebug && debugMesh == nullptr) {
 		debugMesh = AddComponent<MeshComponent>(true);
 		debugMesh->mesh(CreateDebugMesh());
+		debugMesh->castShadow(false);
 	}
 	if (!drawDebug && debugMesh != nullptr) {
 		debugMesh->Destroy();
@@ -82,7 +83,7 @@ JPH::ShapeRefC BoxCollider::CreateShapeSettings() {
 }
 
 const MeshAsset* BoxCollider::CreateDebugMesh() {
-	return game()->meshAsset()->GetMesh(MeshAssets::formBoxLined);
+	return game()->assets()->GetStatic<MeshAsset>(Assets::FormBoxLined);
 }
 
 void BoxCollider::OnUpdate() {
@@ -118,7 +119,7 @@ JPH::ShapeRefC SphereCollider::CreateShapeSettings() {
 }
 
 const MeshAsset* SphereCollider::CreateDebugMesh() {
-	return game()->meshAsset()->GetMesh(MeshAssets::formSphereLined);
+	return game()->assets()->GetStatic<MeshAsset>(Assets::FormSphereLined);
 }
 
 void SphereCollider::OnUpdate() {

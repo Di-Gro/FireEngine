@@ -6,7 +6,6 @@
 #include "RenderPass.h"
 
 #include "Assets.h"
-#include "MeshAssets.h"
 #include "MeshAsset.h"
 #include "MaterialAsset.h"
 
@@ -15,12 +14,12 @@
 
 void SpotLight::OnInit() {
 	auto render = game()->render();
-	auto meshAsset = game()->meshAsset();
+	auto assets = game()->assets();
 
-	m_mesh = meshAsset->GetMesh(MeshAssets::formCone);
-	m_meshBlend = meshAsset->GetMesh(MeshAssets::formCone);
-	m_material = meshAsset->CreateDynamicMaterial("Spot Light", Assets::ShaderSpotLight);
-	m_materialShape = meshAsset->CreateDynamicMaterial("Spot Light", Assets::ShaderDiffuseColor);
+	m_mesh = assets->GetStatic<MeshAsset>(Assets::FormCone);
+	m_meshBlend = assets->GetStatic<MeshAsset>(Assets::FormCone);
+	m_material = MaterialAsset::CreateDynamic(game(), "Spot Light", Assets::ShaderSpotLight);
+	m_materialShape = MaterialAsset::CreateDynamic(game(), "Spot Light", Assets::ShaderDiffuseColor);
 	m_materialShape->resource.data.diffuseColor = { 0, 0.1f, 0, 1 };
 
 	m_lightSource = scene()->renderer.AddLightSource(this);
@@ -100,11 +99,12 @@ LightCBuffer SpotLight::GetCBuffer() {
 	return cbuffer;
 }
 
-DEF_COMPONENT(SpotLight, Engine.SpotLight, 6, RunMode::EditPlay) {
+DEF_COMPONENT(SpotLight, Engine.SpotLight, 7, RunMode::EditPlay) {
 	OFFSET(0, SpotLight, color);
 	OFFSET(1, SpotLight, intensity);
 	OFFSET(2, SpotLight, length);
 	OFFSET(3, SpotLight, angle);
 	OFFSET(4, SpotLight, blend);
 	OFFSET(5, SpotLight, attenuation);
+	OFFSET(6, SpotLight, drawShape);
 }

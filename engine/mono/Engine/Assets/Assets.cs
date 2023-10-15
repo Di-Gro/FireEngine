@@ -69,7 +69,7 @@ namespace Engine {
             }
         }
 
-        public static bool cpp_Load(int assetIdHash, CppRef cppRef) {
+        public static bool cpp_Load(CppRef cppRef, int assetIdHash) {
             try {
                 var asset = CreateAssetWrapper(assetIdHash, cppRef);
                 asset.LoadAsset();

@@ -36,7 +36,7 @@ private:
 	std::string m_nullValue = "Null";
 	std::string m_anyScriptName = "Asset";
 	std::string m_missingValue = "Missing";
-	std::string m_dynamicValue = "Dynamic";
+	std::string m_runtimeValue = "Runtime";
 
 	std::string m_projectPath;
 	std::string m_assetsPath;
@@ -60,42 +60,9 @@ public:
 	const std::string&	buffer() { return m_emptyValue; }
 	void				buffer(const std::string& value) { m_buffer = value; }
 
-	const std::string& GetAssetName(int assetIdHash) {
-		if (assetIdHash == 0)
-			return m_nullValue;
-
-		if (assetIdHash == -1)
-			return m_dynamicValue;
-
-		if (assetNames.contains(assetIdHash))
-			return assetNames[assetIdHash];
-
-		return m_missingValue;
-	}
-
-	const std::string& GetScriptName(int scriptIdHash) {
-		if (scriptIdHash == 0)
-			return m_nullValue;
-
-		if (scriptIdHash == anyScriptIdHash)
-			return m_anyScriptName;
-
-		if (typeNames.contains(scriptIdHash))
-			return typeNames[scriptIdHash];
-
-		return m_missingValue;
-	}
-
-	const std::string& GetScriptFullName(int scriptIdHash) {
-		if (scriptIdHash == 0)
-			return m_nullValue;
-
-		if (typeFullNames.contains(scriptIdHash))
-			return typeFullNames[scriptIdHash];
-
-		return m_missingValue;
-	}
-
+	const std::string& GetAssetName(int assetIdHash);
+	const std::string& GetScriptName(int scriptIdHash);
+	const std::string& GetScriptFullName(int scriptIdHash);
 	const std::string& GetAssetGuid(int assetGuidHash);
 
 	void SetType(TypeHash typeId, const std::string& fullName, const std::string& name);
@@ -110,6 +77,11 @@ public:
 
 	void RenameAsset(AssetHash assetId, const std::string& name);
 	void RemoveAsset(TypeHash typeId, AssetHash assetId);
+
+	std::string CreateRuntimeAssetId(const std::string& path = "");
+	void AddRuntimeAssetId(const std::string& assetId);
+
+	bool IsRuntimeAsset(int assetIdHash);
 };
 
 FUNC(AssetStore, ClearTypes, void)(CppRef gameRef);

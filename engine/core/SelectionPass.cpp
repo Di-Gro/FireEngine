@@ -3,7 +3,6 @@
 #include "Game.h"
 #include "Window.h"
 #include "Assets.h"
-#include "MeshAssets.h"
 #include "UI/UserInterface.h"
 #include "Actor.h"
 #include "MeshComponent.h"
@@ -12,7 +11,7 @@
 void SelectionPass::Init(Game* game) {
 	RenderPass::Init(game);
 
-	m_highlightMaterial = m_game->meshAsset()->CreateDynamicMaterial("Editor Highlight", Assets::ShaderEditorHihglight);
+	m_highlightMaterial = MaterialAsset::CreateDynamic(m_game, "Editor Highlight", Assets::ShaderEditorHihglight);
 	m_highlightMaterial->resource.cullMode = CullMode::None;
 
 	auto width = m_game->window()->GetWidth();

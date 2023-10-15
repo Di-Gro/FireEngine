@@ -526,9 +526,9 @@ namespace Engine {
                     matRefs.Add(defaultMatCppRef);
                     continue;
                 }
-                var assetIdHash = material.assetId.GetAssetIDHash();
-                if (!AssetStore.HasAssetPath(assetIdHash))
-                    throw new Exception($"Missing AssetId: {material.assetId}");
+                //var assetIdHash = material.assetId.GetAssetIDHash();
+                //if (!AssetStore.HasAsset(assetIdHash))
+                //    throw new Exception($"Missing AssetId: {material.assetId}");
 
                 material.LoadFromAsset(material.assetId);
                 matRefs.Add(material.cppRef.value);

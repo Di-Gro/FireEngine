@@ -78,14 +78,6 @@ void Render::Init(Game* game, Window* window) {
 	onePixelStagingTexFLOAT3 = TextureResource::CreateStagingTexture(this, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
 }
 
-void Render::Start() {
-
-}
-
-void Render::Destroy() {
-
-}
-
 void Render::Draw(std::list<Scene*>* scenes) {
 
 	/// Begin Render

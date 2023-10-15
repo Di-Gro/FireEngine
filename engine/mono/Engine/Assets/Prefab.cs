@@ -72,7 +72,7 @@ namespace Engine {
             }
         }
 
-        public static bool LoadPrefab(int assetGuidHash, CsRef actorRef) {
+        public static bool LoadPrefab(CsRef actorRef, int assetGuidHash) {
             try {
                 var assetGuid = AssetStore.GetAssetGuid(assetGuidHash);
                 object actorObj = CppLinked.GetObjectByRef(actorRef);

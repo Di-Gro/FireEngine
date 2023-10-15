@@ -168,12 +168,12 @@ PROP_GETSET(ClassName, int, assetIdHash)\
 DEF_FUNC(ClassName, PushAsset, CppRef)(CppRef gameRef, const char* assetId, int assetIdHash) {\
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);\
 \
-	auto* asset = (ClassName*)game->assets()->Get(assetIdHash);\
+	auto* asset = (ClassName*)game->assets()->GetStatic(assetIdHash);\
 	if (asset == nullptr) {\
 		asset = new ClassName();\
 		asset->assetId(assetId);\
 		asset->assetIdHash(assetIdHash);\
-		game->assets()->Push(assetIdHash, asset);\
+		game->assets()->Push(assetId, asset);\
 	}\
 	return CppRefs::GetRef(asset);\
 }\

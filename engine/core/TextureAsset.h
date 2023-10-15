@@ -12,7 +12,7 @@ class ImageAsset;
 
 class TextureAsset : public IAsset {
 public:
-	static TextureAsset* Default;
+	static const TextureAsset* Default;
 
 public:
 	std::string name;

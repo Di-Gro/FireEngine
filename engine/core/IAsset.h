@@ -10,7 +10,7 @@ public:
 
 	virtual ~IAsset() { delete[] m_assetId; }
 
-	const char* assetId() { return m_assetId; };
+	const char* assetId() const { return m_assetId; };
 
 	void assetId(const char* value) {
 		delete[] m_assetId;
@@ -20,7 +20,7 @@ public:
 		std::memcpy(m_assetId, value, length);
 	};
 
-	int assetIdHash() { return m_assetIdHash; }
+	int assetIdHash() const { return m_assetIdHash; }
 	void assetIdHash(int value) { m_assetIdHash = value; }
 
 	virtual void Release() = 0;

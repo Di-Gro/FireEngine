@@ -170,7 +170,7 @@ namespace FireBin {
 
             var asset = (IAsset)obj;
 
-            if (Engine.AssetStore.IsTmpAssetId(asset.assetIdHash))
+            if (Engine.AssetStore.IsRuntimeAsset(asset.assetIdHash))
                 return null;
 
             return m_writer.WriteAssetRef(asset.assetId);

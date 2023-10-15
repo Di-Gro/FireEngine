@@ -51,6 +51,11 @@ namespace Engine {
 
         ~StaticMesh() { Assets.AssetUpdateEvent -= OnAssetUpdate; }
 
+        /// <summary>
+        /// Загружает StaticMesh из файла '.obj'.<br/>
+        /// Позволяет загрузить меш, даже если для него нет ассета.<br/>
+        /// Будет создан runtime ассет, которого нет в AssetStore. 
+        /// </summary>
         public StaticMesh LoadFromFile(string path) {
             assetId = path;
             assetIdHash = assetId.GetAssetIDHash();

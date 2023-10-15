@@ -12,7 +12,6 @@ namespace Engine {
     static class Game {
 
         public static CppRef gameRef { get; private set; }
-        public static CppRef meshAssetRef { get; private set; }
         public static CppRef assetStoreRef { get; private set; }
         public static CppRef uiRef { get; private set; }
         public static CppRef sceneRef { get; private set; }
@@ -69,49 +68,50 @@ namespace Engine {
             gameRef = _gameRef;
 
             m_gameCallbacks = new GameCallbacks();
-            m_gameCallbacks.setSceneRef = new GameCallbacks.TakeCppRef(SetSceneRef);
-            m_gameCallbacks.setMeshAssetRef = new GameCallbacks.TakeCppRef(SetMeshAssetRef);
-            m_gameCallbacks.setAssetStoreRef = new GameCallbacks.TakeCppRef(SetAssetStoreRef);
+            m_gameCallbacks.setSceneRef = new GameCallbacks.CppRef_void(SetSceneRef);
+            m_gameCallbacks.setAssetStoreRef = new GameCallbacks.CppRef_void(SetAssetStoreRef);
             m_gameCallbacks.setUpdateData = new GameCallbacks.SetUpdateData(SetUpdateData);
-            m_gameCallbacks.onInputUpdate = new GameCallbacks.Void(Input.OnUpdate);
-            m_gameCallbacks.writeScene = new GameCallbacks.WriteScene(cpp_WriteScene);
-            m_gameCallbacks.loadScene = new GameCallbacks.LoadScene(LoadScene);
+            m_gameCallbacks.onInputUpdate = new GameCallbacks.void_void(Input.OnUpdate);
+            m_gameCallbacks.writeScene = new GameCallbacks.CppRef_hash_bool(cpp_WriteScene);
+            m_gameCallbacks.loadScene = new GameCallbacks.CppRef_hash_bool(LoadScene);
 
             m_gameCallbacks.runOrCrush = new GameCallbacks.RunOrCrush(Component.RunOrCrush);
             m_gameCallbacks.runOrCrushContactEnter = new GameCallbacks.RunOrCrushContactEnter(Component.RunOrCrushContactEnter);
             m_gameCallbacks.runOrCrushContactExit = new GameCallbacks.RunOrCrushContactExit(Component.RunOrCrushContactExit);
 
-            m_gameCallbacks.isAssignable = new GameCallbacks.IsAssignable(AssetStore.cpp_IsAssignable);
-            m_gameCallbacks.removeCsRef = new GameCallbacks.TakeCsRef(CppLinked.RemoveCsRef);
-            m_gameCallbacks.loadAssetStore = new GameCallbacks.Void(LoadAssets);
-            m_gameCallbacks.hasAssetInStore = new GameCallbacks.HasAsset(AssetStore.HasAsset);
-            m_gameCallbacks.getStringHash = new GameCallbacks.GetStringHash(cpp_GetStringHash);
-            m_gameCallbacks.loadAsset = new GameCallbacks.LoadAsset(Assets.cpp_Load);
-            m_gameCallbacks.reloadAsset = new GameCallbacks.ReloadAsset(Assets.cpp_Reload);
-            m_gameCallbacks.saveAsset = new GameCallbacks.SaveAsset(Assets.cpp_Save);
-            m_gameCallbacks.pushClipboard = new GameCallbacks.TakeCsRef(Clipboard.Push);
-            m_gameCallbacks.peekClipboard = new GameCallbacks.ClipboardPeek(Clipboard.Peek);
-            m_gameCallbacks.clipboardIsAssignable = new GameCallbacks.ClipboardIsAssignable(Clipboard.IsAssignable);
-            m_gameCallbacks.clipboardIsSameType = new GameCallbacks.ClipboardIsAssignable(Clipboard.IsSameType);
-            m_gameCallbacks.clipboardSetActor = new GameCallbacks.TakeCsRef(Clipboard.SetActor);
+            m_gameCallbacks.isAssignable = new GameCallbacks.CsRef_hash_bool(AssetStore.cpp_IsAssignable);
+            m_gameCallbacks.removeCsRef = new GameCallbacks.CsRef_void(CppLinked.RemoveCsRef);
+            m_gameCallbacks.loadAssetStore = new GameCallbacks.void_void(LoadAssets);
+            m_gameCallbacks.hasAssetInStore = new GameCallbacks.hash_bool(AssetStore.HasAsset);
+            m_gameCallbacks.getStringHash = new GameCallbacks.cstr_int(cpp_GetStringHash);
+            m_gameCallbacks.loadAsset = new GameCallbacks.CppRef_hash_bool(Assets.cpp_Load);
+            m_gameCallbacks.reloadAsset = new GameCallbacks.hash_void(Assets.cpp_Reload);
+            m_gameCallbacks.saveAsset = new GameCallbacks.hash_void(Assets.cpp_Save);
+            m_gameCallbacks.pushClipboard = new GameCallbacks.CsRef_void(Clipboard.Push);
+            m_gameCallbacks.peekClipboard = new GameCallbacks.void_CppRef(Clipboard.Peek);
+            m_gameCallbacks.clipboardIsAssignable = new GameCallbacks.hash_bool(Clipboard.IsAssignable);
+            m_gameCallbacks.clipboardIsSameType = new GameCallbacks.hash_bool(Clipboard.IsSameType);
+            m_gameCallbacks.clipboardSetActor = new GameCallbacks.CsRef_void(Clipboard.SetActor);
 
             m_gameCallbacks.createAsset = new GameCallbacks.CreateAsset(AssetStore.cpp_CreateAsset);
-            m_gameCallbacks.renameAsset = new GameCallbacks.RenameAsset(AssetStore.cpp_RenameAsset);
-            m_gameCallbacks.removeAsset = new GameCallbacks.RemoveAsset(AssetStore.cpp_RemoveAsset);
+            m_gameCallbacks.renameAsset = new GameCallbacks.hash_cstr_bool(AssetStore.cpp_RenameAsset);
+            m_gameCallbacks.removeAsset = new GameCallbacks.hash_void(AssetStore.cpp_RemoveAsset);
 
             m_gameCallbacks.createPrefab = new GameCallbacks.CreatePrefab(Prefab.CreatePrefab);
-            m_gameCallbacks.loadPrefab = new GameCallbacks.LoadPrefab(Prefab.LoadPrefab);
-            m_gameCallbacks.updatePrefab = new GameCallbacks.UpdatePrefab(Prefab.UpdatePrefab);
+            m_gameCallbacks.loadPrefab = new GameCallbacks.CsRef_hash_bool(Prefab.LoadPrefab);
+            m_gameCallbacks.updatePrefab = new GameCallbacks.CsRef_hash_bool(Prefab.UpdatePrefab);
             
-            m_gameCallbacks.setPrefabId = new GameCallbacks.SetPrefabId(Actor.SetPrefabId);
+            m_gameCallbacks.setPrefabId = new GameCallbacks.CsRef_hash_void(Actor.SetPrefabId);
 
-            m_gameCallbacks.createSceneAsset = new GameCallbacks.CreateSceneAsset(Scene.cpp_CreateSceneAsset);
-            m_gameCallbacks.renameSceneAsset = new GameCallbacks.RenameSceneAsset(Scene.cpp_RenameSceneAsset);
+            m_gameCallbacks.createSceneAsset = new GameCallbacks.cstr_int(Scene.cpp_CreateSceneAsset);
+            m_gameCallbacks.renameSceneAsset = new GameCallbacks.hash_cstr_bool(Scene.cpp_RenameSceneAsset);
 
-            m_gameCallbacks.requestAssetGuid = new GameCallbacks.TakeAssetHash(AssetStore.cpp_RequestAssetGuid);
-            m_gameCallbacks.setStartupScene = new GameCallbacks.TakeCppRef(cpp_SetStartupScene);
+            m_gameCallbacks.requestAssetGuid = new GameCallbacks.hash_void(AssetStore.cpp_RequestAssetGuid);
+            m_gameCallbacks.setStartupScene = new GameCallbacks.CppRef_void(cpp_SetStartupScene);
 
-            m_gameCallbacks.setUserInterfaceRef = new GameCallbacks.TakeCppRef(SetUserInterfaceRef);
+            m_gameCallbacks.setUserInterfaceRef = new GameCallbacks.CppRef_void(SetUserInterfaceRef);
+            m_gameCallbacks.isRuntimeAsset = new GameCallbacks.hash_bool(AssetStore.IsRuntimeAsset);
+            m_gameCallbacks.addRuntimeAsset = new GameCallbacks.hash_void(AssetStore.AddRuntimeAsset);
 
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
@@ -145,7 +145,7 @@ namespace Engine {
         }
 
         private static void SetSceneRef(CppRef value) => sceneRef = value;
-        private static void SetMeshAssetRef(CppRef value) => meshAssetRef = value;
+        //private static void SetMeshAssetRef(CppRef value) => meshAssetRef = value;
         private static void SetAssetStoreRef(CppRef value) => assetStoreRef = value;
         private static void SetUserInterfaceRef(CppRef value) => uiRef = value;
         private static void SetUpdateData(GameUpdateData value) => m_updateData = value;
@@ -239,83 +239,66 @@ namespace Engine {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct GameCallbacks {
-        public delegate void Void();
-        public delegate void TakeCppRef(CppRef value);
-        public delegate void TakeCsRef(CsRef value);
-        public delegate CppRef ClipboardPeek();
-        public delegate bool ClipboardIsAssignable(int scriptIdHash);
         public delegate void SetUpdateData(GameUpdateData value);
-        public delegate bool WriteScene(CppRef cppSceneRef, int assetIdHash);
-        public delegate bool LoadScene(CppRef cppSceneRef, int assetIdHash);
         public delegate bool RunOrCrush(CsRef componentRef, ComponentCallbacks.ComponentCallback method);
         public delegate bool RunOrCrushContactEnter(CsRef componentRef, ComponentCallbacks.ContactEnter method, CsRef csRef, in Contact contact);
         public delegate bool RunOrCrushContactExit(CsRef componentRef, ComponentCallbacks.ContactExit method, CsRef csRef);
-        public delegate bool IsAssignable(CsRef csRef, int typeIdHash);
-        public delegate bool HasAsset(int typeIdHash);
-        public delegate int GetStringHash(ulong stringPtr);
-        public delegate bool LoadAsset(int assetIdHash, CppRef cppRef);
-        public delegate void ReloadAsset(int assetIdHash);
-        public delegate void SaveAsset(int assetIdHash);
         public delegate bool CreateAsset(ulong pathPtr);
-        public delegate bool RenameAsset(int assetGuidHash, ulong newPathPtr);
-        public delegate void RemoveAsset(int assetGuidHash);
         public delegate int CreatePrefab(CsRef actorRef, ulong pathPtr);
-        public delegate bool LoadPrefab(int assetGuidHash, CsRef actorRef);
-        public delegate bool UpdatePrefab(CsRef actorRef, int assetGuidHash);
-        public delegate void SetPrefabId(CsRef actorRef, int prefabGuidHash);
-        public delegate int CreateSceneAsset(ulong cpath);
-        public delegate bool RenameSceneAsset(int assetIdHash, ulong cpath);
-        public delegate void TakeAssetHash(int assetGuidHash);
 
-        public TakeCppRef setSceneRef;
-        public TakeCppRef setMeshAssetRef;
-        public TakeCppRef setAssetStoreRef;
+        public delegate void    void_void();
+        public delegate CppRef  void_CppRef();
+
+        public delegate void hash_void(int hash);
+        public delegate bool hash_bool(int hash);
+        public delegate bool hash_cstr_bool(int hash, ulong cstr);
+
+        public delegate void CppRef_void(CppRef value);
+        public delegate bool CppRef_hash_bool(CppRef cppRef, int hash);
+
+        public delegate void CsRef_void(CsRef value);
+        public delegate bool CsRef_hash_bool(CsRef value, int hash);
+        public delegate void CsRef_hash_void(CsRef value, int hash);
+
+        public delegate int cstr_int(ulong cstr);
+
+
+        public CppRef_void setSceneRef;
+        public CppRef_void setAssetStoreRef;
         public SetUpdateData setUpdateData;
-        public Void onInputUpdate;
-
-        public WriteScene writeScene;
-        public LoadScene loadScene;
-
+        public void_void onInputUpdate;
+        public CppRef_hash_bool writeScene;
+        public CppRef_hash_bool loadScene;
         public RunOrCrush runOrCrush;
         public RunOrCrushContactEnter runOrCrushContactEnter;
         public RunOrCrushContactExit runOrCrushContactExit;
-
-        public IsAssignable isAssignable; // From, To
-        public TakeCsRef removeCsRef;
-
-        public Void loadAssetStore;
-        public HasAsset hasAssetInStore;
-
-        public GetStringHash getStringHash;
-
-        public LoadAsset loadAsset;
-        public ReloadAsset reloadAsset;
-        public SaveAsset saveAsset;
-
-        public TakeCsRef pushClipboard;
-        public ClipboardPeek peekClipboard;
-        public ClipboardIsAssignable clipboardIsAssignable;
-        public ClipboardIsAssignable clipboardIsSameType;
-        public TakeCsRef clipboardSetActor;
-
+        public CsRef_hash_bool isAssignable; // From, To
+        public CsRef_void removeCsRef;
+        public void_void loadAssetStore;
+        public hash_bool hasAssetInStore;
+        public cstr_int getStringHash;
+        public CppRef_hash_bool loadAsset;
+        public hash_void reloadAsset;
+        public hash_void saveAsset;
+        public CsRef_void pushClipboard;
+        public void_CppRef peekClipboard;
+        public hash_bool clipboardIsAssignable;
+        public hash_bool clipboardIsSameType;
+        public CsRef_void clipboardSetActor;
         public CreateAsset createAsset;
-        public RenameAsset renameAsset;
-        public RemoveAsset removeAsset;
-
+        public hash_cstr_bool renameAsset;
+        public hash_void removeAsset;
         public CreatePrefab createPrefab;
-        public LoadPrefab loadPrefab;
-        public UpdatePrefab updatePrefab;
-
-        public SetPrefabId setPrefabId;
-
-        public CreateSceneAsset createSceneAsset;
-        public RenameSceneAsset renameSceneAsset;
-
-        public TakeAssetHash requestAssetGuid;
-
-        public TakeCppRef setStartupScene;
-
-        public TakeCppRef setUserInterfaceRef;
+        public CsRef_hash_bool loadPrefab;
+        public CsRef_hash_bool updatePrefab;
+        public CsRef_hash_void setPrefabId;
+        public cstr_int createSceneAsset;
+        public hash_cstr_bool renameSceneAsset;
+        public hash_void requestAssetGuid;
+        public CppRef_void setStartupScene;
+        public CppRef_void setUserInterfaceRef;
+        public hash_bool isRuntimeAsset;
+        public hash_void addRuntimeAsset;
     }
 }
 

@@ -34,8 +34,8 @@ public:
 	}
 
 	bool IsEmpty() { return m_texture.Get() == nullptr; }
-	ID3D11Texture2D* get() { return m_texture.Get(); }
-	const D3D11_TEXTURE2D_DESC& desc() { return m_desc; }
+	ID3D11Texture2D* get() const { return m_texture.Get(); }
+	const D3D11_TEXTURE2D_DESC& desc() const { return m_desc; }
 
 	void Release();
 

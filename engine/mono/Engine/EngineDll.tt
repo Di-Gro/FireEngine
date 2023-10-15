@@ -166,6 +166,9 @@ namespace EngineDll {
 
 			FUNC("MaterialAsset", "Init", "void", "CppRef gameRef, CppRef matRef");
 			FUNC("MaterialAsset", "textures_set", "void", "CppRef matRef, size_t[] cppRefs, int count");
+
+			FUNC("MaterialAsset", "CreateDynamicMaterial",	"CppRef",	"CppRef gameRef, CppRef otherMaterialRef");
+			FUNC("MaterialAsset", "DeleteDynamicMaterial",	"void",		"CppRef gameRef, CppRef otherMaterialRef");
 #>
 		}
 
@@ -211,9 +214,6 @@ namespace EngineDll {
 
 			//FUNC("MeshAssets", "Load",		"void", 	"CppRef meshAssetRef, int assetHash");
 			//FUNC("MeshAssets", "GetMesh",	"CppRef", 	"CppRef meshAssetRef, int assetHash");
-
-			FUNC("MeshAssets", "CreateDynamicMaterial",	"CppRef",	"CppRef meshAssetRef, CppRef otherMaterialRef");
-			FUNC("MeshAssets", "DeleteDynamicMaterial",	"void",		"CppRef meshAssetRef, CppRef otherMaterialRef");
 #>
 		}
 
