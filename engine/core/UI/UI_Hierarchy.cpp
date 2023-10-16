@@ -13,7 +13,6 @@
 
 const char* UI_Hierarchy::ActorDragType = "Hierarchy.Actor";
 
-
 void UI_Hierarchy::Init(Game* game) {
 	m_game = game;
 	m_ui = m_game->ui();
@@ -56,6 +55,9 @@ void UI_Hierarchy::Draw_UI_Hierarchy() {
 }
 
 void UI_Hierarchy::m_DrawSceneHeader() {
+	static std::string treeNodeId;
+	treeNodeId.clear();
+
 	ImGuiTreeNodeFlags node_flags = 0
 		//| ImGuiTreeNodeFlags_SpanFullWidth
 		| ImGuiTreeNodeFlags_FramePadding
@@ -68,7 +70,9 @@ void UI_Hierarchy::m_DrawSceneHeader() {
 
 	auto scene = m_game->ui()->selectedScene();
 
-	auto treeNodeId = "\t" + scene->name() + "##m_DrawSceneHeader";
+	treeNodeId += "\t";
+	treeNodeId += scene->name();
+	treeNodeId += "##m_DrawSceneHeader";
 	
 	auto lastCursor = ImGui::GetCursorPos();
 	bool selectedTree = ImGui::TreeNodeEx(treeNodeId.c_str(), node_flags);
@@ -167,6 +171,11 @@ void UI_Hierarchy::m_DrawActorContextMenu(Actor* actor) {
 
 void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterator rootIter)
 {
+	static std::string actorId;
+	static std::string treeNodeId;
+	actorId.clear();
+	treeNodeId.clear();
+
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 4.5f));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
 
@@ -185,9 +194,13 @@ void UI_Hierarchy::VisitActor(Actor* actor, int index, std::list<Actor*>::iterat
 	float cursorHeight = ImGui::GetCursorScreenPos().y;
 	float mousePosY = mouseHeight - cursorHeight;
 
-	//std::string actorId = std::to_string(actor->Id());
-	auto actorId = "ID:" + std::to_string(actor->Id());
-	auto treeNodeId = actor->name() + "##" + actorId + "SceneTreeNodeEx";
+	actorId += "ID:";
+	actorId += actor->IdStr();
+
+	treeNodeId += actor->name();
+	treeNodeId += "##";
+	treeNodeId += actorId;
+	treeNodeId += "SceneTreeNodeEx";
 		
 	if (!isActive)
 		ImGui::PushStyleColor(ImGuiCol_Text, { 1.00f, 1.00f, 1.00f, 0.3f });

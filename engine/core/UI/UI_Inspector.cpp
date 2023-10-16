@@ -26,7 +26,6 @@
 const char* UI_Inspector::ComponentDragType = "Inspector.Actor";
 char UI_Inspector::textBuffer[UI_Inspector::TEXT_BUF_SIZE] = { 0 };
 
-
 void UI_Inspector::Init(Game* game, UserInterface* ui)
 {
 	_game = game;
@@ -82,12 +81,17 @@ void UI_Inspector::Draw_UI_Inspector() {
 }
 
 void UI_Inspector::DrawHeaderContext(const std::string& idText, ImVec2 headerSize, ImVec2 lastCursor, ImVec2 nextCursor) {
+	static std::string id;
+	id.clear();
+	
 	auto textSize = ImGui::CalcTextSize(idText.c_str());
 
 	lastCursor.x = headerSize.x - textSize.x - 10;
 	lastCursor.y += (headerSize.y - textSize.y) / 2;
 
-	auto id = "##m_DrawActorId" + idText;
+	id += "##m_DrawActorId";
+	id += idText;
+
 	ImGui::PushID(id.c_str());
 
 	ImGui::PushStyleColor(ImGuiCol_Text, { 0.4f, 0.4f ,0.4f ,1.0f });
@@ -102,12 +106,12 @@ void UI_Inspector::DrawHeaderContext(const std::string& idText, ImVec2 headerSiz
 }
 
 void UI_Inspector::m_DrawAddComponent() {
+	static auto headerText = "(Right click to Add Component)";
 
 	BigSpace();
 
 	ImGui::PushStyleColor(ImGuiCol_Text, { 0.4f, 0.4f ,0.4f ,1.0f });
-
-	auto headerText = "(Right click to Add Component)";
+	
 	auto windowWidth = ImGui::GetWindowSize().x;
 	auto textSize = ImGui::CalcTextSize(headerText);
 
@@ -168,8 +172,6 @@ void UI_Inspector::m_DrawHeader() {
 	auto name = actor->name();
 	std::memcpy(&nameBuffer, name.c_str(), min(name.size(), bufSize));
 
-	auto id = "ID: " + std::to_string(actor->Id());
-
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 10.0f, 0.0f });
 
 	ImGui::Indent(10);
@@ -217,6 +219,8 @@ void UI_Inspector::m_DrawHeader() {
 }
 
 bool UI_Inspector::CollapsingHeader(Component* component, const std::string& name) {
+	static std::string compId;
+	
 	bool result = false;
 
 	bool isCrashed = component->f_isCrashed;
@@ -241,8 +245,11 @@ bool UI_Inspector::CollapsingHeader(Component* component, const std::string& nam
 		ImGui::EndDragDropSource();
 	}
 	
-	std::string crashedTag = isCrashed ? "Crashed " : "";
-	std::string compId = crashedTag + "ID:" + std::to_string(component->csRef());
+	compId.clear();
+	compId += isCrashed ? "Crashed " : "";
+	compId += "ID:";
+	compId += std::to_string(component->csRef());
+
 	DrawHeaderContext(compId, headerSize, lastCursor, nextCursor);
 
 	if (isCrashed)
@@ -314,6 +321,22 @@ void UI_Inspector::m_DrawComponentContent() {
 
 bool UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 {
+	static std::string nameX;
+	static std::string nameY;
+	static std::string nameZ;
+	
+	nameX.clear();
+	nameX += "##X_";
+	nameX += title;
+
+	nameY.clear();
+	nameY += "##Y_";
+	nameY += title;
+
+	nameZ.clear();
+	nameZ += "##Z_";
+	nameZ += title;
+
 	auto tmpValues = *values;
 
 	ImGui::Columns(2, nullptr, false);
@@ -321,10 +344,6 @@ bool UI_Inspector::ShowVector3(Vector3* values, const std::string& title)
 	ImGui::Text(title.c_str());
 	ImGui::NextColumn();
 	ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 50.0f);
-
-	std::string nameX = "##X_" + title;
-	std::string nameY = "##Y_" + title;
-	std::string nameZ = "##Z_" + title;
 
 	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0.0f });
@@ -359,15 +378,35 @@ const std::string& UI_Inspector::RequestComponentName(Component* component) {
 }
 
 bool UI_Inspector::ShowActorPrefab(Actor* actor) {
+	static std::string fieldName;
+	static std::string assetName;
+	static std::string assetType;
+	static std::string buttonText;
+	static std::string buttonId;
 
 	auto& prefabId = actor->prefabId();
 	auto assetIdHash = prefabId == "" ? 0 : _game->assets()->GetAssetIDHash(prefabId);
 	auto scriptIdHash = _game->assetStore()->prefabTypeIdHash;
 		
-	std::string fieldName = "##Prefab" + std::to_string(_ui->groupId());
-	std::string assetName = _game->assetStore()->GetAssetName(assetIdHash);
-	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
-	std::string buttonText = assetName + " (" + assetType + ") ";
+	fieldName.clear();
+	fieldName += "##Prefab";
+	fieldName += std::to_string(_ui->groupId());
+
+	assetName.clear();
+	assetName += _game->assetStore()->GetAssetName(assetIdHash);
+
+	assetType.clear();
+	assetType += _game->assetStore()->GetScriptName(scriptIdHash);
+
+	buttonText.clear();
+	buttonText += assetName;
+	buttonText += " (";
+	buttonText += assetType;
+	buttonText += ") ";
+
+	buttonId.clear();
+	buttonId += fieldName;
+	buttonId += "##2";
 
 	auto& style = ImGui::GetStyle();
 
@@ -390,7 +429,7 @@ bool UI_Inspector::ShowActorPrefab(Actor* actor) {
 	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
 
-	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
+	ImGui::PushID(ImGui::GetID(buttonId.c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
 	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
@@ -416,12 +455,33 @@ bool UI_Inspector::ShowActorPrefab(Actor* actor) {
 	return false;
 }
 
-
 bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* assetIdHash, bool isActive) {
-	std::string fieldName = "##" + label + std::to_string(_ui->groupId());
-	std::string assetName = _game->assetStore()->GetAssetName(*assetIdHash);
-	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
-	std::string buttonText = assetName + " (" + assetType + ") ";
+	static std::string fieldName;
+	static std::string assetName;
+	static std::string assetType;
+	static std::string buttonText;
+	static std::string buttonId;
+	
+	fieldName.clear();
+	fieldName += "##";
+	fieldName += label;
+	fieldName += std::to_string(_ui->groupId());
+
+	assetName.clear();
+	assetName += _game->assetStore()->GetAssetName(*assetIdHash);
+
+	assetType.clear();
+	assetType += _game->assetStore()->GetScriptName(scriptIdHash);
+
+	buttonText.clear();
+	buttonText += assetName;
+	buttonText += " (";
+	buttonText += assetType;
+	buttonText += ") ";
+
+	buttonId.clear();
+	buttonId += fieldName;
+	buttonId += "##2";
 
 	if (scriptIdHash == _game->assetStore()->prefabTypeIdHash)
 		scriptIdHash = _game->assetStore()->actorTypeIdHash;
@@ -450,7 +510,7 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 	ImGui::ImageButton(_ui->icPickupActor.get(), { iconWidth, iconWidth }, { 0, 0 }, { 1, 1 }, 0, { 0,0,0,0 }, { 1,1,1,0.8f });
 	ImGui::PopStyleColor(3);
 
-	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
+	ImGui::PushID(ImGui::GetID(buttonId.c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
 	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
@@ -482,20 +542,43 @@ bool UI_Inspector::ShowAsset(const std::string& label, int scriptIdHash, int* as
 }
 
 bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppRef) {
+	static std::string actorId;
+	static std::string fieldName;
+	static std::string actorName;
+	static std::string buttonText;
+	static std::string buttonId;
+	
 	auto actor = CppRefs::GetPointer<Actor>(cppRef);
 
 	if (actor == nullptr && cppRef.value != 0)
 		throw std::exception("ShowComponent: Bad actor reference");
+	
+	actorId.clear();
 
-	std::string actorId = "";
-	std::string fieldName = "##" + label + std::to_string(_ui->groupId());
-	std::string actorName = csRef->value == 1 ? "Missing" : "Null"; 
+	fieldName.clear();
+	fieldName += "##";
+	fieldName += label;
+	fieldName += std::to_string(_ui->groupId());
+	
+	actorName.clear();
+	actorName += csRef->value == 1 ? "Missing" : "Null"; 
 
 	if (actor != nullptr) {
-		actorId = "[" + std::to_string(actor->Id()) + "] ";
-		actorName = actor->name();
+		actorId += "[";
+		actorId += actor->IdStr();
+		actorId += "] ";
+
+		actorName.clear();
+		actorName += actor->name();
 	}
-	std::string buttonText = actorId + actorName + " (Actor) ";
+	buttonText.clear();
+	buttonText += actorId;
+	buttonText += actorName;
+	buttonText += " (Actor) ";
+
+	buttonId.clear();
+	buttonId += fieldName;
+	buttonId += "##2";
 
 	auto& style = ImGui::GetStyle();
 
@@ -522,7 +605,7 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 	if (hasDraggedActor) 
 		ImGui::PushStyleColor(ImGuiCol_Button, m_dragTargetColor);
 
-	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
+	ImGui::PushID(ImGui::GetID(buttonId.c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
 	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
@@ -543,23 +626,51 @@ bool UI_Inspector::ShowActor(const std::string& label, CsRef* csRef, CppRef cppR
 }
 
 bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef cppRef, int scriptIdHash) {
+	static std::string fieldName;
+	static std::string actorName;
+	static std::string compId;
+	static std::string assetType;
+	static std::string buttonText;
+	static std::string buttonId;
+	
 	auto component = CppRefs::GetPointer<Component>(cppRef);
 	auto actor = component == nullptr ? nullptr : component->actor();
 
 	if (component == nullptr && cppRef.value != 0)
 		throw std::exception("ShowComponent: Bad component reference");
 
-	std::string compId = "";
-	std::string fieldName = "##" + label + std::to_string(_ui->groupId());
-	std::string actorName = csRef->value == 1 ? "Missing" : "Null";
-	if(actor != nullptr) 
-		actorName = actor->name();
+	fieldName.clear();
+	fieldName += "##";
+	fieldName += label;
+	fieldName += std::to_string(_ui->groupId());
 
-	if (component != nullptr)
-		compId = "[" + std::to_string(component->csRef()) + "] ";
+	actorName.clear();
+	actorName += csRef->value == 1 ? "Missing" : "Null";
+	if (actor != nullptr) {
+		actorName.clear();
+		actorName += actor->name();
+	}
 
-	std::string assetType = _game->assetStore()->GetScriptName(scriptIdHash);
-	std::string buttonText = compId + actorName + " (" + assetType + ") ";
+	compId.clear();
+	if (component != nullptr) {
+		compId += "[";
+		compId += std::to_string(component->csRef());
+		compId += "] ";
+	}
+
+	assetType.clear();
+	assetType += _game->assetStore()->GetScriptName(scriptIdHash);
+
+	buttonText.clear();
+	buttonText += compId;
+	buttonText += actorName;
+	buttonText += " (";
+	buttonText += assetType;
+	buttonText += ") ";
+
+	buttonId.clear();
+	buttonId += fieldName;
+	buttonId += "##2";
 
 	auto& style = ImGui::GetStyle();
 
@@ -586,7 +697,7 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 	if (hasDraggedComponent) 
 		ImGui::PushStyleColor(ImGuiCol_Button, m_dragTargetColor);
 	
-	ImGui::PushID(ImGui::GetID((fieldName + "##2").c_str()));
+	ImGui::PushID(ImGui::GetID(buttonId.c_str()));
 	ImGui::SameLine();
 	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, { 0.0f, 0.5f });
 	ImGui::Button(buttonText.c_str(), { holderWidth, iconWidth });
@@ -607,8 +718,13 @@ bool UI_Inspector::ShowComponent(const std::string& label, CsRef* csRef, CppRef 
 }
 
 bool UI_Inspector::ShowColor3(const std::string& label, Vector3* value) {
+	static std::string itemId;
 
-	std::string itemId = "##_" + label + "_" + std::to_string(_ui->groupId());
+	itemId.clear();
+	itemId += "##_";
+	itemId += label;
+	itemId += "_";
+	itemId += std::to_string(_ui->groupId());
 
 	auto& style = ImGui::GetStyle();
 
@@ -635,8 +751,13 @@ bool UI_Inspector::ShowColor3(const std::string& label, Vector3* value) {
 }
 
 bool UI_Inspector::ShowColor4(const std::string& label, Vector4* value) {
+	static std::string itemId;
 
-	std::string itemId = "##_" + label + "_" + std::to_string(_ui->groupId());
+	itemId.clear();
+	itemId += "##_";
+	itemId += label;
+	itemId += "_";
+	itemId += std::to_string(_ui->groupId());
 
 	auto& style = ImGui::GetStyle();
 
@@ -838,10 +959,13 @@ bool UI_Inspector::m_DrawComponentFieldContextMenu(int scriptIdHash, CsRef* comp
 }
 
 bool UI_Inspector::ShowText(const char* label, const char* labelId, const char* buffer, int length, size_t* ptr, int flags) {
+	static std::string text;
+
 	/// out
 	*ptr = (size_t)UI_Inspector::textBuffer;
 	
-	std::string text = buffer;
+	text.clear();
+	text += buffer;
 
 	auto& style = ImGui::GetStyle();
 	auto column1 = labelWidth;
