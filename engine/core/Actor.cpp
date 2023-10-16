@@ -411,7 +411,7 @@ void Actor::m_CrashComponent(Component* component, std::exception ex) {
 
 	auto className = component->GetMeta().name;
 	auto actorName = component->actor()->name();
-	auto actorId = std::to_string(component->actor()->Id());
+	auto actorId = component->actor()->IdStr();
 
 	std::cout << "ComponentCrash: Component was disabled.\n";
 	std::cout << "Component class: " << className << ", ";

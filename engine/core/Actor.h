@@ -57,6 +57,7 @@ private:
 	Game* f_game = nullptr;
 	Scene* f_scene = nullptr;
 	unsigned int f_actorID;
+	std::string f_actorIDStr;
 
 	Actor* f_parent = nullptr;
 
@@ -67,10 +68,10 @@ private:
 	static bool mono_inited;
 	static mono::mono_method_invoker<CsRef(CsRef, size_t, size_t, CppObjectInfo)> mono_AddComponent;
 	static mono::mono_method_invoker<CppRef(CsRef, size_t, size_t)> mono_AddCsComponent;
-	//static mono::mono_method_invoker<void(CsRef, size_t, size_t)> mono_SetName;
 
 public:
 	unsigned int Id() const { return f_actorID; }
+	const std::string& IdStr() const { return f_actorIDStr; }
 
 	bool isActive();
 	bool activeSelf() { return m_isActiveSelf; }
