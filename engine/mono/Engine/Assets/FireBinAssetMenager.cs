@@ -105,7 +105,7 @@ namespace Engine {
 
             LoadAssetData(assetIdHash);
 
-            return new FireBin.Deserializer(asset.data, useCsRefs: useCsRefs);
+            return new FireBin.Deserializer(asset.data, useCsRefs: useCsRefs, assetId: asset.assetID);
         }
 
         public Asset GetAsset(int assetIdHash) {
@@ -218,7 +218,7 @@ namespace Engine {
             if (type == typeof(Actor)) return ".prefab";
             if (type == typeof(Scene)) return ".scene";
             if (type == typeof(Texture)) return ".tex";
-            if (type == typeof(StaticMesh)) return ".mesh";
+            if (type == typeof(Mesh)) return ".mesh";
             if (type == typeof(Image)) return ".image";
             if (type == typeof(StaticMaterial)) return ".mat";
             return ".asset";

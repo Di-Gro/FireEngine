@@ -44,7 +44,7 @@ namespace Engine {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if (cppRef.value == 0) {
                 cppRef = Dll.PureAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
-                Assets.SetLoadedAsset(assetIdHash, this);
+                Assets.SetLoadedAsset(this);
                 ReloadAsset();
             }
             else {

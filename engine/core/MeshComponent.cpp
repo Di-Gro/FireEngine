@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "Render.h"
 #include "Assets.h"
+#include "AssetStore.h"
 #include "RenderPass.h"
 #include "MeshAsset.h"
 #include "MaterialAsset.h"
@@ -68,10 +69,13 @@ void MeshComponent::m_InitDynamic() {
 	if (IsDynamic())
 		return;
 
-	auto assetId = "DynamicMesh_" + std::to_string(Random().Int());
-	auto assetIdHash = game()->assets()->GetAssetIDHash(assetId);
-	auto meshCppRef = MeshAsset_PushAsset(CppRefs::GetRef(game()), assetId.c_str(), assetIdHash);
-	auto newMesh = CppRefs::ThrowPointer<MeshAsset>(meshCppRef);
+	auto* store = game()->assetStore();
+	auto* assets = game()->assets();
+
+	auto assetId = store->CreateRuntimeAssetId("DynamicMesh");
+	auto* newMesh = new MeshAsset();
+
+	assets->Push(assetId, newMesh);
 
 	if (m_mesh != nullptr)
 		newMesh->resource = m_mesh->resource;

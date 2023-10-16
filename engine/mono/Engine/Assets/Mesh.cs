@@ -8,96 +8,50 @@ using EngineDll;
 using FireYaml;
 
 namespace Engine {
-
-    public class Mesh  {
-        public CppRef cppRef { get; protected set; } = CppRef.NullRef;
-        public int ShapeCount => Dll.MeshAsset.ShapeCount(cppRef);
-        public int MaxMaterialIndex => Dll.MeshAsset.MaterialMaxIndex(cppRef);
-
-        public bool IsDynamic => GetType() != typeof(StaticMesh);
-
-        public Mesh() {}
-        public Mesh(CppRef cppRef) => this.cppRef = cppRef;
+    public class MeshData : AssetDataBase {
+        public string ext = "";
+        public List<StaticMaterial> materials = new List<StaticMaterial>();
     }
 
-    [GUID("bad8395e-7c27-4697-ba7a-2e7556af5423", typeof(StaticMesh))]
-    public class StaticMesh : Mesh, IFile, IAsset, ISourceAsset, IEditorUIDrawer {
-        /// IAsset ->
-        [Open][ReadOnly] public string assetId { get; private set; } = "0000000000";
-        public int assetIdHash { get; private set; }
-        /// ISourceAsset ->
-        public string ext { get; set; } = "";
-        /// <- 
-        /// CppRef cppRef -> Mesh
-        /// <- 
-        /// IFile ->
-        [Close] public ulong assetInstance { get; set; } = 0;
-        [Close] public int fileId { get; set; } = -1;
-        [Close] public string prefabId { get; set; } = IFile.NotPrefab;
-        /// <- 
+    [GUID("bad8395e-7c27-4697-ba7a-2e7556af5423")]
+    public class Mesh : AssetBase<Mesh, MeshData>, IAsset, ISourceAsset, IEditorUIDrawer {
 
-        [Open] private List<StaticMaterial> m_materials { get; set; }
+        public string ext { get => m_data.ext; protected set => m_data.ext = value; }
+        [Open] private List<StaticMaterial> m_materials { get => m_data.materials; set => m_data.materials = value; }
 
-        public StaticMesh() {
-            Assets.AssetUpdateEvent += OnAssetUpdate;
-            assetInstance = AssetInstance.PopId();
+
+        public Mesh() { }
+
+        public Mesh(CppRef meshRef) {
+            cppRef = meshRef;
+            assetId = Assets.ReadCString(Dll.MeshAsset.assetId_get(cppRef));
         }
-
-        public StaticMesh(int assetIdHash) {
-            this.assetIdHash = assetIdHash;
-            cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
-            this.assetId = Assets.ReadCString(Dll.MeshAsset.assetId_get(cppRef));
-        }
-
-        ~StaticMesh() { Assets.AssetUpdateEvent -= OnAssetUpdate; }
 
         /// <summary>
         /// Загружает StaticMesh из файла '.obj'.<br/>
         /// Позволяет загрузить меш, даже если для него нет ассета.<br/>
         /// Будет создан runtime ассет, которого нет в AssetStore. 
         /// </summary>
-        public StaticMesh LoadFromFile(string path) {
+        public Mesh LoadFromFile(string path) {
             assetId = path;
-            assetIdHash = assetId.GetAssetIDHash();
 
-            cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
-            if(cppRef.value == 0){
-                cppRef = Dll.MeshAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
-                
-                Dll.MeshAsset.Init(Game.gameRef, cppRef, path);
-                Dll.MeshAsset.assetId_set(cppRef, assetId);
-                Assets.SetLoadedAsset(assetIdHash, this);
-            }
-            else {
-                OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
-            }
+            if (m_TakeLoadedInstance())
+                return this;
+
+            m_PushThisInstance();
+
+            Dll.MeshAsset.Init(Game.gameRef, cppRef, path);
+
             return this;
         }
 
-        public StaticMesh LoadFromAsset(string assetId) {
+        public Mesh LoadFromAsset(string assetId) {
             this.assetId = assetId;
             LoadAsset();
             return this;
         }
 
-        public void LoadAsset() {
-            assetIdHash = assetId.GetAssetIDHash();
-
-            cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
-            if(cppRef.value == 0){
-                cppRef = Dll.MeshAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
-
-                Assets.SetLoadedAsset(assetIdHash, this);
-                ReloadAsset();
-            }
-            else {
-                OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
-            }
-        }
-
-        public void ReloadAsset() {
-            assetIdHash = assetId.GetAssetIDHash();
-
+        public override void ReloadAsset() {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
@@ -116,24 +70,6 @@ namespace Engine {
 
                 Dll.MeshAsset.materials_set(cppRef, cppRefs, m_materials.Count);
             }
-        }
-
-        private void OnAssetUpdate(int assetIdHash, FireYaml.IAsset asset) {
-            if(assetIdHash != this.assetIdHash || asset == this)
-                return;
-                
-            var mesh = asset as StaticMesh;
-            if (mesh == null)
-                throw new Exception($"Asset with assetId: '{assetId}' is not {nameof(StaticMesh)} but {asset.GetType().Name}");
-
-            this.assetId = mesh.assetId;
-            this.assetIdHash = mesh.assetIdHash;
-            this.ext = mesh.ext;
-            this.m_materials = mesh.m_materials;
-        }
-
-        public void SaveAsset() {
-            AssetStore.WriteAsset(assetIdHash, this);
         }
 
         public void OnDrawUI() {

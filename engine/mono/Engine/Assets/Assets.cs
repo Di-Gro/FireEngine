@@ -40,13 +40,25 @@ namespace Engine {
 
         public static Dictionary<int, string> m_assetSources = new Dictionary<int, string>() {
             { typeof(Image).FullName.GetHashCode(), "|.png|.jpg|" },
-            { typeof(StaticMesh).FullName.GetHashCode(), "|.obj|" },
+            { typeof(Mesh).FullName.GetHashCode(), "|.obj|" },
         };
 
         private static Dictionary<int, IAsset> m_loadedAssets = new Dictionary<int, IAsset>();
 
-        public static void SetLoadedAsset(int assetIdHash, IAsset asset) => m_loadedAssets[assetIdHash] = asset;
-        
+        public static void SetLoadedAsset(IAsset asset) => m_loadedAssets[asset.assetIdHash] = asset;
+
+        public static TAsset GetLoaded<TAsset>(int assetIdHash) where TAsset: class, IAsset {
+            var iasset = GetLoadedAsset(assetIdHash);
+            if (iasset == null)
+                return null;
+
+            var asset = iasset as TAsset;
+            if (asset == null)
+                throw new ArgumentException($"Assets.GetLoaded: The asset type: '{iasset.GetType().Name}' does not match the specified type: '{typeof(TAsset).Name}'.");
+
+            return asset;
+        }
+
         public static IAsset GetLoadedAsset(int assetIdHash) {
             if(m_loadedAssets.ContainsKey(assetIdHash))
                 return m_loadedAssets[assetIdHash];
@@ -67,6 +79,27 @@ namespace Engine {
                 TextureAssetUpdateEvent?.Invoke(assetIdHash);
                 return;
             }
+        }
+
+        public static CppRef PushCppAsset<TAsset>(string assetId, int assetIdHash) {
+            var type = typeof(TAsset);
+
+            if (type == typeof(Image))
+                return Dll.Image.PushAsset(Game.gameRef, assetId, assetIdHash);
+
+            if (type == typeof(Texture))
+                return Dll.Texture.PushAsset(Game.gameRef, assetId, assetIdHash);
+
+            if (type == typeof(StaticMaterial))
+                return Dll.Material.PushAsset(Game.gameRef, assetId, assetIdHash);
+
+            if (type == typeof(Mesh))
+                return Dll.MeshAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
+
+            if (type == typeof(Scene))
+                return Dll.Scene.PushAsset(Game.gameRef, assetId, assetIdHash);
+
+            throw new Exception($"PushCppAsset: Cannot push cpp asset of specified type: {type.Name}.");
         }
 
         public static bool cpp_Load(CppRef cppRef, int assetIdHash) {
@@ -178,7 +211,7 @@ namespace Engine {
                     return typeof(Engine.Texture);
 
                 case ".obj":
-                    return typeof(Engine.StaticMesh);
+                    return typeof(Engine.Mesh);
 
                 case ".png":
                 case ".jpg":

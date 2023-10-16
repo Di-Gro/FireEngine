@@ -4,6 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 
 using EngineDll;
+using FireYaml;
 
 namespace Engine {
 
@@ -31,61 +32,54 @@ namespace Engine {
 
     }
 
+    public class MaterialData : AssetDataBase {
+        public List<Texture> textures { get; set; }
+        public long texturesHash = 0;
+        public MaterialProxy proxy = new MaterialProxy();
+
+        public bool IsDynamic { get => proxy.IsDynamic; }
+        public string Name { get => proxy.Name; set => proxy.Name = value; }
+        public string Shader { get => proxy.Shader; set => proxy.Shader = value; }
+        public CullMode CullMode { get => proxy.CullMode; set => proxy.CullMode = value; }
+        public FillMode FillMode { get => proxy.FillMode; set => proxy.FillMode = value; }
+        public ulong Priority { get => proxy.Priority; set => proxy.Priority = value; }
+        public Vector3 DiffuseColor { get => proxy.DiffuseColor; set => proxy.DiffuseColor = value; }
+        public float Diffuse { get => proxy.Diffuse; set => proxy.Diffuse = value; }
+        public float Ambient { get => proxy.Ambient; set => proxy.Ambient = value; }
+        public float Specular { get => proxy.Specular; set => proxy.Specular = value; }
+        public float Shininess { get => proxy.Shininess; set => proxy.Shininess = value; }
+    }
+
     [GUID("110065f7-ed95-4fca-8a09-288b7ec17500", typeof(StaticMaterial))]
-    public class StaticMaterial : IMaterial, FireYaml.IFile, FireYaml.IAsset, FireYaml.IEditorUIDrawer
-    {
+    public class StaticMaterial : AssetBase<StaticMaterial, MaterialData>, IMaterial, IAsset, IEditorUIDrawer {
 
-        /// IFile ->
-        [Close] public ulong assetInstance { get; set; } = 0;
-        [Close] public int fileId { get; set; } = -1;
-        [Close] public string prefabId { get; set; } = FireYaml.IFile.NotPrefab;
-        /// <- 
-
-        /// IAsset ->
-        [Open][ReadOnly] public string assetId { get; private set; } = "0000000000";
-        public int assetIdHash { get; private set; }
-        public CppRef cppRef { get => m_proxy.cppRef; protected set => m_proxy.cppRef = value; }
-        /// <- 
-
-        /// IMaterial ->
-        public bool IsDynamic { get => m_proxy.IsDynamic; }
-        [Open][ReadOnly] public string Name { get => m_proxy.Name; private set => m_proxy.Name = value; }
-        [Open] public string Shader { get => m_proxy.Shader; private set => m_proxy.Shader = value; }
-        
-        [Open] public CullMode CullMode { get => m_proxy.CullMode; private set => m_proxy.CullMode = value; }
-        [Open] public FillMode FillMode { get => m_proxy.FillMode; private set => m_proxy.FillMode = value; }
-        [Open] public ulong Priority { get => m_proxy.Priority; private set => m_proxy.Priority = value; }
-        [Open] public Vector3 DiffuseColor { get => m_proxy.DiffuseColor; private set => m_proxy.DiffuseColor = value; }
-        [Open] public float Diffuse { get => m_proxy.Diffuse; private set => m_proxy.Diffuse = value; }
-        [Open] public float Ambient { get => m_proxy.Ambient; private set => m_proxy.Ambient = value; }
-        [Open] public float Specular { get => m_proxy.Specular; private set => m_proxy.Specular = value; }
-        [Open] public float Shininess { get => m_proxy.Shininess; private set => m_proxy.Shininess = value; }
-        /// <- 
-
-        [Open] private List<Texture> m_textures { get; set; }
-
-        private MaterialProxy m_proxy = new MaterialProxy();
-        private long m_texturesHash = 0;
+        public bool IsDynamic { get => m_data.IsDynamic; }
+        [Open][ReadOnly] public string Name { get => m_data.Name; private set => m_data.Name = value; }
+        [Open] public string Shader { get => m_data.Shader; private set => m_data.Shader = value; }
+        [Open] public CullMode CullMode { get => m_data.CullMode; private set => m_data.CullMode = value; }
+        [Open] public FillMode FillMode { get => m_data.FillMode; private set => m_data.FillMode = value; }
+        [Open] public ulong Priority { get => m_data.Priority; private set => m_data.Priority = value; }
+        [Open] public Vector3 DiffuseColor { get => m_data.DiffuseColor; private set => m_data.DiffuseColor = value; }
+        [Open] public float Diffuse { get => m_data.Diffuse; private set => m_data.Diffuse = value; }
+        [Open] public float Ambient { get => m_data.Ambient; private set => m_data.Ambient = value; }
+        [Open] public float Specular { get => m_data.Specular; private set => m_data.Specular = value; }
+        [Open] public float Shininess { get => m_data.Shininess; private set => m_data.Shininess = value; }
+        [Open] private List<Texture> m_textures { get => m_data.textures; set => m_data.textures = value; }
 
 
         public StaticMaterial() {
-            Assets.AssetUpdateEvent += OnAssetUpdate;
             Assets.TextureAssetUpdateEvent += m_OnTextureUpdate;
-
-            assetInstance = FireYaml.AssetInstance.PopId();
         }
 
         public StaticMaterial(CppRef cppRef) {
-            Assets.AssetUpdateEvent += OnAssetUpdate;
             Assets.TextureAssetUpdateEvent += m_OnTextureUpdate;
-            
+
             this.cppRef = cppRef;
             assetId = Assets.ReadCString(Dll.Material.assetId_get(cppRef));
             assetIdHash = Dll.Material.assetIdHash_get(cppRef);
         }
 
         ~StaticMaterial() { 
-            Assets.AssetUpdateEvent -= OnAssetUpdate;
             Assets.TextureAssetUpdateEvent -= m_OnTextureUpdate;
         }
 
@@ -95,65 +89,28 @@ namespace Engine {
             return this;
         }
 
-        public void LoadAsset() {
-            assetIdHash = assetId.GetAssetIDHash();
-
-            cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
-            if(cppRef.value == 0){
-                cppRef = Dll.Material.PushAsset(Game.gameRef, assetId, assetIdHash);
-                Assets.SetLoadedAsset(assetIdHash, this);
-                ReloadAsset();
-            }
-            else {
-                OnAssetUpdate(assetIdHash, Assets.GetLoadedAsset(assetIdHash));
-            }
-        }
-
-        public void ReloadAsset() {
-            assetIdHash = assetId.GetAssetIDHash();
-
+        public override void ReloadAsset() {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
+
+            m_data.proxy.cppRef = cppRef;
 
             AssetStore.GetAssetDeserializer(assetIdHash).InstanciateToWithoutLoad(this);
          
             Dll.Material.Init(Game.gameRef, cppRef);
 
-            m_texturesHash = m_GetTexturesHash();
+            m_data.texturesHash = m_GetTexturesHash();
 
             m_SendTexturesToCpp();
         }
 
-        public void SaveAsset() {
-            AssetStore.WriteAsset(assetIdHash, this);
-        }
-
         public void OnDrawUI() {
             var hash = m_GetTexturesHash();
-            if (m_texturesHash != hash) {
-                m_texturesHash = hash;
+            if (m_data.texturesHash != hash) {
+                m_data.texturesHash = hash;
                 m_SendTexturesToCpp();
             }
-        }
-
-        private void OnAssetUpdate(int assetIdHash, FireYaml.IAsset asset) {
-            if(assetIdHash != this.assetIdHash || asset == this)
-                return;
-                
-            var material = asset as StaticMaterial;
-            if (material == null)
-                throw new Exception($"Asset with assetIdHash: '{assetIdHash}' is not {nameof(StaticMaterial)} but {asset.GetType().Name}");
-
-            this.assetId = material.assetId;
-            this.assetIdHash = material.assetIdHash;
-            this.m_textures = material.m_textures;
-            this.m_texturesHash = material.m_texturesHash;
-
-            this.m_proxy = new MaterialProxy();
-            this.m_proxy.Name = material.m_proxy.Name;
-            this.m_proxy.Shader = material.m_proxy.Shader;
-            this.m_proxy.cppRef = material.m_proxy.cppRef;
         }
 
         private void m_OnTextureUpdate(int texAssetIdHash) {
@@ -237,7 +194,7 @@ namespace Engine {
 
     }
 
-    class MaterialProxy : IMaterial {
+    public class MaterialProxy : IMaterial {
 
         public bool IsDynamic { 
             get { return cppRef.value == 0 ? false : Dll.Material.isDynamic_get(cppRef); }

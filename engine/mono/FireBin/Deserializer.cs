@@ -51,9 +51,12 @@ namespace FireBin {
 
         private bool m_useCsRefs = false;
 
-        public Deserializer(FireBin.Data data, bool useCsRefs = false) {
+        private string m_assetId;
+
+        public Deserializer(FireBin.Data data, bool useCsRefs = false, string assetId = "") {
             Reader = new FireBin.DataReader(data);
             m_useCsRefs = useCsRefs;
+            m_assetId = assetId;
 
             m_deserializers = new LoadAsDelegate[(int)BinType._Count] {
                 LoadAsList,
@@ -80,9 +83,10 @@ namespace FireBin {
 
             LoadAsNamedList(type, structPtr, target);
 
-            if (YamlWriter.IsAsset(type))
+            if (YamlWriter.IsAsset(type)) {
+                FireYaml.FireReader.InitIAsset(ref target, m_assetId, 0);
                 m_assets.Add((FireYaml.IAsset)target);
-
+            }
             EndLoad();
 
             return target;
@@ -93,9 +97,10 @@ namespace FireBin {
 
             LoadAsNamedList(type, structPtr, target);
 
-            if(YamlWriter.IsAsset(type))
+            if (YamlWriter.IsAsset(type)) {
+                FireYaml.FireReader.InitIAsset(ref target, m_assetId, 0);
                 m_assets.Add((FireYaml.IAsset)target);
-
+            }
             EndLoad();
         }
 
@@ -245,13 +250,11 @@ namespace FireBin {
             var valueObj = target != null ? target : CreateInstance(type);
 
             var fieldName = nameof(FireYaml.IAsset.assetId);
-            var serializer = new Engine.SerializerBase();
-            var field = YamlWriter.GetField(fieldName, type, valueObj, serializer);
-
             var assetId = Reader.ReadAssetRef(dataPtr);
-            field.SetValue(assetId);
+            var prop = type.GetProperty(fieldName, YamlWriter.s_flags);
 
-            m_assets.Add((FireYaml.IAsset)field.Instance);
+            prop.SetValue(valueObj, assetId);
+            m_assets.Add((FireYaml.IAsset)valueObj);
 
             return valueObj;
         }

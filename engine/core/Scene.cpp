@@ -172,6 +172,7 @@ GameObjectInfo Scene::m_CreateActorFromCs(CsRef csRef, CppRef parentRef) {
 	m_actors.insert(m_actors.end(), actor);
 
 	actor->f_actorID = ++m_objectCount;
+	actor->f_actorIDStr = std::to_string(actor->f_actorID);
 	actor->f_ref = CppRefs::Create(actor);
 	actor->f_cppRef = actor->f_ref.cppRef();
 	actor->f_csRef = csRef;

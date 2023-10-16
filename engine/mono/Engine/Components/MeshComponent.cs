@@ -79,13 +79,12 @@ namespace Engine {
                 component.m_mesh = null;
                 return;
             }
-            if (component.IsStatic) {
-                var assetHash = Dll.MeshAsset.assetIdHash_get(meshRef);
-                component.m_mesh = new StaticMesh(assetHash);
-            }
-            else {
-                component.m_mesh = new Mesh(meshRef);
-            }
+            // if (component.IsStatic) {
+            component.m_mesh = new Mesh(meshRef);
+            // }
+            // else {
+            //     component.m_mesh = new Mesh(meshRef);
+            // }
         }
     }
 }

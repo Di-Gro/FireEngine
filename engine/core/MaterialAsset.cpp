@@ -73,7 +73,7 @@ MaterialAsset* MaterialAsset::CreateDynamic(Game* game, const MaterialAsset* oth
 		const auto* image = otherTex->image;
 		assert(image != nullptr);
 
-		auto texAssetId = store->CreateRuntimeAssetId(assetId + "/deffuseTex");
+		auto texAssetId = store->CreateRuntimeAssetId("textures/deffuseTex");
 		auto thisTex = new TextureAsset();
 
 		assets->Push(texAssetId, thisTex);

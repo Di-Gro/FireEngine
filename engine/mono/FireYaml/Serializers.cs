@@ -350,7 +350,7 @@ namespace Engine {
 
             var mesh = meshComponent.mesh;
             var materials = m_GetMaterialsList(meshComponent);
-            var staticMeshType = typeof(Engine.StaticMesh);
+            var staticMeshType = typeof(Engine.Mesh);
             var needSave = mesh != null && mesh.GetType() == staticMeshType;
 
             serializer.AddField($"{selfPath}.m_mesh", staticMeshType, needSave ? mesh : null);
@@ -370,7 +370,7 @@ namespace Engine {
             var meshComponent = instance as Engine.MeshComponent;
             var mesh = meshComponent.mesh;
             var materials = m_GetMaterialsList(meshComponent);
-            var staticMeshType = typeof(Engine.StaticMesh);
+            var staticMeshType = typeof(Engine.Mesh);
             var needSave = mesh != null && mesh.GetType() == staticMeshType;
 
             res.Add(writer.AddAsAssetRef(staticMeshType, needSave ? mesh : null));
@@ -439,11 +439,11 @@ namespace Engine {
                     throw new Exception($"Missing AssetId: {assetId}");
 
             if (yamlValue.type == YamlValue.Type.AssetId) {
-                StaticMesh mesh = null;
+                Mesh mesh = null;
                 if (isPath)
-                    mesh = new StaticMesh().LoadFromFile(assetId);
+                    mesh = new Mesh().LoadFromFile(assetId);
                 else
-                    mesh = new StaticMesh().LoadFromAsset(assetId);
+                    mesh = new Mesh().LoadFromAsset(assetId);
 
                 Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
                 return;
@@ -454,8 +454,8 @@ namespace Engine {
             if (meshPtr.offset == FireBin.Pointer.NullOffset)
                 return;
 
-            var meshObj = des.LoadAsAssetRef(typeof(StaticMesh), meshPtr);
-            var mesh = meshObj as StaticMesh;
+            var meshObj = des.LoadAsAssetRef(typeof(Mesh), meshPtr);
+            var mesh = meshObj as Mesh;
 
             var isPath = m_IsPath(mesh.assetId);
             var assetIdHash = mesh.assetId.GetAssetIDHash();
@@ -464,9 +464,9 @@ namespace Engine {
                 throw new Exception($"Missing AssetId: {mesh.assetId}");
 
             if (isPath)
-                mesh = new StaticMesh().LoadFromFile(mesh.assetId);
+                mesh = new Mesh().LoadFromFile(mesh.assetId);
             else
-                mesh = new StaticMesh().LoadFromAsset(mesh.assetId);
+                mesh = new Mesh().LoadFromAsset(mesh.assetId);
 
             Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
         }
@@ -547,12 +547,12 @@ namespace Engine {
             int assetIdHash = 0;
 
             if(mesh != null)
-                assetIdHash = mesh.IsDynamic ? -1 : ((StaticMesh)mesh).assetIdHash;
+                assetIdHash = mesh.assetIdHash;
 
             GUI.Space();
 
             object changedMesh;
-            if (GUI.DrawAsset("Mesh", typeof(StaticMesh), assetIdHash, out changedMesh))
+            if (GUI.DrawAsset("Mesh", typeof(Mesh), assetIdHash, out changedMesh))
                 meshComponent.mesh = changedMesh as Mesh;
             
             var flags = ImGuiTreeNodeFlags_._Framed | ImGuiTreeNodeFlags_._DefaultOpen;
@@ -562,10 +562,8 @@ namespace Engine {
                 for (ulong index = 0; index < count; index++) {
                     var material = meshComponent.GetMaterial(index);
 
-                    assetIdHash = material.IsDynamic ? -1 : material.assetIdHash;
-
                     object changedMaterial;
-                    if (GUI.DrawAsset($"Material: {index}", typeof(StaticMaterial), assetIdHash, out changedMaterial))
+                    if (GUI.DrawAsset($"Material: {index}", typeof(StaticMaterial), material.assetIdHash, out changedMaterial))
                         meshComponent.SetMaterial(index, changedMaterial as StaticMaterial);
 
                     if(index < count - 1)

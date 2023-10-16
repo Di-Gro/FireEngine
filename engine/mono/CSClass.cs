@@ -32,37 +32,37 @@ namespace Engine {
     [GUID("a6b0e3a1-0a74-4901-be26-f38ce7ec7b55", typeof(TestMesh))]
     class TestMesh : TestMeshBase {
 
-        public Component component;
+        // public Component component;
 
-        public Actor actorRef;
+        // public Actor actorRef;
 
-        public Prefab userPrefab;
-        public Scene sameScene;
+        // public Prefab userPrefab;
+        // public Scene sameScene;
 
         [Open] private MeshComponent m_meshComp;
         [Open] private DynamicMaterial m_material;
 
-        public StaticMaterial nullStaticMaterial;
-        public StaticMaterial staticMaterial;
+        // public StaticMaterial nullStaticMaterial;
+        // public StaticMaterial staticMaterial;
 
-        public List<Vector3> vecList = null;
+        // public List<Vector3> vecList = null;
 
 
-        [Range(0f, 10f)] public float floatField = 4.56f; // Overlap is for test
-        [Close] public float floatField2 = 5.56f;
+        // [Range(0f, 10f)] public float floatField = 4.56f; // Overlap is for test
+        // [Close] public float floatField2 = 5.56f;
 
-        [Range(1, 100)] 
-        public int intField3 = 68;
+        // [Range(1, 100)] 
+        // public int intField3 = 68;
 
-        private float m_floatField3 = 6.56f;
+        // private float m_floatField3 = 6.56f;
 
-        [Open] 
-        private float m_floatField4 = 7.56f;
+        // [Open] 
+        // private float m_floatField4 = 7.56f;
 
-        [Range(0f, 10f)] 
-        public Vector3 vector = new Vector3(4,3,2);
+        // [Range(0f, 10f)] 
+        // public Vector3 vector = new Vector3(4,3,2);
 
-        [Open] private List<StaticMesh> m_meshes = new List<StaticMesh>();
+        [Open] private List<Mesh> m_meshes = new List<Mesh>();
 
         private int m_index = 0;
 
