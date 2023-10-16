@@ -21,9 +21,6 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{e414bae3-5c22-46b8-a676-1a89d0e3c02b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Json">
-      <UniqueIdentifier>{af512a77-c7a2-4d99-9c44-3daf0f5434d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bridge">
       <UniqueIdentifier>{f39e6195-6222-416e-8a64-c7328e35e3c3}</UniqueIdentifier>
     </Filter>
@@ -454,9 +451,6 @@
     </ClInclude>
     <ClInclude Include="SimpleMath.h">
       <Filter>Not Components</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>Json</Filter>
     </ClInclude>
     <ClInclude Include="CameraComponent.h">
       <Filter>Components</Filter>
