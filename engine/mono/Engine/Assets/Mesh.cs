@@ -10,11 +10,14 @@ using FireYaml;
 namespace Engine {
     public class MeshData : AssetDataBase {
         public string ext = "";
+
         public List<StaticMaterial> materials = new List<StaticMaterial>();
+
+        public int materialsHash;
     }
 
     [GUID("bad8395e-7c27-4697-ba7a-2e7556af5423")]
-    public class Mesh : AssetBase<Mesh, MeshData>, IAsset, ISourceAsset, IEditorUIDrawer {
+    public class Mesh : AssetBase<Mesh, MeshData>, IAsset, ISourceAsset, IAssetEditorListener {
 
         public string ext { get => m_data.ext; protected set => m_data.ext = value; }
         [Open] private List<StaticMaterial> m_materials { get => m_data.materials; set => m_data.materials = value; }
@@ -39,8 +42,10 @@ namespace Engine {
                 return this;
 
             m_PushThisInstance();
+            m_PushCppAsset();
 
             Dll.MeshAsset.Init(Game.gameRef, cppRef, path);
+            m_data.materialsHash = GetAssetsListHash(m_materials);
 
             return this;
         }
@@ -62,21 +67,28 @@ namespace Engine {
             var sourcePath = Path.ChangeExtension(selfPath, ext);
 
             Dll.MeshAsset.Init(Game.gameRef, cppRef, sourcePath);
+            m_data.materialsHash = GetAssetsListHash(m_materials);
 
-            if(m_materials.Count > 0) {
-                var cppRefs = new ulong[m_materials.Count];
-                for(int i = 0; i < m_materials.Count; i++)
-                    cppRefs[i] = m_materials[i].cppRef.value;
+            m_SendMaterialsToCpp();
+        }
 
-                Dll.MeshAsset.materials_set(cppRef, cppRefs, m_materials.Count);
+        public void OnEditAsset() {
+            var hash = GetAssetsListHash(m_materials);
+            if (m_data.materialsHash != hash) {
+                m_data.materialsHash = hash;
+                m_SendMaterialsToCpp();
             }
         }
 
-        public void OnDrawUI() {
-            if (m_materials != null && m_materials.Count > 0) {
-                // GUI.DrawList("materials", m_materials);
-            }
+        private void m_SendMaterialsToCpp(){
+            var cppRefs = new ulong[m_materials.Count];
+            for (int i = 0; i < m_materials.Count; i++)
+                cppRefs[i] = m_materials[i] == null ? 0 : m_materials[i].cppRef.value;
+
+            Dll.MeshAsset.materials_set(cppRef, cppRefs, m_materials.Count);
         }
+
+        
     }
 
 }

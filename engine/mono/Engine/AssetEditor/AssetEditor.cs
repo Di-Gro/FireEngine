@@ -19,19 +19,31 @@ namespace Engine {
         public object? Value { get; private set; }
         public object? Instance => null;
 
-        public ValueField(Type type, object value)
-        {
+        private List<object> m_customAttributes = new List<object>();
+
+        public ValueField(Type type, object value) {
             Value = value;
             this.type = type;
         }
-        public ValueField(object value)
-        {
+        public ValueField(object value) {
             Value = value;
             type = value.GetType();
         }
         public void SetValue(object? value) => Value = value;
         public object? GetValue() => Value;
-        public TAttribute GetCustomAttribute<TAttribute>() where TAttribute : Attribute => null;
+
+        public void AddCustomAttribute<TAttribute>(TAttribute attr) where TAttribute : Attribute {
+            m_customAttributes.Add(attr);
+        }
+
+        public TAttribute GetCustomAttribute<TAttribute>() where TAttribute : Attribute {
+            var targetType = typeof(TAttribute);
+            foreach (var attr in m_customAttributes){
+                if (attr.GetType() == targetType)
+                    return attr as TAttribute;
+            }
+            return null;
+        }
     }
     
     public class AssetEditor {
@@ -72,7 +84,7 @@ namespace Engine {
                 if (Dll.ImGui.Begin($"Asset", ref isOpen, flags)) {
                     m_DrawWindow();
 
-                    if(isDirty && ImGui.IsWindowFocused() && Input.GetButtonDownEd(Key.S, Key.Ctrl))
+                    if (ImGui.IsWindowFocused() && Input.GetButtonDownEd(Key.S, Key.Ctrl))
                         Assets.Save(assetIdHash);
                 }
                 ImGui.End();
@@ -125,9 +137,7 @@ namespace Engine {
             object assetObj = m_iasset;
             UserInterface.Instance.DrawObject(m_iasset.GetType(), ref assetObj);
 
-            var uiDrawer = m_iasset as IEditorUIDrawer;
-            if (uiDrawer != null)
-                uiDrawer.OnDrawUI();
+            (m_iasset as IAssetEditorListener)?.OnEditAsset();
         }
 
         private void m_DrawAssetHeader() {
@@ -138,6 +148,11 @@ namespace Engine {
 
             int assetIdHash = m_assetIdHash;
             bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, "Asset", -1, ref assetIdHash, GUI.active);
+            GUI.Space();
+
+            var field = new ValueField(m_asset.assetID);
+            field.AddCustomAttribute(new ReadOnlyAttribute());
+            GUI.DrawString("AssetId", field);
             GUI.Space();
 
             ImGui.PushStyleColor((int)ImGuiCol_._Text, new sn.Vector4(1.0f, 1.0f, 1.0f, 0.3f));

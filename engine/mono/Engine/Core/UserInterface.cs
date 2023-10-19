@@ -725,15 +725,19 @@ namespace Engine
 
             var drawer = fieldDrawers[drawerType.FullName.GetHashCode()];
 
+            var prevRectWidthH = rectWidth;
+            rectWidth = prevRectWidthH - 18;
+
             var flags = ImGuiTreeNodeFlags_._Framed | ImGuiTreeNodeFlags_._DefaultOpen;
-            if (CollapsingHeader($" {label}", flags, out var size)) {
+            var prevHeaderPos = GetCursorPos();
+            var isOpen = CollapsingHeader($" {label}", flags, out var size);
+
+            if (isOpen) {
                 var textSize = Dll.ImGui.CalcTextSize(" + ");
 
-                var prevRectWidth = rectWidth;
-                rectWidth = prevRectWidth - 25;
+                rectWidth = prevRectWidthH - 25;
 
                 int indexToRemove = -1;
-
                 for (int index = 0; index < list.Count; index++) {
                     var itemField = new Field(list, valueType, index);
 
@@ -748,20 +752,30 @@ namespace Engine
 
                     Space();
                 }
-                rectWidth = prevRectWidth;
+                rectWidth = prevRectWidthH;
 
-                if (indexToRemove >= 0)
+                if (indexToRemove >= 0) {
                     list.RemoveAt(indexToRemove);
-
-                if (m_DrawListButton($" + ##_{groupId}_{subGroupId}_{label}_A", size, GetCursorPos())) {
+                    Assets.MakeDirty(groupAssetIdHash);
+                }
+            }
+            var nextHeaderPos = GetCursorPos();
+            rectWidth = prevRectWidthH - 18;
+            prevHeaderPos.Y += lineSpacing.Y;
+            if (m_DrawListButton($" + ##_{groupId}_{subGroupId}_{label}_A", size, prevHeaderPos)) {
+                if (isOpen) {
                     if (valueType.IsValueType)
                         list.Add(FireReader.CreateInstance(valueType));
                     else if (valueType == typeof(string))
                         list.Add("");
                     else
                         list.Add(null);
+
+                    Assets.MakeDirty(groupAssetIdHash);
                 }
             }
+            rectWidth = prevRectWidthH;
+            ImGui.SetCursorPos(nextHeaderPos);
         }
 
         public static sn.Vector2 GetCursorPos() {
@@ -774,7 +788,8 @@ namespace Engine
         public static bool m_DrawListButton(string text, Vector3 headerSize, sn.Vector2 cursorPos) {
             // var textSize = Dll.ImGui.CalcTextSize(text);
 
-            cursorPos.X = headerSize.X - 4;
+            // cursorPos.X = headerSize.X - 4;
+            cursorPos.X += headerSize.X + padding / 2 - 3;
             // cursorPos.Y += (headerSize.Y - textSize.Y) / 2;
 
             ImGui.SetCursorPos(cursorPos);

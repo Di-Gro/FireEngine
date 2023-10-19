@@ -26,9 +26,8 @@ void SceneEditorWindow::AfterDrawScene() {
 		m_HandleSelection();
 	}
 	if (scene()->isEditor()) {
-		if (game()->hotkeys()->GetButtonDownEd(Keys::S, Keys::Ctrl)) {
+		if (ImGui::IsWindowFocused() && game()->hotkeys()->GetButtonDownEd(Keys::S, Keys::Ctrl))
 			game()->assets()->Save(scene()->assetIdHash());
-		}
 	}
 	if (!scene()->isEditor() && game()->inFocus) {
 		auto vpos = viewportPosition();

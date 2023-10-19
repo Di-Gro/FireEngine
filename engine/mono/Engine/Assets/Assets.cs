@@ -83,7 +83,10 @@ namespace Engine {
 
         public static CppRef PushCppAsset<TAsset>(string assetId, int assetIdHash) {
             var type = typeof(TAsset);
+            return PushCppAsset(type, assetId, assetIdHash);
+        }
 
+        public static CppRef PushCppAsset(Type type, string assetId, int assetIdHash) {
             if (type == typeof(Image))
                 return Dll.Image.PushAsset(Game.gameRef, assetId, assetIdHash);
 
@@ -103,6 +106,9 @@ namespace Engine {
         }
 
         public static bool cpp_Load(CppRef cppRef, int assetIdHash) {
+            if (AssetStore.IsRuntimeAsset(assetIdHash))
+                return false;
+
             try {
                 var asset = CreateAssetWrapper(assetIdHash, cppRef);
                 asset.LoadAsset();
@@ -121,20 +127,28 @@ namespace Engine {
             }
         }
 
-        public static void cpp_Reload(int assetIdHash) {
+        public static void cpp_Reload(CppRef cppRef, int assetIdHash) {
+            if (AssetStore.IsRuntimeAsset(assetIdHash))
+                return;
+
             var asset = GetLoadedAsset(assetIdHash);
             if (asset == null)
-                asset = CreateAssetWrapper(assetIdHash, CppRef.NullRef);
+                // throw new Exception($"Assets.Save: The asset is not loaded.");
+                asset = CreateAssetWrapper(assetIdHash, cppRef);
 
             asset.ReloadAsset();
 
             AssetUpdateEvent?.Invoke(assetIdHash, asset);
         }
 
-        public static void cpp_Save(int assetIdHash) {
+        public static void cpp_Save(CppRef cppRef, int assetIdHash) {
+            if (AssetStore.IsRuntimeAsset(assetIdHash))
+                return;
+                
             var asset = GetLoadedAsset(assetIdHash);
             if (asset == null)
-                asset = CreateAssetWrapper(assetIdHash, CppRef.NullRef);
+                // throw new Exception($"Assets.Save: The asset is not loaded.");
+                asset = CreateAssetWrapper(assetIdHash, cppRef);
 
             asset.SaveAsset();
         }

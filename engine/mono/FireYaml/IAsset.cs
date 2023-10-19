@@ -17,8 +17,8 @@ namespace FireYaml {
         void SaveAsset();
     }
 
-    public interface IEditorUIDrawer {
-        void OnDrawUI();
+    public interface IAssetEditorListener {
+        void OnEditAsset();
     }
 
     public interface ISourceAsset {

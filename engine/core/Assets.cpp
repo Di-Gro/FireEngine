@@ -131,7 +131,11 @@ bool Assets::Load(int assetIdHash, CppRef cppRef) {
 void Assets::ReloadAll() {
 	for (auto& pair : m_assets) {
 		auto iasset = pair.second.iasset;
-		m_game->callbacks().reloadAsset(iasset->assetIdHash());
+
+		auto cppRef = CppRefs::GetRef(iasset);
+
+		iasset->Release();
+		m_game->callbacks().reloadAsset(cppRef, iasset->assetIdHash());
 	}
 }
 
@@ -140,8 +144,10 @@ void Assets::Reload(int assetIdHash) {
 	if (iasset == nullptr)
 		return;
 
+	auto cppRef = CppRefs::GetRef(iasset);
+
 	iasset->Release();
-	m_game->callbacks().reloadAsset(iasset->assetIdHash());
+	m_game->callbacks().reloadAsset(cppRef, iasset->assetIdHash());
 }
 
 void Assets::Save(int assetIdHash) {
@@ -155,7 +161,8 @@ void Assets::Save(int assetIdHash) {
 		return;
 	}
 
-	m_game->callbacks().saveAsset(iasset->assetIdHash());
+	auto cppRef = CppRefs::GetRef(iasset);
+	m_game->callbacks().saveAsset(cppRef, iasset->assetIdHash());
 
 	if (m_dirtyAssets.contains(assetIdHash))
 		m_dirtyAssets.erase(assetIdHash);

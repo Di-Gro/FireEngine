@@ -264,9 +264,14 @@ namespace Engine {
                 sourceExt = sourceExt,
             };
 
-            using (var fileStream = new FileStream(assetPath, FileMode.Create)) {
+            FileStream fileStream = null;
+            try {
+                fileStream = new FileStream(assetPath, FileMode.Create);
                 var assetWriter = new FireBin.AssetWriter(fileStream);
                 assetWriter.Write(assetHeader, assetData);
+            } finally {
+                if (fileStream != null)
+                    fileStream.Close();
             }
             var asset = new FireBinAsset();
 
@@ -284,7 +289,7 @@ namespace Engine {
             m_assetIDHash_asset[asset.assetIDHash] = asset;
 
             Dll.AssetStore.AddAsset(Game.gameRef, asset.scriptIDHash, asset.assetIDHash, asset.name);
-
+            
             Console.WriteLine($"FBIN.CreateNewAsset: {asset.time}: '{assetPath}'");
 
             return asset.assetIDHash;
@@ -321,8 +326,14 @@ namespace Engine {
                 sourceExt = asset.sourceExt,
             };
 
-            using (var fileStream = new FileStream(fullPath, FileMode.Open))
+            FileStream fileStream = null;
+            try {
+                fileStream = new FileStream(fullPath, FileMode.Truncate);
                 new FireBin.AssetWriter(fileStream).Write(assetHeader, asset.data);
+            } finally {
+                if (fileStream != null)
+                    fileStream.Close();
+            }           
         }
 
         public int CreateAssetFromSourceOrRequest(string filePath) {
@@ -492,6 +503,8 @@ namespace Engine {
             var assetReader = new FireBin.AssetReader(fileStream);
 
             asset.data = assetReader.ReadData();
+
+            fileStream.Close();
         }
 
         private void m_UpdateAssetPath(AssetFile assetFile) {

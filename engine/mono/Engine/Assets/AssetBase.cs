@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using EngineDll;
 using FireYaml;
@@ -25,6 +26,7 @@ namespace Engine {
                 return;
 
             m_PushThisInstance();
+            m_PushCppAsset();
             ReloadAsset();
         }
 
@@ -54,12 +56,23 @@ namespace Engine {
 
             m_assetInstance = thisInstance;
             Assets.SetLoadedAsset(thisInstance);
+        }
 
+        protected void m_PushCppAsset() {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
-            if (cppRef.value != 0)
-                throw new Exception($"AssetBase<{typeof(TAsset).Name}, {typeof(TAssetData).Name}>: Cpp asset already exists.");
+            if (cppRef.value == 0)
+                cppRef = Assets.PushCppAsset<TAsset>(assetId, assetIdHash);
 
-            cppRef = Assets.PushCppAsset<TAsset>(assetId, assetIdHash);
+            // if (cppRef.value != 0)
+            //     throw new Exception($"AssetBase<{typeof(TAsset).Name}, {typeof(TAssetData).Name}>: The cpp asset already exists.");
+        }
+
+        public int GetAssetsListHash<T>(List<T> list) where T : IAsset {
+            long value = 0;
+            foreach (var asset in list)
+                value += asset != null ? asset.assetIdHash : -1111;
+
+            return value.GetHashCode();
         }
 
     }

@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "Assets.h"
+#include "MaterialAsset.h"
 
 void MeshAsset::Release() {
 	resource.Release();
@@ -40,9 +41,12 @@ DEF_FUNC(MeshAsset, materials_set, void)(CppRef meshRef, size_t* cppRefs, int co
 
 	auto ptr = cppRefs;
 	for (int i = 0; i < count; i++, ptr++) {
-		auto cppRef = RefCpp(*ptr);
-		auto* material = CppRefs::ThrowPointer<MaterialAsset>(cppRef);
+		auto* material = MaterialAsset::Default;
 
+		if (*ptr != 0) {
+			auto cppRef = RefCpp(*ptr);
+			material = CppRefs::ThrowPointer<MaterialAsset>(cppRef);
+		}
 		mesh->f_staticMaterials.push_back(material);
 	}
 }

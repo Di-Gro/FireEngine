@@ -35,6 +35,6 @@ namespace Engine {
             width = w;
             height = h;
         }
-        
+
     }
 }

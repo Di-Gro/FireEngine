@@ -5,7 +5,7 @@ using FireYaml;
 namespace Engine {
 
     [GUID("3dfd7ca5-2750-4783-b7ef-9fced505568d", typeof(EditorSettings))]
-    public class EditorSettings : IFile, IAsset, IEditorUIDrawer {
+    public class EditorSettings : IFile, IAsset, IAssetEditorListener {
         /// FireYaml.IFile ->
         [Close] public ulong assetInstance { get; set; } = FireYaml.AssetInstance.PopId();
 
@@ -63,7 +63,7 @@ namespace Engine {
             AssetStore.WriteAsset(assetIdHash, this);
         }
 
-        public void OnDrawUI() {
+        public void OnEditAsset() {
             int sceneHash = StartupScene == null ? 0 : StartupScene.assetIdHash;
             if(m_lastSceneHash != sceneHash) {
                 m_lastSceneHash = sceneHash;

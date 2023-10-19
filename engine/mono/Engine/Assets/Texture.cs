@@ -9,17 +9,17 @@ namespace Engine {
 
     public class TextureData : AssetDataBase {
         public Image image;
-        public uint width = 128;
-        public uint height = 128;
+        public int width = 128;
+        public int height = 128;
         public int imageIdHash = 0;
     }
 
     [GUID("81b31ac1-86d8-4d99-aff6-324c5f987b15", typeof(Texture))]
-    public class Texture : AssetBase<Texture, TextureData>, IAsset, IEditorUIDrawer {
+    public class Texture : AssetBase<Texture, TextureData>, IAsset, IAssetEditorListener {
 
         public Image image { get => m_data.image; set => m_data.image = value; }
-        public uint width { get => m_data.width; set => m_data.width = value; }
-        public uint height { get => m_data.height; set => m_data.height = value; }
+        public int width { get => m_data.width; set => m_data.width = value; }
+        public int height { get => m_data.height; set => m_data.height = value; }
 
         public override void ReloadAsset() {
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
@@ -32,7 +32,10 @@ namespace Engine {
             m_InitTexture();
         }
 
-        public void OnDrawUI() {
+        public void OnEditAsset() {
+            width = Math.Clamp(width, 0, int.MaxValue);
+            height = Math.Clamp(height, 0, int.MaxValue);
+
             int hash = image == null ? 0 : image.assetIdHash;
             if (m_data.imageIdHash != hash) {
                 m_data.imageIdHash = hash;
@@ -43,7 +46,7 @@ namespace Engine {
 
         private void m_InitTexture() {
             if (image == null)
-                Dll.Texture.Init(Game.gameRef, cppRef, width, height);
+                Dll.Texture.Init(Game.gameRef, cppRef, (uint)width, (uint)height);
             else
                 Dll.Texture.InitFromImage(Game.gameRef, cppRef, image.cppRef);
         }

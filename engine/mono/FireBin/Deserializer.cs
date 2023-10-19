@@ -183,6 +183,7 @@ namespace FireBin {
                 var fieldReader = m_GetLoader(binType);
                 var fieldValue = fieldReader.Invoke(valueType, valuePtr);
 
+                fieldValue = Convert.ChangeType(fieldValue, valueType);
                 field.SetValue(fieldValue);
             }
             if (data.extraFields.Count > 0)

@@ -80,8 +80,9 @@ private:
 	bool m_onExit = false;
 	//bool m_isEditor = false;
 
-	std::string editorSceneAssetName;
-	int editorSceneAssetIdHash;
+	std::string gameSceneAssetName;
+	std::string gameSceneAssetId;
+	int gameSceneAssetIdHash;
 
 public:
 

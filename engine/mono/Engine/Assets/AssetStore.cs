@@ -238,7 +238,7 @@ namespace Engine {
         public static int CreateNewAsset(Type type, string assetPath, string sourceExt = "") {
             foreach (var assetMenager in Instance.m_assetMenagers)
                 return assetMenager.CreateNewAsset(type, assetPath, sourceExt);
-
+                
             return 0;
         }
 

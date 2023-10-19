@@ -85,8 +85,8 @@ namespace Engine {
             m_gameCallbacks.hasAssetInStore = new GameCallbacks.hash_bool(AssetStore.HasAsset);
             m_gameCallbacks.getStringHash = new GameCallbacks.cstr_int(cpp_GetStringHash);
             m_gameCallbacks.loadAsset = new GameCallbacks.CppRef_hash_bool(Assets.cpp_Load);
-            m_gameCallbacks.reloadAsset = new GameCallbacks.hash_void(Assets.cpp_Reload);
-            m_gameCallbacks.saveAsset = new GameCallbacks.hash_void(Assets.cpp_Save);
+            m_gameCallbacks.reloadAsset = new GameCallbacks.CppRef_hash_void(Assets.cpp_Reload);
+            m_gameCallbacks.saveAsset = new GameCallbacks.CppRef_hash_void(Assets.cpp_Save);
             m_gameCallbacks.pushClipboard = new GameCallbacks.CsRef_void(Clipboard.Push);
             m_gameCallbacks.peekClipboard = new GameCallbacks.void_CppRef(Clipboard.Peek);
             m_gameCallbacks.clipboardIsAssignable = new GameCallbacks.hash_bool(Clipboard.IsAssignable);
@@ -255,6 +255,7 @@ namespace Engine {
 
         public delegate void CppRef_void(CppRef value);
         public delegate bool CppRef_hash_bool(CppRef cppRef, int hash);
+        public delegate void CppRef_hash_void(CppRef cppRef, int hash);
 
         public delegate void CsRef_void(CsRef value);
         public delegate bool CsRef_hash_bool(CsRef value, int hash);
@@ -278,8 +279,8 @@ namespace Engine {
         public hash_bool hasAssetInStore;
         public cstr_int getStringHash;
         public CppRef_hash_bool loadAsset;
-        public hash_void reloadAsset;
-        public hash_void saveAsset;
+        public CppRef_hash_void reloadAsset;
+        public CppRef_hash_void saveAsset;
         public CsRef_void pushClipboard;
         public void_CppRef peekClipboard;
         public hash_bool clipboardIsAssignable;

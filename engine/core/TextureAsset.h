@@ -16,6 +16,7 @@ public:
 
 public:
 	std::string name;
+
 	const ImageAsset* image = nullptr;
 	TextureResource resource;
 

@@ -51,7 +51,7 @@ namespace Engine {
     }
 
     [GUID("110065f7-ed95-4fca-8a09-288b7ec17500", typeof(StaticMaterial))]
-    public class StaticMaterial : AssetBase<StaticMaterial, MaterialData>, IMaterial, IAsset, IEditorUIDrawer {
+    public class StaticMaterial : AssetBase<StaticMaterial, MaterialData>, IMaterial, IAsset, IAssetEditorListener {
 
         public bool IsDynamic { get => m_data.IsDynamic; }
         [Open][ReadOnly] public string Name { get => m_data.Name; private set => m_data.Name = value; }
@@ -100,13 +100,13 @@ namespace Engine {
          
             Dll.Material.Init(Game.gameRef, cppRef);
 
-            m_data.texturesHash = m_GetTexturesHash();
+            m_data.texturesHash = GetAssetsListHash(m_textures);
 
             m_SendTexturesToCpp();
         }
 
-        public void OnDrawUI() {
-            var hash = m_GetTexturesHash();
+        public void OnEditAsset() {
+            var hash = GetAssetsListHash(m_textures);
             if (m_data.texturesHash != hash) {
                 m_data.texturesHash = hash;
                 m_SendTexturesToCpp();
@@ -125,18 +125,10 @@ namespace Engine {
             }
         }
 
-        private long m_GetTexturesHash() {
-            long value = 0;
-            foreach (var texture in m_textures)
-                value += texture != null ? texture.assetIdHash : -1111;
-
-            return value.GetHashCode();
-        }
-
         private void m_SendTexturesToCpp() {
             var cppRefs = new ulong[m_textures.Count];
             for (int i = 0; i < m_textures.Count; i++)
-                cppRefs[i] = m_textures[i].cppRef.value;
+                cppRefs[i] = m_textures[i] == null ? 0 : m_textures[i].cppRef.value;
 
             Dll.Material.textures_set(cppRef, cppRefs, m_textures.Count);
         }
@@ -179,13 +171,11 @@ namespace Engine {
         }
 
         public void UpdateTextures() {
-            if(textures.Count > 0) {
-                var cppRefs = new ulong[textures.Count];
-                for(int i = 0; i < textures.Count; i++)
-                    cppRefs[i] = textures[i].cppRef.value;
+            var cppRefs = new ulong[textures.Count];
+            for (int i = 0; i < textures.Count; i++)
+                cppRefs[i] = textures[i] == null ? 0 : textures[i].cppRef.value;
 
-                Dll.Material.textures_set(cppRef, cppRefs, textures.Count);
-            }
+            Dll.Material.textures_set(cppRef, cppRefs, textures.Count);
         }
 
         public void Delete() {

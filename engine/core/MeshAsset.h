@@ -28,6 +28,7 @@ public:
 	MeshResource resource;
 	std::vector<const MaterialAsset*> f_staticMaterials;
 
+public:
 	void Release() override;
 
 public:
@@ -40,3 +41,4 @@ FUNC(MeshAsset, MaterialMaxIndex, int)(CppRef mesh4Ref);
 PUSH_ASSET(MeshAsset);
 
 FUNC(MeshAsset, Init, void)(CppRef gameRef, CppRef meshRef, const char* path);
+

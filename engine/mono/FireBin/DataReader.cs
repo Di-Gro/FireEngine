@@ -72,12 +72,19 @@ namespace FireBin {
             var prevPos = reader.BaseStream.Position;
             reader.BaseStream.Position = position;
 
+            int writedRefsCount = 0;
+
             for (int i = 0; i < count; i++) {
                 var fromPtr = Area.ReadPointerData(reader);
 
                 m_data.AddPointer(fromPtr);
+                writedRefsCount++;
+
+                // var toPtr = new DataReader(m_data).ReadPointer(fromPtr.areaId, fromPtr.offset);
+                // Console.WriteLine($"From(area: {fromPtr.areaId}, offset: {fromPtr.offset}) To(area: {toPtr.areaId}, offset: {toPtr.offset}))");
             }
             reader.BaseStream.Position = prevPos;
+            // Console.WriteLine($"Readed Refs Count: {writedRefsCount}\n");
         }
 
         public StructType ReadStructType(Pointer structPtr) {

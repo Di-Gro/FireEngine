@@ -117,8 +117,8 @@ public:
 	int (*getAssetIDHash)(size_t stringPtr);
 
 	bool (*loadAsset)(CppRef cppRef, int assetIdHash);
-	void (*reloadAsset)(int assetIdHash);
-	void (*saveAsset)(int assetIdHash);
+	void (*reloadAsset)(CppRef cppRef, int assetIdHash);
+	void (*saveAsset)(CppRef cppRef, int assetIdHash);
 
 	void (*pushClipboard)(CsRef value);
 	CppRef (*peekClipboard)();

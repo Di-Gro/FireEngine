@@ -106,6 +106,12 @@ void UI_Hierarchy::m_HandleInput() {
 
 		if (m_game->hotkeys()->GetButtonDownEd(Keys::Delete))
 			ActorMenu::Remove(actor);
+
+		if (ImGui::IsWindowFocused() && m_game->hotkeys()->GetButtonDownEd(Keys::S, Keys::Ctrl)) {
+			auto scene = m_game->ui()->selectedScene();
+			if (scene != nullptr)
+				m_game->assets()->Save(scene->assetIdHash());
+		}
 	}
 }
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <chrono>
+#include <cassert>
 #include <filesystem>
 
 #include "imgui\imgui.h"
@@ -149,11 +150,17 @@ bool Game::LoadScene(Scene* targetScene, int assetGuidHash) {
 	auto sceneRef = CppRefs::GetRef(targetScene);
 
 	if (targetScene->IsAsset()) {
+		bool hasCppAsset = assets()->Contains(targetScene->assetIdHash());
+		assert(hasCppAsset);
+
 		bool hasAsset = callbacks().hasAssetInStore(targetScene->assetIdHash());
 		if (hasAsset)
 			loaded = assets()->Load(targetScene->assetIdHash(), sceneRef);
 	}
 	else if(assetGuidHash != 0) {
+		//bool hasCppAsset = assets()->Contains(assetGuidHash);
+		//assert(hasCppAsset);
+
 		loaded = callbacks().loadScene(sceneRef, assetGuidHash);
 	}
 	return loaded;
@@ -182,12 +189,13 @@ void Game::Run() {
 	}
 	m_editorWindow->scene(m_editorScene);
 
-	editorSceneAssetName = "\\Ignore\\editor_scene";
-	auto editorSceneAssetPath = m_assetStore->editorPath() + editorSceneAssetName + ".scene";
+	gameSceneAssetName = "\\Ignore\\GameScene";
+	auto editorSceneAssetPath = m_assetStore->editorPath() + gameSceneAssetName + ".scene";
 	if (fs::exists(editorSceneAssetPath))
 		fs::remove(editorSceneAssetPath);
 
-	editorSceneAssetIdHash = SceneMenu::Create(this, editorSceneAssetName, true);
+	gameSceneAssetIdHash = SceneMenu::Create(this, gameSceneAssetName, true);
+	gameSceneAssetId = assetStore()->GetAssetGuid(gameSceneAssetIdHash);
 
 	MSG msg = {};
 
@@ -305,9 +313,10 @@ void Game::m_EndUpdate() {
 		std::cout << std::endl;
 	}
 
-	if (m_hotkeys->GetButtonDownEd(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
-		/// TODO: Сохранить все ассеты
-	}
+	/// TODO: Сохранить все ассеты
+	//if (m_hotkeys->GetButtonDownEd(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
+	//	
+	//}
 		
 }
 
@@ -448,16 +457,16 @@ void Game::DeleteMaterialFromAllScenes(const MaterialResource* material) {
 
 void Game::TogglePlayMode() {
 	if (m_gameScene == nullptr) {
-		m_gameScene = CreateScene(false);
+		m_gameScene = CreateScene(false, gameSceneAssetId);
 
 		auto editorSceneRef = CppRefs::GetRef(m_editorScene);
 		auto gameSceneRef = CppRefs::GetRef(m_gameScene);
 
-		bool wasWrited = callbacks().writeScene(editorSceneRef, editorSceneAssetIdHash);
+		bool wasWrited = callbacks().writeScene(editorSceneRef, gameSceneAssetIdHash);
 		bool wasLoaded = false;
 
 		if (wasWrited) {
-			wasLoaded = LoadScene(m_gameScene, editorSceneAssetIdHash);
+			wasLoaded = LoadScene(m_gameScene, gameSceneAssetIdHash);
 			if (wasLoaded) {
 				m_gameScene->name(m_editorScene->name() + " (Game)");
 
@@ -474,8 +483,11 @@ void Game::TogglePlayMode() {
 				PopScene();
 			}
 		}
-		if (!wasLoaded)
+		if (!wasLoaded) {
 			DestroyScene(m_gameScene);
+			m_EraseScene(m_gameScene->f_sceneIter);
+			m_gameScene = nullptr;
+		}
 	}
 	else {
 		if (ui()->selectedScene() == m_gameScene)
@@ -485,6 +497,7 @@ void Game::TogglePlayMode() {
 			ui()->SelectedActor(nullptr);
 
 		DestroyScene(m_gameScene);
+		m_EraseScene(m_gameScene->f_sceneIter);
 		m_gameScene = nullptr;
 
 		m_gameWindow->scene(nullptr);

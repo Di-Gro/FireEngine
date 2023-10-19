@@ -71,6 +71,11 @@ void UI_Inspector::Draw_UI_Inspector() {
 			m_DrawComponents();
 			m_DrawAddComponent();
 		}
+		if (ImGui::IsWindowFocused() && _game->hotkeys()->GetButtonDownEd(Keys::S, Keys::Ctrl)) {
+			auto scene = _game->ui()->selectedScene();
+			if (scene != nullptr)
+				_game->assets()->Save(scene->assetIdHash());
+		}
 	}
 
 	if (ImGui::IsWindowHovered() && !ImGui::IsAnyItemHovered())
