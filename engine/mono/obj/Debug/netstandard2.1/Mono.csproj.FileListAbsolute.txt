@@ -15,13 +15,12 @@ C:\GitHub\FireEngine\engine\mono\bin\Debug\netstandard2.1\Mono.dll
 C:\GitHub\FireEngine\engine\mono\bin\Debug\netstandard2.1\Mono.pdb
 C:\GitHub\FireEngine\engine\mono\bin\Debug\netstandard2.1\vim-math.dll
 C:\GitHub\FireEngine\engine\mono\bin\Debug\netstandard2.1\vim-math.pdb
-C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csproj.AssemblyReference.cache
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.Properties.Resources.resources
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csproj.GenerateResource.cache
-C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.GeneratedMSBuildEditorConfig.editorconfig
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.AssemblyInfoInputs.cache
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.AssemblyInfo.cs
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csproj.CoreCompileInputs.cache
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csproj.CopyComplete
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.dll
 C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.pdb
+C:\GitHub\FireEngine\engine\mono\obj\Debug\netstandard2.1\Mono.csprojAssemblyReference.cache

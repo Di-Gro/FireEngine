@@ -4,8 +4,9 @@
     <id>vim-math</id>
     <version>1.6.0</version>
     <authors>vim-math</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Package Description</description>
-    <repository type="git" url="https://github.com/Di-Gro/FireEngine.git" commit="47c080205332330d4c83d2cdcaf8963cc71b24a4" />
+    <repository type="git" url="https://github.com/Di-Gro/FireEngine.git" commit="324f6355ff23ab56cf4e79e8676c32cc0493c74d" />
     <dependencies>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>
