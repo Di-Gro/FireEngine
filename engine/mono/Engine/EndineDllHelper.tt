@@ -38,8 +38,7 @@
     private void PUSH_ASSET(string className)
     {
         ANSI_FUNC(className, "PushAsset", "CppRef", "CppRef gameRef, string assetId, int assetIdHash");
-        FUNC(className, "assetId_get", "size_t", "CppRef cppRef");
-        ANSI_FUNC(className, "assetId_set", "void", "CppRef cppRef, string value");
+        PROP_GETSET_STR(className, "assetId");
         PROP_GETSET(className, "int", "assetIdHash");
     }
 #>

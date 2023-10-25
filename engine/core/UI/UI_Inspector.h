@@ -85,6 +85,7 @@ public:
 	bool ShowColor3(const std::string& label, Vector3* value);
 	bool ShowColor4(const std::string& label, Vector4* value);
 	bool ShowText(const char* label, const char* labelId, const char* buffer, int length, size_t* ptr, int flags);
+	bool DrawFloat(const char* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f);
 
 	void BigSpace();
 	void Space();
@@ -133,5 +134,7 @@ FUNC(ImGui, Begin, bool)(const char* name, bool* isOpen, int flags = 0);
 
 FUNC(UI_Inspector, ShowColor3, bool)(CppRef gameRef, const char* label, Vector3* value);
 FUNC(UI_Inspector, ShowColor4, bool)(CppRef gameRef, const char* label, Vector4* value);
+
+FUNC(UI_Inspector, DragFloat, bool)(CppRef gameRef, const char* label, float* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f);
 
 

@@ -6,12 +6,15 @@ using Engine;
 
 namespace FireYaml {
 
+    public class CsOnly : System.Attribute { }
+
     public interface IAsset {
 
         string assetId { get; }
         int assetIdHash { get; }
         CppRef cppRef { get; }
 
+        void Init(string assetId, CppRef cppRef);
         void LoadAsset();
         void ReloadAsset();
         void SaveAsset();

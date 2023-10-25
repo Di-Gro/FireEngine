@@ -10,8 +10,21 @@ public:
 	std::string sceneId = "";
 	bool visible = false;
 
-public:
+protected:
+	float m_beginViewHeight;
+	float m_barHeight;
 
+private:
+	Game* m_game;
+	Scene* m_scene;
+
+	bool m_needSetFocus = false;
+
+	Vector2 m_viewportSize = { 800, 800 };
+	Vector2 m_viewportPosition;
+	Vector2 m_mouseViewportPosition;
+
+public:
 	SceneWindow(const std::string& _sceneId) : sceneId(_sceneId) { }
 	virtual ~SceneWindow() {}
 
@@ -29,23 +42,15 @@ public:
 
 	Vector2 viewportSize() { return m_viewportSize; }
 	Vector2 viewportPosition() { return m_viewportPosition; }
-	Vector2 mouseViewportPosition() { return m_mouseViewportPosition ; }
+	Vector2 mouseViewportPosition() { return m_mouseViewportPosition; }
 
 protected:
 	virtual void OnInit() { }
+	virtual void OnDrawBar() { }
 	virtual void AfterDrawScene() { }
 
 private:
-	Game* m_game;
-	Scene* m_scene;
-
-	bool m_needSetFocus = false;
-
-	Vector2 m_viewportSize = {800, 800};
-	Vector2 m_viewportPosition;
-	Vector2 m_mouseViewportPosition;
-
-private:
+	void m_DrawBar();
 	void m_DrawRender();
 	void m_UpdateViewportInfo();
 };

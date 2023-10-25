@@ -110,8 +110,13 @@ namespace Engine {
                 return;
 
             m_asset = asset;
+
+            Game.PushScene(Game.StaticScene);
+
             m_iasset = Assets.CreateAssetWrapper(m_assetIdHash, CppRef.NullRef);
             m_iasset.LoadAsset();
+
+            Game.PopScene();
         }
 
         private void m_DrawWindow() {
@@ -135,7 +140,10 @@ namespace Engine {
             m_DrawAssetHeader();
 
             object assetObj = m_iasset;
-            UserInterface.Instance.DrawObject(m_iasset.GetType(), ref assetObj);
+
+            GUI.groupScene = Game.StaticScene;
+            GUI.DrawObject(m_iasset.GetType(), ref assetObj);
+            GUI.groupScene = null;
 
             (m_iasset as IAssetEditorListener)?.OnEditAsset();
         }

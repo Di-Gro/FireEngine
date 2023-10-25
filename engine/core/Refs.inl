@@ -28,6 +28,6 @@ T* CppRefs::ThrowPointer(CppRef refId) {
 	if (pointer != nullptr)
 		return pointer;
 
-	auto text = "CppRefs::ThrowPointer(): CppRef:" + std::to_string(refId.value) + " not exists";
+	auto text = "CppRefs::ThrowPointer(): CppRef:" + std::to_string(refId.value) + " not exists. Maybe object was destroyed.";
 	throw std::exception(text.c_str());
 }

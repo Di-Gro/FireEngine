@@ -105,12 +105,8 @@ namespace Engine {
             public Component component;
             public LinkedListNode<WaitedComponent> node;
 
-
             public void OnEndLoad() {
-#if DETACHED
-#else
                 Dll.Actor.InitComponent(actor.cppRef, component.cppRef);
-#endif
                 m_waitedComponents.Remove(node);
             }
         }
@@ -173,23 +169,18 @@ namespace Engine {
         }
 
         public Component LoadComponent(FireBin.Deserializer des, Engine.Actor actor, FireBin.Pointer compPtr) {
-
             var scriptId = des.Reader.ReadScriptId(compPtr);
             var componentType = FireBin.Deserializer.GetTypeOf(scriptId);
 
             /// Create
             var componentObj = Activator.CreateInstance(componentType);
             var component = componentObj as Component;
-
-#if DETACHED
-            actor.detached_components.Add(component);
-#else
             var info = component.CppConstructor();
 
             /// Bind
             component.CsBindComponent(actor.csRef, info);
             Dll.Actor.BindComponent(actor.cppRef, component.cppRef);
-#endif
+
             /// PostBind
             des.LoadAsNamedList(componentType, compPtr, componentObj);
 
@@ -418,36 +409,37 @@ namespace Engine {
         }
 
         private void m_LoadMesh(FireYaml.FireReader deserializer, string meshPath, MeshComponent meshComponent) {
-            
-            var meshAssetPath = $"{meshPath}.assetId";
-            var meshField = deserializer.GetField(meshPath);
+            throw new NotImplementedException("MeshComponentSerializer.m_LoadMesh: FireYaml не поддеиживается.");
+
+            // var meshAssetPath = $"{meshPath}.assetId";
+            // var meshField = deserializer.GetField(meshPath);
         
-            /// Если есть сам меш, значит равен нулю
-            if(meshField.HasValue(meshPath))
-                return;
+            // /// Если есть сам меш, значит равен нулю
+            // if(meshField.HasValue(meshPath))
+            //     return;
                 
-            /// Если нет, значит меш не установлен
-            if(!meshField.HasValue(meshAssetPath))
-                return;
+            // /// Если нет, значит меш не установлен
+            // if(!meshField.HasValue(meshAssetPath))
+            //     return;
                 
-            var yamlValue = meshField.GetValue(meshAssetPath);
-            var assetId = yamlValue.value;
-            var assetIdHash = assetId.GetAssetIDHash();
-            var isPath = m_IsPath(assetId);
+            // var yamlValue = meshField.GetValue(meshAssetPath);
+            // var assetId = yamlValue.value;
+            // var assetIdHash = assetId.GetAssetIDHash();
+            // var isPath = m_IsPath(assetId);
 
-            if (!isPath && !AssetStore.HasAssetPath(assetIdHash))
-                    throw new Exception($"Missing AssetId: {assetId}");
+            // if (!isPath && !AssetStore.HasAssetPath(assetIdHash))
+            //         throw new Exception($"Missing AssetId: {assetId}");
 
-            if (yamlValue.type == YamlValue.Type.AssetId) {
-                Mesh mesh = null;
-                if (isPath)
-                    mesh = new Mesh().LoadFromFile(assetId);
-                else
-                    mesh = new Mesh().LoadFromAsset(assetId);
+            // if (yamlValue.type == YamlValue.Type.AssetId) {
+            //     Mesh mesh = null;
+            //     if (isPath)
+            //         mesh = new Mesh().LoadFromFile(assetId);
+            //     else
+            //         mesh = new Mesh().LoadFromAsset(assetId);
 
-                Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
-                return;
-            }
+            //     Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
+            //     return;
+            // }
         }
 
         private void m_LoadMesh(FireBin.Deserializer des, FireBin.Pointer meshPtr, MeshComponent meshComponent) {
@@ -457,22 +449,15 @@ namespace Engine {
             var meshObj = des.LoadAsAssetRef(typeof(Mesh), meshPtr);
             var mesh = meshObj as Mesh;
 
-            var isPath = m_IsPath(mesh.assetId);
-            var assetIdHash = mesh.assetId.GetAssetIDHash();
+            var isPath = Mesh.IsPath(mesh.assetId);
 
-            if (!isPath && !AssetStore.HasAssetPath(assetIdHash))
+            if (!isPath && !AssetStore.HasAssetPath(mesh.assetIdHash))
                 throw new Exception($"Missing AssetId: {mesh.assetId}");
 
-            if (isPath)
-                mesh = new Mesh().LoadFromFile(mesh.assetId);
-            else
-                mesh = new Mesh().LoadFromAsset(mesh.assetId);
+            /// Нельзя устанавливать незагруженный mesh. 
+            mesh.LoadAsset();
 
             Dll.MeshComponent.SetPreInitMesh(meshComponent.cppRef, mesh.cppRef);
-        }
-
-        private bool m_IsPath(string value) {
-            return value.Contains('/') || value.Contains('\\') || value.Contains('.');
         }
 
         private void m_LoadMaterials(FireYaml.FireReader deserializer, string materialsPath, MeshComponent meshComponent) {
@@ -530,7 +515,7 @@ namespace Engine {
                 //if (!AssetStore.HasAsset(assetIdHash))
                 //    throw new Exception($"Missing AssetId: {material.assetId}");
 
-                material.LoadFromAsset(material.assetId);
+                // material.LoadFromAsset(material.assetId);
                 matRefs.Add(material.cppRef.value);
             }
             Dll.MeshComponent.SetPreInitMaterials(meshComponent.cppRef, matRefs.ToArray(), matRefs.Count);

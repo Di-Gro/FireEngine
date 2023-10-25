@@ -7,7 +7,8 @@
 #include "CameraComponent.h"
 #include "EditorCamera.h"
 #include "LinedPlain.h"
-
+#include "Audio.h"
+#include "Sound.h"
 #include "PhysicsScene.h"
 
 unsigned int Scene::m_objectCount = 0;
@@ -19,11 +20,11 @@ bool Scene::mono_inited = false;
 static const char* MissingPushPopMsg = "You are trying to manipulate the scene without calling PushScene() / PopScene() pair.";
 
 
-void Scene::Init(Game* game, bool _isEditor) {
+void Scene::Init(Game* game, bool isEditor) {
 	pointerForDestroy(this);
 
 	m_game = game;
-	m_isEditor = _isEditor;
+	m_isEditor = isEditor;
 
 	m_InitMono();
 
@@ -31,6 +32,9 @@ void Scene::Init(Game* game, bool _isEditor) {
 
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->Init();
+
+	m_audio = new Audio();
+	m_audio->Init(m_game, this);
 }
 
 void Scene::Start() {
@@ -80,6 +84,8 @@ void Scene::f_Update() {
 	m_UpdateActors(&m_staticActors);
 	m_UpdateActors(&m_actors);
 
+	m_audio->Update();
+
 	m_game->PopScene();
 }
 
@@ -111,6 +117,10 @@ void Scene::Destroy() {
 
 	delete m_physicsScene;
 	m_physicsScene = nullptr;
+
+	m_audio->Destroy();
+	delete m_audio;
+	m_audio = nullptr;
 
 	m_game->PopScene();
 }
@@ -386,6 +396,11 @@ float Scene::editorCameraSpeed() {
 	return editorCamera->speed;
 }
 
+std::string Scene::ToSceneAssetId(const std::string& assetId) {
+	auto sceneRef = CppRefs::GetRef(this);
+	return "scene_" + sceneRef.ToString() +"_" + assetId;
+}
+
 DEF_FUNC(Game, CreateGameObjectFromCS, GameObjectInfo)(CppRef sceneRef, CsRef csRef, CppRef parentRef) {
 	return CppRefs::ThrowPointer<Scene>(sceneRef)->m_CreateActorFromCs(csRef, parentRef);
 }
@@ -411,3 +426,16 @@ DEF_PROP_GETSET_STR(Scene, name);
 DEF_PROP_GETSET(Scene, Vector3, editorCameraPos);
 DEF_PROP_GETSET(Scene, Quaternion, editorCameraRot);
 DEF_PROP_GETSET(Scene, float, editorCameraSpeed);
+
+FUNC(Scene, CreateSound, CppRef)(CppRef sceneRef, CsRef soundRef) {
+	auto* scene = CppRefs::ThrowPointer<Scene>(sceneRef);
+
+	auto* sound = new Sound(scene, soundRef);
+	return sound->f_cppRef;
+}
+
+FUNC(Scene, RemoveSound, void)(CppRef soundRef) {
+	auto* sound = CppRefs::ThrowPointer<Sound>(soundRef);
+
+	delete sound;
+}

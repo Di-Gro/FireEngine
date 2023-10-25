@@ -29,6 +29,12 @@ namespace Engine {
 		public static void RemoveCsRef(CsRef csRef) {
             s_refs.Remove(csRef);
 		}
+		public static CsRef CreateCsRef(object obj) {
+			var csRef = s_nextRefId.value;
+			s_refs.Add(csRef, obj);
+			s_nextRefId.value++;
+			return csRef;
+		}
 		/// <- Static
 
 		public ClassInfo classInfo { get; private set; }

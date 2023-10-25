@@ -262,6 +262,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "Game_PushScene")]
 		    public static extern void PushScene(CppRef gameRef, CppRef sceneRef);
 
+            [DllImport(Paths.Exe, EntryPoint = "Game_PushSelectedScene")]
+		    public static extern void PushSelectedScene(CppRef gameRef);
+
             [DllImport(Paths.Exe, EntryPoint = "Game_PopScene")]
 		    public static extern void PopScene(CppRef gameRef);
 
@@ -273,6 +276,9 @@ namespace EngineDll {
 
             [DllImport(Paths.Exe, EntryPoint = "Game_SetEditorSettings", CharSet = CharSet.Ansi)]
 		    public static extern void SetEditorSettings(CppRef gameRef, string startupScene);
+
+            [DllImport(Paths.Exe, EntryPoint = "Game_StaticScene")]
+		    public static extern CppRef StaticScene(CppRef gameRef);
 
 
 		}
@@ -354,10 +360,14 @@ namespace EngineDll {
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
             [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_assetId_get")]
-		    public static extern size_t assetId_get(CppRef cppRef);
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
 
             [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_assetId_set", CharSet = CharSet.Ansi)]
-		    public static extern void assetId_set(CppRef cppRef, string value);
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "MaterialAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
@@ -504,10 +514,14 @@ namespace EngineDll {
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
             [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_get")]
-		    public static extern size_t assetId_get(CppRef cppRef);
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
 
             [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_set", CharSet = CharSet.Ansi)]
-		    public static extern void assetId_set(CppRef cppRef, string value);
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
@@ -526,10 +540,14 @@ namespace EngineDll {
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
             [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_get")]
-		    public static extern size_t assetId_get(CppRef cppRef);
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
 
             [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetId_set", CharSet = CharSet.Ansi)]
-		    public static extern void assetId_set(CppRef cppRef, string value);
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "PureAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
@@ -549,10 +567,14 @@ namespace EngineDll {
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
             [DllImport(Paths.Exe, EntryPoint = "ImageAsset_assetId_get")]
-		    public static extern size_t assetId_get(CppRef cppRef);
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
 
             [DllImport(Paths.Exe, EntryPoint = "ImageAsset_assetId_set", CharSet = CharSet.Ansi)]
-		    public static extern void assetId_set(CppRef cppRef, string value);
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "ImageAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
@@ -575,10 +597,14 @@ namespace EngineDll {
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
             [DllImport(Paths.Exe, EntryPoint = "TextureAsset_assetId_get")]
-		    public static extern size_t assetId_get(CppRef cppRef);
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
 
             [DllImport(Paths.Exe, EntryPoint = "TextureAsset_assetId_set", CharSet = CharSet.Ansi)]
-		    public static extern void assetId_set(CppRef cppRef, string value);
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "TextureAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
@@ -608,10 +634,14 @@ namespace EngineDll {
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
             [DllImport(Paths.Exe, EntryPoint = "MeshAsset_assetId_get")]
-		    public static extern size_t assetId_get(CppRef cppRef);
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
 
             [DllImport(Paths.Exe, EntryPoint = "MeshAsset_assetId_set", CharSet = CharSet.Ansi)]
-		    public static extern void assetId_set(CppRef cppRef, string value);
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "MeshAsset_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
@@ -719,6 +749,9 @@ namespace EngineDll {
             [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_ShowColor3", CharSet = CharSet.Ansi)]
 		    public static extern bool ShowColor3(CppRef gameRef, string label, ref Vector3 value);
 
+            [DllImport(Paths.Exe, EntryPoint = "UI_Inspector_DragFloat", CharSet = CharSet.Ansi)]
+		    public static extern bool DragFloat(CppRef gameRef, string label, ref float v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f);
+
 		}
 
 		public static class UserInterface {
@@ -732,6 +765,16 @@ namespace EngineDll {
 		    private static extern void SelectedAsset_set_inner(CppRef objRef, int value);
 
             public static void SelectedAsset_set(CppRef objRef, int value) { if(objRef.value != 0) SelectedAsset_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_groupSceneRef_get")]
+		    private static extern CppRef groupSceneRef_get_inner(CppRef objRef);
+
+            public static CppRef groupSceneRef_get(CppRef objRef) => objRef.value != 0 ? groupSceneRef_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_groupSceneRef_set")]
+		    private static extern void groupSceneRef_set_inner(CppRef objRef, CppRef value);
+
+            public static void groupSceneRef_set(CppRef objRef, CppRef value) { if(objRef.value != 0) groupSceneRef_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "UserInterface_rectWidth_get")]
 		    private static extern float rectWidth_get_inner(CppRef objRef);
@@ -772,6 +815,9 @@ namespace EngineDll {
 		    private static extern void groupAssetIdHash_set_inner(CppRef objRef, int value);
 
             public static void groupAssetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) groupAssetIdHash_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "UserInterface_SelectedScene")]
+		    public static extern CppRef SelectedScene(CppRef uiRef);
 
 		}
 
@@ -942,10 +988,14 @@ namespace EngineDll {
 		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
 
             [DllImport(Paths.Exe, EntryPoint = "Scene_assetId_get")]
-		    public static extern size_t assetId_get(CppRef cppRef);
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
 
             [DllImport(Paths.Exe, EntryPoint = "Scene_assetId_set", CharSet = CharSet.Ansi)]
-		    public static extern void assetId_set(CppRef cppRef, string value);
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
 
             [DllImport(Paths.Exe, EntryPoint = "Scene_assetIdHash_get")]
 		    private static extern int assetIdHash_get_inner(CppRef objRef);
@@ -996,6 +1046,12 @@ namespace EngineDll {
 		    private static extern void editorCameraSpeed_set_inner(CppRef objRef, float value);
 
             public static void editorCameraSpeed_set(CppRef objRef, float value) { if(objRef.value != 0) editorCameraSpeed_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_CreateSound")]
+		    public static extern CppRef CreateSound(CppRef sceneRef, CsRef soundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Scene_RemoveSound")]
+		    public static extern void RemoveSound(CppRef soundRef);
 
 		}
 
@@ -1177,6 +1233,162 @@ namespace EngineDll {
 			
 		}
 
+		public static class AudioEmitter {
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_SetSound")]
+		    public static extern void SetSound(CppRef compRef, CppRef soundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_loop_get")]
+		    private static extern bool loop_get_inner(CppRef objRef);
+
+            public static bool loop_get(CppRef objRef) => objRef.value != 0 ? loop_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_loop_set")]
+		    private static extern void loop_set_inner(CppRef objRef, bool value);
+
+            public static void loop_set(CppRef objRef, bool value) { if(objRef.value != 0) loop_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_IsStopped_get")]
+		    private static extern bool IsStopped_get_inner(CppRef objRef);
+
+            public static bool IsStopped_get(CppRef objRef) => objRef.value != 0 ? IsStopped_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_IsPlaying_get")]
+		    private static extern bool IsPlaying_get_inner(CppRef objRef);
+
+            public static bool IsPlaying_get(CppRef objRef) => objRef.value != 0 ? IsPlaying_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_IsPaused_get")]
+		    private static extern bool IsPaused_get_inner(CppRef objRef);
+
+            public static bool IsPaused_get(CppRef objRef) => objRef.value != 0 ? IsPaused_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_Play")]
+		    public static extern void Play(CppRef iSoundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_Stop")]
+		    public static extern void Stop(CppRef iSoundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_Pause")]
+		    public static extern void Pause(CppRef iSoundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioEmitter_Resume")]
+		    public static extern void Resume(CppRef iSoundRef);
+
+			
+		}
+
+		public static class AudioListener {
+            [DllImport(Paths.Exe, EntryPoint = "AudioListener_Create")]
+		    public static extern CppObjectInfo Create(/*CppRef cppObjRef, */CsRef csCompRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioListener_IsMainListener_get")]
+		    private static extern bool IsMainListener_get_inner(CppRef objRef);
+
+            public static bool IsMainListener_get(CppRef objRef) => objRef.value != 0 ? IsMainListener_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioListener_IsMuted_get")]
+		    private static extern bool IsMuted_get_inner(CppRef objRef);
+
+            public static bool IsMuted_get(CppRef objRef) => objRef.value != 0 ? IsMuted_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioListener_volume_get")]
+		    private static extern float volume_get_inner(CppRef objRef);
+
+            public static float volume_get(CppRef objRef) => objRef.value != 0 ? volume_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioListener_volume_set")]
+		    private static extern void volume_set_inner(CppRef objRef, float value);
+
+            public static void volume_set(CppRef objRef, float value) { if(objRef.value != 0) volume_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioListener_Mute")]
+		    public static extern void Mute(CppRef compRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioListener_Unmute")]
+		    public static extern void Unmute(CppRef compRef);
+
+			
+		}
+
+		public static class AudioAsset {
+            [DllImport(Paths.Exe, EntryPoint = "AudioAsset_PushAsset", CharSet = CharSet.Ansi)]
+		    public static extern CppRef PushAsset(CppRef gameRef, string assetId, int assetIdHash);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioAsset_assetId_get")]
+		    private static extern size_t assetId_get_ptr(CppRef objRef);
+
+            public static string assetId_get(CppRef objRef) => objRef.value != 0 ? Engine.Assets.ReadCString(assetId_get_ptr(objRef)) : "";
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioAsset_assetId_set", CharSet = CharSet.Ansi)]
+		    private static extern void assetId_set_inner(CppRef objRef, string value);
+
+            public static void assetId_set(CppRef objRef, string value) { if(objRef.value != 0) assetId_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioAsset_assetIdHash_get")]
+		    private static extern int assetIdHash_get_inner(CppRef objRef);
+
+            public static int assetIdHash_get(CppRef objRef) => objRef.value != 0 ? assetIdHash_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioAsset_assetIdHash_set")]
+		    private static extern void assetIdHash_set_inner(CppRef objRef, int value);
+
+            public static void assetIdHash_set(CppRef objRef, int value) { if(objRef.value != 0) assetIdHash_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioAsset_Init")]
+		    public static extern void Init(CppRef sceneRef, CppRef assetRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "AudioAsset_Load", CharSet = CharSet.Ansi)]
+		    public static extern void Load(CppRef assetRef, string path);
+
+			
+		}
+
+		public static class Sound {
+            [DllImport(Paths.Exe, EntryPoint = "Sound_SetAsset")]
+		    public static extern void SetAsset(CppRef soundRef, CppRef assetRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_loop_get")]
+		    private static extern bool loop_get_inner(CppRef objRef);
+
+            public static bool loop_get(CppRef objRef) => objRef.value != 0 ? loop_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_loop_set")]
+		    private static extern void loop_set_inner(CppRef objRef, bool value);
+
+            public static void loop_set(CppRef objRef, bool value) { if(objRef.value != 0) loop_set_inner(objRef, value); }
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_IsStopped_get")]
+		    private static extern bool IsStopped_get_inner(CppRef objRef);
+
+            public static bool IsStopped_get(CppRef objRef) => objRef.value != 0 ? IsStopped_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_IsPlaying_get")]
+		    private static extern bool IsPlaying_get_inner(CppRef objRef);
+
+            public static bool IsPlaying_get(CppRef objRef) => objRef.value != 0 ? IsPlaying_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_IsPaused_get")]
+		    private static extern bool IsPaused_get_inner(CppRef objRef);
+
+            public static bool IsPaused_get(CppRef objRef) => objRef.value != 0 ? IsPaused_get_inner(objRef) : default;
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_Play")]
+		    public static extern void Play(CppRef iSoundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_Stop")]
+		    public static extern void Stop(CppRef iSoundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_Pause")]
+		    public static extern void Pause(CppRef iSoundRef);
+
+            [DllImport(Paths.Exe, EntryPoint = "Sound_Resume")]
+		    public static extern void Resume(CppRef iSoundRef);
+
+			
+		}
 		
 	}
 }

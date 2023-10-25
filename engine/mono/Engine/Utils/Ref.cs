@@ -7,13 +7,21 @@ namespace Engine {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct CppRef {
-        public static CppRef NullRef = 0;
+        public static readonly CppRef NullRef = 0;
 
         public ulong value;
 
         CppRef(ulong v) => value = v;
 
         public static implicit operator CppRef(ulong v) => new CppRef { value = v };
+
+        public static bool operator ==(CppRef a, CppRef b) {
+            return a.value == b.value;
+        }
+
+        public static bool operator !=(CppRef a, CppRef b) {
+            return !(a == b);
+        }
 
         public override string ToString() => $"cpp:{value}";
     }
@@ -28,6 +36,14 @@ namespace Engine {
         public CsRef(ulong v) => value = v;
 
         public static implicit operator CsRef(ulong v) => new CsRef { value = v };
+
+        public static bool operator ==(CsRef a, CsRef b) {
+            return a.value == b.value;
+        }
+
+        public static bool operator !=(CsRef a, CsRef b) {
+            return !(a == b);
+        }
 
         public override string ToString() => $"cs:{value}";
     }

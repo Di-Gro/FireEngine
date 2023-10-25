@@ -74,7 +74,7 @@ namespace Engine {
         public virtual void OnDeactivate() { }
 
 
-        public void Destroy() => Dll.Actor.Destroy(cppRef);
+        public void Destroy() => Dll.Actor.DestroyComponent(cppRef);
 
         public void CsBindComponent(CsRef objectRef, CppObjectInfo componentInfo) {
             m_objectRef = objectRef;

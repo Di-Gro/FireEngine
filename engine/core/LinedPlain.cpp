@@ -33,8 +33,10 @@ void LinedPlain::OnStart() {
 }
 
 void LinedPlain::OnDestroy() {
-	m_meshComponent->ClearMesh();
-	m_meshComponent->Destroy();
+	if (m_meshComponent != nullptr) {
+		m_meshComponent->ClearMesh();
+		m_meshComponent->Destroy();
+	}
 
 	MaterialAsset::DeleteDinamic(game(), m_material);
 	m_material = nullptr;

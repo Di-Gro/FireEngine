@@ -13,6 +13,9 @@ class Game;
 
 class Window {
 public:
+    static Window* s_window;
+
+public:
     bool sizeChanged = false;
 
 private:

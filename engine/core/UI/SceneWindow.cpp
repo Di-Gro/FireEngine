@@ -20,16 +20,20 @@ const std::string& SceneWindow::name() {
 void SceneWindow::Draw() {
 	if (!visible)
 		return;
-	
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 	auto flags = 0;
 	if (scene() != nullptr && game()->assets()->IsDirty(scene()->assetIdHash()))
 		flags = ImGuiWindowFlags_UnsavedDocument;
 
+	flags |= ImGuiWindowFlags_NoScrollbar;
+	flags |= ImGuiWindowFlags_NoScrollWithMouse;
+
 	if (ImGui::Begin(windowId().c_str(), &visible, flags)) {
 		m_game->ui()->selectedScene(scene());
 
+		m_DrawBar();
 		m_UpdateViewportInfo();
 
 		if (scene() != nullptr) {
@@ -46,10 +50,20 @@ void SceneWindow::Draw() {
 	ImGui::PopStyleVar();
 }
 
+void SceneWindow::m_DrawBar() {
+	auto beginBarHeight = ImGui::GetCursorPosY();
+	OnDrawBar();
+	auto endBarHeight = ImGui::GetCursorPosY();
+
+	m_beginViewHeight = endBarHeight;
+	m_barHeight = endBarHeight - beginBarHeight;
+}
+
 void SceneWindow::m_DrawRender() {
 	auto* renderer = &scene()->renderer;
 
 	renderer->ResizeViewport(m_viewportSize);
+
 	ImGui::Image(renderer->screenSRV(), (ImVec2&)m_viewportSize);
 }
 
@@ -59,12 +73,14 @@ void SceneWindow::Init(Game* game) {
 }
 
 void SceneWindow::m_UpdateViewportInfo() {
-	m_viewportSize = (Vector2&)ImGui::GetWindowSize() - Vector2(0, 19.0f);
+	float headerHeight = 20;
+	float topOffset = headerHeight + m_barHeight;
 
+	m_viewportSize = (Vector2&)ImGui::GetWindowSize() - Vector2(0, topOffset);
 	m_viewportPosition = (Vector2&)ImGui::GetWindowPos();
 
 	auto mousePos = (Vector2&)ImGui::GetMousePos();
-	mousePos -= (Vector2&)ImGui::GetWindowPos() + Vector2(0, 19.0f);
+	mousePos -= (Vector2&)ImGui::GetWindowPos() + Vector2(0, topOffset);
 	mousePos = mousePos / m_viewportSize;
 
 	m_mouseViewportPosition = mousePos;

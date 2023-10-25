@@ -22,6 +22,8 @@ namespace Engine {
         public int height { get => m_data.height; set => m_data.height = value; }
 
         public override void ReloadAsset() {
+            LogReload();
+            
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");

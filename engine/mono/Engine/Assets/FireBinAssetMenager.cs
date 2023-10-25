@@ -79,12 +79,14 @@ namespace Engine {
             ".image",
             ".mat",
             ".asset",
+            ".audio",
         };
 
         public static readonly string[] SourceExtentions = new string[] {
             ".obj",
             ".png",
             ".jpg",
+            ".wav",
         };
 
         public static readonly string[] CreateExtentions = new string[] {
@@ -299,7 +301,8 @@ namespace Engine {
         /// Обновляет данные в существующем ассете.
         /// </summary>
         public void WriteAsset(int assetIDHash, object valueObj, FireYaml.FireWriter writer = null) {
-            var asset = GetAsset(assetIDHash) as FireBinAsset;
+            var assetBase = GetAsset(assetIDHash);
+            var asset = assetBase as FireBinAsset;
             if (asset == null)
                 throw new Exception($"FBIN.Asset with assetIDHash: '{assetIDHash}' not exist.");
 
@@ -463,9 +466,10 @@ namespace Engine {
             else {
                 var asset = FireBin.Deserializer.CreateInstance(assetType);
 
-                if (FireYaml.FireWriter.IsAsset(assetType))
-                    FireYaml.FireReader.InitIAsset(ref asset, assetID, 0);
-
+                if (FireYaml.FireWriter.IsAsset(assetType)){
+                    var iasset = asset as IAsset;
+                    iasset.Init(assetID, CppRef.NullRef);
+                }
                 if (FireYaml.FireWriter.IsAssetWithSource(assetType)) {
                     if (assetSourcePath == "")
                         throw new Exception("FBIN.CreateNewAssetData: Asset with source need a sourcePath");

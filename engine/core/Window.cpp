@@ -4,12 +4,14 @@
 
 #include "Game.h"
 
+Window* Window::s_window = nullptr;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) {
-    Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+    auto* window = Window::s_window;
+    //Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
     if(window != nullptr)
         return window->MassageHandler(hwnd, umessage, wparam, lparam);
@@ -42,6 +44,8 @@ void Window::Init(Game* game, LPCWSTR name, int width, int height) {
 }
 
 void Window::Create() {
+    s_window = this;
+
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
     AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
@@ -60,7 +64,7 @@ void Window::Create() {
         windowRect.bottom - windowRect.top,
         nullptr, nullptr, m_hInstance, nullptr);
 
-    SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+    //SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
     ShowWindow(m_hWnd, SW_MAXIMIZE);
     SetForegroundWindow(m_hWnd);
@@ -92,43 +96,33 @@ void Window::UnclipCursor() {
 void Window::Exit(int code) { PostQuitMessage(code); }
 
 LRESULT Window::MassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) {
+    LRESULT res = 0;
+    
+    res = ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
+
+    m_game->WindowMassageHandler(hwnd, umessage, wparam, lparam);
+
     switch (umessage) {
     case WM_CLOSE: {
-        ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
-
         m_game->Exit(0);
-        return DefWindowProc(hwnd, umessage, wparam, lparam);
-    }
-    case WM_KEYDOWN: {
-        ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
         return 0;
     }
     case WM_SIZE: {
         m_width = LOWORD(lparam);
         m_height = HIWORD(lparam);
         sizeChanged = true;
-        ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
         return 0;
     }
     case WM_INPUT: {
         if (m_inputHandler != nullptr)
             m_inputHandler->OnInput(lparam);
+        break;
     }
-    //case WM_SETFOCUS:
-    //    std::cout << "Got the focus\n";
-    //    break;
-
-    //case WM_KILLFOCUS:
-    //    std::cout << "Lost the focus\n";
-    //    break;
-    // Fall is OK
-    //default:
-        //return DefWindowProc(hwnd, umessage, wparam, lparam);
     }
 
-    auto res = ImGui_ImplWin32_WndProcHandler(hwnd, umessage, wparam, lparam);
     if (res != 0)
         return res;
+
     return DefWindowProc(hwnd, umessage, wparam, lparam);
 }
 

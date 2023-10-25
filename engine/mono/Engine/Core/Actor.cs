@@ -517,6 +517,9 @@ namespace Engine {
             //Console.WriteLine($"#: GameObject({objRef}).cpp_AddComponent(\"{name}\") -> ");
 
             var componentType = Type.GetType(name);
+            if (componentType == null)
+                throw new Exception($"Component type with name: {name} not found.");
+
             var addComponent = typeof(Actor).GetMethod(nameof(Actor.m_AddComponentFromCpp), BindingFlags.NonPublic | BindingFlags.Instance);
 
             addComponent = addComponent.MakeGenericMethod(componentType);

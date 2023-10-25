@@ -46,6 +46,8 @@ public:
 	ShaderResource icPickupActor;
 	ShaderResource icPickupComponent;
 	ShaderResource icPickupAsset;
+	ShaderResource icSoundOn;
+	ShaderResource icSoundOff;
 
 	bool isSceneHovered = false;
 
@@ -62,6 +64,7 @@ private:
 	bool _isActorActive = false;
 
 	/// Context -> 
+	CppRef m_groupSceneRef = RefCpp(0);
 	float m_rectWidth = 0;
 	size_t m_groupId;
 	int m_subGroupId;
@@ -90,6 +93,8 @@ private:
 	ImageResource m_imgPickupActor;
 	ImageResource m_imgPickupComponent;
 	ImageResource m_imgPickupAsset;
+	ImageResource m_imgSoundOn;
+	ImageResource m_imgSoundOff;
 
 	TextureResource m_texMove;
 	TextureResource m_texRotate;
@@ -98,6 +103,8 @@ private:
 	TextureResource m_texPickupActor;
 	TextureResource m_texPickupComponent;
 	TextureResource m_texPickupAsset;
+	TextureResource m_texSoundOn;
+	TextureResource m_texSoundOff;
 
 public:
 	UserInterface();
@@ -127,6 +134,9 @@ public:
 	float rectWidth() { return m_rectWidth; };
 	void rectWidth(float value) { m_rectWidth = value; };
 
+	CppRef groupSceneRef() { return m_groupSceneRef; }
+	void groupSceneRef(CppRef ref) { m_groupSceneRef = ref; }
+
 	size_t groupId() { return m_groupId; };
 	void groupId(size_t value) { m_groupId = value; };
 
@@ -145,7 +155,7 @@ public:
 		
 
 private:
-	void InitMono();
+	//void InitMono();
 	void InitDockSpace();
 	void m_InitStyles();
 	void m_InitIcons();
@@ -155,10 +165,11 @@ private:
 
 FUNC(UserInterface, SetCallbacks2, void)(CppRef cppRef, const UserInterface::Callbacks& callbacks);
 
-
 PROP_GETSET(UserInterface, int, SelectedAsset);
-
+PROP_GETSET(UserInterface, CppRef, groupSceneRef);
 PROP_GETSET(UserInterface, float, rectWidth);
 PROP_GETSET(UserInterface, size_t, groupId);
 PROP_GETSET(UserInterface, int, subGroupId);
 PROP_GETSET(UserInterface, int, groupAssetIdHash);
+
+FUNC(UserInterface, SelectedScene, CppRef)(CppRef uiRef);

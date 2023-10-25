@@ -490,7 +490,8 @@ void Actor::m_OnDestroyComponent(Component* component) {
 	if (!component->f_isInited)
 		return;
 
-	m_OnDeactivateComponent(component);
+	if (component->f_isActive)
+		m_OnDeactivateComponent(component);
 
 	assert(!component->f_isActive);
 
@@ -625,11 +626,13 @@ void Actor_InitComponent(CppRef objRef, CppRef compRef) {
 }
 
 DEF_FUNC(Actor, DestroyComponent, void)(CppRef compRef) {
-	CppRefs::ThrowPointer<Component>(compRef)->Destroy();
+	auto comp = CppRefs::ThrowPointer<Component>(compRef);
+	comp->Destroy();
 }
 
 DEF_FUNC(Actor, Destroy, void)(CppRef objRef) {
-	CppRefs::ThrowPointer<Actor>(objRef)->Destroy();
+	auto actor = CppRefs::ThrowPointer<Actor>(objRef);
+	actor->Destroy();
 }
 
 DEF_FUNC(Actor, GetComponentsCount, int)(CppRef objRef) {

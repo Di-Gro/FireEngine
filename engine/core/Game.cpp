@@ -39,6 +39,8 @@
 #include "MeshComponent.h"
 #include "AmbientLight.h"
 #include "LinedPlain.h"
+#include "AudioEmitter.h"
+#include "AudioAsset.h"
 
 #include "MonoInst.h"
 #include "ClassInfo.h"
@@ -125,9 +127,6 @@ void Game::Init(MonoInst* imono) {
 	callbacks().setAssetStoreRef(RefCpp(assetStoreRef));
 	callbacks().loadAssetStore();
 
-	auto uiRef = CppRefs::Create(m_ui).cppRef();
-	callbacks().setUserInterfaceRef(RefCpp(uiRef));
-
 	m_editorWindow = ui()->CreateSceneWindow("Editor");
 	m_editorWindow->visible = true;
 
@@ -178,7 +177,9 @@ if (msg.message == WM_QUIT || m_onExit) {\
 
 void Game::Run() {
 	m_assets->Start();
-	//m_meshAsset->Start();
+
+	m_staticSceneAssetId = assetStore()->CreateRuntimeAssetId("scene/static");
+	m_staticScene = CreateScene(true, m_staticSceneAssetId, false);
 
 	m_editorScene = CreateScene(true, editorSettings.startupSceneId);
 	if (!LoadScene(m_editorScene)) {
@@ -312,16 +313,14 @@ void Game::m_EndUpdate() {
 		//meshAsset()->ReloadMaterials();
 		std::cout << std::endl;
 	}
-
-	/// TODO: Сохранить все ассеты
-	//if (m_hotkeys->GetButtonDownEd(Keys::S, Keys::LeftShift, Keys::Ctrl)) {
-	//	
-	//}
 		
 }
 
 
 void Game::m_Destroy() {
+
+	DestroyScene(m_staticScene);
+	delete m_staticScene;
 
 	auto it = m_scenes.begin();
 	while (it != m_scenes.end()) {
@@ -344,32 +343,46 @@ void Game::PushScene(Scene* value) {
 		value->Start();
 }
 
-void Game::PopScene() {
-	m_sceneStack.pop_back();
-	callbacks().setSceneRef(RefCpp(0));
+void Game::PushSelectedScene() {
+	PushScene(ui()->selectedScene());
 }
 
-Scene* Game::CreateScene(bool isEditor) {
+void Game::PopScene() {
+	m_sceneStack.pop_back();
+
+	if (m_sceneStack.empty()) {
+		callbacks().setSceneRef(RefCpp(0));
+		return;
+	}
+	auto* scene = m_sceneStack.back();
+	callbacks().setSceneRef(CppRefs::GetRef(scene));
+}
+
+Scene* Game::CreateScene(bool isEditor, bool insert) {
 	auto* scene = new Scene();
-	m_scenes.push_back(scene);
 
 	scene->f_ref = CppRefs::Create(scene);
-	scene->f_sceneIter = --m_scenes.end();
+
+	if (insert) {
+		m_scenes.push_back(scene);
+		scene->f_sceneIter = --m_scenes.end();
+	}
 	scene->Init(this, isEditor);
 
 	return scene;
 }
 
-Scene* Game::CreateScene(bool isEditor, const std::string& assetId) {
+Scene* Game::CreateScene(bool isEditor, const std::string& assetId, bool insert) {
 	auto gameRef = CppRefs::GetRef(this);
 	auto assetIdHash = assets()->GetAssetIDHash(assetId);
 
 	auto sceneRef = Scene_PushAsset(gameRef, assetId.c_str(), assetIdHash);
 	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);
 
-	m_scenes.push_back(scene);
-
-	scene->f_sceneIter = --m_scenes.end();
+	if (insert) {
+		m_scenes.push_back(scene);
+		scene->f_sceneIter = --m_scenes.end();
+	}
 	scene->Init(this, isEditor);
 
 	return scene;
@@ -383,6 +396,11 @@ void Game::DestroyScene(Scene* scene) {
 		}
 		scene->Destroy();
 		scene->EndDestroy();
+
+		if (scene->IsAsset())
+			assets()->Pop(scene->assetIdHash());
+		else
+			CppRefs::Remove(scene->f_ref);
 	}
 }
 
@@ -399,13 +417,8 @@ void Game::ChangeScene(Scene* scene) {
 
 std::list<Scene*>::iterator Game::m_EraseScene(std::list<Scene*>::iterator iter) {
 	auto scene = *iter;
-
-	if (scene->IsAsset())
-		assets()->Pop(scene->assetIdHash());
-	else
-		CppRefs::Remove(scene->f_ref);
-
 	auto nextIter = m_scenes.erase(scene->f_sceneIter);
+
 	delete scene;
 
 	return nextIter;
@@ -537,6 +550,11 @@ void Game::ToggleGameFocus() {
 	}
 }
 
+void Game::WindowMassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam) {
+	for (auto* scene : m_scenes)
+		scene->audio()->WindowMassageHandler(hwnd, umessage, wparam, lparam);
+}
+
 DEF_FUNC(Game, SetGameCallbacks, void)(CppRef gameRef, const GameCallbacks& callbacks) {
 	CppRefs::ThrowPointer<Game>(gameRef)->callbacks(callbacks);
 }
@@ -557,6 +575,11 @@ DEF_FUNC(Game, PushScene, void)(CppRef gameRef, CppRef sceneRef) {
 	game->PushScene(scene);
 }
 
+DEF_FUNC(Game, PushSelectedScene, void)(CppRef gameRef) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+	game->PushSelectedScene();
+}
+
 DEF_FUNC(Game, PopScene, void)(CppRef gameRef) {
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
 
@@ -575,4 +598,11 @@ DEF_FUNC(Game, DestroyScene, void)(CppRef gameRef, CppRef sceneRef) {
 	auto scene = CppRefs::ThrowPointer<Scene>(sceneRef);
 
 	game->DestroyScene(scene);
+}
+
+DEF_FUNC(Game, StaticScene, CppRef)(CppRef gameRef) {
+	auto* game = CppRefs::ThrowPointer<Game>(gameRef);
+	auto* scene = game->staticScene();
+
+	return CppRefs::GetRef(scene);
 }

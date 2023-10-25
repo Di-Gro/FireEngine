@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <Audio.h>
 #include "SimpleMath.h"
 
 #include "Window.h"

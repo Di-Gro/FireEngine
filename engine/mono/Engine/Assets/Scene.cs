@@ -44,15 +44,20 @@ namespace Engine {
 
         public Scene(CppRef sceneRef) {
             cppRef = sceneRef;
-            assetId = Assets.ReadCString(Dll.Scene.assetId_get(cppRef));
+            assetId = Dll.Scene.assetId_get(cppRef);
         }
 
         public Scene(string assetId) : this() {
             this.assetId = assetId;
         }
 
+        public override void Init(string assetId, CppRef cppRef) {
+            this.assetId = assetId;
+            this.cppRef = cppRef;
+        }
+
         public override void LoadAsset() {
-            Console.WriteLine("Scene.LoadAsset()");
+            LogLoad();
 
             if (!HasInstance)
                 return;
@@ -61,7 +66,7 @@ namespace Engine {
         }
 
         public override void ReloadAsset() {
-            Console.WriteLine($"Scene.ReloadAsset({assetId}: {assetIdHash})");
+            LogReload();
 
             if (!HasInstance)
                 return;
@@ -81,6 +86,10 @@ namespace Engine {
 
             var assetPath = AssetStore.GetAssetPath(assetIdHash);
             Name = Path.GetFileNameWithoutExtension(assetPath);
+        }
+
+        public static string ToSceneAssetId(CppRef sceneRef, string assetId) {
+            return $"scene_{sceneRef}_{assetId}";
         }
 
         public static int cpp_CreateSceneAsset(ulong cpath) {

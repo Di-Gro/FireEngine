@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 
 
 class CppRef {
@@ -14,6 +15,8 @@ public:
 
 	operator size_t() const { return value; }
 
+	std::string ToString() { return "cpp:" + std::to_string(value); }
+
 	CppRef& operator=(size_t v) {
 		value = v; 
 		return *this;
@@ -24,7 +27,7 @@ public:
 		ref.value = v;
 		return ref;
 	}
-
+	
 	friend std::ostream& operator<< (std::ostream& out, const CppRef& ref);
 };
 
@@ -147,4 +150,10 @@ public:
 
 	bool (*isRuntimeAsset)(int assetIdHash);
 	void (*addRuntimeAsset)(int assetIdHash);
+
+	CsRef (*createSound)(CppRef soundRef);
+	void (*soundSetAsset)(CsRef soundRef, CppRef assetRef);
+	void (*emitterSetSound)(CsRef emitterRef, CsRef soundRef);
+
+	void (*initUserInterface)();
 };

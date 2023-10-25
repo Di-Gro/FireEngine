@@ -27,7 +27,9 @@ namespace Engine {
 
         public Mesh(CppRef meshRef) {
             cppRef = meshRef;
-            assetId = Assets.ReadCString(Dll.MeshAsset.assetId_get(cppRef));
+            assetId = Dll.MeshAsset.assetId_get(meshRef);
+
+            Init(assetId, cppRef);
         }
 
         /// <summary>
@@ -36,27 +38,31 @@ namespace Engine {
         /// Будет создан runtime ассет, которого нет в AssetStore. 
         /// </summary>
         public Mesh LoadFromFile(string path) {
-            assetId = path;
+            Init(path, CppRef.NullRef);
+            LogLoad();
 
-            if (m_TakeLoadedInstance())
-                return this;
+            if (m_isNewInstance) {
+                m_isNewInstance = false;
 
-            m_PushThisInstance();
-            m_PushCppAsset();
+                LogReload();
 
-            Dll.MeshAsset.Init(Game.gameRef, cppRef, path);
-            m_data.materialsHash = GetAssetsListHash(m_materials);
-
+                AssetStore.AddRuntimeAsset(assetIdHash);
+                Dll.MeshAsset.Init(Game.gameRef, cppRef, path);
+                m_data.materialsHash = GetAssetsListHash(m_materials);
+            }
             return this;
         }
 
-        public Mesh LoadFromAsset(string assetId) {
-            this.assetId = assetId;
-            LoadAsset();
-            return this;
+        public override void LoadAsset() {
+            if (IsPath(assetId))
+                LoadFromFile(assetId);
+            else
+                base.LoadAsset();
         }
 
         public override void ReloadAsset() {
+            LogReload();
+            
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");
@@ -88,7 +94,10 @@ namespace Engine {
             Dll.MeshAsset.materials_set(cppRef, cppRefs, m_materials.Count);
         }
 
-        
+        public static bool IsPath(string value) {
+            return value.Contains('/') || value.Contains('\\') || value.Contains('.');
+        }
+
     }
 
 }

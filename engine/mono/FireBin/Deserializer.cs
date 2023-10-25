@@ -6,6 +6,8 @@ using System.Text;
 
 using YamlWriter = FireYaml.FireWriter;
 using System.Numerics;
+using FireYaml;
+using Engine;
 
 /// Поддерживаемые типы: 
 /// 1) Component-ы и Actor-ы. Если они являются полями или эллементами списка, 
@@ -84,10 +86,11 @@ namespace FireBin {
             LoadAsNamedList(type, structPtr, target);
 
             if (YamlWriter.IsAsset(type)) {
-                FireYaml.FireReader.InitIAsset(ref target, m_assetId, 0);
-                m_assets.Add((FireYaml.IAsset)target);
+                var iasset = target as IAsset;
+                iasset.Init(m_assetId, CppRef.NullRef);
+                m_assets.Add(iasset);
             }
-            EndLoad();
+            EndLoad(target);
 
             return target;
         }
@@ -98,17 +101,18 @@ namespace FireBin {
             LoadAsNamedList(type, structPtr, target);
 
             if (YamlWriter.IsAsset(type)) {
-                FireYaml.FireReader.InitIAsset(ref target, m_assetId, 0);
-                m_assets.Add((FireYaml.IAsset)target);
+                var iasset = target as IAsset;
+                iasset.Init(m_assetId, CppRef.NullRef);
+                m_assets.Add(iasset);
             }
-            EndLoad();
+            EndLoad(target);
         }
 
         public void InstanciateToWithoutLoad(object target) {
             m_GetFirstStructInfo(out var type, out var structPtr);
 
             LoadAsNamedList(type, structPtr, target);
-            EndLoad();
+            EndLoad(target);
         }
 
         private void m_GetFirstStructInfo(out Type type, out Pointer structPtr) {
@@ -125,20 +129,27 @@ namespace FireBin {
             var structPtr = new Pointer { areaId = AreaId.Structs, offset = 0 };
 
             var component = new Engine.ActorSerializer().LoadComponent(this, actor, structPtr);
-            EndLoad();
+            EndLoad(actor);
 
             return component;
         }
 
-        public void EndLoad() {
+        public void EndLoad(object target) {
+            var scene = target as Scene;
+            var needPushScene = scene != null && scene.HasInstance;
+            
+            if (needPushScene)
+                Game.PushScene(scene);
+
             m_ResolveRefs();
 
             foreach (var asset in m_assets)
                 asset.LoadAsset();
-#if DETACHED
-#else
-#endif
+
             EndLoadEvent?.Invoke();
+
+            if (needPushScene)
+                Game.PopScene();
         }
 
         public object LoadAsNamedList(Type type, Pointer dataPtr, object target = null) {
@@ -249,13 +260,11 @@ namespace FireBin {
 
         public object LoadAsAssetRef(Type type, Pointer dataPtr, object target = null) {
             var valueObj = target != null ? target : CreateInstance(type);
-
-            var fieldName = nameof(FireYaml.IAsset.assetId);
+            var asset = valueObj as IAsset;
             var assetId = Reader.ReadAssetRef(dataPtr);
-            var prop = type.GetProperty(fieldName, YamlWriter.s_flags);
-
-            prop.SetValue(valueObj, assetId);
-            m_assets.Add((FireYaml.IAsset)valueObj);
+            
+            asset.Init(assetId, CppRef.NullRef);
+            m_assets.Add(asset);
 
             return valueObj;
         }

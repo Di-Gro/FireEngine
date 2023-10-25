@@ -1,5 +1,6 @@
 #pragma once
 
+#include <windows.h>
 #include <iostream>
 #include <chrono>
 #include <list>
@@ -46,7 +47,6 @@ private:
 	Window* m_window;
 	Render* m_render;
 	Physics* m_physics;
-	//Lighting* m_lighting;
 	InputDevice* m_input;
 	FPSCounter m_updateTimer;
 	FixedTimer m_fixedTimer;
@@ -60,15 +60,13 @@ private:
 
 	UserInterface* m_ui;
 
-	//CameraComponent* m_defaultCamera = nullptr;
 	CameraComponent* m_mainCamera = nullptr;
-	//CameraComponent* m_editorCamera = nullptr;
-	//CameraComponent* m_lastGameCamera = nullptr;
 
 	SceneWindow* m_editorWindow;
 	SceneWindow* m_gameWindow;
 
 	Scene* m_editorScene;
+	Scene* m_staticScene;
 	Scene* m_gameScene = nullptr;
 	Scene* m_nextScene = nullptr;
 
@@ -83,6 +81,8 @@ private:
 	std::string gameSceneAssetName;
 	std::string gameSceneAssetId;
 	int gameSceneAssetIdHash;
+
+	std::string m_staticSceneAssetId;
 
 public:
 
@@ -100,19 +100,18 @@ public:
 	inline Window* window() { return m_window; }
 	inline Render* render() { return m_render; }
 	inline Physics* physics() { return m_physics; }
-	//inline Lighting* lighting() { return m_lighting; }
 	inline InputDevice* input() { return m_input; }
 	inline HotKeys* hotkeys() { return m_hotkeys; }
 	inline UserInterface* ui() { return m_ui; }
 	inline Assets* assets() { return m_assets; }
 	inline AssetStore* assetStore() { return m_assetStore; }
+
 	inline Scene* currentScene() { return m_sceneStack.empty() ? nullptr : m_sceneStack.back(); }
+	inline Scene* staticScene() { return m_staticScene; }
 
 	inline ShaderAsset* shaderAsset() { return m_shaderAsset; }
 
 	inline NavMesh* navMesh() { return m_NavMesh; };
-
-	//inline bool isEditor() { return m_isEditor; }
 
 	inline CameraComponent* mainCamera() { return m_mainCamera; }
 	void mainCamera(CameraComponent* camera) {  m_mainCamera = camera; };
@@ -121,8 +120,6 @@ public:
 	const float& deltaFixedTime() { return m_fixedTimer.GetDelta(); }
 
 	bool IsPlayMode() { return m_gameScene != nullptr; }
-
-	//void Stat();
 
 	const GameCallbacks& callbacks() { 
 		return m_callbacks; 
@@ -134,10 +131,11 @@ public:
 	}
 
 	void PushScene(Scene* value);
+	void PushSelectedScene();
 	void PopScene();
 
-	Scene* CreateScene(bool isEditor);
-	Scene* CreateScene(bool isEditor, const std::string& assetId);
+	Scene* CreateScene(bool isEditor, bool insert = true);
+	Scene* CreateScene(bool isEditor, const std::string& assetId, bool insert = true);
 	void DestroyScene(Scene* scene);
 
 	bool CanChangeScene();
@@ -153,6 +151,8 @@ public:
 
 	//bool LoadScene(Scene* targetScene, const char* assetId = nullptr);
 	bool LoadScene(Scene* targetScene, int assetGuidHash = 0);
+
+	void WindowMassageHandler(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam);
 
 
 private:
@@ -177,7 +177,11 @@ FUNC(Game, mainCamera_get, CsRef)(CppRef gameRef);
 FUNC(Game, Exit, void)(CppRef gameRef);
 
 FUNC(Game, PushScene, void)(CppRef gameRef, CppRef sceneRef);
+FUNC(Game, PushSelectedScene, void)(CppRef gameRef);
 FUNC(Game, PopScene, void)(CppRef gameRef);
 
 FUNC(Game, CreateScene, CppRef)(CppRef gameRef, bool isEditor);
 FUNC(Game, DestroyScene, void)(CppRef gameRef, CppRef sceneRef);
+
+
+FUNC(Game, StaticScene, CppRef)(CppRef gameRef);

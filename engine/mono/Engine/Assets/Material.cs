@@ -66,30 +66,24 @@ namespace Engine {
         [Open] public float Shininess { get => m_data.Shininess; private set => m_data.Shininess = value; }
         [Open] private List<Texture> m_textures { get => m_data.textures; set => m_data.textures = value; }
 
-
         public StaticMaterial() {
             Assets.TextureAssetUpdateEvent += m_OnTextureUpdate;
         }
 
-        public StaticMaterial(CppRef cppRef) {
+        public StaticMaterial(CppRef targetRef) {
             Assets.TextureAssetUpdateEvent += m_OnTextureUpdate;
 
-            this.cppRef = cppRef;
-            assetId = Assets.ReadCString(Dll.Material.assetId_get(cppRef));
-            assetIdHash = Dll.Material.assetIdHash_get(cppRef);
+            var targetAssetId = Dll.Material.assetId_get(targetRef);
+            Init(targetAssetId, targetRef);
         }
 
         ~StaticMaterial() { 
             Assets.TextureAssetUpdateEvent -= m_OnTextureUpdate;
         }
 
-        public StaticMaterial LoadFromAsset(string assetId) {
-            this.assetId = assetId;
-            LoadAsset();
-            return this;
-        }
-
         public override void ReloadAsset() {
+            LogReload();
+
             cppRef = Dll.Assets.Get(Game.gameRef, assetIdHash);
             if(cppRef.value == 0)
                 throw new Exception("Asset not loaded");

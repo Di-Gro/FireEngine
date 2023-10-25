@@ -32,12 +32,15 @@ namespace Engine {
             return AssetStore.GetAssetDeserializer(assetIdHash).Instanciate<Actor>();
         }
 
-        public void LoadAsset() {
+        public void Init(string assetId, CppRef cppRef) {
+            this.assetId = assetId;
+            this.cppRef = cppRef;
+
             assetIdHash = assetId.GetAssetIDHash();
         }
 
+        public void LoadAsset() { }
         public void ReloadAsset() { }
-
         public void SaveAsset() { }
 
 
@@ -122,5 +125,6 @@ namespace Engine {
             }
         }
 
+        
     }
 }

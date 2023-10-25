@@ -15,6 +15,8 @@ class LinedPlain;
 class CameraComponent;
 class EditorCamera;
 class PhysicsScene;
+class Audio;
+class Sound;
 
 using CameraIter = std::list<CameraComponent*>::iterator;
 using SceneIter = std::list<Scene*>::iterator;
@@ -54,6 +56,7 @@ private: // friend
 
 private:
 	Game* m_game;
+	Audio* m_audio;
 	std::string m_name = "";
 
 	std::list<Actor*> m_actors;
@@ -73,6 +76,7 @@ public:
 	bool IsAsset() { return assetIdHash() != 0; }
 
 	Game* game() { return m_game; }
+	inline Audio* audio() { return m_audio; }
 
 	const std::string& name() { return m_name; }
 	void name(const std::string& value) { m_name = value; }
@@ -113,6 +117,8 @@ public:
 	Quaternion editorCameraRot();
 	float editorCameraSpeed();
 
+	std::string ToSceneAssetId(const std::string& assetId);
+
 private:
 	void f_Update();
 	void Destroy() override;
@@ -141,3 +147,6 @@ PROP_GETSET_STR(Scene, name);
 PROP_GETSET(Scene, Vector3, editorCameraPos);
 PROP_GETSET(Scene, Quaternion, editorCameraRot);
 PROP_GETSET(Scene, float, editorCameraSpeed);
+
+FUNC(Scene, CreateSound, CppRef)(CppRef sceneRef, CsRef soundRef);
+FUNC(Scene, RemoveSound, void)(CppRef soundRef);

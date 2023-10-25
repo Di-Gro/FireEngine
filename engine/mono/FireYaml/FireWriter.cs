@@ -661,7 +661,7 @@ namespace FireYaml {
         //     return serializer as Engine.SerializerBase;
         // }
 
-        public static List<Field> GetFields(Type type, object obj, Engine.SerializerBase serializer) {
+        public static List<Field> GetFields(Type type, object obj, Engine.SerializerBase serializer, Func<Type, bool> canSerialize = null) {
             var fields = new List<Field>();
 
             if (type.IsEnum)
@@ -670,8 +670,11 @@ namespace FireYaml {
             var allFields = type.GetFields(s_flags);
             var allProps = type.GetProperties(s_flags);
 
+            if (canSerialize == null)
+                canSerialize = CanSerialize;
+
             foreach (var field in allFields) {
-                if (field.DeclaringType != type || !CanSerialize(field.FieldType))
+                if (field.DeclaringType != type || !canSerialize(field.FieldType))
                     continue;
                 if (serializer.NeedSerialize(field)) {
                     if(showLog) Console.WriteLine($"#: GetFields: field:{field.Name}");
@@ -679,7 +682,7 @@ namespace FireYaml {
                 }
             }
             foreach (var prop in allProps) {
-                if (prop.DeclaringType != type || !CanSerialize(prop.PropertyType))
+                if (prop.DeclaringType != type || !canSerialize(prop.PropertyType))
                     continue;
                 if (serializer.NeedSerialize(prop)) {
                     if (showLog) Console.WriteLine($"#: GetFields: prop:{prop.Name}");

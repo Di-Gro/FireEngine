@@ -41,11 +41,17 @@ namespace Engine {
         public static Dictionary<int, string> m_assetSources = new Dictionary<int, string>() {
             { typeof(Image).FullName.GetHashCode(), "|.png|.jpg|" },
             { typeof(Mesh).FullName.GetHashCode(), "|.obj|" },
+            { typeof(AudioAsset).FullName.GetHashCode(), "|.wav|" },
         };
 
         private static Dictionary<int, IAsset> m_loadedAssets = new Dictionary<int, IAsset>();
 
-        public static void SetLoadedAsset(IAsset asset) => m_loadedAssets[asset.assetIdHash] = asset;
+        public static void SetLoadedAsset(IAsset asset) {
+            if (asset.assetId == "")
+                throw new ArgumentException($"Assets.SetLoadedAsset: The asset: '{asset.GetType().Name}' has empty assetId.");
+
+            m_loadedAssets[asset.assetIdHash] = asset;
+        }
 
         public static TAsset GetLoaded<TAsset>(int assetIdHash) where TAsset: class, IAsset {
             var iasset = GetLoadedAsset(assetIdHash);
@@ -102,6 +108,13 @@ namespace Engine {
             if (type == typeof(Scene))
                 return Dll.Scene.PushAsset(Game.gameRef, assetId, assetIdHash);
 
+            if (type == typeof(AudioAsset))
+                return Dll.AudioAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
+
+            var csOnly = type.GetCustomAttribute<CsOnly>();
+            if (csOnly != null)
+                return Dll.PureAsset.PushAsset(Game.gameRef, assetId, assetIdHash);
+
             throw new Exception($"PushCppAsset: Cannot push cpp asset of specified type: {type.Name}.");
         }
 
@@ -142,15 +155,27 @@ namespace Engine {
         }
 
         public static void cpp_Save(CppRef cppRef, int assetIdHash) {
-            if (AssetStore.IsRuntimeAsset(assetIdHash))
-                return;
-                
-            var asset = GetLoadedAsset(assetIdHash);
-            if (asset == null)
-                // throw new Exception($"Assets.Save: The asset is not loaded.");
-                asset = CreateAssetWrapper(assetIdHash, cppRef);
+            try {
+                if (AssetStore.IsRuntimeAsset(assetIdHash))
+                    return;
 
-            asset.SaveAsset();
+                var asset = GetLoadedAsset(assetIdHash);
+                if (asset == null)
+                    // throw new Exception($"Assets.Save: The asset is not loaded.");
+                    asset = CreateAssetWrapper(assetIdHash, cppRef);
+
+                asset.SaveAsset();
+                
+            } catch (Exception e) {
+                Console.WriteLine("Assets.Load:");
+
+                if (e.InnerException != null) {
+                    Console.WriteLine(e.InnerException.Message);
+                    Console.WriteLine(e.InnerException.StackTrace);
+                }
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
         }
 
         public static string FindSourceFile(Type assetType, string assetPath) {
@@ -158,7 +183,7 @@ namespace Engine {
             var typeNameHash = typeName.GetHashCode();
 
             if (!m_assetSources.ContainsKey(typeNameHash))
-                throw new Exception($"Assets.Create: unknown source extentions for '{typeName}'");
+                throw new Exception($"Assets.FindSourceFile: unknown source for '{typeName}'");
 
             var filter = m_assetSources[typeNameHash];
             var dirPath = Path.GetDirectoryName(assetPath);
@@ -196,13 +221,13 @@ namespace Engine {
             if (iassetInterface == null)
                 throw new Exception($"Assets.Load(): Asset Type {assetType.FullName} not implement {iassetName} interface");
 
-            var asset = FireReader.CreateInstance(assetType);
+            var assetId = AssetStore.GetAssetGuid(assetIdHash);
+            var assetObj = FireReader.CreateInstance(assetType);
+            var asset = assetObj as IAsset;
 
-            var assetIdStr = AssetStore.GetAssetGuid(assetIdHash);
+            asset.Init(assetId, cppRef);
 
-            FireReader.InitIAsset(ref asset, assetIdStr, cppRef);
-
-            return asset as IAsset;
+            return asset;
         }
         
         public static void MakeDirty(int assetIdHash) {
@@ -234,6 +259,9 @@ namespace Engine {
                 case ".mat":
                     return typeof(Engine.StaticMaterial);
 
+                case ".wav":
+                    return typeof(Engine.AudioAsset);
+
                 default:
                     Console.WriteLine($"CreatAsset: Unknown asset extention: {ext}");
                     return null;
@@ -249,6 +277,9 @@ namespace Engine {
                 case ".png":
                 case ".jpg":
                     return ".image";
+
+                case ".wav":
+                    return ".audio";
 
                 default:
                     return "";

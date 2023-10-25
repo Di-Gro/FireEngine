@@ -25,6 +25,16 @@ namespace Engine {
 
         public static EditorSettings editorSettings;
 
+        public static Scene StaticScene {
+            get {
+                var sceneRef = Dll.Game.StaticScene(gameRef);
+                if (sceneRef == CppRef.NullRef)
+                    return null;
+
+                return new Scene(sceneRef);
+            }
+        }
+
         public static T InstanciateAsset<T>(int assetIdHash) where T : FireYaml.IFile, new() {
             return AssetStore.GetAssetDeserializer(assetIdHash).Instanciate<T>();
         }
@@ -68,9 +78,9 @@ namespace Engine {
             gameRef = _gameRef;
 
             m_gameCallbacks = new GameCallbacks();
-            m_gameCallbacks.setSceneRef = new GameCallbacks.CppRef_void(SetSceneRef);
-            m_gameCallbacks.setAssetStoreRef = new GameCallbacks.CppRef_void(SetAssetStoreRef);
-            m_gameCallbacks.setUpdateData = new GameCallbacks.SetUpdateData(SetUpdateData);
+            m_gameCallbacks.setSceneRef = new GameCallbacks.CppRef_void(cpp_SetSceneRef);
+            m_gameCallbacks.setAssetStoreRef = new GameCallbacks.CppRef_void(cpp_SetAssetStoreRef);
+            m_gameCallbacks.setUpdateData = new GameCallbacks.SetUpdateData(cpp_SetUpdateData);
             m_gameCallbacks.onInputUpdate = new GameCallbacks.void_void(Input.OnUpdate);
             m_gameCallbacks.writeScene = new GameCallbacks.CppRef_hash_bool(cpp_WriteScene);
             m_gameCallbacks.loadScene = new GameCallbacks.CppRef_hash_bool(LoadScene);
@@ -109,9 +119,15 @@ namespace Engine {
             m_gameCallbacks.requestAssetGuid = new GameCallbacks.hash_void(AssetStore.cpp_RequestAssetGuid);
             m_gameCallbacks.setStartupScene = new GameCallbacks.CppRef_void(cpp_SetStartupScene);
 
-            m_gameCallbacks.setUserInterfaceRef = new GameCallbacks.CppRef_void(SetUserInterfaceRef);
+            m_gameCallbacks.setUserInterfaceRef = new GameCallbacks.CppRef_void(cpp_SetUserInterfaceRef);
             m_gameCallbacks.isRuntimeAsset = new GameCallbacks.hash_bool(AssetStore.IsRuntimeAsset);
             m_gameCallbacks.addRuntimeAsset = new GameCallbacks.hash_void(AssetStore.AddRuntimeAsset);
+
+            m_gameCallbacks.createSound = new GameCallbacks.CppRef_CsRef(Sound.cpp_CreateSound);
+            m_gameCallbacks.soundSetAsset = new GameCallbacks.CsRef_CppRef_void(Sound.cpp_SetAsset);
+            m_gameCallbacks.emitterSetSound = new GameCallbacks.CsRef_CsRef_void(AudioEmitter.cpp_SetSound);
+
+            m_gameCallbacks.initUserInterface = new GameCallbacks.void_void(UserInterface.cpp_Init);
 
             Dll.Game.SetGameCallbacks(Game.gameRef, m_gameCallbacks);
         }
@@ -144,11 +160,14 @@ namespace Engine {
             return str.GetAssetIDHash();
         }
 
-        private static void SetSceneRef(CppRef value) => sceneRef = value;
+        private static void cpp_SetSceneRef(CppRef value) {
+            sceneRef = value;
+            // Console.WriteLine($"scene {sceneRef}");
+        }
         //private static void SetMeshAssetRef(CppRef value) => meshAssetRef = value;
-        private static void SetAssetStoreRef(CppRef value) => assetStoreRef = value;
-        private static void SetUserInterfaceRef(CppRef value) => uiRef = value;
-        private static void SetUpdateData(GameUpdateData value) => m_updateData = value;
+        private static void cpp_SetAssetStoreRef(CppRef value) => assetStoreRef = value;
+        private static void cpp_SetUserInterfaceRef(CppRef value) => uiRef = value;
+        private static void cpp_SetUpdateData(GameUpdateData value) => m_updateData = value;
 
 #if DETACHED
         public static Stack<Scene> detached_scenes = new Stack<Scene>();
@@ -170,6 +189,10 @@ namespace Engine {
 
         public static void PushScene(Scene scene){
             Dll.Game.PushScene(gameRef, scene.cppRef);
+        }
+
+        public static void PushSelectedScene() {
+            Dll.Game.PushSelectedScene(gameRef);
         }
 
         public static void PopScene() {
@@ -205,15 +228,14 @@ namespace Engine {
             }
         }
 
-        private static bool LoadScene(CppRef cppSceneRef, int assetGuidHash) {
+        private static bool LoadScene(CppRef cppSceneRef, int assetIdHash) {
             try {
-                var assetGuid = AssetStore.GetAssetGuid(assetGuidHash);
-
+                var assetId = AssetStore.GetAssetGuid(assetIdHash);
                 var scene = new Scene(cppSceneRef);
-                object sceneObj = scene;
-                FireYaml.FireReader.InitIAsset(ref sceneObj, assetGuid, cppSceneRef);
 
+                scene.Init(assetId, cppSceneRef);
                 scene.LoadAsset();
+
                 return true;
 
             } catch (Exception e) {
@@ -256,6 +278,9 @@ namespace Engine {
         public delegate void CppRef_void(CppRef value);
         public delegate bool CppRef_hash_bool(CppRef cppRef, int hash);
         public delegate void CppRef_hash_void(CppRef cppRef, int hash);
+        public delegate CsRef CppRef_CsRef(CppRef cppRef);
+        public delegate void CsRef_CppRef_void(CsRef csRef, CppRef cppRef);
+        public delegate void CsRef_CsRef_void(CsRef csRef1, CsRef csRef2);
 
         public delegate void CsRef_void(CsRef value);
         public delegate bool CsRef_hash_bool(CsRef value, int hash);
@@ -300,6 +325,10 @@ namespace Engine {
         public CppRef_void setUserInterfaceRef;
         public hash_bool isRuntimeAsset;
         public hash_void addRuntimeAsset;
+        public CppRef_CsRef createSound;
+        public CsRef_CppRef_void soundSetAsset;
+        public CsRef_CsRef_void emitterSetSound;
+        public void_void initUserInterface;
     }
 }
 

@@ -30,4 +30,22 @@ namespace Engine {
 			m_linkedObj = linkedObj;
 		}
 	}
+
+	// public class CppProps {
+	// 	public ClassInfo classInfo { get; private set; }
+	// 	public CppRef cppRef { get; private set; }
+
+	// 	public void Link(CppRef classInfoRef, CppRef objRef) {
+	// 		cppRef = objRef;
+	// 		classInfo = ClassInfo.GetClassInfo(classInfoRef);
+	// 	}
+
+	// 	public TValue Get<TValue>(int index) where TValue : unmanaged {
+	// 		return Ref.GetFieldValue<TValue>(classInfo, cppRef, index);
+	// 	}
+
+	// 	public void Set<TValue>(int index, TValue value) where TValue : unmanaged {
+	// 		Ref.SetFieldValue(classInfo, cppRef, index, value);
+	// 	}
+	// }
 }

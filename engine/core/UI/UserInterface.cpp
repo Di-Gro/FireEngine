@@ -2,6 +2,7 @@
 #include "SceneEditorWindow.h"
 
 #include "../Game.h"
+#include "../Scene.h"
 
 bool UserInterface::opt_fullscreen = true;
 bool UserInterface::dockspaceOpen = true;
@@ -15,6 +16,11 @@ UserInterface::~UserInterface() { }
 void UserInterface::Init(Game* game) {
 	_game = game;
 
+	auto thisRef = CppRefs::Create(this).cppRef();
+
+	_game->callbacks().setUserInterfaceRef(RefCpp(thisRef));
+	_game->callbacks().initUserInterface();
+
 	m_InitStyles();
 	m_InitIcons();
 
@@ -23,9 +29,6 @@ void UserInterface::Init(Game* game) {
 	uiBarMenu.Init(_game);
 
 	uiInspector.Init(_game, this);
-	//m_assetEditor.Init(_game, this);
-
-	InitMono();
 }
 
 void UserInterface::Destroy() {
@@ -123,6 +126,8 @@ void UserInterface::m_InitIcons() {
 	m_imgPickupActor = ImageResource::CreateFromFile("../../engine/data/icons/ic_pickup_actor.png");
 	m_imgPickupComponent = ImageResource::CreateFromFile("../../engine/data/icons/ic_pickup_component.png");
 	m_imgPickupAsset = ImageResource::CreateFromFile("../../engine/data/icons/ic_pickup_asset.png");
+	m_imgSoundOn = ImageResource::CreateFromFile("../../engine/data/icons/ic_sound_on.png");
+	m_imgSoundOff = ImageResource::CreateFromFile("../../engine/data/icons/ic_sound_off_3.png");
 
 	m_texMove = TextureResource::CreateFromImage(_game->render(), &m_imgMove);
 	m_texRotate = TextureResource::CreateFromImage(_game->render(), &m_imgRotate);
@@ -131,6 +136,8 @@ void UserInterface::m_InitIcons() {
 	m_texPickupActor = TextureResource::CreateFromImage(_game->render(), &m_imgPickupActor);
 	m_texPickupComponent = TextureResource::CreateFromImage(_game->render(), &m_imgPickupComponent);
 	m_texPickupAsset = TextureResource::CreateFromImage(_game->render(), &m_imgPickupAsset);
+	m_texSoundOn = TextureResource::CreateFromImage(_game->render(), &m_imgSoundOn);
+	m_texSoundOff = TextureResource::CreateFromImage(_game->render(), &m_imgSoundOff);
 
 	icMove = ShaderResource::Create(&m_texMove);
 	icRotate = ShaderResource::Create(&m_texRotate);
@@ -139,6 +146,8 @@ void UserInterface::m_InitIcons() {
 	icPickupActor = ShaderResource::Create(&m_texPickupActor);
 	icPickupComponent = ShaderResource::Create(&m_texPickupComponent);
 	icPickupAsset = ShaderResource::Create(&m_texPickupAsset);
+	icSoundOn = ShaderResource::Create(&m_texSoundOn);
+	icSoundOff = ShaderResource::Create(&m_texSoundOff);
 }
 
 void UserInterface::Draw()
@@ -207,12 +216,12 @@ void UserInterface::SetCallbacks(const Callbacks& callbacks) {
 	_callbacks = callbacks;
 }
 
-void UserInterface::InitMono() {
-	auto type = _game->mono()->GetType("Engine", "UserInterface");
-	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_Init");
-	auto cppRefs = CppRefs::Create(this);
-	method(CppRef::Create(cppRefs.cppRef()));
-}
+//void UserInterface::InitMono() {
+//	auto type = _game->mono()->GetType("Engine", "UserInterface");
+//	auto method = mono::make_method_invoker<void(CppRef)>(type, "cpp_Init");
+//	auto cppRefs = CppRefs::Create(this);
+//	method(CppRef::Create(cppRefs.cppRef()));
+//}
 
 bool UserInterface::HasSceneWindow(const std::string& sceneId) {
 	auto hash = m_StringHash(sceneId);
@@ -253,7 +262,15 @@ DEF_FUNC(UserInterface, SetCallbacks2, void)(CppRef cppRef, const UserInterface:
 }
 
 DEF_PROP_GETSET(UserInterface, int, SelectedAsset);
+DEF_PROP_GETSET(UserInterface, CppRef, groupSceneRef);
 DEF_PROP_GETSET(UserInterface, float, rectWidth);
 DEF_PROP_GETSET(UserInterface, size_t, groupId);
 DEF_PROP_GETSET(UserInterface, int, subGroupId);
 DEF_PROP_GETSET(UserInterface, int, groupAssetIdHash);
+
+DEF_FUNC(UserInterface, SelectedScene, CppRef)(CppRef uiRef) {
+	auto* ui = CppRefs::ThrowPointer<UserInterface>(uiRef);
+	auto* scene = ui->selectedScene();
+	
+	return scene == nullptr ? RefCpp(0) : CppRefs::GetRef(scene);
+}

@@ -2,31 +2,23 @@
 #include <string>
 
 #include "Refs.h"
+#include "CSBridge.h"
 
 class IAsset {
+private:
+	std::string m_assetId = "";
+	int m_assetIdHash = 0;
 
 public:
-	IAsset() { m_assetId = new char[1]{ '\0' }; }
-
-	virtual ~IAsset() { delete[] m_assetId; }
-
-	const char* assetId() const { return m_assetId; };
-
-	void assetId(const char* value) {
-		delete[] m_assetId;
-		auto length = std::string(value).size();
-
-		m_assetId = new char[length + 1]{ '\0' };
-		std::memcpy(m_assetId, value, length);
-	};
+	const char* assetId() const { return m_assetId.c_str(); };
+	void assetId(const char* value) { m_assetId = value; };
 
 	int assetIdHash() const { return m_assetIdHash; }
 	void assetIdHash(int value) { m_assetIdHash = value; }
 
 	virtual void Release() = 0;
-
-private:
-	char* m_assetId = nullptr;
-	int m_assetIdHash = 0;
-
 };
+
+//PROP_GETSET_STR(IAsset, assetId);
+//PROP_GETSET_CSTR(IAsset, assetId);
+//PROP_GETSET(IAsset, int, assetIdHash);

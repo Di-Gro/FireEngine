@@ -97,12 +97,15 @@ namespace EngineDll {
 			FUNC("Game", "Exit", "void", "CppRef gameRef");
 
 			FUNC("Game", "PushScene", "void", "CppRef gameRef, CppRef sceneRef");
+			FUNC("Game", "PushSelectedScene", "void", "CppRef gameRef");
 			FUNC("Game", "PopScene", "void", "CppRef gameRef");
 
 			FUNC("Game", "CreateScene", "CppRef", "CppRef gameRef, bool isEditor");
 			FUNC("Game", "DestroyScene", "void", "CppRef gameRef, CppRef sceneRef");
 
 			ANSI_FUNC("Game", "SetEditorSettings", "void", "CppRef gameRef, string startupScene");
+
+			FUNC("Game", "StaticScene", "CppRef", "CppRef gameRef");
 #>
 
 		}
@@ -268,6 +271,8 @@ namespace EngineDll {
 			ANSI_FUNC("UI_Inspector", "ShowComponent", "bool", "CppRef gameRef, string label, ref CsRef csRef, CppRef cppRef, int scriptIdHash");
 
 			ANSI_FUNC("UI_Inspector", "ShowColor3", "bool", "CppRef gameRef, string label, ref Vector3 value");
+
+			ANSI_FUNC("UI_Inspector", "DragFloat", "bool", "CppRef gameRef, string label, ref float v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f");
 #>
 		}
 
@@ -275,10 +280,13 @@ namespace EngineDll {
 		
 <#
 			PROP_GETSET("UserInterface", "int", "SelectedAsset");
+			PROP_GETSET("UserInterface", "CppRef", "groupSceneRef");
 			PROP_GETSET("UserInterface", "float", "rectWidth");
 			PROP_GETSET("UserInterface", "size_t", "groupId");
 			PROP_GETSET("UserInterface", "int", "subGroupId");
 			PROP_GETSET("UserInterface", "int", "groupAssetIdHash");
+
+			FUNC("UserInterface", "SelectedScene", "CppRef", "CppRef uiRef");
 #>
 		}
 
@@ -361,6 +369,9 @@ namespace EngineDll {
 			PROP_GETSET("Scene", "Vector3", "editorCameraPos");
 			PROP_GETSET("Scene", "Quaternion", "editorCameraRot");
 			PROP_GETSET("Scene", "float", "editorCameraSpeed");
+
+			FUNC("Scene", "CreateSound", "CppRef", "CppRef sceneRef, CsRef soundRef");
+			FUNC("Scene", "RemoveSound", "void", "CppRef soundRef");
 #>
 		}
 
@@ -451,6 +462,59 @@ namespace EngineDll {
 #>			
 		}
 
+		public static class AudioEmitter {
+<#
+			DEC_COMPONENT("AudioEmitter");
+			FUNC("AudioEmitter", "SetSound", "void", "CppRef compRef, CppRef soundRef");
+
+			PROP_GETSET("AudioEmitter", "bool", "loop");
+
+			PROP_GET("AudioEmitter", "bool", "IsStopped");
+			PROP_GET("AudioEmitter", "bool", "IsPlaying");
+			PROP_GET("AudioEmitter", "bool", "IsPaused");
+
+			FUNC("AudioEmitter", "Play", "void", "CppRef iSoundRef");
+			FUNC("AudioEmitter", "Stop", "void", "CppRef iSoundRef");
+			FUNC("AudioEmitter", "Pause", "void", "CppRef iSoundRef");
+			FUNC("AudioEmitter", "Resume", "void", "CppRef iSoundRef");
+#>			
+		}
+
+		public static class AudioListener {
+<#
+			DEC_COMPONENT("AudioListener");
+			PROP_GET("AudioListener", "bool", "IsMainListener");
+			PROP_GET("AudioListener", "bool", "IsMuted");
+			PROP_GETSET("AudioListener", "float", "volume");
+			FUNC("AudioListener", "Mute", "void", "CppRef compRef");
+			FUNC("AudioListener", "Unmute", "void", "CppRef compRef");
+#>			
+		}
+
+		public static class AudioAsset {
+<#
+			PUSH_ASSET("AudioAsset");
+			FUNC("AudioAsset", "Init", "void", "CppRef sceneRef, CppRef assetRef");
+			ANSI_FUNC("AudioAsset", "Load", "void", "CppRef assetRef, string path");
+#>			
+		}
+
+		public static class Sound {
+<#
+			FUNC("Sound", "SetAsset", "void", "CppRef soundRef, CppRef assetRef");
+
+			PROP_GETSET("Sound", "bool", "loop");
+			
+			PROP_GET("Sound", "bool", "IsStopped");
+			PROP_GET("Sound", "bool", "IsPlaying");
+			PROP_GET("Sound", "bool", "IsPaused");
+
+			FUNC("Sound", "Play", "void", "CppRef iSoundRef");
+			FUNC("Sound", "Stop", "void", "CppRef iSoundRef");
+			FUNC("Sound", "Pause", "void", "CppRef iSoundRef");
+			FUNC("Sound", "Resume", "void", "CppRef iSoundRef");
+#>			
+		}
 		
 	}
 }

@@ -62,7 +62,10 @@ void UI_Inspector::Draw_UI_Inspector() {
 
 	if (ImGui::Begin("Inspector")) {
 		if (_ui->HasActor()) {
+			auto sceneRef = CppRefs::GetRef(_ui->GetActor()->scene());
 
+			_ui->groupSceneRef(sceneRef);
+			
 			m_DrawComponent(&UI_Inspector::m_DrawHeader);
 
 			if (ImGui::CollapsingHeader("Transform", collapsingHeaderFlags)) {
@@ -70,6 +73,8 @@ void UI_Inspector::Draw_UI_Inspector() {
 			}
 			m_DrawComponents();
 			m_DrawAddComponent();
+
+			_ui->groupSceneRef(RefCpp(0));
 		}
 		if (ImGui::IsWindowFocused() && _game->hotkeys()->GetButtonDownEd(Keys::S, Keys::Ctrl)) {
 			auto scene = _game->ui()->selectedScene();
@@ -1063,4 +1068,24 @@ DEF_FUNC(UI_Inspector, ShowColor4, bool)(CppRef gameRef, const char* label, Vect
 	auto game = CppRefs::ThrowPointer<Game>(gameRef);
 
 	return game->ui()->inspector()->ShowColor4(label, value);
+}
+
+DEF_FUNC(UI_Inspector, DragFloat, bool)(CppRef gameRef, const char* label, float* v, float v_speed, float v_min, float v_max) {
+	auto game = CppRefs::ThrowPointer<Game>(gameRef);
+
+	return game->ui()->inspector()->DrawFloat(label,v, v_speed, v_min, v_max);
+}
+
+bool UI_Inspector::DrawFloat(const char* label, float* v, float v_speed, float v_min, float v_max) {
+	static std::string id; 
+
+	id.clear();
+	id += "##";
+	id += label;
+	id += "_";
+	id += std::to_string(_ui->groupId());
+	id += "_";
+	id += std::to_string(_ui->subGroupId());
+
+	return ImGui::DragFloat(id.c_str(), v, v_speed, v_min, v_max);
 }

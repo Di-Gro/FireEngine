@@ -26,16 +26,20 @@ public:
 
 protected:
 	void OnInit() override;
+	void OnDrawBar() override;
 	void AfterDrawScene() override;
 
 private:
-	void m_DrawTools();
+	//void m_DrawTools();
 	void m_DrawGuizmo();
-	void m_DrawTransfotmButton(ShaderResource* icon, ImGuizmo::OPERATION target);
+	void m_DrawTransfotmButton(ShaderResource* icon, ImVec2 size, ImGuizmo::OPERATION target);
+	void m_DrawAudioVolume(ImVec2 size);
 
 	void m_ToggleGizmoMode();
 	void m_HandleToolsInput();
 	void m_HandleSelection();
+
+	void m_DrawSeparator();
 
 };
 

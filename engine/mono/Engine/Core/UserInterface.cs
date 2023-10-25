@@ -9,10 +9,30 @@ using EngineDll;
 using FireYaml;
 
 using sn = System.Numerics;
-using System.Linq.Expressions;
+using System.Reflection;
 
-namespace Engine
-{
+namespace Engine {
+
+    public class EditorButton {
+        public string methodName = null;
+        public string name = "";
+
+        public EditorButton(string _methodName, string _name = "") {
+            methodName = _methodName;
+            name = _name != "" ? _name : _methodName;
+        }
+
+        public void Invoke(Type type, object target) {
+            var flags = BindingFlags.Public 
+            | BindingFlags.NonPublic
+            | BindingFlags.Instance 
+            | BindingFlags.InvokeMethod;
+
+            var method = type.GetMethod(methodName, flags);
+            
+            method?.Invoke(target, new object[] { });
+        }
+    }
 
     class TestGUIFields {
 
@@ -55,25 +75,145 @@ namespace Engine
 
         private Callbacks m_callbacks;
 
-        private CppRef m_UICppRef;
+        // private CppRef m_UICppRef;
+
+        public static Scene SelectedScene {
+            get {
+                var sceneRef = Dll.UserInterface.SelectedScene(Game.uiRef);
+                if (sceneRef == CppRef.NullRef)
+                    return null;
+
+                return new Scene(sceneRef);
+            }
+        } 
 
         private AssetEditor m_AssetEditor = new AssetEditor();
 
-        public static void cpp_Init(CppRef cppRef)
-        {
+        public static void cpp_Init() {
             Instance = new UserInterface();
-            Instance.m_UICppRef = cppRef;
 
             Instance.m_callbacks = new Callbacks();
-            Instance.m_callbacks.onDrawComponent = new Callbacks.Callback(Instance.OnDrawComponent);
+            Instance.m_callbacks.onDrawComponent = new Callbacks.Callback(GUI.OnDrawComponent);
             Instance.m_callbacks.requestComponentName = new Callbacks.RequestName(Instance.RequestComponentName);
-            Instance.m_callbacks.onDrawActorTags = new Callbacks.OnDrawActorTags(Instance.DrawActorTags);
+            Instance.m_callbacks.onDrawActorTags = new Callbacks.OnDrawActorTags(GUI.DrawActorTags);
             Instance.m_callbacks.onDrawAssetEditor = new Callbacks.DrawAssetEditor(Instance.m_AssetEditor.Draw);
 
-            dll_SetCallbacks2(cppRef, Instance.m_callbacks);
+            dll_SetCallbacks2(Game.uiRef, Instance.m_callbacks);
         }
 
-        public void DrawActorTags(CsRef csRef) {
+        public void RequestComponentName(CsRef csRef) {
+            var component = CppLinked.GetObjectByRef(csRef);
+            var name = component.GetType().Name;
+
+            Dll.UI_Inspector.SetComponentName(Game.gameRef, name);
+        }
+
+
+        [DllImport(Paths.Exe, EntryPoint = "UserInterface_SetCallbacks2")]
+        private static extern void dll_SetCallbacks2(CppRef cppRef, Callbacks callbacks);
+    }
+
+    public static class GUI {
+        public delegate void FieldDrawer(string label, IField field, RangeAttribute range = null);
+
+        public static readonly Dictionary<int, FieldDrawer> fieldDrawers = new Dictionary<int, FieldDrawer>() {
+            { typeof(int).FullName.GetHashCode(), DrawIntField },
+            { typeof(float).FullName.GetHashCode(), DrawFloatField },
+            { typeof(bool).FullName.GetHashCode(), DrawBoolField },
+            { typeof(Vector2).FullName.GetHashCode(), DrawVector2 },
+            { typeof(Vector3).FullName.GetHashCode(), DrawVector3 },
+            { typeof(Quaternion).FullName.GetHashCode(), DrawQuaternion },
+            { typeof(Enum).FullName.GetHashCode(), DrawEnum },
+            { typeof(string).FullName.GetHashCode(), DrawString },
+            { typeof(IAsset).FullName.GetHashCode(), DrawAsset },
+            { typeof(Actor).FullName.GetHashCode(), DrawActor },
+            { typeof(Component).FullName.GetHashCode(), DrawComponent },
+            { typeof(IList).FullName.GetHashCode(), DrawList },
+            { typeof(EditorButton).FullName.GetHashCode(), DrawButton },
+        };
+
+       
+        /// Context ->
+        public static Scene groupScene {
+            get {
+                var lastSceneRef = m_scene != null ? m_scene.cppRef : CppRef.NullRef;
+                var sceneRef = Dll.UserInterface.groupSceneRef_get(Game.uiRef);
+
+                if (lastSceneRef != sceneRef)
+                    m_scene = sceneRef == CppRef.NullRef ? null : new Scene(sceneRef);
+
+                return m_scene;
+            }
+            set {
+                var lastSceneRef = m_scene != null ? m_scene.cppRef : CppRef.NullRef;
+                var sceneRef = value != null ? value.cppRef : CppRef.NullRef;
+
+                if (lastSceneRef != sceneRef) {
+                    m_scene = sceneRef == CppRef.NullRef ? null : new Scene(sceneRef);
+                    Dll.UserInterface.groupSceneRef_set(Game.uiRef, sceneRef);
+                }
+            }
+        }
+
+        public static UI.ImGuiStyle style;
+
+        public static ulong groupId {
+            get => Dll.UserInterface.groupId_get(Game.uiRef);
+            set => Dll.UserInterface.groupId_set(Game.uiRef, value);
+        }
+
+        public static int subGroupId {
+            get => Dll.UserInterface.subGroupId_get(Game.uiRef);
+            set => Dll.UserInterface.subGroupId_set(Game.uiRef, value);
+        }
+
+        public static int groupAssetIdHash {
+            get => Dll.UserInterface.groupAssetIdHash_get(Game.uiRef);
+            set => Dll.UserInterface.groupAssetIdHash_set(Game.uiRef, value);
+        }
+
+        public static float rectWidth {
+            get => Dll.UserInterface.rectWidth_get(Game.uiRef);
+            set => Dll.UserInterface.rectWidth_set(Game.uiRef, value);
+        }
+
+        public static bool active = true;
+        /// <-
+        
+        public static float labelWidth = 100;
+        public static float padding = 20;
+        public static float floatSpeed = 0.01f;
+        public static bool hasBorder = false;
+
+        public static sn.Vector2 lineSpacing = new sn.Vector2(0, 3);
+        public static sn.Vector2 headerSpacing = new sn.Vector2(0, 8);
+
+        private static Scene m_scene = null;
+
+        public static Type GetSupportedType(Type type) {
+            if (fieldDrawers.ContainsKey(type.FullName.GetHashCode()))
+                return type;
+
+            if (type.IsEnum)
+                return typeof(Enum);
+
+            bool isAsset = type.GetInterface(nameof(IAsset)) != null;
+            if (isAsset)
+                return typeof(IAsset);
+
+            if (FireWriter.IsComponent(type))
+                return typeof(Component);
+
+            if (FireWriter.IsList(type))
+                return typeof(IList);
+
+            return null;
+        }
+
+        public static void Space() { ImGui.Dummy(lineSpacing); }
+        public static void HeaderSpace() { ImGui.Dummy(headerSpacing); }
+
+        public static void DrawActorTags(CsRef csRef) {
             var actor = CppLinked.GetObjectByRef(csRef) as Actor;
 
             var type = typeof(Flag);
@@ -114,11 +254,10 @@ namespace Engine
                 Assets.MakeDirty(actor.scene.assetIdHash);
         }
 
-        public void OnDrawComponent(CsRef csRef) {
+        public static void OnDrawComponent(CsRef csRef) {
             var component = CppLinked.GetObjectByRef(csRef) as Component;
 
             GUI.style = Marshal.PtrToStructure<UI.ImGuiStyle>(ImGui.GetStyle());
-            // GUI.rectWidth = Dll.ImGui.GetContentRegionAvail().X;
             GUI.groupId = csRef.value;
             GUI.groupAssetIdHash = component.actor.scene.assetIdHash;
 
@@ -128,7 +267,7 @@ namespace Engine
             DrawObject(type, ref instance);
         }
 
-        public void DrawObject(Type type, ref object instance) {
+        public static void DrawObject(Type type, ref object instance) {
             var serializer = FireWriter.GetSerializer(type);
 
             if (serializer.NeedIncludeBase(type)) {
@@ -137,13 +276,12 @@ namespace Engine
             }
             GUI.subGroupId = type.GetHashCode();
 
-            var fields = FireWriter.GetFields(type, instance, serializer);
+            var fields = FireWriter.GetFields(type, instance, serializer, CanInspect);
 
             for (int i = 0; i < fields.Count; i++) {
                 var field = fields[i];
 
                 if (field.GetCustomAttribute<SpaceAttribute>() != null) {
-                    // ImGui.Separator();
                     GUI.Space();
                     GUI.Space();
                 }
@@ -157,8 +295,17 @@ namespace Engine
             serializer.OnDrawGui(type, ref instance);
         }
 
-        
-        private void m_DrawField(IField field) {
+        public static bool CanInspect(Type type) {
+            if (FireWriter.CanSerialize(type))
+                return true;
+
+            if (type == typeof(EditorButton))
+                return true;
+
+            return false;
+        }
+
+        private static void m_DrawField(IField field) {
             var type = GUI.GetSupportedType(field.type);
             if (type == null)
                 return;
@@ -169,96 +316,7 @@ namespace Engine
             var drawer = GUI.fieldDrawers[hash];
 
             drawer(field.name, field, range);
-        }        
-
-        public void RequestComponentName(CsRef csRef) {
-            var component = CppLinked.GetObjectByRef(csRef);
-            var name = component.GetType().Name;
-
-            Dll.UI_Inspector.SetComponentName(Game.gameRef, name);
-        }
-
-
-        [DllImport(Paths.Exe, EntryPoint = "UserInterface_SetCallbacks2")]
-        private static extern void dll_SetCallbacks2(CppRef cppRef, Callbacks callbacks);
-    }
-
-    public static class GUI {
-        public delegate void FieldDrawer(string label, IField field, RangeAttribute range = null);
-
-        public static readonly Dictionary<int, FieldDrawer> fieldDrawers = new Dictionary<int, FieldDrawer>() {
-            { typeof(int).FullName.GetHashCode(), DrawIntField },
-            { typeof(float).FullName.GetHashCode(), DrawFloatField },
-            { typeof(bool).FullName.GetHashCode(), DrawBoolField },
-            { typeof(Vector2).FullName.GetHashCode(), DrawVector2 },
-            { typeof(Vector3).FullName.GetHashCode(), DrawVector3 },
-            { typeof(Quaternion).FullName.GetHashCode(), DrawQuaternion },
-            { typeof(Enum).FullName.GetHashCode(), DrawEnum },
-            { typeof(string).FullName.GetHashCode(), DrawString },
-            { typeof(IAsset).FullName.GetHashCode(), DrawAsset },
-            { typeof(Actor).FullName.GetHashCode(), DrawActor },
-            { typeof(Component).FullName.GetHashCode(), DrawComponent },
-            { typeof(IList).FullName.GetHashCode(), DrawList }
-        };
-        
-        /// Context ->
-        public static UI.ImGuiStyle style;
-
-        public static ulong groupId {
-            get => Dll.UserInterface.groupId_get(Game.uiRef);
-            set => Dll.UserInterface.groupId_set(Game.uiRef, value);
-        }
-
-        public static int subGroupId {
-            get => Dll.UserInterface.subGroupId_get(Game.uiRef);
-            set => Dll.UserInterface.subGroupId_set(Game.uiRef, value);
-        }
-
-        public static int groupAssetIdHash {
-            get => Dll.UserInterface.groupAssetIdHash_get(Game.uiRef);
-            set => Dll.UserInterface.groupAssetIdHash_set(Game.uiRef, value);
-        }
-
-        public static float rectWidth {
-            get => Dll.UserInterface.rectWidth_get(Game.uiRef);
-            set => Dll.UserInterface.rectWidth_set(Game.uiRef, value);
-        }
-
-        public static bool active = true;
-        /// <-
-        
-        public static float labelWidth = 100;
-        public static float padding = 20;
-        public static float floatSpeed = 0.01f;
-        public static bool hasBorder = false;
-
-        public static sn.Vector2 lineSpacing = new sn.Vector2(0, 3);
-        public static sn.Vector2 headerSpacing = new sn.Vector2(0, 8);
-
-        private static TestGUIFields testObj = new TestGUIFields();
-
-        public static Type GetSupportedType(Type type) {
-            if (fieldDrawers.ContainsKey(type.FullName.GetHashCode()))
-                return type;
-
-            if (type.IsEnum)
-                return typeof(Enum);
-
-            bool isAsset = type.GetInterface(nameof(IAsset)) != null;
-            if (isAsset)
-                return typeof(IAsset);
-
-            if (FireWriter.IsComponent(type))
-                return typeof(Component);
-
-            if (FireWriter.IsList(type))
-                return typeof(IList);
-
-            return null;
-        }
-
-        public static void Space() { ImGui.Dummy(lineSpacing); }
-        public static void HeaderSpace() { ImGui.Dummy(headerSpacing); }
+        }   
 
         public static void DrawIntField(string label, IField field, RangeAttribute range = null) {
             ImGui.Columns(2, "", hasBorder);
@@ -626,15 +684,22 @@ namespace Engine
             bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash, GUI.active);
 
             if (changed) {
-                instance = FireYaml.FireReader.CreateInstance(field.type);
-                iasset = instance as FireYaml.IAsset;
-                field.SetValue(instance);
-
                 var assetId = AssetStore.GetAssetGuid(assetIdHash);
 
-                FireYaml.FireReader.InitIAsset(ref instance, assetId, 0);
+                if (GUI.groupScene == null)
+                    throw new Exception($"GUI groupScene is null");
 
+                Game.PushScene(GUI.groupScene);
+
+                instance = FireReader.CreateInstance(field.type);
+                iasset = instance as IAsset;
+
+                iasset.Init(assetId, CppRef.NullRef);
                 iasset.LoadAsset();
+
+                field.SetValue(instance);
+
+                Game.PopScene();
                 Assets.MakeDirty(groupAssetIdHash);
             }
         }
@@ -648,14 +713,20 @@ namespace Engine
             bool changed = Dll.UI_Inspector.ShowAsset(Game.gameRef, label, scriptIdHash, ref assetIdHash, GUI.active);
 
             if (changed) {
-                changedAsset = FireYaml.FireReader.CreateInstance(type);
-                var iasset = changedAsset as FireYaml.IAsset;
-
                 var assetId = AssetStore.GetAssetGuid(assetIdHash);
 
-                FireYaml.FireReader.InitIAsset(ref changedAsset, assetId, 0);
+                if (GUI.groupScene == null)
+                    throw new Exception($"GUI groupScene is null");
+                    
+                Game.PushScene(GUI.groupScene);
 
+                changedAsset = FireReader.CreateInstance(type);
+                var iasset = changedAsset as IAsset;
+
+                iasset.Init(assetId, CppRef.NullRef);
                 iasset.LoadAsset();
+
+                Game.PopScene();
                 Assets.MakeDirty(groupAssetIdHash);
             }
             return changed;
@@ -778,6 +849,34 @@ namespace Engine
             ImGui.SetCursorPos(nextHeaderPos);
         }
 
+        public static void DrawButton(string label, IField field, RangeAttribute range = null) {
+            if (field.Value == null)
+                return;
+
+            var button = field.Value as EditorButton;
+            if (button == null)
+                return;
+
+            ImGui.Columns(2, "", hasBorder);
+            ImGui.SetColumnWidth(0, labelWidth);
+
+            ImGui.Text("Button");
+
+            ImGui.NextColumn();
+            ImGui.PushItemWidth(rectWidth - labelWidth - padding);
+
+            if (ImGui.Button($" {button.name} ")) {
+                Game.PushSelectedScene();
+                
+                button.Invoke(field.Instance.GetType(), field.Instance);
+
+                Game.PopScene();
+            }
+
+            ImGui.PopItemWidth();
+            ImGui.Columns(1);
+        }
+
         public static sn.Vector2 GetCursorPos() {
             var x = ImGui.GetCursorPosX();
             var y = ImGui.GetCursorPosY();
@@ -820,12 +919,6 @@ namespace Engine
             Space();
 
             return isOpen;
-        }
-
-        public static void TestDrawers() {
-            object instance = testObj;
-
-            UserInterface.Instance.DrawObject(instance.GetType(), ref instance);
         }
 
         public static string ReadCString(ulong ptr) {

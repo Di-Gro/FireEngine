@@ -29,7 +29,7 @@ public class FlyingCamera : CSComponent {
 
     public override void OnStart() {
         m_camera.UpdateProjMatrix();
-        m_camera.Attach();
+        // m_camera.Attach();
     }
 
     public override void OnFixedUpdate() {
