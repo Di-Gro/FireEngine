@@ -34,13 +34,19 @@
     <ClCompile Include="AmbientLight.cpp" />
     <ClCompile Include="Assets.cpp" />
     <ClCompile Include="AssetStore.cpp" />
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="AudioEmitter.cpp" />
+    <ClCompile Include="AudioAsset.cpp" />
+    <ClCompile Include="AudioListener.cpp" />
     <ClCompile Include="BlurPass.cpp" />
     <ClCompile Include="Bridge.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CS.cpp" />
+    <ClCompile Include="IAsset.cpp" />
     <ClCompile Include="ImageAsset.cpp" />
     <ClCompile Include="ImageResource.cpp" />
+    <ClCompile Include="ISound.cpp" />
     <ClCompile Include="MaterialAsset.cpp" />
     <ClCompile Include="MeshResource.cpp" />
     <ClCompile Include="ObjLoader.cpp" />
@@ -112,6 +118,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowPass.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="TextureAsset.cpp" />
     <ClCompile Include="TextureResource.cpp" />
@@ -150,6 +157,10 @@
     <ClInclude Include="AssetIterator.h" />
     <ClInclude Include="Assets.h" />
     <ClInclude Include="AssetStore.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="AudioEmitter.h" />
+    <ClInclude Include="AudioAsset.h" />
+    <ClInclude Include="AudioListener.h" />
     <ClInclude Include="BlurPass.h" />
     <ClInclude Include="Bridge.h" />
     <ClInclude Include="CameraComponent.h" />
@@ -163,6 +174,7 @@
     <ClInclude Include="CS.h" />
     <ClInclude Include="ImageAsset.h" />
     <ClInclude Include="ImageResource.h" />
+    <ClInclude Include="ISound.h" />
     <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MeshResource.h" />
     <ClInclude Include="MeshShape.h" />
@@ -209,6 +221,7 @@
     <ClInclude Include="SceneRenderer.h" />
     <ClInclude Include="SelectionPass.h" />
     <ClInclude Include="ShaderResource.h" />
+    <ClInclude Include="Sound.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TextureAsset.h" />
     <ClInclude Include="HotKeys.h" />
@@ -366,6 +379,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -404,6 +418,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>DirectXTK.lib;monopp.lib;mono-2.0-sgen.lib;Jolt.lib;Detour.lib;Recast.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\x64\Debug;C:\Program Files\Mono\lib;$(SolutionDir)\engine\Jolt\lib;$(SolutionDir)\engine\RD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
