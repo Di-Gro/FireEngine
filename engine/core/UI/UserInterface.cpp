@@ -185,6 +185,8 @@ void UserInterface::Draw()
 
 	uiHierarchy.Draw_UI_Hierarchy();
 	uiInspector.Draw_UI_Inspector();
+
+	// TODO: заменить вызов на универсальный и отрисовать что угодно в C#
 	_callbacks.drawAssetEditor();
 
 	ImGui::End();

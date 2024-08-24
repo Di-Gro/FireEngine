@@ -92,6 +92,7 @@ namespace CSBridge {
 	int ClassName##_##propName##_get(CppRef objRef) {\
 		auto* a = CppRefs::GetPointer<ClassName>(objRef);\
 		if (a != nullptr)\
+			/* TODO: Почему здесь преобразование к int, а в DEF_PROP_SET_E к propType? */\
 			return (int)a->propName();\
 		else\
 			std::cout << "+: prop_get::GetPointer<" << #ClassName << ">(" << objRef << "): NULL" << std::endl;\
